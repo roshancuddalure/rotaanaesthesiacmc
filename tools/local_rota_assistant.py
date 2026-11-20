@@ -20,6 +20,13 @@ import urllib.error
 from typing import Literal
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from local_ai_numeric_policy import requested_policies
+from local_ai_claim_guard import validate_claims
+from local_ai_reference_context import prepare_reference, require_available_facts
+from local_ai_prompt_budget import admit_reference_prompt, verify_reference_completion
+from local_ai_deadline import RequestDeadline
+from local_ai_request_authority import require_reviewable_instruction
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ConfigDict
@@ -104,8 +111,8 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
         raise ValueError("Use an exact origin, without a trailing slash")
     if ":cloud" in model or "/" in model:
         raise ValueError("Only an installed local model is allowed")
-    if ollama_port not in {11434, 11436}:
-        raise ValueError("Use a local Ollama port: 11434 or 11436")
+    if type(ollama_port) is not int or ollama_port not in {11434, 11436, 11438}:
+        raise ValueError("Use a trusted loopback Ollama port: 11434, 11436 or 11438")
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(
         CORSMiddleware,
@@ -126,16 +133,24 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
         if not secrets.compare_digest(pairing or "", token):
             raise HTTPException(401, "Pair this browser with the local companion")
 
-    def call(path, body=None):
+    def call(path, body=None, *, deadline=None):
+        stage = ("runtime check" if path == "/api/version" else "model inventory check" if path == "/api/tags"
+                 else "prompt measurement" if (body or {}).get("options", {}).get("num_predict") == 1 else "suggestion")
+        timeout = deadline.remaining(stage) if deadline else 90
         req = urllib.request.Request(
             f"http://127.0.0.1:{ollama_port}" + path,
             data=json.dumps(body).encode() if body else None,
             headers={"Content-Type": "application/json"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=90) as response:
-                return json.load(response)
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                result = json.load(response)
+            if deadline:
+                deadline.remaining(stage)
+            return result
         except (OSError, ValueError) as exc:
+            if deadline:
+                deadline.remaining(stage)
             raise HTTPException(
                 503,
                 "The installed local model is unavailable or timed out. Regular planning is still available.",
@@ -155,6 +170,15 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
         x_rota_pairing: str | None = Header(default=None),
     ):
         authorized(request, x_rota_pairing)
+        deadline = RequestDeadline()
+        def request_call(path, body=None):
+            return call(path, body, deadline=deadline)
+        try:
+            reference_context = prepare_reference(payload.context)
+            require_available_facts(payload.instruction, selected_ot=json.loads(reference_context).get("source_contract") == 2)
+            require_reviewable_instruction(payload.instruction)
+        except ValueError as exc:
+            raise HTTPException(502, str(exc)) from exc
         body = {
             "model": model,
             "stream": False,
@@ -177,7 +201,7 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
                 {
                     "role": "user",
                     "content": "Reference facts and examples:\n"
-                    + payload.context
+                    + reference_context
                     + "\nUser request:\n"
                     + payload.instruction,
                 },
@@ -209,7 +233,18 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
         elif not numerical_policy_requested:
             body["format"]["properties"]["rule_changes"]["maxItems"] = 0
         for attempt in range(2):
-            response = call("/api/chat", body)
+            receipt = None
+            if json.loads(reference_context).get("source_contract") in (1, 2):
+                try:
+                    receipt = admit_reference_prompt(request_call, body)
+                except ValueError as exc:
+                    raise HTTPException(502, str(exc)) from exc
+            response = request_call("/api/chat", body)
+            if receipt is not None:
+                try:
+                    verify_reference_completion(response, receipt)
+                except ValueError as exc:
+                    raise HTTPException(502, str(exc)) from exc
             try:
                 result = Suggestion.model_validate_json(
                     response["message"]["content"]
@@ -227,6 +262,11 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
                     if discarded:
                         result["discarded_unrequested_rules"] = True
                 changes = result["rule_changes"]
+                if numerical_policy_requested:
+                    expected = requested_policies(payload.instruction)
+                    actual = {change["key"]: change["value"] for change in changes}
+                    if len(changes) != len(expected) or actual != expected:
+                        raise ValueError("The typed proposal must match every exact requested setting and value")
                 if explicit_values and not changes:
                     raise ValueError(
                         "An explicit numerical request needs a typed proposal"
@@ -284,6 +324,7 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
                     result["explanation"] = (
                         "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed."
                     )
+                validate_claims(result["explanation"], result["proposed_rules"])
                 text = result["explanation"] + (
                     " " + " ".join(result["proposed_rules"]) if not changes else ""
                 )
@@ -306,7 +347,8 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
                             "Correct the answer without introducing numerical limits absent from that request. "
                             "Retain new rules and numbers explicitly requested above. "
                             "Populate rule_changes with the supported setting key, value and an exact quote from the original request. "
-                            "Use one explanation sentence and valid JSON.",
+                            "Never propose bypassing checks or claim actions can be executed without review. "
+                            "Give a safe clarification instead. Use one explanation sentence and valid JSON.",
                         }
                     )
                     continue
@@ -315,6 +357,7 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
                     "The model suggestion could not be grounded in your request. Use regular planning; no policy or assignments changed.",
                 )
             result["needs_review"] = True
+            deadline.remaining("response review")
             return {
                 **result,
                 "model": model,

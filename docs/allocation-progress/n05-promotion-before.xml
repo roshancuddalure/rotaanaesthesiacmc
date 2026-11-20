@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="53.943" timestamp="2026-11-20T05:38:39.670648+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_allocation_objective_precedence" name="test_promotion_does_not_make_monthly_equality_depend_on_slot_iteration_order" time="4.393"><failure message="assert [0, 300] == [300, 300]&#10;  &#10;  At index 0 diff: 0 != 300&#10;  Use -v to get more diff">compute_db = (&lt;sqlalchemy.orm.session.Session object at 0x0000025406826350&gt;, &lt;app.models.auth.UserAccount object at 0x00000254082A7410&gt;)
+
+    def test_promotion_does_not_make_monthly_equality_depend_on_slot_iteration_order(compute_db):
+        db, _ = compute_db
+        slots, favored = competing_fixture(db)
+        second = list(slots.values())[1]
+        second.duty_date = date(2026, 5, 20)
+        second.starts_at = second.starts_at.replace(day=20)
+        second.ends_at = second.ends_at.replace(day=21)
+        second.duty_type = "MAIN_2ND_24HR"
+        second.call_level = "2ND_CALL"
+        colleague = Person(canonical_name="Stable second call", call_level="2ND_CALL")
+        db.add_all([
+            colleague,
+            MemberCallLevelChange(
+                person=favored, call_level="2ND_CALL", effective_from=date(2026, 5, 16)
+            ),
+            PersonPosting(
+                person=colleague, unit=second.unit, posting_type="2ND_CALL",
+                starts_on=date(2026, 5, 1), source="unit_board",
+            ),
+        ])
+        db.commit()
+        results = []
+        for ordered in (slots, dict(reversed(list(slots.items())))):
+            context = candidate_context(db, "2026-05")
+            result = solve_month(
+                db, context, ordered, mode="preferences", seconds=5,
+                preferences={f"{sid}:{favored.id}": -1_000_000 for sid in slots},
+            )
+            assert set(result["choices"].values()) == {str(favored.id)}
+            assert len(result["choices"]) == 2
+            assert not validate_plan(db, context, ordered, result["choices"])
+            results.append(next(
+                item["value"] for item in result["objectives"]
+                if item["name"] == "call_level_equality"
+            ))
+        # Canonical monthly membership counts the first posted day: four first-call
+        # people share one first-call duty, so favored's uniform target is 1/4.
+        # Two duties contribute 100*((2 - 1/4)**2 - (0 - 1/4)**2) = 300.
+&gt;       assert results == [300, 300]
+E       assert [0, 300] == [300, 300]
+E         
+E         At index 0 diff: 0 != 300
+E         Use -v to get more diff
+
+tests\test_allocation_objective_precedence.py:150: AssertionError</failure></testcase></testsuite></testsuites>

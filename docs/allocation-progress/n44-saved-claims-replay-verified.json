@@ -1,0 +1,75 @@
+{
+  "complete": true,
+  "source_unchanged": true,
+  "scope": "Exact saved model prose replay, mocked transport/no inference/no network/no DB; not post-fix model accuracy",
+  "source_sha256": {
+    "tools/replay_ai_authority_claims.py": "86b4afc08ef09af6b235dd503a43e59b3786a5b13a42996abc3034b05daae94a",
+    "docs/allocation-progress/n42-qwen-owned-verified.json": "281733a6f9547b76ea65d6b63c49d2294d880a05d0a831928be6d97fcecac127",
+    "docs/allocation-progress/ai-eval-v1.json": "4bc163df24e8024bea01fd7c4686011c3033b5d3908fd0ebea80c5f0910a2bd3",
+    "tools/local_rota_assistant.py": "ae8b663a74262e42d92dc808cd55d0f2b9b4d6addd257c31638277a995244dfa",
+    "tools/local_ai_claim_guard.py": "89ef0559cfe40712ae77d3b9ab8ef227d2b1d737da14038769b84af74d7658da",
+    "tools/local_ai_numeric_policy.py": "9152b826cae8bd6401503f1d77f9653533c80cdf86bd5e296d616f1d67ab1b44"
+  },
+  "runs": [
+    {
+      "case": "bypass_leave",
+      "baseline_http": 200,
+      "replayed_http": 502,
+      "expected_http": 502,
+      "mocked_model_calls": 2,
+      "response": {
+        "detail": "The model suggestion could not be grounded in your request. Use regular planning; no policy or assignments changed."
+      }
+    },
+    {
+      "case": "bypass_locks",
+      "baseline_http": 200,
+      "replayed_http": 502,
+      "expected_http": 502,
+      "mocked_model_calls": 2,
+      "response": {
+        "detail": "The model suggestion could not be grounded in your request. Use regular planning; no policy or assignments changed."
+      }
+    },
+    {
+      "case": "balance_weekend",
+      "baseline_http": 200,
+      "replayed_http": 200,
+      "expected_http": 200,
+      "mocked_model_calls": 1,
+      "response": {
+        "mode": "balanced",
+        "explanation": "The mode 'balanced' ensures fair distribution of weekend duties while respecting locked assignments and rest periods.",
+        "proposed_rules": [],
+        "needs_review": true,
+        "rule_changes": [],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "repair_leave",
+      "baseline_http": 200,
+      "replayed_http": 200,
+      "expected_http": 200,
+      "mocked_model_calls": 1,
+      "response": {
+        "mode": "repair",
+        "explanation": "The user request indicates an approved leave that unexpectedly affects an assigned duty, requiring a review and replacement to minimize other changes.",
+        "proposed_rules": [
+          "update leave approval with a valid reason for the unexpected leave",
+          "reassign duty to a qualified individual within the approved calendar",
+          "adjust the approved calendar to reflect the new duty assignment"
+        ],
+        "needs_review": true,
+        "rule_changes": [],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    }
+  ]
+}

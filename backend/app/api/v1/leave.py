@@ -6,13 +6,15 @@ are shown as warnings (see ``app.services.leave``). Any signed-in user may edit 
 """
 
 from datetime import date
+from typing import Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Body, Depends, File, Form, HTTPException, Query, UploadFile
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session, selectinload
 
 from app.api.v1.auth import current_user, require_admin
+from app.api.v1.rota_compute import limit_start as limit_repair_start
 from app.db.session import get_db
 from app.services.member_profiles import call_level_on
 from app.services.reference_catalog import resolve_value
@@ -32,6 +34,34 @@ from app.services.reviewed_import import acquire_import_lock, reviewed_hash, ver
 router = APIRouter()
 
 
+class LeaveRepairScope(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    month: str = Field(pattern=r"^\d{4}-(0[1-9]|1[0-2])$", min_length=7, max_length=7)
+    leave_ids: list[UUID] = Field(min_length=1, max_length=100)
+    repair_slots: list[UUID] = Field(default_factory=list, max_length=5000)
+    locked_slots: list[UUID] = Field(default_factory=list, max_length=5000)
+
+
+class LeaveRepairProposal(LeaveRepairScope):
+    review_token: str = Field(pattern=r"^[a-f0-9]{64}$", min_length=64, max_length=64)
+    seconds: int = Field(default=30, ge=1, le=120, strict=True)
+
+
+@router.post("/leave/repair-preview")
+def preview_leave_repair(payload: LeaveRepairScope, user=Depends(require_admin), db=Depends(get_db)):
+    from app.services.leave_repair import preview
+    return preview(db, payload.month, user, payload.leave_ids,
+                   repair_slots=payload.repair_slots, locked_slots=payload.locked_slots)
+
+
+@router.post("/leave/repair-proposal", dependencies=[Depends(limit_repair_start)])
+def propose_leave_repair(payload: LeaveRepairProposal, user=Depends(require_admin), db=Depends(get_db)):
+    from app.services.leave_repair import start_proposal
+    return start_proposal(db, payload.month, user, payload.leave_ids, payload.review_token,
+                          repair_slots=payload.repair_slots, locked_slots=payload.locked_slots,
+                          seconds=payload.seconds)
+
+
 class LeaveApprovalScope(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     month: str = Field(pattern=r"^\d{4}-(0[1-9]|1[0-2])$", min_length=7, max_length=7)
@@ -40,6 +70,12 @@ class LeaveApprovalScope(BaseModel):
 class LeaveApprovalApply(LeaveApprovalScope):
     review_token: str = Field(pattern=r"^[a-f0-9]{64}$", min_length=64, max_length=64)
     acknowledge_duties: bool = False
+    reason: str | None = Field(default=None, max_length=2000)
+
+
+class LeaveCancellation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    reason: str | None = Field(default=None, max_length=2000)
 
 
 @router.post("/leave/approval-preview")
@@ -61,7 +97,8 @@ def approve_monthly_leave(payload: LeaveApprovalApply, user=Depends(require_admi
         month_bounds(payload.month)
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
-    return approve_month(db, payload.month, user, payload.review_token, payload.acknowledge_duties)
+    return approve_month(db, payload.month, user, payload.review_token, payload.acknowledge_duties,
+                         reason=payload.reason)
 
 
 class LeavePersonRead(BaseModel):
@@ -116,6 +153,7 @@ class LeaveRequestUpdate(BaseModel):
     status: str
     notes: str | None = None
     acknowledge_duties: bool = False
+    change_reason: str | None = Field(default=None, max_length=2000)
 
 
 class LeaveCalendarRead(BaseModel):
@@ -136,6 +174,8 @@ class LeaveImportPreviewRead(BaseModel):
     source_formats: list[str] = []
     parser_warnings: list[str] = []
     rows: list[dict[str, object]]
+    affected_duties: list[dict[str, object]] = []
+    ot_impact: dict[str, object] | None = None
 
 
 class LeaveImportApplyRead(BaseModel):
@@ -282,7 +322,8 @@ def update_leave_request(
     leave.status = normalized["status"]
     leave.raw_person_name = person.canonical_name
     leave.notes = payload.notes.strip() if payload.notes else None
-    details = {"before":review["before"],"after":review["after"],"affected_duties":review["duties"]}
+    details = {"before":review["before"],"after":review["after"],"affected_duties":review["duties"],
+               "reason": payload.change_reason.strip() or None if payload.change_reason else None}
     audit(db,_user,"leave_updated",leave.id,details)
     db.add(MemberActivity(person_id=person.id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
                           action="leave_updated",details=details))
@@ -293,6 +334,7 @@ def update_leave_request(
 @router.post("/leave/requests/{leave_id}/cancel")
 def cancel_leave_request(
     leave_id: UUID,
+    payload: LeaveCancellation | None = Body(default=None),
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
@@ -308,6 +350,7 @@ def cancel_leave_request(
     details = {
         "before": before,
         "after": {"status": "cancelled"},
+        "reason": payload.reason.strip() or None if payload and payload.reason else None,
         "availability": "This leave no longer blocks availability. Existing duty assignments remain unchanged.",
     }
     audit(db, _user, "leave_cancelled", leave.id, details)
@@ -322,6 +365,40 @@ def cancel_leave_request(
     )
     db.commit()
     return leave_to_read(get_leave_or_404(db, leave.id))
+
+
+@router.get("/leave/requests/{leave_id}/history")
+def get_leave_history(
+    leave_id: UUID,
+    _user: UserAccount = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    from app.services.leave_history import history
+
+    # Reuse the existing write namespace for a coherent canonical/audit read.
+    lock_namespace(db, "normalization-edit")
+    result = history(db, leave_id)
+    if result is None:
+        raise HTTPException(404, "Leave record or retained history not found")
+    return result
+
+
+@router.get("/leave/requests/{leave_id}/history/page")
+def get_leave_history_page(
+    leave_id: UUID,
+    category: Literal["audit", "imports", "recycle", "merges"],
+    cursor: str | None = Query(default=None, max_length=2048),
+    limit: int = Query(default=200, ge=1, le=200),
+    _user: UserAccount = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    from app.services.leave_history import history
+
+    lock_namespace(db, "normalization-edit")
+    try:
+        return history(db, leave_id, category=category, cursor=cursor, limit=limit)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
 
 
 @router.get("/leave/calendar")
@@ -365,8 +442,14 @@ async def preview_leave_upload(
     try:
         month_bounds(month)
         content = await read_bounded_upload(file)
+        acquire_import_lock(db)
+        from app.services.scheduling_inputs import lock_inputs
+        from app.services.leave_import_ot_impact import legacy_review
+        lock_inputs(db)
         result = preview_leave_import(db, file.filename or "leave-import", content, month)
-        result["preview_hash"] = reviewed_hash(db, "leave", file.filename or "leave-import", content, month, {}, result["rows"])
+        impacts, options = legacy_review(db, month, result)
+        result.update(impacts)
+        result["preview_hash"] = reviewed_hash(db, "leave", file.filename or "leave-import", content, month, options, result["rows"])
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return LeaveImportPreviewRead(**result)
@@ -377,6 +460,7 @@ async def apply_leave_upload(
     month: str,
     file: UploadFile = File(...),
     preview_hash: str = Form(""),
+    acknowledge_duties: bool = Form(False),
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> LeaveImportApplyRead:
@@ -387,9 +471,17 @@ async def apply_leave_upload(
         existing = replayed_result(db, "leave_upload", preview_hash, str(_user.id), file.filename or "leave-import", content, {"month": month})
         if existing is not None:
             return LeaveImportApplyRead(**existing)
+        from app.services.scheduling_inputs import lock_inputs
+        from app.services.leave_import_ot_impact import legacy_review
+        lock_inputs(db)
         preview = preview_leave_import(db, file.filename or "leave-import", content, month)
-        verify_reviewed_hash(preview_hash, reviewed_hash(db, "leave", file.filename or "leave-import", content, month, {}, preview["rows"]))
+        impacts, options = legacy_review(db, month, preview)
+        verify_reviewed_hash(preview_hash, reviewed_hash(db, "leave", file.filename or "leave-import", content, month, options, preview["rows"]))
+        if impacts['affected_duties'] and not acknowledge_duties:
+            raise HTTPException(422, 'Review and acknowledge affected duties before applying leave')
         result = apply_leave_import(db, file.filename or "leave-import", content, month, commit=False)
+        result['preview'].update(impacts)
+        result['preview']['preview_hash'] = preview_hash
         record_workflow_batch(db, "leave_upload", file.filename or "leave-import", content, month,
                               {"month": month}, str(_user.id), preview_hash, result)
         db.commit()

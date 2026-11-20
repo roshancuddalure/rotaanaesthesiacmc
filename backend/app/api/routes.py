@@ -21,6 +21,7 @@ from app.api.v1.health import router as health_router
 from app.api.v1.import_history import router as import_history_router
 from app.api.v1.historical_imports import router as historical_imports_router
 from app.api.v1.leave import router as leave_router
+from app.api.v1.ot_calendar import router as ot_calendar_router
 from app.api.v1.limits import router as limits_router
 from app.api.v1.members import router as members_router
 from app.api.v1.member_bulk import router as member_bulk_router
@@ -60,6 +61,7 @@ api_router.include_router(balance_duties_router, prefix="/v1", tags=["balance du
 api_router.include_router(superadmin_allocation_router, prefix="/v1", tags=["superadmin allocation"])
 api_router.include_router(historical_imports_router, prefix="/v1", tags=["historical imports"])
 api_router.include_router(leave_router, prefix="/v1", tags=["leave"])
+api_router.include_router(ot_calendar_router, prefix="/v1", tags=["OT calendars"])
 api_router.include_router(limits_router, prefix="/v1", tags=["limits"])
 api_router.include_router(member_bulk_router, prefix="/v1", tags=["members"])
 api_router.include_router(members_router, prefix="/v1", tags=["members"])

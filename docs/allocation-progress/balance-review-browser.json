@@ -1,0 +1,87 @@
+{
+  "client_date": "2026-11-19",
+  "server_only": false,
+  "hardware": {
+    "test": {
+      "supported": true,
+      "software": false,
+      "adapter": "nvidia",
+      "vendor": "nvidia",
+      "architecture": "turing",
+      "description": "",
+      "device": "",
+      "signature": "[2,\"high-performance\",\"nvidia\",\"turing\",\"\",\"\",false,268435456,134217728,65535]",
+      "preference": "high-performance",
+      "version": 2,
+      "parity": true,
+      "test_ms": 6640.600000023842,
+      "kernel_checks": {
+        "members": true,
+        "template": true,
+        "optimizer": true
+      }
+    },
+    "batches": [
+      {
+        "rows": 1,
+        "gpu_ms": 6.100000023841858
+      },
+      {
+        "rows": 63,
+        "gpu_ms": 4.699999988079071
+      },
+      {
+        "rows": 64,
+        "gpu_ms": 7.199999988079071
+      },
+      {
+        "rows": 65,
+        "gpu_ms": 5.800000011920929
+      },
+      {
+        "rows": 513,
+        "gpu_ms": 12.600000023841858
+      },
+      {
+        "rows": 10000,
+        "gpu_ms": 22.399999976158142
+      }
+    ]
+  },
+  "workflows": [
+    {
+      "width": 1440,
+      "engine": "local_gpu",
+      "gpu_frames_verified": 2,
+      "excel": true,
+      "unapplied": true,
+      "stale_recovery": true,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "main_review_download": true,
+      "filename": "review-rota-2026-05.xlsx"
+    },
+    {
+      "width": 390,
+      "engine": "server",
+      "gpu_frames_verified": 0,
+      "excel": true,
+      "unapplied": true,
+      "stale_recovery": true,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "width": 320,
+      "engine": "server",
+      "gpu_frames_verified": 0,
+      "excel": true,
+      "unapplied": true,
+      "stale_recovery": true,
+      "overflow": false,
+      "errors": []
+    }
+  ]
+}

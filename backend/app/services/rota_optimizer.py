@@ -11,7 +11,7 @@ from uuid import UUID
 
 from ortools.sat.python import cp_model
 
-from app.services.rota_assignment import validate_assignment, rule_group_for_slot, campus_for_slot
+from app.services.rota_assignment import validate_assignment
 from app.services.rota_candidates import (
     add_provisional_assignment,
     slot_candidates_with_context,
@@ -19,6 +19,9 @@ from app.services.rota_candidates import (
     context_targets,
 )
 from app.services.rota_safety import assignment_indexes, rule_for_slot
+from app.services.allocation_objectives import describe_objectives
+from app.services.allocation_objective_model import build_objectives
+from app.services.allocation_count_constraints import add_monthly_count_limits
 
 
 def without_slots(context, slot_ids):
@@ -215,32 +218,28 @@ def solve_month(
             for tid, other in rows[i + 1 :]:
                 if incompatible(slots[sid], slots[tid], context.rules):
                     model.add(var + other <= 1)
-        existing = [a.duty_slot for a in context.assignments_by_person.get(UUID(person), [])]
-        limits = context.rules.duty_count_limits
-        predicates = [
-            (limits.max_24hr_per_month, lambda s: s.is_24hr),
-            (limits.max_weekend_24hr_per_month, lambda s: s.is_24hr and s.duty_date.weekday() >= 5),
-        ]
-        for group in {rule_group_for_slot(slots[s], context.rules) for s, _ in rows}:
-            predicates.append(
-                (
-                    limits.max_same_group_per_month,
-                    lambda s, g=group: rule_group_for_slot(s, context.rules) == g,
-                )
-            )
-        for campus in {campus_for_slot(slots[s]) for s, _ in rows} - {None}:
-            predicates.append(
-                (limits.max_same_campus_per_month, lambda s, c=campus: campus_for_slot(s) == c)
-            )
-        for limit, predicate in predicates:
-            if limit is not None:
-                model.add(
-                    sum(v for s, v in rows if predicate(slots[s]))
-                    <= max(0, limit - sum(predicate(s) for s in existing))
-                )
+    add_monthly_count_limits(model, variables, slots, context)
     for previous in forbidden or []:
         chosen = set(previous.items())
         model.add(sum(v if k in chosen else -v for k, v in variables.items()) <= len(chosen) - 1)
+    joint_reservations = None
+    if getattr(context, "ot_guard", None) is not None:
+        from app.services.ot_capacity import CapacityResourceLimit
+        from app.services.ot_joint_reservations import add_joint_reservations
+        try:
+            joint_reservations = add_joint_reservations(model, context.ot_guard,
+                (a for rows in context.nearby_assignments.values() for a in rows),
+                slots, variables, context.rules)
+        except CapacityResourceLimit as exc:
+            # An incomplete model is not a search space or a safety exception.
+            return {"choices": {}, "candidates": candidates, "rejected": rejected,
+                    "status": "time_limited", "objectives": [], "cuts": 0,
+                    "baseline_retained": False, "quality": [],
+                    "elapsed_ms": round((perf_counter() - started) * 1000, 2),
+                    "uncovered": len(slots), "mode": mode, "holiday_dates": sorted(holiday_dates),
+                    "warnings": [str(exc)], "ot_reservations": {"status": "unresolved", "reason": str(exc)},
+                    "history_window": {"start": str(context.history["start"]),
+                        "end": str(context.history["end"]), "observed_months": context.history["months"]}}
     mandatory = sum(
         v
         for (s, _), v in variables.items()
@@ -250,86 +249,12 @@ def solve_month(
     coverage = sum(variables.values())
     model.add(coverage >= minimum_coverage)
     model.add(mandatory >= minimum_required)
-    changes = sum((1 - variables.get((s, p), 0)) for s, p in originals.items())
-    preference_cost = sum(v * preferences.get(f"{s}:{p}", 0) for (s, p), v in variables.items())
-    # Convex load costs discourage concentrating assignments. Normalize by compatible
-    # opportunities; missing historical coverage is handled neutrally by existing scoring.
-    load_costs, weekend_costs, night_costs, holiday_costs = [], [], [], []
-    # Equal duties within a call level (docs/limits_callevel_fairness_contract.md 2): the sum
-    # of (month duties - call-level target)^2 over members, all campuses together. The n-th
-    # extra duty adds 2(base+n) - 1 - 2*target (x100); campus plays no part here.
-    equality_costs = []
     targets = context_targets(db, context)
-    level_of = {p: c.get("call_level") for rows in candidates.values() for p, c in rows.items()}
-    for person, rows in by_person.items():
-        for category, predicate, costs in [
-            ("total", lambda s: True, load_costs),
-            ("weekend", lambda s: s.duty_date.weekday() >= 5, weekend_costs),
-            (
-                "night",
-                lambda s: (
-                    s.is_24hr or s.starts_at.hour >= 18 or s.ends_at.date() > s.starts_at.date()
-                ),
-                night_costs,
-            ),
-            ("holiday", lambda s: str(s.duty_date) in holiday_dates, holiday_costs),
-        ]:
-            selected = [v for s, v in rows if predicate(slots[s])]
-            base = sum(
-                predicate(a.duty_slot) for a in context.assignments_by_person.get(UUID(person), [])
-            )
-            for n in range(1, len(selected) + 1):
-                threshold = model.new_bool_var(f"load{person}{category}{n}")
-                model.add(sum(selected) >= n).only_enforce_if(threshold)
-                model.add(sum(selected) < n).only_enforce_if(threshold.Not())
-                costs.append(
-                    threshold * max(1, round((2 * (base + n) - 1) * 100 / max(1, len(rows))))
-                )
-                if category == "total":
-                    target = targets.get(level_of.get(person))
-                    if target is None:
-                        target = context.average_assignments
-                    equality_costs.append(
-                        threshold * round((2 * (base + n) - 1 - 2 * target) * 100)
-                    )
-    burden = sum(load_costs)
-    weekends = sum(weekend_costs)
-    nights = sum(night_costs)
-    ranking = sum(
-        v
-        * (
-            candidates[s][p]["score_parts"].get("burden", 0) * weights["burden"]
-            + candidates[s][p]["score_parts"].get("historical_fairness", 0) * weights["history"]
-            + candidates[s][p]["score_parts"].get("rest", 0) * weights["spacing"]
-        )
-        for (s, p), v in variables.items()
-    )
-    tiers = [("required_coverage", -mandatory), ("coverage", -coverage)]
-    if originals:
-        tiers.append(("changes", changes))
-    if mode == "preferences":
-        tiers.append(("preferences", preference_cost))
-    spacing = []
-    for person, rows in by_person.items():
-        for i, (sid, var) in enumerate(rows):
-            for tid, other in rows[i + 1 :]:
-                days = abs((slots[sid].duty_date - slots[tid].duty_date).days)
-                if 0 < days <= 7 and not incompatible(slots[sid], slots[tid], context.rules):
-                    together = model.new_bool_var(f"space{len(spacing)}")
-                    model.add(together <= var)
-                    model.add(together <= other)
-                    model.add(together >= var + other - 1)
-                    spacing.append(together * (8 - days))
-    tiers += [
-        ("call_level_equality", sum(equality_costs)),
-        ("weekend_burden", weekends),
-        ("night_burden", nights),
-        ("holiday_burden", sum(holiday_costs)),
-        ("workload", burden),
-        ("spacing_history", ranking + sum(spacing) * weights["spacing"]),
-    ]
-    if mode != "preferences":
-        tiers.append(("preferences", preference_cost))
+    terms = build_objectives(model, variables, candidates, slots, context,
+        targets=targets, mandatory=mandatory, coverage=coverage, mode=mode,
+        originals=originals, preferences=preferences, weights=weights,
+        holiday_dates=holiday_dates, incompatible=incompatible)
+    tiers, quality, level_of = terms.tiers, terms.quality, terms.level_of
     # Seed with a validated, scarcity-aware greedy draft. A short search must never
     # replace that draft with an equally covered but needlessly concentrated incumbent.
     seed_context = without_slots(context, [])
@@ -361,68 +286,6 @@ def solve_month(
             seed.pop(next(reversed(seed)))
     for (sid, person), variable in variables.items():
         model.add_hint(variable, int(seed.get(sid) == person))
-
-    def quality(choices):
-        categories = [
-            lambda s: s.duty_date.weekday() >= 5,
-            lambda s: s.is_24hr or s.starts_at.hour >= 18 or s.ends_at.date() > s.starts_at.date(),
-            lambda s: str(s.duty_date) in holiday_dates,
-            lambda s: True,
-        ]
-        costs = []
-        for predicate in categories:
-            cost = 0
-            for person, rows in by_person.items():
-                baseline = sum(
-                    predicate(a.duty_slot)
-                    for a in context.assignments_by_person.get(UUID(person), [])
-                )
-                count = sum(choices.get(s) == person and predicate(slots[s]) for s, _ in rows)
-                cost += sum(
-                    max(1, round((2 * (baseline + n) - 1) * 100 / max(1, len(rows))))
-                    for n in range(1, count + 1)
-                )
-            costs.append(cost)
-        required = sum(
-            not rule_for_slot(slots[s], context.rules)
-            or rule_for_slot(slots[s], context.rules).is_mandatory
-            for s in choices
-        )
-        result = [-required, -len(choices)]
-        if originals:
-            result.append(sum(choices.get(s) != p for s, p in originals.items()))
-        pref = sum(preferences.get(f"{s}:{p}", 0) for s, p in choices.items())
-        if mode == "preferences":
-            result.append(pref)
-        equality = 0
-        for person, rows in by_person.items():
-            target = targets.get(level_of.get(person))
-            if target is None:
-                target = context.average_assignments
-            baseline = len(context.assignments_by_person.get(UUID(person), []))
-            count = sum(choices.get(s) == person for s, _ in rows)
-            equality += sum(
-                round((2 * (baseline + n) - 1 - 2 * target) * 100) for n in range(1, count + 1)
-            )
-        result.append(equality)
-        result.extend(costs)
-        ranked = sum(
-            candidates[s][p]["score_parts"].get("burden", 0) * weights["burden"]
-            + candidates[s][p]["score_parts"].get("historical_fairness", 0) * weights["history"]
-            + candidates[s][p]["score_parts"].get("rest", 0) * weights["spacing"]
-            for s, p in choices.items()
-        )
-        for person, rows in by_person.items():
-            chosen = [s for s, _ in rows if choices.get(s) == person]
-            for i, s in enumerate(chosen):
-                for t in chosen[i + 1 :]:
-                    days = abs((slots[s].duty_date - slots[t].duty_date).days)
-                    if 0 < days <= 7 and not incompatible(slots[s], slots[t], context.rules):
-                        ranked += (8 - days) * weights["spacing"]
-        result.append(ranked)
-        if mode != "preferences":
-            result.append(pref)
-        return result
 
     seed_valid = (
         len(seed) >= minimum_coverage
@@ -587,6 +450,7 @@ def solve_month(
         raise RuntimeError("Optimizer returned an invalid proposal")
     return {
         "choices": choices,
+        **({"ot_reservations": {"status": "modeled", **joint_reservations}} if joint_reservations is not None else {}),
         "candidates": candidates,
         "rejected": rejected,
         "status": "optimal"
@@ -597,6 +461,7 @@ def solve_month(
             else ("infeasible" if last_status == cp_model.INFEASIBLE else "time_limited")
         ),
         "objectives": objectives,
+        "objective_basis": describe_objectives(mode, targets),
         "cuts": cuts,
         "baseline_retained": baseline_retained,
         "quality": quality(choices),

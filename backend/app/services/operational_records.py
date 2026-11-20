@@ -3,14 +3,13 @@
 import hashlib
 import json
 from datetime import date
+from types import SimpleNamespace
 from uuid import UUID
 
 from fastapi import HTTPException
 from sqlalchemy import select
 
 from app.models import (
-    DutyAssignment,
-    DutySlot,
     LeaveRequest,
     MemberActivity,
     Person,
@@ -18,6 +17,9 @@ from app.models import (
     Unit,
 )
 from app.services.operational_import import fingerprint, record_values
+from app.services.leave_impact import affected_duties
+from app.services.leave_projection import LeaveProjection
+from app.services.leave_ot_impact import review_impacts
 from app.services.reference_catalog import resolve_value
 from app.services.reference_registry import audit, lock_namespace
 
@@ -39,8 +41,16 @@ def get_record(db, kind, identity):
 
 def inspect_record(db, kind, values, identity=None):
     model = model_for(kind)
+    if kind == "leave":
+        from app.services.scheduling_inputs import lock_inputs
+        lock_namespace(db, "operational-import")
+        lock_inputs(db)
     before = record_values(get_record(db, kind, identity), kind) if identity else None
     try:
+        change_reason = values.get("change_reason") if kind == "leave" else None
+        if change_reason is not None and (not isinstance(change_reason, str) or len(change_reason) > 2000):
+            raise ValueError("Change reason must be text of at most 2000 characters")
+        change_reason = change_reason.strip() or None if change_reason else None
         person = db.get(Person, UUID(str(values.get("person_id"))))
         if not person or person.active_status != "active":
             raise ValueError("Select an active department member")
@@ -103,26 +113,31 @@ def inspect_record(db, kind, values, identity=None):
             )
     duties = []
     if kind == "leave" and after["status"] not in {"cancelled", "rejected"}:
-        assignments = db.scalars(
-            select(DutyAssignment)
-            .join(DutySlot)
-            .where(
-                DutyAssignment.person_id == person.id,
-                DutySlot.duty_date >= start,
-                DutySlot.duty_date <= end,
-            )
+        # A detached value object avoids adding a pending canonical request or
+        # mutating the existing record while reviewing prospective values.
+        proposal = SimpleNamespace(
+            id=identity or "proposed", person_id=person.id, person=person,
+            starts_on=start, ends_on=end, leave_slot=after["leave_slot"],
         )
-        from app.services.rota_safety import slot_leave_blocks
-
-        proposal = LeaveRequest(leave_slot=after["leave_slot"])
-        duties = [
-            {"id": str(a.id), "date": str(a.duty_slot.duty_date), "duty": a.duty_slot.slot_label}
-            for a in assignments
-            if slot_leave_blocks(proposal, a.duty_slot)
-        ]
+        try:
+            duties = affected_duties(db, [proposal])
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+    token_data = {"context": fingerprint(db), "after": after, "kind": kind, "identity": str(identity)}
+    ot_impact = None
+    if kind == "leave":
+        token_data["affected_duties"] = duties
+        previous = (LeaveProjection(identity, UUID(before["person_id"]),
+                    date.fromisoformat(before["starts_on"]), date.fromisoformat(before["ends_on"]),
+                    before["leave_slot"], before["status"]),) if before else ()
+        ot_impact = review_impacts(db, (LeaveProjection(identity or "proposed", person.id,
+                                   start, end, after["leave_slot"], after["status"]),), previous=previous)
+        token_data["ot_context"] = ot_impact["context_digest"]
+    if change_reason is not None:
+        token_data["change_reason"] = change_reason
     token = hashlib.sha256(
         json.dumps(
-            {"context": fingerprint(db), "after": after, "kind": kind, "identity": str(identity)},
+            token_data,
             sort_keys=True,
         ).encode()
     ).hexdigest()
@@ -130,7 +145,9 @@ def inspect_record(db, kind, values, identity=None):
         "before": before,
         "after": after,
         "duties": duties,
+        "ot_impact": ot_impact,
         "review_token": token,
+        "change_reason": change_reason,
         "availability": "Approved leave blocks availability; existing duties require review."
         if after.get("status") == "approved"
         else "Pending leave warns; cancelled or rejected leave does not block availability."
@@ -163,6 +180,7 @@ def save_record(db, operator, kind, values, token, identity=None):
         "before": review["before"],
         "after": review["after"],
         "affected_duties": review["duties"],
+        "reason": review["change_reason"],
     }
     action = f"{'posting' if kind == 'units' else 'leave'}_{'updated' if identity else 'created'}"
     audit(db, operator, action, record.id, details)

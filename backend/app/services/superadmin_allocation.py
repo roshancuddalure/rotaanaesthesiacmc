@@ -47,7 +47,7 @@ from app.models import (
 )
 from app.services.extra_duty_hooks import void_extra_duty_records
 from app.services.extra_duty_verify import MonthState, check_state, load_month_state
-from app.services.leave import BLOCKING_LEAVE_STATUSES
+from app.services.leave_semantics import is_approved
 from app.services.reference_registry import audit, lock_namespace
 from app.services.rota_eligibility import (
     CODE_CALL_LEVEL,
@@ -84,6 +84,8 @@ STRICT_LABELS = {
     "on_leave": "On leave",
     "rest_after_24hr": "Resting after a 24-hour duty",
     "overlapping_duty": "Already on duty",
+    "ot_reservation_conflict": "Mandatory OT or staffing reserve would be uncovered",
+    "ot_capacity_unresolved": "OT staffing capacity cannot be verified",
 }
 OVERRIDE_LABELS = {
     "call_level_mismatch": "Call level does not match the duty",
@@ -183,7 +185,7 @@ def _state_slot(state: MonthState, slot: DutySlot) -> DutySlot:
 # ------------------------------------------------------------------------------- strict rules
 
 
-def strict_blocks(state: MonthState, person_id: UUID, slot) -> list[dict[str, str]]:
+def strict_blocks(state: MonthState, person_id: UUID, slot, *, include_ot=True) -> list[dict[str, str]]:
     """Leave, rest after 24-hour duty and double duty for ``person_id`` taking ``slot``.
 
     ``[{code, label, detail}]``; ``[]`` = allowed. Duties on ``slot`` itself are ignored (the
@@ -206,8 +208,7 @@ def strict_blocks(state: MonthState, person_id: UUID, slot) -> list[dict[str, st
         if leave.starts_on <= day <= leave.ends_on:
             if not slot_leave_blocks(leave, slot):
                 continue
-            status = (leave.status or "").lower()
-            kind = "approved leave" if status in BLOCKING_LEAVE_STATUSES else "leave pending review"
+            kind = "approved leave" if is_approved(leave.status) else "leave pending review"
             span = _day(day) if leave.starts_on == leave.ends_on else f"{_day(leave.starts_on)}–{_day(leave.ends_on)}"
             part = "" if (leave.leave_slot or "FULL_DAY").upper() == "FULL_DAY" else f" ({leave.leave_slot})"
             leave_type = f" – {leave.leave_type}" if leave.leave_type else ""
@@ -240,7 +241,10 @@ def strict_blocks(state: MonthState, person_id: UUID, slot) -> list[dict[str, st
             gap = (o.starts_at - slot.ends_at).total_seconds() / 3600
             if gap < gap_needed:
                 add("rest_after_24hr", f"Only {gap:g} h of rest before {_duty_label(state, o)} on {_day(o.duty_date)} after this 24-hour duty; needs {gap_needed:g} h")
-    order = {"on_leave": 0, "rest_after_24hr": 1, "overlapping_duty": 2}
+    for code, message in (state.ot_blockers(person_id, slot, replace_existing=True) if include_ot else []):
+        add(code, message)
+    order = {"on_leave": 0, "rest_after_24hr": 1, "overlapping_duty": 2,
+             "ot_reservation_conflict": 3, "ot_capacity_unresolved": 3}
     found.sort(key=lambda item: order[item["code"]])
     return found
 
@@ -538,6 +542,10 @@ def allocate(
     period = _period_for(db, slot)
     month = _month_of(slot)
     lock_namespace(db, f"extra-duty:{month}")
+    from app.core.config import settings
+    if settings.ot_calendar_enabled:
+        from app.services.rota_compute import lock_operational_inputs
+        lock_operational_inputs(db)
     db.refresh(slot)
     db.refresh(period)
     period = _period_for(db, slot)
@@ -770,6 +778,10 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
     if batch is None or (batch.summary or {}).get("mode") != BATCH_MODE:
         raise SuperadminAllocationError("not_found", "Superadmin allocation not found.", 404)
     lock_namespace(db, f"extra-duty:{batch.month}")
+    from app.core.config import settings
+    if settings.ot_calendar_enabled:
+        from app.services.rota_compute import lock_operational_inputs
+        lock_operational_inputs(db)
     db.refresh(batch)
     if batch.status == "undone":
         return {"batch_id": str(batch.id), "restored": 0, "removed": 0, "conflicts": [], "dry_run": dry_run,
@@ -812,7 +824,7 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
             if state is None:
                 state = load_month_state(db, batch.month)
             s = next((x for x in state.slots if x.id == slot.id), slot)
-            for block in strict_blocks(state, row.person_id, s):
+            for block in strict_blocks(state, row.person_id, s, include_ot=False):
                 conflict("holder_blocked", f"{who} cannot be put back: {block['detail']}.")
             # Strict call level: a restore must not create a crossing (e.g. after a promotion).
             holder_person = state.persons.get(row.person_id) or row.person
@@ -830,6 +842,24 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
             conflict("slot_has_new_assignments", "Other members were assigned to this duty since.")
         work.append((item, assignment, restores))
 
+    from app.core.config import settings
+    if settings.ot_calendar_enabled and not conflicts:
+        from types import SimpleNamespace
+        from app.services.ot_restoration import check_restored_duties, restoration_failure_message
+        proposals, removed = [], []
+        for item, assignment, restores in work:
+            removed.append(assignment.id)
+            if item.get("reused_row"):
+                proposals.append(SimpleNamespace(id=assignment.id, person_id=assignment.person_id,
+                    duty_slot=assignment.duty_slot, status=item["reused_row"].get("status_before") or "assigned"))
+            proposals.extend(SimpleNamespace(id=row.id, person_id=row.person_id, duty_slot=row.duty_slot,
+                status=holder.get("status_before") or "assigned") for holder, row in restores)
+        with db.no_autoflush:
+            report = check_restored_duties(db, proposals, removed_ids=removed)
+        if report is not None:
+            message = restoration_failure_message(report)
+            conflicts.append({"code": "ot_reservation_conflict" if report["status"] == "infeasible" else "ot_capacity_unresolved",
+                              "reason": message, "message": message})
     restored = sum(len(r) for _i, _a, r in work)
     if dry_run:
         return {"batch_id": str(batch.id), "restored": 0 if conflicts else restored, "would_restore": restored,

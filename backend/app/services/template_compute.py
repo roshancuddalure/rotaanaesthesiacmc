@@ -119,6 +119,10 @@ def preview(db, month, configuration, answers=None):
     from app.services.rota_rules import get_phase_one_rules
 
     get_phase_one_rules(db)
+    # Acquire before the savepoint, so rolling back hypothetical duties does not
+    # release the root transaction's coherent input view.
+    compute.lock_operational_inputs(db)
+    compute.writable_period(db, month)
     savepoint = db.begin_nested()
     try:
         result = generate_empty_template(
@@ -136,6 +140,7 @@ def preview(db, month, configuration, answers=None):
 def start(db, month, user, configuration, engine):
     configuration = {key: value for key, value in configuration.items() if value is not None}
     options(configuration)
+    compute.prepare_planning_inputs(db, month)
     from app.services.rota_rules import get_phase_one_rules
     from app.services.rota_template import selected_duty_rules, month_dates
 
@@ -198,6 +203,7 @@ def advance(
         return compute.serialize(job)
     if revision != job.revision:
         raise HTTPException(409, "Reload the template proposal before continuing")
+    compute.lock_operational_inputs(db)
     compute.check_current(db, job)
     started = perf_counter()
     state = copy.deepcopy(job.state)

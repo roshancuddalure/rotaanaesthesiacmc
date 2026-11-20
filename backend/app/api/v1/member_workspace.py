@@ -3,10 +3,10 @@
 import json
 import csv
 import io
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from pydantic import BaseModel, model_validator
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -107,6 +107,33 @@ def profile(person_id: UUID, db: Session = Depends(get_db)) -> dict:
     }}
 
 
+@router.get("/{person_id}/leave-statistics")
+def person_leave_statistics(
+    person_id: UUID,
+    year: int = Query(ge=1, le=9998),
+    month: int | None = Query(default=None, ge=1, le=12),
+    as_of: datetime | None = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    from app.models import LeaveRequest
+    from app.services.member_leave_statistics import report_bounds, statistics
+    from app.services.reference_registry import lock_namespace
+
+    lock_namespace(db, "normalization-edit")
+    get_member_or_404(db, person_id)
+    first, last = report_bounds(year, month)
+    local_now = datetime.now(timezone(timedelta(hours=5, minutes=30))).replace(tzinfo=None)
+    with db.no_autoflush:
+        rows = list(db.scalars(select(LeaveRequest).where(
+            LeaveRequest.person_id == person_id, LeaveRequest.starts_on <= last,
+            LeaveRequest.ends_on >= first,
+        ).order_by(LeaveRequest.starts_on, LeaveRequest.id).limit(2001)))
+        try:
+            return statistics(rows, person_id, year=year, month=month, as_of=as_of or local_now)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+
 @router.get("/{person_id}/{section}")
 def section(person_id: UUID, section: str, db: Session = Depends(get_db)) -> dict:
     person = get_member_or_404(db, person_id)
@@ -143,8 +170,11 @@ def section(person_id: UUID, section: str, db: Session = Depends(get_db)) -> dic
                  "leave": len(p.leave_requests), "memberships": len(p.call_cluster_memberships)}
                 for p in candidates.values()]
     elif section == "activity":
+        from app.services.member_activity_projection import profile_activity_details
+
         rows = [{"action": a.action, "operator": a.operator_name,
-                 "created_at": a.created_at.isoformat() + "Z", "details": a.details}
+                 "created_at": a.created_at.isoformat() + "Z",
+                 "details": profile_activity_details(a.action, a.details)}
                 for a in db.scalars(select(MemberActivity).where(MemberActivity.person_id == person_id)
                                    .order_by(MemberActivity.created_at.desc()))]
     else:

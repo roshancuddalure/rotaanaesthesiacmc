@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T09:07:27.774429+00:00",
+  "sha256": {
+    "backend/app/services/scheduling_inputs.py": "1812fe50bfc6d2ad9a5b993fb17a29e296cc2f36cd14b957ddf43b43dd3885dd",
+    "backend/app/services/rota_compute.py": "b80dda304802cf94341f7f15d957b2d9bc48ef39d358b285d091da3169bdef6f",
+    "backend/app/services/rota_template.py": "85064a227c76a6a83df664ae88739460886760c7964c90b34617003de05f5254",
+    "backend/app/services/rota_auto_fill.py": "e85d1a083a05592e39f18f1fc1f600595c2e92107657d83b95974d9ed971c47d",
+    "backend/app/services/rota_rules.py": "2a48eaae5fe9171616bce28f9f589a9d8ad67f74d0a3ab5e40739b6fc1b1df89",
+    "backend/app/services/call_clusters.py": "524db54ad69ec2e447fded5ec916a6c8841484fafcb3349d14bf73c167743f96",
+    "backend/tests/test_ot_snapshot_freshness.py": "9e582c039159c202e608f89ea34a013570053461028ad67264835f9e67fad5c8",
+    "backend/tests/test_ot_allocation_concurrency.py": "24329d17a974f03c5946025fba97d149bcb0fb94c6dcf1a4a66afbed3dbc9ce5",
+    "tools/test_compute_postgres.py": "4f96575d64505e418c7e0c792a0ebf3951fcd5d748faae4f8a44a183112a3c6e"
+  },
+  "evidence": [
+    "ot-freshness-bootstrap-core.xml",
+    "ot-freshness-preservation-final.xml",
+    "ot-freshness-autofill-core.xml",
+    "ot-postgres-allocation-final.xml"
+  ],
+  "limitations": "Overlapping suites. Final explicit autofill period lookup exercised by final PG warm/cold autofill. Raw-writer serialization permits later authorized configuration changes, not permanent feasibility. No deployment/operational migration."
+}

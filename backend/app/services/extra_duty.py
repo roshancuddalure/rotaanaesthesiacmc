@@ -33,7 +33,7 @@ from types import SimpleNamespace
 from typing import Any, Iterable
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import or_, select, update
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import (
@@ -49,8 +49,9 @@ from app.models import (
     Unit,
     UnitFallback,
 )
-from app.services.history_fairness import unique_assignments
-from app.services.leave import ACTIVE_LEAVE_STATUSES, BLOCKING_LEAVE_STATUSES, month_bounds
+from app.services.history_fairness import OFFICIAL_STATUSES, unique_assignments
+from app.services.leave import month_bounds
+from app.services.leave_semantics import is_active, is_approved
 from app.services.reference_registry import lock_namespace
 from app.services.rota_assignment import validate_assignment
 from app.services.rota_eligibility import (
@@ -94,6 +95,8 @@ STRICT_CODES = {
     "rest_gap",
     "slot_full",
     "unit_rule",
+    "ot_reservation_conflict",
+    "ot_capacity_unresolved",
 }
 # Not a rota rule: the (slot, person) pair already has a non-active row and the database
 # allows one row per pair, so the layer cannot add a second one. Only checked for new choices.
@@ -191,6 +194,8 @@ CAUSE_LABELS = {
     "all_on_leave": "Every suitable member is on leave",
     "all_resting": "Every suitable member is resting around a 24-hour duty",
     "all_double_booked": "Every suitable member is already on duty that day",
+    "ot_reservations": "Mandatory OT or staffing reserves need these members",
+    "ot_unresolved": "OT staffing capacity cannot be verified",
     "other": "Suitable members are busy or cannot be reached",
 }
 CAUSE_ORDER = list(CAUSE_LABELS)
@@ -208,6 +213,8 @@ STRICT_ORDER = [
     "pre_24hr_rest",
     "rest_gap",
     "slot_full",
+    "ot_reservation_conflict",
+    "ot_capacity_unresolved",
     EXISTING_ROW_CODE,
 ]
 
@@ -224,6 +231,8 @@ STRICT_LABELS = {
     "pre_24hr_rest": "Has a duty the next day (this 24-hour duty blocks it)",
     "rest_gap": "Too little rest around a 24-hour duty",
     "slot_full": "The slot is already full",
+    "ot_reservation_conflict": "Mandatory OT or staffing reserve would be uncovered",
+    "ot_capacity_unresolved": "OT staffing capacity cannot be verified",
     EXISTING_ROW_CODE: "Already has an earlier entry on this slot",
 }
 
@@ -241,6 +250,8 @@ REASON_WORDS = {
     "pre_24hr_rest": "on duty the next day",
     "rest_gap": "short rest around a 24h duty",
     "slot_full": "slot full",
+    "ot_reservation_conflict": "needed for OT or staffing reserve",
+    "ot_capacity_unresolved": "OT capacity unresolved",
     EXISTING_ROW_CODE: "already listed on this slot",
 }
 
@@ -371,6 +382,7 @@ class ExtraDutyContext:
         self._day_people: dict[date, dict[UUID, set[UUID]]] = {}
         self._eligibility: dict[tuple, tuple[str, str | None] | None] = {}
         self._unit_rule: dict[tuple, bool] = {}
+        self.ot_guard = None
         # Every active member (``load_people``); the fill-all "unposted" tier and the
         # unfilled-cause diagnosis draw from it.
         self.active_people: dict[UUID, Person] = {}
@@ -490,6 +502,7 @@ def strict_blockers(
     exclude_assignment_id: UUID | None = None,
     first_only: bool = False,
     allow_unposted: bool = False,
+    ot_replace_existing: bool = False,
 ) -> list[dict[str, str]]:
     """Strict rules (contract 1.1) person ``person_id`` breaks by doing ``slot`` in ``unit_id``.
 
@@ -499,6 +512,8 @@ def strict_blockers(
     ``allow_unposted`` (fill-all tier 6 and its ledgered assignments) waives the posted-to-unit
     check for a member with no posting at all on the date; everything else still applies,
     including ``unit_rule`` (the duty's allowed/excluded units on ``unit_id``).
+    ``ot_replace_existing`` is for the balance replacement precheck only: its
+    final transfer still removes actual holders and rechecks the complete plan.
     """
     found: list[dict[str, str]] = []
 
@@ -519,10 +534,10 @@ def strict_blockers(
         if add("unit_rule"):
             return found
     for leave in ctx.leaves.get(slot.duty_date, {}).get(person_id, []):
-        if leave.status.lower() in ACTIVE_LEAVE_STATUSES and slot_leave_blocks(leave, slot):
+        if is_active(leave.status) and slot_leave_blocks(leave, slot):
             label = (
                 "On approved leave"
-                if leave.status.lower() in BLOCKING_LEAVE_STATUSES
+                if is_approved(leave.status)
                 else "Leave pending review (still blocks)"
             )
             if add("leave", label):
@@ -567,6 +582,14 @@ def strict_blockers(
             return found
     if exclude_assignment_id is None and person_id in ctx.slot_rows.get(slot.id, set()):
         add(EXISTING_ROW_CODE)
+    if ctx.ot_guard is not None:
+        from app.services.ot_assignment_validation import check_ot_placement
+        assignments = [SimpleNamespace(person_id=entry.person_id, duty_slot_id=entry.slot_id,
+            duty_slot=entry, status="assigned") for entries in ctx.entries_by_person.values() for entry in entries]
+        report = check_ot_placement(ctx.ot_guard, assignments, slot, person_id, ctx.rules,
+                                    replace_existing=ot_replace_existing)
+        if report["status"] != "feasible":
+            add("ot_reservation_conflict" if report["status"] == "infeasible" else "ot_capacity_unresolved")
     return found
 
 
@@ -625,6 +648,11 @@ def build_context(
     if leaves is None:
         leaves = leaves_by_day_and_person(db, month)
     window = _rest_window_days(rules)
+    from app.core.config import settings
+    ot_guard = None
+    if settings.ot_calendar_enabled:
+        from app.services.ot_assignment_context import load_assignment_guard
+        ot_guard = load_assignment_guard(db, month, rules)
     assignments = unique_assignments(
         a
         for a in assignments_for_month(
@@ -634,9 +662,22 @@ def build_context(
         )
         if a.status.lower() in ACTIVE_ASSIGNMENT_STATUSES
     )
+    if ot_guard is not None and ot_guard.horizon_start is not None:
+        # Preserve history used by existing justice rules, and union every actual
+        # duty overlapping the reviewed reservation/rest horizon by identity.
+        from app.services.rota_template import PHASE4_SLOT_SOURCE
+        buffer = timedelta(hours=rules.rest_rules.minimum_gap_after_24hr_hours + 48)
+        reservation_context = db.scalars(select(DutyAssignment).join(DutyAssignment.duty_slot)
+            .outerjoin(DutySlot.rota_period).where(
+                DutySlot.ends_at >= ot_guard.horizon_start - buffer,
+                DutySlot.starts_at < ot_guard.horizon_end,
+                or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)))
+            .options(selectinload(DutyAssignment.person), selectinload(DutyAssignment.duty_slot)))
+        assignments = unique_assignments([*assignments, *(a for a in reservation_context
+            if a.status.lower() in ACTIVE_ASSIGNMENT_STATUSES)])
     slots = template_slots_for_period(db, period.id)
     units = {unit.id: unit for unit in db.scalars(select(Unit))}
-    return ExtraDutyContext(
+    context = ExtraDutyContext(
         month=month,
         rules=rules,
         postings=postings,
@@ -645,6 +686,8 @@ def build_context(
         slots=slots,
         units=units,
     )
+    context.ot_guard = ot_guard
+    return context
 
 
 # --------------------------------------------------------------------------------------------
@@ -999,6 +1042,8 @@ class _Plan:
 
 
 _CAUSE_OF_CODE = {
+    "ot_reservation_conflict": "ot_reservations",
+    "ot_capacity_unresolved": "ot_unresolved",
     "leave": "all_on_leave",
     "post_24hr_rest": "all_resting",
     "pre_24hr_rest": "all_resting",
@@ -1383,15 +1428,21 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
                 "all_on_leave": "Review leave for this date",
                 "all_resting": "Move a nearby 24-hour duty so someone is rested",
                 "all_double_booked": "Free a member from another duty that day",
+                "ot_reservations": "Choose another duty time or add compatible OT capacity; keep mandatory reservations protected",
+                "ot_unresolved": "Review the OT calendar, qualifications and dated roster before allocating",
                 "other": "Review this duty's slot (it may already be full)",
             }
             return cause, fixes[cause], counts
+        if busy.intersection({"ot_reservations", "ot_unresolved"}):
+            return "other", "Review OT capacity, dated eligibility, leave, rest and other duties on this date", counts
         return "other", "Review leave, rest and other duties on this date", counts
 
     cause_words = {
         "all_on_leave": "on leave",
         "all_resting": "resting around a 24h duty",
         "all_double_booked": "already on duty that day",
+        "ot_reservations": "needed for OT or staffing reserve",
+        "ot_unresolved": "OT capacity unresolved",
         "other": "otherwise blocked",
     }
 
@@ -1584,6 +1635,12 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
 
         add_provisional_assignment(candidates, view, chosen)
         ctx.add_plan_assignment(view, chosen, unit_id)
+        if ctx.ot_guard is not None:
+            # Reserving one person changes everybody's OT alternatives. The old
+            # duty/rest-only cache invalidation (chosen person) is insufficient.
+            feasible_cache.clear()
+            holders.clear()
+            slot_pools.clear()
         for key in list(holders[chosen]):
             other = ctx.slot_by_id.get(key[0])
             if other is not None and abs((other.duty_date - slot.duty_date).days) > window:
@@ -1812,6 +1869,9 @@ def preview(db: Session, month: str, user, mode: str = MODE_STANDARD) -> dict[st
     """The plan plus a token binding it to this user, month, mode and context."""
     _ensure_enabled()
     mode = _check_mode(mode)
+    from app.services.rota_compute import prepare_planning_inputs
+    _draft_period(db, month)
+    prepare_planning_inputs(db, month)
     _refuse_active_proposal(db, month, user)
     plan = plan_extra_duties(db, month, mode)
     return {**plan, "token": make_token(plan["plan_hash"], plan["context_hash"], month, user, mode)}
@@ -1886,7 +1946,7 @@ def apply(
             ) from exc
         raise
     result = plan.result
-    if result["plan_hash"] != plan_hash:
+    if result["plan_hash"] != plan_hash or (token or "").partition(".")[0] != result["context_hash"]:
         raise ExtraDutyError(
             "stale_preview",
             "The month changed since the preview. Preview again.",

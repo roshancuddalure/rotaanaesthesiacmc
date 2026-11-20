@@ -1,0 +1,129 @@
+{
+  "recorded_at_utc": "2026-11-11T18:54:36.751012+00:00",
+  "reviewer": "/root/account_diagnostics_review_nov12",
+  "scope": "Read-only ETA review of separate progress tools, not rota product or a browser/build execution. PowerShell AST parse only; JavaScript syntax parse plus actual renderEstimate function exercised with text-only DOM stubs. GET localhost5199 only.",
+  "source_sha256": {
+    "tools/show_frontend_progress.ps1": "09932714aaa80f6896a7c11c1f8c4de95fc47eadfa05964e45c7b1f66bb2176d",
+    "tools/frontend_progress_window.py": "bef44272dd58471f1f4eb3cc35c36bf9d53154c0eeef404a69985267386c2035",
+    "docs/premium-ui/progress-window.html": "0b5e03c05cfff6d656a8085ea9acbda0cdb86d9dc088be83972185e7a04599eb",
+    "docs/premium-ui/live-work.json": "6e46a98bf49c33073a734eec6fc43a82acee517e37ef44dd9980edabc2d9936f"
+  },
+  "sources_unchanged_during_review": true,
+  "http_observation": {
+    "status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "cache_control": "no-store",
+    "body_sha256": "6aa823abfe8d49079c1dba761f204882522985be4f23f1fd7190f46ac6ecb8c0"
+  },
+  "current_values": {
+    "recorded_signoffs": 63,
+    "total": 260,
+    "unfinished_excluding_dependencies": 196,
+    "dependency_ids": [
+      252
+    ],
+    "estimate": {
+      "reviewed_at": "2026-11-11T18:50:17.322690+00:00",
+      "confidence": "low",
+      "hours_per_item_low": 0.4,
+      "hours_per_item_high": 0.8,
+      "integration_hours_low": 8,
+      "integration_hours_high": 16,
+      "current_batch": "Context help verification, conflict evidence and disposable restore testing: roughly 2\u20134 additional active working hours",
+      "basis": "Manual planning allowance, not historical throughput or guaranteed finish date. Shared browser verification and review remain serial constraints. External physical/nativeAT checks excluded; agent availability may extend calendar time."
+    },
+    "low_hours": 90,
+    "high_hours": 180,
+    "eight_hour_days": [
+      12,
+      23
+    ]
+  },
+  "syntax": {
+    "powershell_ast": {
+      "errors": [],
+      "error_count": 0
+    },
+    "javascript_vm_parse_exit_code": 0
+  },
+  "render_estimate_function_results": {
+    "current": {
+      "eta-total": {
+        "textContent": "About 90\u2013180 active working hours"
+      },
+      "eta-batch": {
+        "textContent": "Current repair batch: Context help verification, conflict evidence and disposable restore testing: roughly 2\u20134 additional active working hours. Overall: roughly 12\u201323 working days at 8 active hours/day."
+      },
+      "eta-basis": {
+        "textContent": "196 unfinished items excluding external dependencies; allowance of 0.4\u20130.8 hours/item plus 8\u201316 hours for integration and final checks. Reviewed 2026-11-11T18:50:17.322690+00:00. This is a manual scope allowance, not a measured throughput forecast; parallel work is already assumed."
+      }
+    },
+    "missing_estimate": {
+      "eta-total": {
+        "textContent": "Estimate awaiting review"
+      },
+      "eta-batch": {
+        "textContent": ""
+      },
+      "eta-basis": {
+        "textContent": "No estimate has been recorded."
+      }
+    },
+    "empty_items": {
+      "eta-total": {
+        "textContent": "About 10\u201320 active working hours"
+      },
+      "eta-batch": {
+        "textContent": "Current repair batch: Context help verification, conflict evidence and disposable restore testing: roughly 2\u20134 additional active working hours. Overall: roughly 2\u20133 working days at 8 active hours/day."
+      },
+      "eta-basis": {
+        "textContent": "0 unfinished items excluding external dependencies; allowance of 0.4\u20130.8 hours/item plus 8\u201316 hours for integration and final checks. Reviewed 2026-11-11T18:50:17.322690+00:00. This is a manual scope allowance, not a measured throughput forecast; parallel work is already assumed."
+      }
+    },
+    "malformed_truthy_estimate": {
+      "eta-total": {
+        "textContent": "About NaN\u2013NaN active working hours"
+      },
+      "eta-batch": {
+        "textContent": "Current repair batch: undefined. Overall: roughly NaN\u2013NaN working days at 8 active hours/day."
+      },
+      "eta-basis": {
+        "textContent": "196 unfinished items excluding external dependencies; allowance of undefined\u2013undefined hours/item plus undefined\u2013undefined hours for integration and final checks. Reviewed Not recorded. This is a manual scope allowance, not a measured throughput forecast; parallel work is already assumed."
+      }
+    }
+  },
+  "findings": [
+    {
+      "severity": "pass",
+      "finding": "PowerShell and HTML use identical remaining-item exclusion and ceiling-to-ten formula. At196unfinished,0.4\u20130.8hours/item plus8\u201316integration hours gives90\u2013180hours. Dashboard12\u201323eight-hour days and live note agree."
+    },
+    {
+      "severity": "pass",
+      "finding": "Both windows prominently disclose low confidence, active working time, no countdown/promise and external device checks excluded. HTML additionally names manual scope allowance, no measured-throughput forecast, parallel work assumed and defects can increase estimate. Reviewed date and current batch are visible."
+    },
+    {
+      "severity": "pass",
+      "finding": "Whole missing estimate yields Estimate awaiting review and clears stale ETA subtext in HTML. PowerShell omits its estimate section. Empty items retains explicit integration allowance10\u201320hours, consistent with formula; it is not a zero-completion certificate."
+    },
+    {
+      "severity": "pass_static_only",
+      "finding": "HTML HTTP/JSON failure catch retains previously rendered data and ETA, displays persistent connection error and re-enables Refresh in finally; loading guard and8second abort bound overlap. PowerShell catches transient failure and retries after5seconds without source writes. This inspection does not simulate network interruption in a browser or execute the viewer loop."
+    },
+    {
+      "severity": "nonblocking_resilience_gap",
+      "finding": "A truthy empty or partially malformed time_estimate bypasses the missing-estimate guard and renders NaN\u2013NaN hours/undefined batch in HTML. PowerShell missing numeric properties can coerce to zero, yielding inconsistent output. Current local estimate is complete, finite, nonnegative and ordered, so present displayed numbers are valid. Recommend shared validation of numeric bounds/current_batch/reviewed_at with Estimate awaiting review fallback before computing."
+    },
+    {
+      "severity": "scope_limit",
+      "finding": "Review count is explicitly recorded-checkpoint acceptance, not current global validation. Current batch2\u20134hours is a manually reviewed allowance, not observed process completion. Current work notes are not live process telemetry."
+    }
+  ],
+  "blocking_findings_for_current_valid_estimate": [],
+  "limitations": [
+    "No browser rendering, mobile viewport/zoom, native PowerShell window appearance or error-state runtime certification.",
+    "No statistically measured throughput or reliable calendar completion forecast; manual estimates can change.",
+    "Projection server missing/invalid optional data resilience beyond ETA was not exhaustively reviewed."
+  ],
+  "product_or_ledger_changes": false,
+  "review_harness_note": "First authoring attempt passed full HTTP snapshot as node command-line text and exceeded Windows command length before Node execution. Corrected to stdin; no product or evidence source changed and no failed browser/build inferred."
+}

@@ -1,0 +1,57 @@
+# N21 member leave timeline
+
+Status: Done against original N21 acceptance, 14 November2026; 17/50 complete. Final reconciliation below supersedes earlier batch checkpoints.
+
+## Implemented and authority
+
+- Existing member workspace still queries canonical member leave rows; Add/Edit/Cancel retain their existing forms and permission boundaries. No competing leave database, duplicated approval engine or derived attendance record.
+- `member-leave-filters.ts` supplies public-field text search, exact type/status filtering and inclusive date-range overlap. Status matching is case-insensitive without silently approving misspellings. A request beginning before the selected range remains included when it overlaps; its stored dates are preserved. Invalid filters have an explicit error. Unknown request dates remain visible without date filtering rather than being silently fabricated.
+- User applies or clears the filter group. Enter in an input applies filters, not the surrounding profile form. Filtering makes no API calls or mutations, and displays shown-versus-loaded record counts. Focus goes to the result count after Apply and back to search after Clear.
+- Display and search use an explicit public leave-field allowlist; unexpected notes/raw-name fields are excluded even if returned by a malformed response. This is defense in depth for the canonical workspace endpoint, which already omits those fields. Existing Activity and other profile sections are separate acceptance scope; no claim that this batch solves every historical privacy path.
+- Filter state belongs to the opened member workspace. Existing per-section loading/error cache and explicit Retry remain authoritative. Source rows retain exact IDs, dates and canonical action buttons after filtering.
+
+## Verification and remaining acceptance
+
+- Three pure filter tests cover overlap/source preservation, combined status/type/public search, malformed dates and private fields; full frontend suite135passed, zero failures/skips/cancellations. Production TS/Vite build passed; existing mixed-import/chunk warnings persist.
+- Browser test `member-leave-filters.browser.mjs` exercises the actual workspace module with production styles and controlled API responses at1440/390/320. Failed initial section load/Retry, status/text/date filtering, empty matches, invalid range, source action identity, private-note exclusion, focus restoration and exactly two initial/retry reads pass. No page errors/horizontal overflow/serious-criticalAxe in the tested dialog.
+- Initial browser run found the implementation's nested filter form inside the existing profile form. Replaced it with a group and explicit Apply control; final three viewports pass. No permission rule or domain policy changed.
+- Remaining N21: attributable N19 lifecycle/source links with paged evidence and permission-safe UI; canonical create/amend/approve/cancel reason inputs; stale edit and partial-load recovery; actual global/profile readback reconciliation and restricted-field regression checks. Search/filter completion alone is not N21 completion. N22 elapsed/month/year statistics remain separate.
+
+Scope/hashes/results and exact live-handle handoff are in the tracker and continuation log. Rollback is limited to the new filter module and scoped workspace imports/rendering/bindings; no schema migration. Preserve unrelated workspace/profile changes and historical audit/source records.
+
+Final existing-workspace regression: `n21-workspace-browser-regression.log` reports10desktop/mobileprofile/CSV/app integration workflows passed on the corrected finalruntime. Final build `n21-filter-build-final.log` passed. Source scope and exact results: `n21-filter-source.json`; initial workspace hash: `n21-before.json`. OwnedVite90144stopped after verification; no implementation/test worker at checkpoint. N21 remains In progress.
+
+
+## Linked lifecycle/source viewer foundation (N21 remains In progress)
+
+- Added frontend/src/member-leave-history.ts and an administrator-only View leave history and sources action to canonical profile Leave cards. Backend N19 administrator authorization remains mandatory; client visibility is not a permission grant. Existing mutation permissions are unchanged.
+- Read-only dialog loads the existing history overview and category pages (audit/imports/recycle/merges), constructs its own canonical API paths and validates response record identity/arrays/pagination. Linked record IDs are validated UUIDs; related/unvisited ancestors remain navigable. Returned evidence URLs are never followed as arbitrary network destinations.
+- Shows actor/time, recorded reason, allowlisted before/after facts and source filename/sheet/row/batch references. Text is escaped; private notes/raw contents/unrelated payloads are not rendered even when a malformed response supplies them. Missing actor/time and historical incompleteness remain explicit.
+- Next evidence page follows a cursor only after a successful committed read. Failure or malformed page preserves previous evidence and offers an explicit read-only retry; changing records/categories starts that view's first page. Empty event pages can continue when has_more is true. Read latest overview is explicit and does not imply a frozen historical snapshot.
+- Request tickets/dialog-lifetime checks ignore results after close. Parent close/removal closes the child viewer, preventing a detached member's audit surface from lingering. Close restores focus to the opener when available. A malformed canonical ID produces an inline profile error instead of an unhandled rejection.
+- Final browser n21-history-viewer-browser.json actual modules/styles at1440/390/320 pass initial503retry, malformednextpage preserving old evidence, retry/nextcursor, linkedrecordsource, escaped filenames/private-note exclusion, pendingclose, actual workspace link, parent removal and hidden nonadmin link; onlyGET requests;0pageerrors/overflow/seriouscriticalAxe testedhistorydialog. Controlled API fixtures cover the UI;22fresh backend lifecycle/paging/role/privacy tests pass in n21-history-backend.xml. These do not substitute for upcoming actual canonical mutation/global readback acceptance.
+- Frontend135tests/buildpassed(existingmixedimport/chunksizewarnings). After a small opener catch-only refinement, finalTypeScript noEmit and3browserviewports pass; source evidence records that build timing precisely. n21-history-ui-before.json/n21-history-ui-source.json. No backend/schema/policy/cloud/model/deploy/operationalmigration changes. RemainingN21 is canonical reason/actions/stale/partial-load/globalprofile reconciliation and broaderActivityprivacy review; linked-viewer completion alone is not N21Done.
+
+
+## Final canonical action and original acceptance reconciliation
+
+| Original N21 requirement | Current source and authoritative evidence |
+|---|---|
+| Searchable timeline/filters | Existing complete canonical Leave tab, public text/status/type/date-overlap filters with shown/loaded count, source dates/IDs preserved;135frontend tests include3filtercases;3viewports retry/focus/privatefilter acceptance. |
+| Linked source/history | Read-only N19 overview/category paging UI, recorded actor/time/reason/source references and linked record navigation;3viewer viewports including malformed page/retry, old evidence preservation, close ownership, hidden nonadmin action. Server history role/privacy tests pass. |
+| Authorized canonical create/amend/approve/cancel | Existing reviewed record editor and cancellation endpoint reused, no new ledger or approval engine. Administrative change_reason input is separate from notes and included in reviewed reason output/token. Existing permission contracts preserved, including historical ordinary-edit authority; admin-only audit remains server enforced. |
+| Consistent profile/global readback | Actual memory backend browser1440/390/320 creates request, approves/amends canonical row and cancels; every stage compares global API records and profile result, reasons in canonical audit. No controlled mutation success fixture substitutes for actual backend writes. |
+| Stale and partial-load recovery | Change after preview produces409 and disablesSave; newreview then succeeds. Confirmed save with subsequent profile503 uses existingRetry to read source again. Cancellation lostresponse-aftercommit leaves action disabled; Read latest saved leave confirms canonical cancellation, exactly1POST, no automaticmutationretry. |
+| Private notes not exposed in profile | Leave row display/search and lifecycle viewer use publicallowlists. New profile_activity_details sanitizes leave_*before/after/source details before the profileActivityresponse; durableauditpayload unchanged. Backend test asserts PRIVATE absent fromresponse and exactpayload preserved inDB. Other profile domains are not redefined. |
+
+New member-leave-cancel.ts opens a canonical cancellation dialog with optional<=2000characterreason and explicit record acknowledgement. Existing duties stay assigned. Readonlyuncertainrecovery GET uses canonical normalization record, neverrendersitsnotes, and cannot repeat cancellation in that dialog. A confirmed state invokes existingparent lifecycle/readback notifications; no newpermission orpolicyinference. Existingrecord-workspace reasonedit invalidatesreview likeotherfields;review displays reason separately. Activity sanitization affects response only, not storedhistory.
+
+Fresh regression discovered a priorN20extraction edge: slot_leave_blocks eagerly read starts_at.hour even for24h slot. Existing24hpolicy previouslyshortcircuited; restoredthatbranch before reading starttime. Initialn21-actions-backend.xml52passed1failed retained; finaln21-actions-backend-final.xml59passed14.79s includes existingoperational/customsession/safety cases, fullN19lifecycle/paging, profile andnewActivityprivacy. No clinicalrule amendment.
+
+Finalbrowser n21-member-actions-browser.json3actualviewportspass create/approvalreasons,stalecontextrefusal,newreview,profile503Retry,global/profileagreement,privateActivityprojection,cancelpostcommitlostresponse read-onlyrecovery exactly1POST,0pageerrors/overflow/seriouscriticalAxe in testedcanceldialog. Earlierbrowser checks racedhiddenreadbutton and used a dynamic lastdialog locator that changedtoparent afterclose; corrected waiting/error/scopedname. Recoverybutton now explicitly hidden until uncertainty even ifsharedstylesoverride nativehidden. Finalrunspass.
+
+Fullfrontend135passed0fail/skip/cancel; finalTypeScript/Vitebuildpassedexistingmixedimport/chunkwarnings. Existingworkspace10desktop/mobileprofile/CSV/appworkflowspass. Suitesoverlap;noinventedaggregate. n21-actions-before.json/n21-actions-source.json source/timing/evidence; n21-actions-unit.log/n21-actions-build.log/n21-actions-workspace-regression.log PowerShellUTF16.
+
+N21Done17/50. N22person/month/year/asofstats andN24impact/repair are separatelyunfinished. No claim of entitlement,attendanceconfirmation,completelegacycoverage,productiondeployment,newmodel/cloudrouting orclinicalpermissionamendment. Allverificationwriteswere memory/disposablefixtures.
+
+Rollback requires no schema migration: revert scopedfilters/history/canceldialog/editorreasoninputs/profileActivityprojection as needed while preserving originalcanonical/audit/source records. Restoring the24hshortcircuit should remain because it restorespreviousvalidbehavior. Unrelateduserworkspacechanges were preserved. Ownedfixture82465/Vite23975stopped;onlyprogressdashboardremainslive.

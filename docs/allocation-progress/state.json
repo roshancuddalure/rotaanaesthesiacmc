@@ -1,0 +1,1312 @@
+{
+  "goal_started_at": "2026-11-14T03:52:45Z",
+  "updated_at": "2026-11-20T09:53:41.512166+00:00",
+  "work_state": "running",
+  "phase": "N26 shared monthly hard-count constraints",
+  "current": "21/50 complete (42%); 10 in progress, 19 queued. Preparing shared monthly 24-hour, weekend, group and campus limits with fixed-duty baselines. Baseline optimizer regression running; synthetic configured-limit comparisons will retain all required duties and saved commitments.",
+  "estimate": null,
+  "tests": [
+    {
+      "title": "Existing backend baseline",
+      "result": "93 passed in 60.47s; focused allocation/eligibility/safety/leave suites",
+      "evidence": "docs/allocation-progress/baseline-backend.xml"
+    },
+    {
+      "title": "Existing frontend baseline",
+      "result": "124 passed; zero failures, skips or cancellations",
+      "evidence": "npm test -- --test-reporter=tap; tool output recorded 2026-11-14"
+    },
+    {
+      "title": "Production frontend build",
+      "result": "TypeScript and Vite production build passed; existing bundle-size/mixed-import warnings remain",
+      "evidence": "npm run build; tool output recorded 2026-11-14"
+    },
+    {
+      "title": "Graphical dashboard browser checks",
+      "result": "1440px, 390px, 320px; 50 actions, 7 charts, search/filter, stale snapshot and recovery passed",
+      "evidence": "docs/allocation-progress/dashboard-browser.json"
+    },
+    {
+      "title": "OT feasibility core",
+      "result": "35 passed, including independent exhaustive oracle across 25 generated scenarios",
+      "evidence": "docs/allocation-progress/ot-capacity-tests.xml"
+    },
+    {
+      "title": "Final OT/compute/security integration",
+      "result": "99 passed in 43.96s; supersedes the initial fixture-failure artifact",
+      "evidence": "docs/allocation-progress/ot-admin-compute-final.xml"
+    },
+    {
+      "title": "PostgreSQL migration and concurrency",
+      "result": "15 passed in 53.43s, including two real OT-edit races; sentinel preserved; disposable database cleaned up",
+      "evidence": "docs/allocation-progress/postgres-verification.json"
+    },
+    {
+      "title": "Fresh 96-member benchmark",
+      "result": "62/62 covered with both; greedy 5.765s; CP-SAT 12.338s. Synthetic, not departmental acceptance.",
+      "evidence": "docs/allocation-progress/current-intelligence-benchmark.json"
+    },
+    {
+      "title": "OT contracts, availability and APIs - final",
+      "result": "75 passed in 24.09s; calendar/zero/unknown-area semantics, roster/call windows, leave/rest, admin and read-only preview checks",
+      "evidence": "docs/allocation-progress/ot-coverage-final.xml"
+    },
+    {
+      "title": "OT + existing rules/compute regression",
+      "result": "104 passed in 39.45s before final focused edge refinements; overlaps other suites",
+      "evidence": "docs/allocation-progress/ot-ui-availability-regression.xml"
+    },
+    {
+      "title": "Joint OT, reserves and reviewed qualifications",
+      "result": "94 passed in 44.56s; includes independent cross-unit exhaustive oracle and qualification/API checks.",
+      "evidence": "docs/allocation-progress/ot-joint-final.xml"
+    },
+    {
+      "title": "Joint capacity + final-duty guard regression",
+      "result": "143 passed in 32.80s, including existing assignment/candidate/safety/intelligence and new temporal guard/context checks; overlaps earlier suites.",
+      "evidence": "docs/allocation-progress/ot-reserve-guard-regression.xml"
+    },
+    {
+      "title": "Current native editor browser verification",
+      "result": "11 workflows, six actual desktop/390/320 light/dark layouts; zero tested accessibility violations or horizontal page overflow.",
+      "evidence": "docs/allocation-progress/ot-calendar-browser.json"
+    },
+    {
+      "title": "Current frontend suite/build",
+      "result": "127 passed; TypeScript/Vite production build passed with existing bundle/mixed-import warnings.",
+      "evidence": "npm test; npm run build; fresh tool output 2026-11-14"
+    },
+    {
+      "title": "Progress dashboard fresh verification",
+      "result": "50 actions and seven workstreams; desktop/390/320 layout, search/filter and stale-data recovery passed. Long evidence paths now wrap inside cards.",
+      "evidence": "docs/allocation-progress/dashboard-browser.json"
+    },
+    {
+      "title": "Enabled OT assignment/specialized integration",
+      "result": "12 passed in15.94s; ordinary/manual override rejection, candidate blocking, final combination, replacement, future OT, extra-duty cache invalidation, superadmin published allocation and attributed publish override.",
+      "evidence": "docs/allocation-progress/ot-special-enabled-final.xml"
+    },
+    {
+      "title": "Normal-path OT integration regression",
+      "result": "93 passed in60.97s; shared assignment/candidate/intelligence/compute/publish plus scoped guard cases. Two existing spreadsheet-extension warnings.",
+      "evidence": "docs/allocation-progress/ot-normal-path-final.xml"
+    },
+    {
+      "title": "Specialized legacy compatibility",
+      "result": "151 passed in126.18s; existing extra-duty/verifier/superadmin/balance behavior with feature disabled.",
+      "evidence": "docs/allocation-progress/ot-special-legacy-final.xml"
+    },
+    {
+      "title": "Enabled OT and exchange lifecycle",
+      "result": "21 passed in20.67s:13 enabled integration cases plus existing review tests. Calendar changes prevent unsafe exchange approval without changing holder.",
+      "evidence": "docs/allocation-progress/ot-exchange-final.xml"
+    },
+    {
+      "title": "Restoration enabled integration - incomplete verification",
+      "result": "21 passed, 1 failed in 390.42s. Nine restoration cases passed; pre-existing manual conflict-code assertion failed. Follow-up pending.",
+      "evidence": "docs/allocation-progress/ot-restoration-enabled-final.xml"
+    },
+    {
+      "title": "Restoration focused follow-up",
+      "result": "3 passed in 178.22s: manual OT conflict, unsafe reversal, safe/idempotent reversal. Earlier mixed full-run artifact retained.",
+      "evidence": "docs/allocation-progress/ot-restoration-followup.xml"
+    },
+    {
+      "title": "Restoration legacy regression - performance failure retained",
+      "result": "110 passed, 1 failed in 1016.15s. Superadmin options 2.9071s exceeded 2.0s; standalone rerun pending.",
+      "evidence": "docs/allocation-progress/ot-restoration-legacy.xml"
+    },
+    {
+      "title": "Prospective duty/rest horizon regression",
+      "result": "50 passed in 373.41s; includes guard/scope/context and 23 assignment integration tests.",
+      "evidence": "docs/allocation-progress/ot-horizon-regression.xml"
+    },
+    {
+      "title": "Options performance rerun - failure retained",
+      "result": "1 failed in 326.21s; response/status/member count pass, latency 12.6425s exceeds unchanged 2.0s. Overlapped regression; cause not yet proven.",
+      "evidence": "docs/allocation-progress/ot-restoration-options-performance.xml"
+    },
+    {
+      "title": "Options loading diagnostic",
+      "result": "Instrumented service 5.198s wall/0.578s CPU; month-state loading 4.259s/0.344s; 53 SQL calls, 1.666s total. Performance gate still fails.",
+      "evidence": "docs/allocation-progress/ot-options-profile.json"
+    },
+    {
+      "title": "Complete candidate horizon regression",
+      "result": "57 passed in 27.13s; fixture emitted two transient ORM setup warnings, subsequently corrected.",
+      "evidence": "docs/allocation-progress/ot-complete-horizon-regression.xml"
+    },
+    {
+      "title": "Final horizon adapter/closed-window cases",
+      "result": "2 passed in 18.78s; first worker exited without report near separate PowerShell OOM, retry preserved stdout.",
+      "evidence": "docs/allocation-progress/ot-horizon-final-edges.xml"
+    },
+    {
+      "title": "Specialized horizon regression",
+      "result": "176 passed/1 fixture assertion error in 118.95s; existing performance gate passed. Error corrected in final enabled run.",
+      "evidence": "docs/allocation-progress/ot-special-complete-horizon.xml"
+    },
+    {
+      "title": "Final enabled horizon and restoration integration",
+      "result": "26 passed in 10.39s; all three extended future-context paths, restoration and ordinary integration.",
+      "evidence": "docs/allocation-progress/ot-special-complete-horizon-final.xml"
+    },
+    {
+      "title": "Joint reservation graph and optimizer",
+      "result": "142 passed in27.25s; overlapping graph/guard/scope/assignment/intelligence/compute cases, exact rest and two-day oracle.",
+      "evidence": "docs/allocation-progress/ot-joint-optimizer-final.xml"
+    },
+    {
+      "title": "Unresolved intelligent-job diagnostics",
+      "result": "72 passed in25.40s after preserving candidate/rejection fields; full job remains unresolved without writes.",
+      "evidence": "docs/allocation-progress/ot-joint-job-final.xml"
+    },
+    {
+      "title": "Reviewed server and GPU-protocol OT apply",
+      "result": "34 passed in15.06s; safe reviewed apply, atomic stale-calendar refusal, four CPU/verified-frame scenarios. Not a physical GPU benchmark.",
+      "evidence": "docs/allocation-progress/ot-joint-reviewed-cpu-gpu.xml"
+    },
+    {
+      "title": "Template OT proof and reviewed apply - final",
+      "result": "92 passed in47.41s; includes actual OT-blocked shuffle, no-SQL/no-person writes, unresolved export, CPU/GPU-protocol review/apply, stale refusal and compatibility.",
+      "evidence": "docs/allocation-progress/ot-template-complete-final.xml"
+    },
+    {
+      "title": "Template intermediate regression - corrected helper failure retained",
+      "result": "82 passed/10 failed in66.44s; resource-bound prefilter called nonexistent unit_members; fixed to unit_contexts and superseded by final92-pass run.",
+      "evidence": "docs/allocation-progress/ot-template-complete.xml"
+    },
+    {
+      "title": "First real OT allocation freshness races",
+      "result": "21 passed in57.95s; includes8 new input-edit/allocation races and existing concurrency suites. Disposable migration sentinel preserved and database cleanup succeeded.",
+      "evidence": "docs/allocation-progress/ot-postgres-freshness.xml"
+    },
+    {
+      "title": "Under-lock freshness and rule bootstrap",
+      "result": "72 passed in25.98s; unit/calendar cache, under-lock scope/rules and default-rule APIs.",
+      "evidence": "docs/allocation-progress/ot-freshness-bootstrap-core.xml"
+    },
+    {
+      "title": "Pending edits and bootstrap ownership",
+      "result": "7 passed in11.46s; notes and pending relationships preserved; cold bootstrap does not commit locks away.",
+      "evidence": "docs/allocation-progress/ot-freshness-preservation-final.xml"
+    },
+    {
+      "title": "Legacy cached/uncached autofill",
+      "result": "26 passed in23.80s; legacy paths preserve joint OT capacity. Final period reread subsequently covered by PG cases.",
+      "evidence": "docs/allocation-progress/ot-freshness-autofill-core.xml"
+    },
+    {
+      "title": "Final PostgreSQL allocation and reviewed apply races",
+      "result": "29 passed in98.25s;16 new OT/input cases +13 existing concurrency cases. Migration sentinel preserved; owned disposable database cleanup succeeded.",
+      "evidence": "docs/allocation-progress/ot-postgres-allocation-final.xml"
+    },
+    {
+      "title": "Actual balance and extra-duty OT apply",
+      "result": "172 passed in119.55s; includes4 new enabled apply/stale preview cases. Counts overlap prior suites.",
+      "evidence": "docs/allocation-progress/ot-specialized-apply-regression.xml"
+    },
+    {
+      "title": "OT balance cache across other people moves",
+      "result": "173 passed in102.34s; qualification-dependent rejection reopens and closes after transfers. Overlaps earlier suites.",
+      "evidence": "docs/allocation-progress/ot-balance-cache-regression.xml"
+    },
+    {
+      "title": "Ordinary reviewed scorer with OT",
+      "result": "21 passed in38.86s;4 new server/GPU-protocol safe and stale cases plus existing scorer regression. Not physical GPU evidence.",
+      "evidence": "docs/allocation-progress/ot-reviewed-scoring-final.xml"
+    },
+    {
+      "title": "Actual OT template presentation",
+      "result": "8 browser cases at1440/390px, shortage/unknown/safe/forced review;0pageerrors/overflow/assignmentwrites. TypeScript/Vite build passed with existing warnings.",
+      "evidence": "docs/allocation-progress/ot-template-browser.json"
+    },
+    {
+      "title": "Active learned preference invalidation",
+      "result": "63 passed in49.31s after final activation lock.6before-fix failures retained; includes activation/rollback/weights and inactive/audit no-op cases.",
+      "evidence": "docs/allocation-progress/n04-learning-final.xml"
+    },
+    {
+      "title": "Preference activation vs apply PostgreSQL",
+      "result": "16 passed in62.67s:3new preference cases plus13existing concurrency checks. Observed waiting locks;stale evaluation refused;authorized rollback serializes. Disposable DB cleaned.",
+      "evidence": "docs/allocation-progress/n04-learning-postgres.xml"
+    },
+    {
+      "title": "Scheduling projection regression",
+      "result": "191 passed216.15s; private-note/import separation,13input changes,immutable/no-flush and ordering.",
+      "evidence": "docs/allocation-progress/n04-projection-regression.xml"
+    },
+    {
+      "title": "Projection PostgreSQL",
+      "result": "32 passed168.73s; OT/preference races and existing checks;disposable DB cleaned.",
+      "evidence": "docs/allocation-progress/n04-projection-postgres.xml"
+    },
+    {
+      "title": "Signed snapshot freshness final",
+      "result": "177 passed145.62s after token fix;2actual pre-fix stale acceptances retained;idempotency verified.",
+      "evidence": "docs/allocation-progress/n04-projection-final.xml"
+    },
+    {
+      "title": "Coherent creation/core final",
+      "result": "75 passed42.87s;3creation paths recheck publish changes;OTon/off dirty/new-row/bootstrap preservation.",
+      "evidence": "docs/allocation-progress/n04-acquisition-final.xml"
+    },
+    {
+      "title": "Coherent creation PostgreSQL",
+      "result": "34 passed128.20s;2before-fix creator race failures retained. Writers now observed waiting;disposable DB cleanup passed.",
+      "evidence": "docs/allocation-progress/n04-acquisition-postgres.xml"
+    },
+    {
+      "title": "Creation-lock specialized regression",
+      "result": "161 passed129.22s;balance/extra/OTactualapply and signed context retries. Overlaps other suites.",
+      "evidence": "docs/allocation-progress/n04-acquisition-specialized.xml"
+    },
+    {
+      "title": "N04 rule-note and dated-input acceptance",
+      "result": "88passed96.74s;then9focused21.76s without fixture warnings. Actual note-only rules save remains applicable;dated/scoped changes refuse writes.",
+      "evidence": "docs/allocation-progress/n04-acceptance-final.xml"
+    },
+    {
+      "title": "Specialized preview acceptance and follow-up",
+      "result": "Broadrun152pass2fail266.65s before domain fix;11focused25.27s,4error16.28s,exact2failedtests22.42s passed on corrected code. Full broad rerun not claimed.",
+      "evidence": "docs/allocation-progress/n04-preview-domain-final.xml"
+    },
+    {
+      "title": "Specialized consumers final regression",
+      "result": "154 passed204.61s,0failures/errors/skips on corrected source; supersedes prior152pass2fail run without deleting it.",
+      "evidence": "docs/allocation-progress/n04-consumers-final.xml"
+    },
+    {
+      "title": "Specialized preview real input races",
+      "result": "15 passed98.58s;2new balance/extra preview races+13existing. Actual waiting writer and stale apply refusal;0newduties/batches. Disposable DBcleanup passed.",
+      "evidence": "docs/allocation-progress/n04-consumers-postgres.xml"
+    },
+    {
+      "title": "N13 monthly backend regression",
+      "result": "44 passed41.94s; newmonth/readmodel+calendarAPI/availability/qualification regression beforefinalbounds refinements.",
+      "evidence": "docs/allocation-progress/n13-month-final.xml"
+    },
+    {
+      "title": "N13 current bounded read model",
+      "result": "6 passed13.92s afterallruntimeedits;oneavailabilityload,leave/restdedup,unknown,nulltimeout,closure,pendingstress,adminscope,badmonth.",
+      "evidence": "docs/allocation-progress/n13-month-current-final.xml"
+    },
+    {
+      "title": "Monthly heatmap browser workflow",
+      "result": "1440/390px:30days,namedintervaldrilldown,keyboard,late-responseignore,error+retry,pendingstresslabel,nooverflow/pageerrors;fullpanelserious/criticalAxe clear.",
+      "evidence": "docs/allocation-progress/n13-month-browser.json"
+    },
+    {
+      "title": "Monthly names/backend final",
+      "result": "6 passed17.87s afterminimal canonicalname projection;notprivatenotes. TypeScript/Vite productionbuildpassed with existing warnings.",
+      "evidence": "docs/allocation-progress/n13-ui-backend-final.xml"
+    },
+    {
+      "title": "Actual duty eligibility regression",
+      "result": "59 passed29.23s beforefinalunknownnullrefinement;existing OT integration and reviewed compute retained.",
+      "evidence": "docs/allocation-progress/n13-duty-final.xml"
+    },
+    {
+      "title": "Current duty eligibility edge/API checks",
+      "result": "5 passed13.88s afterallruntimeedits;clearalternatives/mandatoryshortage/unknownnull/protected/filled/noSaved/pending/noBootstrap/admin/date.",
+      "evidence": "docs/allocation-progress/n13-duty-current-final.xml"
+    },
+    {
+      "title": "Monthly duty count browser",
+      "result": "1440/390actualcalendar button reports4 clearcandidates for saved duty;existingkeyboard/stale/retry/Axe/workflows passed;productionbuildpassed.",
+      "evidence": "docs/allocation-progress/n13-month-browser.json"
+    },
+    {
+      "title": "N13 dated/overnight monthly regression",
+      "result": "35 passed21.16s;then4currentfocused9.86s incltransitiveovernightrole. Transfer/qualifications/partialarea/scopednames verified.",
+      "evidence": "docs/allocation-progress/n13-edges-current.xml"
+    },
+    {
+      "title": "N13 unknown/shortage/protected browser acceptance",
+      "result": "8cases1440/390+lateunit-switch:unknownnull/shortage0/protected/noSaved;nooverflow/pageerrors. Earlier8pass+fixtureinactive-switch failure retained.",
+      "evidence": "docs/allocation-progress/n13-month-edges-browser.json"
+    },
+    {
+      "title": "Reviewed OT transfer core",
+      "result": "26 passed39.32s aftertamper/operator/stalerevision cases;latest6focused16.75s afterUnicodeauditnote handling. Counts overlap.",
+      "evidence": "docs/allocation-progress/n15-transfer-final.xml"
+    },
+    {
+      "title": "Reviewed OT transfer browser",
+      "result": "1440/390:download,preview0historywrites,explicitconfirm,actualmin2saved,malformedrefused,Axe0serious/critical,nooverflow/pageerrors;TS/Vitebuildpassedexistingwarnings.",
+      "evidence": "docs/allocation-progress/n15-transfer-browser.json"
+    },
+    {
+      "title": "N15 final backend acceptance",
+      "result": "37 passed31.61s;invaliddates/counts/oversized/role/feature/closureprovenance plus canonicalcalendar/qualifications regression.",
+      "evidence": "docs/allocation-progress/n15-acceptance-final.xml"
+    },
+    {
+      "title": "N15 real transfer races",
+      "result": "16 passed64.34s;duplicateapply exactlyonenewversion;mappingwriterwaitsinpg_locks;botheditordersandretryrefusal;guardedDBcleanup succeeded.",
+      "evidence": "docs/allocation-progress/n15-races-postgres.xml"
+    },
+    {
+      "title": "N15 stale and uncertain recovery",
+      "result": "2 mobile cases;staleapplyrefused,postcommitresponsefailureactualsave;oneapplyeach,noautoretry,explicitreadaddsnohistory. Final2viewportnormalworkflowsandbuildpassed.",
+      "evidence": "docs/allocation-progress/n15-recovery-browser.json"
+    },
+    {
+      "title": "N17 scarcity and temporal corpus",
+      "result": "131 passed43.01s,0failures/errors/skips;6newnamedcases+existingmatching/reserveoracles,availability/template/assignment/jointchecks. Runtimehashesunchanged.",
+      "evidence": "docs/allocation-progress/n17-corpus-regression.xml"
+    },
+    {
+      "title": "N18 leave inventory/accounting characterization",
+      "result": "47 initial integration passed; final10 characterization passed;30 profile/import passed. Suites overlap; no failures/errors/skips; reviewed runtime unchanged.",
+      "evidence": "docs/allocation-progress/n18-source.json"
+    },
+    {
+      "title": "N19 attributable leave lifecycle backend",
+      "result": "101 regression passed;12 final lifecycle passed;14 real PostgreSQL passed incl observed writer ordering. Counts overlap. Initial fixture/indentation failures retained; current runtime unchanged after passing runs.",
+      "evidence": "docs/allocation-progress/n19-source.json"
+    },
+    {
+      "title": "N19 full lifecycle/paging acceptance",
+      "result": "112 regression passed before final compatibility refinement;65 final focused integration and15 final PostgreSQL passed;22 intermediate edge checks. Suites overlap;0 final failures/errors/skips.",
+      "evidence": "docs/allocation-progress/n19-paging-source.json"
+    },
+    {
+      "title": "N20 shared leave-facts foundation",
+      "result": "63 focused passed;276 broader regression passed in237.53s;0 failures/errors/skips. Suites overlap. Consumer-specific pending policies preserved.",
+      "evidence": "docs/allocation-progress/n20-source.json"
+    },
+    {
+      "title": "N20 duplicate-safe reporting foundation",
+      "result": "92 integration passed; final29 passed after unknown/date diagnostics; suites overlap. Initial2failures exposed incorrect NIGHT10hour example, corrected to14 without policy change.",
+      "evidence": "docs/allocation-progress/n20-reporting-source.json"
+    },
+    {
+      "title": "N20 dated transfer/promotion attribution",
+      "result": "85 initial passed;60 final integration passed;7 focused attribution/batch passed.0 failures/errors/skips; suites overlap.1/41people each5loadingqueries,0per-date queries.",
+      "evidence": "docs/allocation-progress/n20-attribution-source.json"
+    },
+    {
+      "title": "N20 counting-basis display",
+      "result": "131 frontend tests and production build passed; renderer browser1440/390/320 passed0errors/overflow/serious-criticalAxe. Full application lifecycle not yet verified.",
+      "evidence": "docs/allocation-progress/n20-ui-source.json"
+    },
+    {
+      "title": "N20 full-page acceptance",
+      "result": "132frontendtests/buildpass;actualmemorybackendLeave1440/390/320 missingcoverage/unknown/503retry/latemonthownership/unitconflicts0errors/overflow.",
+      "evidence": "docs/allocation-progress/n20-page-source.json"
+    },
+    {
+      "title": "N21 member Leave filters foundation",
+      "result": "135frontendtests/build pass;3actualworkspacefilterviewports pass;10existingprofile/CSV/appworkflowspass. N21 broader lifecycle/action acceptanceunfinished.",
+      "evidence": "docs/allocation-progress/n21-filter-source.json"
+    },
+    {
+      "title": "N21 linked lifecycle viewer",
+      "result": "135frontendtests/buildpass;finaltsc/browser3pass;22backendhistory/paging/role/privacy passed. Actualcanonicalmutation/readback stillpending.",
+      "evidence": "docs/allocation-progress/n21-history-ui-source.json"
+    },
+    {
+      "title": "N21 canonical profile action acceptance",
+      "result": "59backendpass;135frontendtests/buildpass;3actualmemorybackendbrowserviewports+10existingworkspaceworkflows pass. Initial24hshortcircuit regressionfixedandverified.",
+      "evidence": "docs/allocation-progress/n21-actions-source.json"
+    },
+    {
+      "title": "N22 person leave statistics backend",
+      "result": "24initial/46refined/47finalboundedpass0fail/error/skip;suitesoverlap. Independentpartialhouroracle,actual31recordAPI,leap/month/midnight/type/unknown/bounds verified.",
+      "evidence": "docs/allocation-progress/n22-statistics-source.json"
+    },
+    {
+      "title": "N22 full statistics acceptance",
+      "result": "35API/report/transfer/authpass;135frontendtests/buildpass;3actualcanonicalstatisticsviewports and10existingworkspaceworkflows pass. Prior47boundedcasesoverlap;noaggregateclaim.",
+      "evidence": "docs/allocation-progress/n22-ui-source.json"
+    },
+    {
+      "title": "N23 absence/entitlement boundary",
+      "result": "15passed0fail/error/skip;actualrepeatedAPIreadsleavecanonicalrowsunchanged,26elapsedapproved/24future/24pending,noinventedcharges/balances/scores. Prior7N22sourcehashescurrent.",
+      "evidence": "docs/allocation-progress/n23-source.json"
+    },
+    {
+      "title": "N24 manual/monthly duty impacts",
+      "result": "53 passed in 139.15s. Includes canonical manual acknowledgement and unchanged assignments. Publication-token refinement is undergoing a separate final run.",
+      "evidence": "docs/allocation-progress/n24-duty-manual-final.xml"
+    },
+    {
+      "title": "N24 final duty review integration",
+      "result": "54 passed in 82.54s; zero failures/errors/skips. Monthly/manual overnight, protected periods, no speculative request/reassignment and publication-stale review regression. Ruff passed. N24 remains incomplete.",
+      "evidence": "docs/allocation-progress/n24-duty-review-final.xml"
+    },
+    {
+      "title": "N24 OT projection foundation",
+      "result": "30 passed in 22.50s. One test-fixture ORM warning was subsequently corrected; integrated regression is pending. Not a whole-N24 acceptance result.",
+      "evidence": "docs/allocation-progress/n24-ot-projection-first.xml"
+    },
+    {
+      "title": "N24 final proposed-leave OT review regression",
+      "result": "88 passed in 102.24s; zero failures/errors/skips. Canonical immutable projection, real monthly/manual review, calendar-stale rejection, retained duty/no double subtraction, disabled/oversized/unknown scenarios. Ruff/scoped whitespace passed.",
+      "evidence": "docs/allocation-progress/n24-ot-review-final.xml"
+    },
+    {
+      "title": "N24 lock-change backend regression",
+      "result": "62 passed in109.16s; manual assignment, autofill, leave approval/review, OT projection and import. Ruff/scoped whitespace passed.",
+      "evidence": "docs/allocation-progress/n24-lock-backend.xml"
+    },
+    {
+      "title": "N24 initial PostgreSQL race run",
+      "result": "17 passed,1 failed in202.71s. Autofill correctly retained staffing minimum in an undersized fixture; added a reserve person and rerunning. This is not a passing gate.",
+      "evidence": "docs/allocation-progress/n24-lock-postgres-first.xml"
+    },
+    {
+      "title": "N24 expanded PostgreSQL gate",
+      "result": "33 passed,1 fixture expectation failed in228.26s; includes16 existing OT-enabled/cold-bootstrap cases. Corrected fixture now has8 eligible identities/2 absences=25%, keeping thresholds unchanged. Final gate pending.",
+      "evidence": "docs/allocation-progress/n24-lock-postgres-final.xml"
+    },
+    {
+      "title": "N24 final PostgreSQL approval/allocation races",
+      "result": "18 passed in66.12s,0fail/error/skip. Both reviewed-compute/approval orders, manual/autofill OTdisabled, external edit/cached refresh. Runner exit0 confirms migration sentinel and disposable DB cleanup. Earlier fixture failures retained.",
+      "evidence": "docs/allocation-progress/n24-lock-postgres-verified.xml"
+    },
+    {
+      "title": "N24 repair runtime regression",
+      "result": "62 passed in38.28s; canonical scope, locks, protected periods, stale inputs, reviewed apply and unresolved-original retention. Refined HTTP/PG gates pending.",
+      "evidence": "docs/allocation-progress/n24-repair-final.xml"
+    },
+    {
+      "title": "N24 final repair API/engine acceptance",
+      "result": "63 passed in41.90s,zero failures/errors/skips. Actual authenticated preview/proposal/step/validate/apply, explicit scope, protected periods, stale inputs, and unresolved apply preserves originals.",
+      "evidence": "docs/allocation-progress/n24-repair-acceptance.xml"
+    },
+    {
+      "title": "N24 real PostgreSQL leave-repair gate",
+      "result": "15 passed in51.52s,zero failures/errors/skips. Includes new leave-scoped double apply/provenance and unresolved original retained. Runner40013 exit0 after migration sentinel checks and guarded DB cleanup.",
+      "evidence": "docs/allocation-progress/n24-repair-postgres.xml"
+    },
+    {
+      "title": "User-priority fairness and Excel acceptance",
+      "result": "9 passed, includes exact equal-capacity/fixed-load/approved-leave oracles, revision/ownership/no-write/formula/official non-template workload checks",
+      "evidence": "docs/allocation-progress/balance-review-acceptance-final.xml"
+    },
+    {
+      "title": "Real NVIDIA WebGPU and Review downloads",
+      "result": "Actual shader parity 1/63/64/65/513/10000 rows; local_gpu optimizer with 2 server-verified frames; desktop/mobile/main Review Excel downloads; no preview apply",
+      "evidence": "docs/allocation-progress/balance-review-browser.json"
+    },
+    {
+      "title": "Final fairness, compute, balance, Excel and publish regression",
+      "result": "116 passed455.68s,0failures/errors/skips;4 existingopenpyxl readerwarnings. Overlaps earlierfocused suites.",
+      "evidence": "docs/allocation-progress/balance-gpu-review-regression-final.xml"
+    },
+    {
+      "title": "Final frontend and build",
+      "result": "140 passed; TypeScript/Vite build passed with existingmixedimport/bundlesizewarnings",
+      "evidence": "docs/allocation-progress/balance-review-frontend-final.log; balance-review-build-final.log"
+    },
+    {
+      "title": "CR02 focused locked-scope and elective export acceptance",
+      "result": "27 passed46.53s; includes20scope/balance and7workbook cases. Earlier18overlap.",
+      "evidence": "docs/allocation-progress/elective-scope-acceptance.xml"
+    },
+    {
+      "title": "CR02 actual responsive Review downloads",
+      "result": "1440/390/320 pass; workbooktabs/availability/scope/privacy/formulas independentlychecked",
+      "evidence": "docs/allocation-progress/elective-browser.json; elective-browser-workbooks.json"
+    },
+    {
+      "title": "CR02 intensive locked-scope and balance regression",
+      "result": "644 passed597.94s,0failures/errors/skips; overlapsfocusedcases. Originalspecializedexceptionbehaviorretained.",
+      "evidence": "docs/allocation-progress/scope-balance-intensive.xml"
+    },
+    {
+      "title": "CR02 final scope/elective and interval regressions",
+      "result": "27 finalfocusedpassed32.24s;21supplementpassed15.95s2existingreaderwarnings. Counts overlapearliergates.",
+      "evidence": "docs/allocation-progress/elective-scope-acceptance-final.xml; elective-interval-optimizer-regression.xml"
+    },
+    {
+      "title": "CR02 real PostgreSQL export consistency",
+      "result": "15passed55.00s incl2newexternal-edit/exportlockraces; migration/sentinel/disposableDBcleanupcompleted;nativeexit0",
+      "evidence": "docs/allocation-progress/elective-scope-postgres-verified.xml; elective-scope-postgres-process.json"
+    },
+    {
+      "title": "N24 canonical import duty impacts",
+      "result": "71 backend passed129.21s;15 PostgreSQL passed193.29s, runnerexit0 after isolated migration/sentinel/cleanup. Counts overlap earlier36.",
+      "evidence": "docs/allocation-progress/n24-import-acceptance.xml"
+    },
+    {
+      "title": "N24 OT-only repair and final boundary tests",
+      "result": "57 regression passed101.00s;13final focused passed65.53s including later transitive/unknown/candidatecap cases. Counts overlap.",
+      "evidence": "docs/allocation-progress/n24-ot-repair-focused-final.xml"
+    },
+    {
+      "title": "N24 OT-only PostgreSQL double apply and import races",
+      "result": "16passed383.87s,zero failures/errors/skips; nativewrapperexit0 after migration/sentinel/guarded cleanup.",
+      "evidence": "docs/allocation-progress/n24-ot-repair-postgres.xml"
+    },
+    {
+      "title": "N24 current administrator repair interface",
+      "result": "141frontend tests/build27.47s; canonical approval/directrepair regression and OT-only1440/390/320 keyboard/locks/malformed/currentjob/separateapply passed.0pageerror/overflow/seriouscriticalAxe in testedcontrols.",
+      "evidence": "docs/allocation-progress/n24-ot-only-browser.json"
+    },
+    {
+      "title": "N24 import-wide OT and retained legacy review",
+      "result": "120 combined backend passed157.67s;141frontend passed/build26.01s;current responsive import/approval/repair and legacy acknowledgement/replay browser gates passed.Expanded PG still running.",
+      "evidence": "docs/allocation-progress/n24-final-backend.xml"
+    },
+    {
+      "title": "N24 final concurrent approval/import/repair gate",
+      "result": "27passed463.85s0fail/error/skip; runnerexit0 after guarded isolated migration/sentinel/cleanup. Current120backend/141frontend+build+browser also pass.",
+      "evidence": "docs/allocation-progress/n24-final-postgres.xml"
+    },
+    {
+      "title": "N25 canonical lifecycle and actual assignment validation",
+      "result": "6passed104.81s;86existingregressionspassed199.81s;focusedassignment1passed87.10s overlaps.0fail/error/skip.No runtime change required.",
+      "evidence": "docs/allocation-progress/n25-lifecycle-acceptance.xml"
+    },
+    {
+      "title": "N02 fresh current-source synthetic baseline",
+      "result": "62/62covered both;max1duty/1weekend per assignedperson;greedy25.77371s/wholemonth53.08591s,finalvalidatorpasses,nooptimizerwrites.OTdisabled,noGPU,holidayunconfigured;not speedupproof.",
+      "evidence": "docs/allocation-progress/n02-current-benchmark-20261119.json"
+    },
+    {
+      "title": "N02 corrected OT/dated/saved-proposal corpus",
+      "result": "5casescomplete/sourceunchanged/0finalassignmentfailures.OTzero/pressure/dateminima+reservesfeasiblebeforeandafter.3cases62/62,saved62/62;dated60new+1fixed/62withunit_safety_reviewunresolved.",
+      "evidence": "docs/allocation-progress/n02-corpus-verified.json"
+    },
+    {
+      "title": "N02 fresh real-shaped and exact fairness regression",
+      "result": "8passed154.59s,0fail/error/skip;150members6units2campuses5calllevels pluspool/fullmonthleave/exactfixedloadoracles.",
+      "evidence": "docs/allocation-progress/n02-real-shaped-fairness.xml"
+    },
+    {
+      "title": "N36 bounded immutable interval cache correctness",
+      "result": "86firstpassed44.68s;35finalcachepassed88.83s;107integrationpassed271.41s,0fail/error/skip. Counts overlap. Slot/rulemutation/invalidnocache/frozenvalues/2048bound/parity covered.",
+      "evidence": "docs/allocation-progress/n36-interval-integration.xml"
+    },
+    {
+      "title": "N36 same-corpus interval experiment",
+      "result": "3casescomplete/sourceunchanged. Semanticfixture/normalizedchoices/coverage/workload/unresolvedreasonsidentical;0finalfailures;OTroles+reservesfeasible. Mixedwholeworkflowtimes,no general speedupclaim.",
+      "evidence": "docs/allocation-progress/n36-interval-comparison.json"
+    },
+    {
+      "title": "N36 primitive interval paired microbenchmark",
+      "result": "5alternatingrounds10000calls:medianold2642.44ms/new332.99ms,50000cachehits/1miss,exactparity. Componentonly,notwholeworkflow/GPUproof.",
+      "evidence": "docs/allocation-progress/n36-interval-micro.json"
+    },
+    {
+      "title": "N05 independent worked objective oracles",
+      "result": "4canonical8duty4memberexamples+exhaustiveenumerationcomplete/sourceunchanged/all8dutiescovered/allfinalvalidatorsclear. Partialcaseuniform2eachvspro-rata1/2/2/3withinexistinggap.",
+      "evidence": "docs/allocation-progress/n05-objective-oracles.json"
+    },
+    {
+      "title": "N05 recorded basis disclosure",
+      "result": "28backendpassed152.23s+4focused82.52s(overlap),143frontend/build1m54s,current1440/390/320browsernoerrors/overflow/seriouscriticalAxe;historicalunknownpreserved.",
+      "evidence": "docs/allocation-progress/n05-objective-basis-browser.json"
+    },
+    {
+      "title": "N26 coverage-only architecture preparation",
+      "result": "Four disposable two-duty cases; 169 exhaustive canonical checks; joint/repair match maxima; final checks clear; zero assignment writes. Complete/source unchanged; Ruff passed. Tiny synthetic scope, OT/fairness/memory unmeasured.",
+      "evidence": "docs/allocation-progress/n26-coverage-three-member.json"
+    },
+    {
+      "title": "Actual-generator dated scarcity",
+      "result": "Final session68943 exit0: normal template checks/swaps produce A/B, fixed/optimizer1 of2; joint/coordinated-swap2 of2; one-coordinate1 of2.49 exhaustive canonical plans, final checks clear, zero saved assignments, source hashes verified/Ruff pass. Synthetic OT-off scope.",
+      "evidence": "docs/allocation-progress/n26-current-template-scarcity-final.json"
+    },
+    {
+      "title": "AI evaluation contract and existing companion",
+      "result": "15 passed in9.24s; scorer rejects wrong duration/scope, duplicate/malformed proposals, missing review and false action claims; distinguishes guard rejection from outage. Canned scorer checks are not model quality evidence.",
+      "evidence": "docs/allocation-progress/n42-evaluation-contract.xml"
+    },
+    {
+      "title": "Exact numeric proposal guard",
+      "result": "57 passed19.69s; all four incorrect canned proposals now502, valid count control200. Parser/endpoint/auth/outage/scorer regression counts overlap. No live-model quality improvement inferred.",
+      "evidence": "docs/allocation-progress/n42-numeric-guard-final.xml"
+    },
+    {
+      "title": "Completed Gemma development baseline",
+      "result": "24 cases complete/source unchanged before fix;4 mechanical passes (2 ordinary repairs+2 expected guard rejections). All22 HTTP200 modes repair. Median30.91s/p95 nearest rank79.14s; Qwen baseline/semantic grounding/peak resources unproven.",
+      "evidence": "docs/allocation-progress/n42-gemma-development.json"
+    },
+    {
+      "title": "Isolated local runtime contract",
+      "result": "67 passed15.50s, includes previous57; allowed fixed loopback11438 with pairing/no caller endpoints. Existing Qwen digest/PID/listener identity verified; no download/shared-service restart.",
+      "evidence": "docs/allocation-progress/n42-owned-runtime-contract.xml"
+    },
+    {
+      "title": "Fresh Qwen development baseline",
+      "result": "24 cases complete/source unchanged before claim-guard edit;13 behavior signals pass (6 accepted including injection+7 guard rejections), not13 correct model answers. Median5.94s/p95 nearest rank9.59s; no comparable model winner or unseen semantic proof.",
+      "evidence": "docs/allocation-progress/n42-qwen-owned-verified.json"
+    },
+    {
+      "title": "Authority claim guard and saved-response replay",
+      "result": "81 passed38.28s; both actual saved bypass claims now502, ordinary balance/repair controls200; four replay sources verified. Bounded lexical scope, not full semantic grounding. Tests overlap previous67/79.",
+      "evidence": "docs/allocation-progress/n44-claim-guard-final.xml"
+    },
+    {
+      "title": "Minimized versioned assistant context",
+      "result": "5 passed72.93s: typed finite bounded teaching features, private/legacy malformed data exclusion, unapproved/exception exclusion, content-version changes, authenticated endpoint/private serialization and existing authorization regression. Initial label-substring failure retained; no live-model grounding claim.",
+      "evidence": "docs/allocation-progress/n44-source-context-final.xml"
+    },
+    {
+      "title": "Assistant reference review contracts",
+      "result": "145 frontend tests/build22.68s pass. Responsive1440/390/320 stale/race/unknown/malformed/close checks pass with mocked API/model and0writes/pageerrors/overflow/serious-critical Axe in reference section. Lifetime matrix still pending.",
+      "evidence": "docs/allocation-progress/n44-reference-browser-final.json"
+    },
+    {
+      "title": "Assistant lifetime across browser engines",
+      "result": "12 cases passed: Chromium/Firefox/WebKit at320/1280px, direct removal and confirmed close.0companion/follow-up private requests after termination; current component source hash verified.",
+      "evidence": "docs/allocation-progress/n44-reference-lifetime.json"
+    },
+    {
+      "title": "Companion reference integrity and missing-fact boundary",
+      "result": "107 passed71.75s, overlapping source/claim/port/numeric/auth/scorer tests. Backend-generated envelopes accepted; tampered/duplicate/private/malformed/boolean-version references rejected with0 model calls. Tested absent OT/eligibility/private-leave queries refuse before inference; general planning retained. No live-model quality claim.",
+      "evidence": "docs/allocation-progress/n44-reference-gate-final.xml"
+    },
+    {
+      "title": "Automatic proof scope and measurement integrity",
+      "result": "150 frontend tests pass; build31.87s with existing warnings. Exact20percent/seven-day boundaries, scope/kernel/browser/adapter/options/duplicate-preference semantics, changed-learning checks. Five synthetic selector cases pass; native probe no-adapter. No hardware speedup claim.",
+      "evidence": "docs/allocation-progress/n40-final-tests.log"
+    },
+    {
+      "title": "Comparison producer rejects changed learning",
+      "result": "Actual settings UI, synthetic worker/API: two six-run cycles,12 starts/validations/cancellations; recorded30s options and timed local verification, matching configuration; changed learning parityfalse/server despite identical raw context/choices.390px disclosure/overflow/scoped Axe clear. No actual solver/GPU throughput claim.",
+      "evidence": "docs/allocation-progress/n40-comparison-learning-invalidation.json"
+    },
+    {
+      "title": "Higher-order OT architecture component oracle",
+      "result": "Three synthetic cases,902 sequences/594 canonical distinct-person checks agree with independent homogeneous-capacity oracle. Joint and coordinated repair reach exact maxima; pairwise-only unsafe triple rejected. Final artifact complete/source unchanged; no DB/production activation or fairness/memory claim.",
+      "evidence": "docs/allocation-progress/n26-joint-ot-comparison-final.json"
+    },
+    {
+      "title": "Existing joint OT and guard regression",
+      "result": "18 passed73.01s; existing reservation/temporal/fixed/unknown-context checks. Pure component scope; not complete monthwide architecture acceptance.",
+      "evidence": "docs/allocation-progress/n26-joint-ot-regression.xml"
+    },
+    {
+      "title": "Qualified OT architecture component oracle",
+      "result": "5 cases/866 distinct-person sets: joint and coordinated repair match independent injective role oracle, preserve sole full-band skill/fixed person/locked open duty; input-order coverage invariant. Complete/source unchanged; no full ordinary-duty/monthwide/fairness proof.",
+      "evidence": "docs/allocation-progress/n26-qualified-ot-comparison.json"
+    },
+    {
+      "title": "Qualified OT existing regression",
+      "result": "28 passed87.39s, existing qualifications/availability/joint reservation tests. No operational DB or live GPU/model claim.",
+      "evidence": "docs/allocation-progress/n26-qualified-ot-regression.xml"
+    },
+    {
+      "title": "Demand-only authoritative OT reference",
+      "result": "26 passed115.33s, six new bounded source cases plus existing OT calendar API suite. Canonical unit/date bands, unknown/partial/closed distinction, private-text exclusion, revision/content/date changes, oversized refusal and admin/feature/auth checks. Disposable SQLite/no inference/operational writes.",
+      "evidence": "docs/allocation-progress/n44-ot-reference.xml"
+    },
+    {
+      "title": "Administrator Assistant recorded OT facts",
+      "result": "152 frontend tests and production build31.56s pass. Responsive1440/390/320 inspector and existing source/race regressions pass; exact canonical fields, unknown/partial, selection clear, refreshed versions, wrong scope/permission/close/nonadmin checks.0writes/model requests/pageerrors/overflow/serious-critical Axe in OT section.390card screenshot visually verified; initial layout/target issues retained.",
+      "evidence": "docs/allocation-progress/n44-ot-inspector-browser-final.json"
+    },
+    {
+      "title": "Actual Thursday Unit IV and compensation audit",
+      "result": "5 disposable canonical template/person scenarios with unit minimum1/included reserves pass.Thursday IV to V,Friday IV compensation; Tuesday unchanged; no later window cannot promise compensation.7/7 duties covered,ordinary final failures0,wholemonthOT feasible,0saved assignments. Complete/source unchanged; not fullmonth fairness/performance proof.",
+      "evidence": "docs/allocation-progress/n16-thursday-unit4-verified.json"
+    },
+    {
+      "title": "N05 adversarial objective precedence",
+      "result": "5 passed in64.06s; actual solver and final validation. Disposable SQLite, safe originals unchanged, no operational writes. Ruff/scoped whitespace passed.",
+      "evidence": "docs/allocation-progress/n05-precedence.xml"
+    },
+    {
+      "title": "N05 promotion consistency regression",
+      "result": "32 passed210.04s; reproduced0vs300 before fix,both300 after. Includes prior5objective checks; no operational writes.",
+      "evidence": "docs/allocation-progress/n05-promotion-regression.xml"
+    },
+    {
+      "title": "N05 category burden trade-offs",
+      "result": "4 passed88.33s; weekend/night/configuredholiday precede contrary preference; absentholiday not claimed fair, originals unchanged.",
+      "evidence": "docs/allocation-progress/n05-category-burdens.xml"
+    },
+    {
+      "title": "N05 context and numeric parity",
+      "result": "7 passed81.53s/10deselected; cached/reference candidates,numericGPU-server/fallback. No physicalGPU speed claim.",
+      "evidence": "docs/allocation-progress/n05-context-parity.xml"
+    },
+    {
+      "title": "N05 independent workload and dated pools",
+      "result": "4 passed77.48s; nine-plan workload oracle, staffing-review negative control, dated mixed pools both slot orders.0generated assignments saved.",
+      "evidence": "docs/allocation-progress/n05-workload-pools-verified.xml"
+    },
+    {
+      "title": "N05 post-promotion exhaustive objective rerun",
+      "result": "4casescomplete/sourceunchanged at recorded pre-compatibility revision; alluniformoracle/0finalfailures. Partialcase stillnotpersonalpro-rataoptimized.",
+      "evidence": "docs/allocation-progress/n05-objective-oracles-post-promotion.json"
+    },
+    {
+      "title": "N05 engine revision and snapshot compatibility",
+      "result": "23 passed114.35s; pre-revision drafts rejectresume/apply409, benchmarkhash changes/importfingerprint unchanged. Existing snapshot/objective regressions included.",
+      "evidence": "docs/allocation-progress/n05-engine-revision.xml"
+    },
+    {
+      "title": "N44 selected OT context and companion boundary",
+      "result": "101passed170.62s; admin/date/feature/version/privatefield/unknown/tamper+rehash/mocked0callsrejects plus existing source/pairing/numeric/claim/evaluator tests. Initial45overlapnotadditive.",
+      "evidence": "docs/allocation-progress/n44-ot-context-final.xml"
+    },
+    {
+      "title": "N44 measured OT prompt budget",
+      "result": "115passed46.72s; measuredboundary/reservedoutput/malformedversions-counters/changedremote model identities/responsechecks+existing source/numeric/claims. Earlier110/111overlap.",
+      "evidence": "docs/allocation-progress/n44-prompt-budget-verified.xml"
+    },
+    {
+      "title": "N44 actual local prompt admission",
+      "result": "OwnedexistingGemma:972prompt admitted/53output/stop;3854prompt rejected after1discardedtoken/no600call. Sourceunchanged,ownedruntimeunloaded0resident/stopped. Syntheticnotaccuracybenchmark.",
+      "evidence": "docs/allocation-progress/n44-prompt-budget-local-model.json"
+    },
+    {
+      "title": "N44 OT opt-in frontend and build",
+      "result": "153passed0fail/skips;finalproductionbuild3.10s,existingwarnings. Typedselectedsourceandfreshnesscomparisons.",
+      "evidence": "docs/allocation-progress/n44-ot-optin-tests-final.log"
+    },
+    {
+      "title": "N44 explicit OT opt-in browser acceptance",
+      "result": "1440/390/320:opt-in/defaultv1/thirdsource/stalebeforeuse+whilemodel/unitdate reset/permission-budget/wrongscope/pendingclose+consentrevocation/0writes-errors/scopedseriousAxe. Existing2suitesalso3widthspass;mockedtransport.",
+      "evidence": "docs/allocation-progress/n44-ot-optin-browser.json"
+    },
+    {
+      "title": "N44 standard versioned prompt admission",
+      "result": "119passed83.66s;4newstandardcontextinvalidruntime/overbudget/boolcounter/changedcompletion cases pluspreceding guards. CurrentUIunchanged.",
+      "evidence": "docs/allocation-progress/n44-standard-budget.xml"
+    },
+    {
+      "title": "N44 actual Qwen standard and selected OT protocol",
+      "result": "Standard521prompt/119out;OT910prompt/104out;oversized3705promptrejectedafter1probe/no600call. Complete/sourceunchanged,50scopedresourcesamples,ownedruntimeclosed. Notmodelaccuracy/physicalpeakproof.",
+      "evidence": "docs/allocation-progress/n44-qwen-standard-live.json"
+    },
+    {
+      "title": "N44 shared advisory deadline and changed retry prompt",
+      "result": "127passed99.69s;8newactualcompanioncumulative/stageexpiry/retryremeasure/lateoutput/earlytransport cases plusprior119overlap. Ruff/scopedwhitespacepass.",
+      "evidence": "docs/allocation-progress/n44-shared-deadline.xml"
+    },
+    {
+      "title": "N44 actual HTTP deadline fixture",
+      "result": "Scaled1stestbudget:quick2000.172s;metadata/probe/suggestionslow504~1.03-1.06s/noexpiredmode.4casescomplete/sourceunchanged/fixtureclosed. No modelinference/hardcancelclaim.",
+      "evidence": "docs/allocation-progress/n44-deadline-http.json"
+    },
+    {
+      "title": "Frozen versioned-reference development comparison",
+      "result": "28 cases/model; supported mechanical matches Qwen7/15, Gemma3/15; not unseen accuracy; no model selected. Gemma resource trace partial.",
+      "evidence": "docs/allocation-progress/n42-v2-results.md"
+    },
+    {
+      "title": "Explicit authority refusal and saved unsafe explanation regression",
+      "result": "140 passed63.35s; hermetic fixture12 passed22.70s (overlap); zero model calls for explicit unauthorized requests. No post-fix actual-model claim.",
+      "evidence": "docs/allocation-progress/n44-request-authority-final.xml"
+    },
+    {
+      "title": "Whole-month real optimizer vs independent OT/equality oracle",
+      "result": "49 passed134.32s;3new30-daycases+46existingjoint/integration. Control15/30duties,squaredload57;boundary/leave13/30,squaredload43;reversed input same.174sourcehashes unchanged.",
+      "evidence": "docs/allocation-progress/n35-whole-month-ot-final.xml"
+    },
+    {
+      "title": "Dated whole-month eligibility and AM leave",
+      "result": "72 passed139.35s after synthetic missing-calendar correction; prior71pass1fixturefail retained.3newdatedcases match oracle8/30duties,squaredload16,2each.174sourcehashes unchanged.",
+      "evidence": "docs/allocation-progress/n35-dated-month-ot-corrected.xml"
+    },
+    {
+      "title": "Whole-month dated skill matching and prior OT regressions",
+      "result": "75 passed157.90s;3newdatedspecialistcases+previous72.Oracle/actual15/30duties,squaredload57,4/4/4/3distribution;distinct simultaneousroles/Dec1restchecked.178sourcehashes unchanged.",
+      "evidence": "docs/allocation-progress/n35-skilled-month-ot-final.xml"
+    },
+    {
+      "title": "Whole-month unit/person architecture comparison and invariant gate",
+      "result": "Two complete30-day syntheticcomparisons:30/30 flexible,29/30 locked forbothmethods,arithmeticminimumload114/107;9 regressiontests passed11.62s.Onlyfirsttwoobjectivetiers;notarchitectureselection.",
+      "evidence": "docs/allocation-progress/n26-month-architecture-comparison.md"
+    },
+    {
+      "title": "Boundary preservation and candidate/rest-prioritized month repair",
+      "result": "12 passed in 64.92s. Month plateau: joint 30, single repair 29, prioritized paired repair 30, with the same 30-second allowance. Boundary case: 29 new plus 1 fixed November duty; all 3 saved duties unchanged. Earlier budget miss retained. Current source and report hashes verified.",
+      "evidence": "docs/allocation-progress/n26-boundary-coordinated-repair.md"
+    },
+    {
+      "title": "Shared production objective model and full-tier month comparison",
+      "result": "94 regression tests passed in 75.81s; one additional universe test passed in 5.56s. Independent 108-selection arithmetic included. Full month: 30 duties covered by both methods, 3 saved assignments unchanged; lower tiers unproved. Nine XML-property warnings retained.",
+      "evidence": "docs/allocation-progress/n05-shared-objective-model.md"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-14T03:52:45Z",
+      "title": "Implementation approved",
+      "detail": "Full 50-item goal authorized. Existing unrelated frontend changes preserved. No production deployment authorized."
+    },
+    {
+      "at": "2026-11-14T03:52:45Z",
+      "title": "Graphical tracking started",
+      "detail": "Dedicated dashboard reads task completion directly from the Markdown tracker; elapsed time is wall time since this goal started."
+    },
+    {
+      "at": "2026-11-14T04:02:56.370155+00:00",
+      "title": "Fresh baseline verified",
+      "detail": "93 backend + 124 frontend tests passed. Production build passed. No operational database writes."
+    },
+    {
+      "at": "2026-11-14T04:02:56.370155+00:00",
+      "title": "OT feasibility core under test",
+      "detail": "Recurring/date-exception demand, explicit closures, identity-level matching and independent exhaustive-oracle scenarios added. Not integrated into live allocation yet."
+    },
+    {
+      "at": "2026-11-14T04:08:11.473185+00:00",
+      "title": "First two actions accepted",
+      "detail": "N01 entry-point inventory and N03 constraint register complete with source evidence. N02/N04/N09/N12 remain in progress; N07/N08 under verification."
+    },
+    {
+      "at": "2026-11-14T04:15:36.299269+00:00",
+      "title": "N09 accepted after real race testing",
+      "detail": "Versioned OT persistence/admin APIs, attributable history, conflict protection, bounded input and feature-gated snapshot/lock extension verified."
+    },
+    {
+      "at": "2026-11-14T04:15:36.299269+00:00",
+      "title": "Next batch ready",
+      "detail": "N10 calendar UI and N11 canonical availability precede operational allocation integration. N02/N04/N12 remain in progress. Full 50-item objective remains active."
+    },
+    {
+      "at": "2026-11-14T04:26:46.133492+00:00",
+      "title": "Native OT editor implemented",
+      "detail": "Review endpoint validates without writes. The product editor preserves local drafts and never retries a save automatically."
+    },
+    {
+      "at": "2026-11-14T04:54:09.446278+00:00",
+      "title": "Editor and canonical availability verified",
+      "detail": "Actual app navigation, stale edits, delayed validation, uncertain-save readback and keyboard Escape during save covered. A partially configured area calendar cannot claim full coverage."
+    },
+    {
+      "at": "2026-11-14T05:03:06.362998+00:00",
+      "title": "Four more actions accepted - 7 of 50 complete",
+      "detail": "N07/N08 contracts and N10/N11 native editor/availability accepted with source/test evidence. N12/N14 full allocation protection remains essential; no automatic apply or live migration."
+    },
+    {
+      "at": "2026-11-14T05:14:41.495266+00:00",
+      "title": "Combined reserve work resumed",
+      "detail": "Progress GUI reopened. Reserve constraints share same-unit staff only when explicitly included, and never share staff across units."
+    },
+    {
+      "at": "2026-11-14T05:44:36.841333+00:00",
+      "title": "N12 accepted - 8 of 50 verified",
+      "detail": "Joint OT/reserve and reviewed qualification inputs passed backend/browser checks. N14 guard/context foundations tested; all-path integration remains unfinished."
+    },
+    {
+      "at": "2026-11-14T06:10:35.083242+00:00",
+      "title": "N14 shared and specialized checks verified",
+      "detail": "Ordinary overrides cannot waive OT, final combinations checked, extra-duty pools invalidated together, publish evidence records existing exceptions. Remaining template/restore/concurrency gates keep N14 In progress;8/50 Done."
+    },
+    {
+      "at": "2026-11-14T07:46:34.285219+00:00",
+      "title": "Extended duty/rest horizons verified",
+      "detail": "Cached proofs refuse uncovered dates. Ordinary, extra-duty and independent verifier preserve future commitments. N14 stays In progress; all50items retained."
+    },
+    {
+      "at": "2026-11-14T08:05:03.806382+00:00",
+      "title": "Joint duty/OT model verified",
+      "detail": "Existing CP-SAT optimizer now reserves OT identities alongside duty choices, retaining objective order and final independent validation. N14 remains In progress; template/replay/race gates still open."
+    },
+    {
+      "at": "2026-11-14T08:31:33.398869+00:00",
+      "title": "Template unit and shuffle OT proof verified",
+      "detail": "Existing fairness ranks protected unit choices. Infeasible/unknown layouts remain visibly unallocated; hypothetical people are never saved. N14 remains unfinished pending races/freshness and remaining gates."
+    },
+    {
+      "at": "2026-11-14T09:07:27.774429+00:00",
+      "title": "Stale input acceptance fixed and races verified",
+      "detail": "Actual committed input edits refuse unsafe duties. Allocation-first raw writers observed blocked in pg_locks. Cached autofill and cold bootstrap keep locks; pending edits survive refresh. N14 still In progress;full50scope retained."
+    },
+    {
+      "at": "2026-11-14T09:43:51.290462+00:00",
+      "title": "Balance replacement precheck corrected",
+      "detail": "Precheck releases old holder in OT calculation; actual transfer and independent post-write verification retain authority. Safe apply and stale-demand refusal verified in both specialized paths. N14 remains In progress,8/50 Done."
+    },
+    {
+      "at": "2026-11-14T09:49:48.548785+00:00",
+      "title": "OT balance memo and ordinary scorer verified",
+      "detail": "Before-fix canonical scenario reproduced stale refusal. Successful OT transfers clear placement memo; reverse move closes alternative. Reviewed scorer independently verified. Full50scope retained;8Done."
+    },
+    {
+      "at": "2026-11-14T10:00:00.287519+00:00",
+      "title": "Template OT outcomes verified in existing UI",
+      "detail": "Canonical isolated backend + actual main application. One fallback label clarified to Unallocated unit; all8browsercases andbuild passed. Source audit mapped normal assignment constructors/holder mutations. Full50scope retained."
+    },
+    {
+      "at": "2026-11-14T10:06:50.830943+00:00",
+      "title": "N04 active preference hash and atomicity fixed",
+      "detail": "Version2 shared identity excludes candidate and audit churn. Active versions/weights invalidate proposals;activation/rollback hold same input lock. Core/realPGpassed,full50scope unchanged."
+    },
+    {
+      "at": "2026-11-14T10:19:35.224603+00:00",
+      "title": "Immutable projection and signed context fixed",
+      "detail": "Import-review full-row fingerprint unchanged. Scheduling privacy projection and actual balance/extra token checks verified. Full50scope retained,8Done."
+    },
+    {
+      "at": "2026-11-14T10:31:17.458574+00:00",
+      "title": "Old context/new hash race fixed",
+      "detail": "Bootstrap before final namespace/input locks, fresh draft check and DTO loading. Template input lock outside replay savepoint;planning steps locked. Full50scope retained;8Done."
+    },
+    {
+      "at": "2026-11-14T10:51:44.323667+00:00",
+      "title": "Rule-note no-op and specialized preview acquisition",
+      "detail": "N04 acceptance map added. Note-save privacy gap fixed;legacy import fingerprint retained. Existing preview domain errors restored after regression. Full50scope retained8Done."
+    },
+    {
+      "at": "2026-11-14T10:57:11.659358+00:00",
+      "title": "N04 and N14 completed against original acceptance",
+      "detail": "Immutable scheduling/invalidation/privacy and normal prospective OT paths reconciled to source,tests,browser evidence. Completion10/50;N13monthly heatmap next. No rollout or wholegoalcompletion claim."
+    },
+    {
+      "at": "2026-11-14T11:03:59.337393+00:00",
+      "title": "N13 monthly capacity API foundation",
+      "detail": "No operational writes;selected-unit witness and interval identity sets. Unknown never zero;unreservednotdutyeligibility. UIandadditionaledgeacceptancepending;10Done."
+    },
+    {
+      "at": "2026-11-14T11:29:13.129139+00:00",
+      "title": "Monthly capacity heatmap and named detail added",
+      "detail": "Existingcalendar lifecycle and response tickets preserved. Interval counts/read-onlywitness scope visible;nofalse dutyeligibility. N13stillInprogress,10Done."
+    },
+    {
+      "at": "2026-11-14T11:41:54.744971+00:00",
+      "title": "Normal-validator duty counts added to monthly drill-down",
+      "detail": "Individuallyeligible alternatives notsimultaneous coverage. Missingproofnull;pendingstressdutycountexplicitlyunevaluated.10Done,N13remainingedgeacceptance."
+    },
+    {
+      "at": "2026-11-14T11:52:08.291077+00:00",
+      "title": "N13 completed against original acceptance",
+      "detail": "Identityintervalcounts,duty-specificnormaleligibility,pending/unknownscope,permissions/browser verified.11Done;N15reviewedOTimport/export nowReady. Full50scope preserved."
+    },
+    {
+      "at": "2026-11-14T13:05:58.443889+00:00",
+      "title": "N15 reviewed monthly transfer foundation verified",
+      "detail": "Canonicaldatedreplacements,outside-monthpreserved,unknownnotclosure,globalpolicyseparatelyreviewed. Sourcehash/filename inexistinghistory;noautoapplyretry.11Done,N15unfinished."
+    },
+    {
+      "at": "2026-11-14T13:12:29.606275+00:00",
+      "title": "N15 completed against original acceptance",
+      "detail": "Canonicalreviewedmonthlytransfer,mappings/source/idempotency,invalidrefusal,realrace/recoveryevidence reconciled.12Done;N17Ready. All50scope retained."
+    },
+    {
+      "at": "2026-11-14T13:18:20.912104+00:00",
+      "title": "N17 completed against original scarcity/temporal criteria",
+      "detail": "Allunitsbusy/nosenior/overlap/aboveroster/closure/leapday/partial/monthrest;shortageandexplicitlysafealternativesverified,nominimumreduction.13Done;N18Ready."
+    },
+    {
+      "at": "2026-11-14T13:25:28.908567+00:00",
+      "title": "N18 completed against original inventory/accounting criteria",
+      "detail": "Full canonical leave/profile/workspace/import/approval/cancel/bin/merge flows mapped; explicit elapsed/future/pending/partial/type/coverage examples. No statistics implementation or entitlement inferred.14Done;N19/N20Ready."
+    },
+    {
+      "at": "2026-11-14T13:37:16.538590+00:00",
+      "title": "N19 lifecycle backend verified; full acceptance unfinished",
+      "detail": "Reused existing audit/import/bin/merge stores; private data projected out; split/source and durable delete/restore attribution. RealPGreader-writer ordering verified. Pagination and survivor lineage next.14Done."
+    },
+    {
+      "at": "2026-11-14T13:50:24.338629+00:00",
+      "title": "N19 completed against original lifecycle/provenance criteria",
+      "detail": "Attributable canonical edits/approval/cancel, original source/split/merge lineage, permanent delete/restore evidence and traversable seek pages.15Done;N20Ready. Legacy unknowns disclosed; no statistics/UI completion claim."
+    },
+    {
+      "at": "2026-11-14T14:04:15.351407+00:00",
+      "title": "N20 shared leave semantics foundation verified",
+      "detail": "Pure canonical facts now reused across scheduling consumers. Normal pending warnings and specialized strict contracts preserved. Reports still need identity/time reconciliation;15Done,N20unfinished."
+    },
+    {
+      "at": "2026-11-14T14:13:00.776256+00:00",
+      "title": "N20 union metrics and distinct pressure counts verified",
+      "detail": "Record counts remain separate; approved/pending/active union by identity, unknown precision explicit; NIGHT example corrected. Dated attribution/UI basis still pending;15Done."
+    },
+    {
+      "at": "2026-11-14T14:30:11.440742+00:00",
+      "title": "N20 dated unit/call reporting reconciled",
+      "detail": "Batched canonical call precedence, actual transfer dates, distinct board person-dates and explicit conflicts. UI basis/unknown disclosure remains;15Done."
+    },
+    {
+      "at": "2026-11-14T15:12:06.407499+00:00",
+      "title": "N20 counting-basis interface foundation verified",
+      "detail": "Approved/pending/union coverage, unknown attribution, request-day label and unit modal basis visible. Full page lifecycle/remaining labels unfinished;15Done."
+    },
+    {
+      "at": "2026-11-14T15:23:20.123766+00:00",
+      "title": "N20 completed against original acceptance",
+      "detail": "Sharedfacts,explicitpendingpolicies,identitytimeunion,datedreports andfullpagebasis/recovery verified.16Done;N21/N22Ready."
+    },
+    {
+      "at": "2026-11-14T15:28:47.472123+00:00",
+      "title": "N21 searchable leave filters verified",
+      "detail": "Existingcanonicalworkspaceextended;publicfieldsearch/status/type/dateoverlap,focus/retry/private-notechecks. Linkedhistory/actionsremain;16Done."
+    },
+    {
+      "at": "2026-11-14T15:34:09.126300+00:00",
+      "title": "N21 linked leave history/source viewer verified",
+      "detail": "Read-only canonicaloverview/categorypaging,actor/source/reasons,readretry/closeownership/privateprojection. N21actionacceptanceremains;16Done."
+    },
+    {
+      "at": "2026-11-14T15:43:05.949400+00:00",
+      "title": "N21 original acceptance complete",
+      "detail": "Canonicalcreate/edit/approval/cancelreason/globalprofile/stale/partial/uncertainreadback/privacy reconciled to priorfilters/history.17Done;N22/N24Ready."
+    },
+    {
+      "at": "2026-11-14T15:48:38.110055+00:00",
+      "title": "N22 canonical statistics backend verified",
+      "detail": "Recordedapprovedelapsed/future/inprogress,pending,status/type/monthcoveragewithoutattendance/balanceinference. UIacceptanceremains;17Done."
+    },
+    {
+      "at": "2026-11-14T15:56:14.216376+00:00",
+      "title": "N22 original statistics acceptance complete",
+      "detail": "Person/month/year/status/type/asofintervalreconciliation,unknown/historicalcoverage andvisiblebasis verified;18Done;N23/N24Ready."
+    },
+    {
+      "at": "2026-11-14T16:11:49.384913+00:00",
+      "title": "N23 original acceptance complete",
+      "detail": "Recordedabsencecountsandcoverageexplicit,separatefromunapprovedentitlements/carryforward/deductions;no disciplinaryscore.19Done;N24Ready."
+    },
+    {
+      "at": "2026-11-14T16:21:15.550482+00:00",
+      "title": "N24 duty-impact integration advances",
+      "detail": "Shared active-duty physical/policy evidence, prior-month overlaps, protected periods and manual prospective review. No reassignment. N24 remains in progress; no added completion."
+    },
+    {
+      "at": "2026-11-14T16:22:55.433603+00:00",
+      "title": "N24 duty-review evidence verified",
+      "detail": "Final suite54 passed; source hashes and continuation recorded. 19/50 Done unchanged. No implementation/test worker remains; dashboard stays open."
+    },
+    {
+      "at": "2026-11-14T16:32:07.016767+00:00",
+      "title": "N24 backend OT review evidence verified",
+      "detail": "88-test final run exited0. Existing all-unit reservation engine reused. N24 remains In progress;19/50 Done unchanged. No implementation/test worker remains at checkpoint."
+    },
+    {
+      "at": "2026-11-14T16:42:28.685315+00:00",
+      "title": "N24 concurrency verification underway",
+      "detail": "Observed real lock waits. Initial autofill fixture shortage corrected without relaxing policy; final run includes existing OT-enabled/cold-bootstrap races.19Done unchanged."
+    },
+    {
+      "at": "2026-11-14T16:48:51.306726+00:00",
+      "title": "N24 staffing fixture diagnosis verified",
+      "detail": "SQLite reproduction confirms8-person fixture safely fills1 duty; no policy threshold relaxed. Third PostgreSQL run27435 live; do not restart while handle remains active."
+    },
+    {
+      "at": "2026-11-14T16:49:47.868161+00:00",
+      "title": "N24 transaction gate verified",
+      "detail": "Final PG18 passed and runner cleanup exited0;62 backend passed. Existing OT/cold-start16 passed in prior expanded run; runtime unchanged.19Done;N24 stillInprogress. No worker remains."
+    },
+    {
+      "at": "2026-11-14T16:58:22.286570+00:00",
+      "title": "N24 reviewed repair adapter implemented",
+      "detail": "Approved identities and explicit slot selection bind to snapshot/actor. Existing server repair engine used; every nonselected slot locked. Found/fixed unresolved original cancellation path.19Done unchanged."
+    },
+    {
+      "at": "2026-11-14T16:59:35.172700+00:00",
+      "title": "N24 leave repair backend verified",
+      "detail": "Existing engine reused with all unselected slots locked. Unresolved repairs cannot cancel originals.63 API/engine and15 PG gates pass; N24 Inprogress,19Done. No worker remains."
+    },
+    {
+      "at": "2026-11-14T17:20:10.164296+00:00",
+      "title": "N24 administrator UI verification advances",
+      "detail": "Canonical desktop/390/320 approval-to-repair lifecycle, stale review, lost response recovery, main entry, closed private workspace and manual malformed-evidence save blocking verified. Completion count unchanged."
+    },
+    {
+      "at": "2026-11-19T09:46:05.2387728+00:00",
+      "title": "User priority: balancing, GPU and Review Excel",
+      "detail": "Cold GPU initialization timeout fixed from 15s to a bounded60s; scoring15s retained. 140 frontend tests/build pass. N35/N36/N39/N41 partial work Inprogress; full50scope and19Done preserved. Broad regression running."
+    },
+    {
+      "at": "2026-11-19T09:53:17.5142094+00:00",
+      "title": "Priority checks verified; full scope retained",
+      "detail": "116 backend/140frontend/build and real NVIDIA2verifiedframes + responsiveReviewExcel passed. CR01done; original19/50Done unchanged. Temporaryservices stopped,noimplementationworker,no productionupload."
+    },
+    {
+      "at": "2026-11-19T10:44:17.2181213+00:00",
+      "title": "CR02 complete: daily elective Excel and strict ordinary scope",
+      "detail": "644broad/27focused/15PG/21supplement/140frontend+buildandresponsivekeyboard/accessibility/downloadgates passed;counts overlap. Original19/50Doneunchanged,temporaryworkersstopped,no productionupload."
+    },
+    {
+      "at": "2026-11-19T12:41:25.954599+00:00",
+      "title": "Canonical import duty-impact gap fixed",
+      "detail": "Shared physical/date-policy overlap, protected status, cancelled-duty exclusion, publication invalidation and final input locks.71backend/15PGpass. N24 remains in progress."
+    },
+    {
+      "at": "2026-11-19T13:01:27.732953+00:00",
+      "title": "OT-only reviewed repair acceptance passed",
+      "detail": "Existing engine frees a different qualified OT member by reviewed duty replacement.57regression/13focused/16PG/141frontend+build+freshbrowser passed; counts overlap.19Done unchanged, N24 import-wide OT comparison remains."
+    },
+    {
+      "at": "2026-11-19T13:30:42.217333+00:00",
+      "title": "N24 complete; N25 starts",
+      "detail": "OriginalN24acceptanceaudit satisfied.20/50Done,6Inprogress,24Queued. Full canonical lifecycle reconciliation now in progress; remaining30items are not claimedcomplete."
+    },
+    {
+      "at": "2026-11-19T13:48:10.208692+00:00",
+      "title": "N25 acceptance complete",
+      "detail": "Canonical imports/profile/calendar/OT/actualassignment/merge/undo/archive/access/provenance reconcile.21/50Done42%,5Inprogress24Queued. N02 current baseline next."
+    },
+    {
+      "at": "2026-11-19T13:51:50.762564+00:00",
+      "title": "Current baseline completed",
+      "detail": "96member62slotrun97330exit0;sourcehashesunchanged.21Done unchanged;N02broadercorpus/stagetimingstillneeded. No implementationworker remains."
+    },
+    {
+      "at": "2026-11-19T14:20:26.544222+00:00",
+      "title": "Corpus and missing-correction evidence recorded",
+      "detail": "FullnormalOTcoverageverified;rawApril30gapandinitialfixturefailure retained. Configuredloopbackaggregate0savedproposals/examples/learningversions,notzerohumancorrections.21Done unchanged,CPUattributionrunning."
+    },
+    {
+      "at": "2026-11-19T18:10:09.603407+00:00",
+      "title": "Measured interval optimization retained",
+      "detail": "CPUprofileidentified126232repeateddutywindowcalls;bounded2048primitiveintervalcachepassesmutation/reference/integrationand3corpusparitygates. Microbenefitdemonstrated,workflowmixed.21Doneunchanged,N36partial."
+    },
+    {
+      "at": "2026-11-19T18:27:07.062763+00:00",
+      "title": "Objective basis now explicit",
+      "detail": "Currentuniformtargetandfixedloadrecordedwithnewproposals/Excel;oldmetadatastaysunknown. Exactpartialavailabilitydifferencequantified;P6choicepending,noobjectiveprioritychange.21Doneunchanged."
+    },
+    {
+      "at": "2026-11-19T18:45:18.1160462+00:00",
+      "title": "Coverage architecture experiment verified",
+      "detail": "Both joint and iterative repair recover coverage versus supplied fixed layout; locks preserved. Initial duplicate-label and four-member expectation failures retained. N26 stays queued pending full dependencies/acceptance; 21 Done unchanged."
+    },
+    {
+      "at": "2026-11-19T18:51:38.6774588+00:00",
+      "title": "Current-template coverage counterexample verified",
+      "detail": "Real generator counterexample reproduced with normal pressure checks/swaps; coordinated repair also recovers coverage, preventing premature architecture selection.21 Done unchanged."
+    },
+    {
+      "at": "2026-11-19T19:00:30.6392243+00:00",
+      "title": "N42 development evaluation starts",
+      "detail": "Versioned24 synthetic cases,15 contract/companion checks pass. Fresh Qwen endpoint has no model; installed Gemma run live with first intent mismatch measured. No model choice/download/cloud/operational data."
+    },
+    {
+      "at": "2026-11-19T19:14:19.5853681+00:00",
+      "title": "Numeric grounding defects corrected",
+      "detail": "Live negative-to-positive mistake independently reproduced; strict exact setting/value parser and endpoint checks now pass57 tests and five-probe audit. Gemma pre-fix baseline retained, no model-selection claim;21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T19:39:55.8053315+00:00",
+      "title": "Local-model baseline and authority-claim correction verified",
+      "detail": "Fresh existing Qwen measured without download; sampled owned resources recorded with limits. Actual unsafe prose replay now rejected. N44 Inprogress,21Done unchanged; isolated runtime and workers stopped."
+    },
+    {
+      "at": "2026-11-19T19:47:18.8776624+00:00",
+      "title": "Assistant source context minimized and versioned",
+      "detail": "Known reason/kind categories and bounded numeric features only; explicit missing facts, timestamp/content references.5 focused checks pass; N44 remains partial,21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T20:00:33.5010300+00:00",
+      "title": "Visible assistant source review verified",
+      "detail": "Freshness and instruction-race UI checks passed; cross-browser lifetime worker remains live.21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T20:01:22.8284878+00:00",
+      "title": "Reference review lifetime gate complete",
+      "detail": "12 three-engine cases passed; task-owned Vite stopped after gates. Source review batch verified, N44 remains in progress and21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T20:08:00.2749847+00:00",
+      "title": "Reference facts checked before inference",
+      "detail": "Companion minimizes supplied context and validates content references; bounded missing-fact questions return guidance without model calls.107 checks pass;21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T23:09:17.6179471+00:00",
+      "title": "Automatic measurements bound to real configuration",
+      "detail": "Optimizer scope, compound learning context and verification cost protected; obsolete timing proofs expire by measurement version. Verified synthetic contracts, physical advantage unproven;21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T23:16:21.2838298+00:00",
+      "title": "Higher-order reservation comparison verified",
+      "detail": "Three-duty oracle exposes pairwise insufficiency; joint model and coordinated repair preserve maxima/locks/fixed duty.21Done unchanged; N26 still preparatory."
+    },
+    {
+      "at": "2026-11-19T23:22:00.0249197+00:00",
+      "title": "Qualified pool and dated skill window evidence verified",
+      "detail": "Independent role matching agrees with full-set guard; joint/repair preserve exact maxima and fixed/open locks.21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T23:27:30.6068033+00:00",
+      "title": "Authoritative OT demand reference verified",
+      "detail": "Read-only minimized selected-unit/date source preserves unknown and date exceptions; model forwarding remains disconnected pending integration.21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T23:39:37.0989950+00:00",
+      "title": "Recorded OT facts available in Assistant review",
+      "detail": "Explicit administrator unit/date inspection reads canonical demand without model inference or planning writes.152 frontend/build/responsive gates pass;21Done unchanged."
+    },
+    {
+      "at": "2026-11-19T23:56:20.8283855+00:00",
+      "title": "Requested Thursday Unit IV behavior verified",
+      "detail": "Actual generator protects heavier OT day and compensates later when required duty exists; unchanged/no-later cases explicit.21Done unchanged,N16Inprogress."
+    },
+    {
+      "at": "2026-11-20T00:06:17.2644020+00:00",
+      "title": "Current-contract objective priorities verified",
+      "detail": "Five real-solver competing-outcome checks passed. Clarified preserved P6 default versus optional amendment; N05 stays Inprogress,21Done unchanged."
+    },
+    {
+      "at": "2026-11-20T00:18:03.5962372+00:00",
+      "title": "Promotion scoring no longer depends on slot order",
+      "detail": "Canonical monthly membership reused consistently.32+4+7 checks pass; preserved policy,no operational writes.21Done unchanged."
+    },
+    {
+      "at": "2026-11-20T03:40:36.1810171+00:00",
+      "title": "Scoring correction invalidates old draft and timing evidence",
+      "detail": "Engine revision2/snapshotv5 protect compatibility;23gates pass plus4workload/poolcases and4exactaudits.21Doneunchanged,goalactive."
+    },
+    {
+      "at": "2026-11-20T04:05:32.5184773+00:00",
+      "title": "Selected OT source contract verified",
+      "detail": "Canonical adminunit/day source now has bounded strict companion contract.101checks pass; UIforwarding/tokenadmission stillopen.21Doneunchanged."
+    },
+    {
+      "at": "2026-11-20T04:35:17.8141530+00:00",
+      "title": "Selected OT prompt budget measured on actual local runtime",
+      "detail": "115gates and real small/oversized cases pass. No new model/cloud/contextbudget;ownedruntimeclosed.21Doneunchanged."
+    },
+    {
+      "at": "2026-11-20T05:14:42.6327422+00:00",
+      "title": "Selected OT facts connected through explicit consent and freshness checks",
+      "detail": "153tests/build and3responsivebrowsersuitespass. Localconsentrevocationinvalidateslate result.21Doneunchanged,N44Inprogress."
+    },
+    {
+      "at": "2026-11-20T05:33:27.3577111+00:00",
+      "title": "Standard Assistant references now receive measured budget checks",
+      "detail": "119tests and actualownedQwen protocol verify standard+OT paths;runtimeclosed/resourceslogged.21Doneunchanged,N44/N42Inprogress."
+    },
+    {
+      "at": "2026-11-20T05:50:45.9567513+00:00",
+      "title": "Assistant stages share one budget; retries measure their changed prompts",
+      "detail": "127regressionsand4actualHTTPcasespass;expiredresultsrefused/nolatefollow-upstages.21Doneunchanged,N44Inprogress."
+    },
+    {
+      "at": "2026-11-20T07:31:40.828089+00:00",
+      "title": "Frozen model comparison exposed an authority refusal gap; verified fix retained",
+      "detail": "Two actual28-case runs complete; no winner.140 regressions pass plus12 overlapping hermetic checks.21Done unchanged; full50 scope active."
+    },
+    {
+      "at": "2026-11-20T07:43:07.998077+00:00",
+      "title": "Whole-month staffing and equality verified against independent oracle",
+      "detail": "Control/boundary/leave/reversed slot cases match exact safe maxima;49tests pass,no new assignment writes.21Done unchanged;N35Inprogress."
+    },
+    {
+      "at": "2026-11-20T07:57:24.237242+00:00",
+      "title": "Dated posting/call changes and partial leave verified across a month",
+      "detail": "Independent optimum matched in3new30-daycases;72tests pass. Unknown destination calendar correctly refused before fixture correction.21Done unchanged,N35Inprogress."
+    },
+    {
+      "at": "2026-11-20T08:08:31.097762+00:00",
+      "title": "Dated specialist competition checked across a complete month",
+      "detail": "Injective identity oracle and real optimizer agree on safe maximumcoverage/equality;75tests pass.21Done unchanged,N35Inprogress;nextunit/personarchitectureevidence."
+    },
+    {
+      "at": "2026-11-20T08:38:40.265063+00:00",
+      "title": "Joint unit/person planning compared with month-wide template repair",
+      "detail": "Both methods safely reach fixturecoverage/equalitybounds;lockedemptyduty preserved;runtime/memory/trace retained.9regressionspass.21Done unchanged,N26preparatoryscopeonly."
+    },
+    {
+      "at": "2026-11-20T09:18:56.592481+00:00",
+      "title": "Coordinated repair recovers a duty missed by single-coordinate month repair",
+      "detail": "Candidate/rest pair priority resolves observed budget starvation on a known fixture. Twelve tests passed; three saved commitments remain unchanged. Completion stays at 21/50; N26 acceptance is open."
+    },
+    {
+      "at": "2026-11-20T09:45:57.742185+00:00",
+      "title": "Production objective construction reused by full-tier month comparison",
+      "detail": "Existing order and scoring preserved. Ninety-five tests passed across final and additional gates; both methods retain safe full coverage with unproved lower tiers visible. Completion stays at 21/50."
+    }
+  ]
+}

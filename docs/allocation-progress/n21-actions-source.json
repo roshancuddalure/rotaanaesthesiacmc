@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-14T15:43:05.949400+00:00",
+  "scope": "N21 original acceptance closed using existingcanonicaleditor/cancellation/history/filter source; scoped leaveActivity projection plus restored24h shortcircuit. No schema/clinicalpermission amendment.",
+  "sha256": {
+    "frontend/src/record-workspace.ts": "4d29d31b9c13e8f0b19f7b6d1f30e12573b830f5aa50dc7ab2312e7c649f3fe0",
+    "frontend/src/member-workspace.ts": "d7ca7ea2a75a3dd0de3388f1cc8a42c01b5ecdaf96050b7c732f491ce9056d11",
+    "frontend/src/member-leave-cancel.ts": "0b33a1133b7500e7c8bb13399f3debab3e8a6ad22cb188a8470935c47e1382cf",
+    "backend/app/api/v1/member_workspace.py": "28d486772b05200e1334d0af292cb642dde7154b0e397704a94f2831d9dce919",
+    "backend/app/services/member_activity_projection.py": "ec06fa0757684901bee2334d2e16a93169e4f10ef9df897acc3a7998fe8d31f1",
+    "backend/app/services/rota_safety.py": "1f8263dd3d62e50c085ba9675004f781be73ef691b5a6bea9a874a172271c320",
+    "backend/tests/test_member_leave_activity.py": "81fa957564c304cd2f8c27511a2c02c35736d276aaf07944c8624bb140d8b9ab",
+    "frontend/tests/member-leave-actions.browser.mjs": "dff5a2fa202aab3d13edac660f6a733f48e7665101aa28f674ea7885a2858816",
+    "tools/member_leave_smoke_server.py": "dfa00c59db13278cc1ffe48a970cd733de841a8cc7e35aea7b27da3c3d66f7d7"
+  },
+  "backend_results": {
+    "n21-actions-backend.xml": {
+      "tests": 53,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "n21-actions-backend-final.xml": {
+      "tests": 59,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "tests": {
+    "frontend": "135passed0fail/skip/cancel n21-actions-unit.log",
+    "build": "TS/Vitepassed n21-actions-build.log existingwarnings",
+    "workspace_regression": "10workflows n21-actions-workspace-regression.log",
+    "canonical_browser": [
+      {
+        "width": 1440,
+        "canonical_create_reason": true,
+        "canonical_approval_reason": true,
+        "stale_review_refused": true,
+        "profile_read_retry": true,
+        "global_profile_reconcile": true,
+        "activity_private_notes_omitted": true,
+        "cancel_lost_response_readonly_recovery": true,
+        "cancel_posts": 1,
+        "axe_serious_critical": 0,
+        "errors": []
+      },
+      {
+        "width": 390,
+        "canonical_create_reason": true,
+        "canonical_approval_reason": true,
+        "stale_review_refused": true,
+        "profile_read_retry": true,
+        "global_profile_reconcile": true,
+        "activity_private_notes_omitted": true,
+        "cancel_lost_response_readonly_recovery": true,
+        "cancel_posts": 1,
+        "axe_serious_critical": 0,
+        "errors": []
+      },
+      {
+        "width": 320,
+        "canonical_create_reason": true,
+        "canonical_approval_reason": true,
+        "stale_review_refused": true,
+        "profile_read_retry": true,
+        "global_profile_reconcile": true,
+        "activity_private_notes_omitted": true,
+        "cancel_lost_response_readonly_recovery": true,
+        "cancel_posts": 1,
+        "axe_serious_critical": 0,
+        "errors": []
+      }
+    ]
+  }
+}

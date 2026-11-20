@@ -1,5 +1,65 @@
 # Development Log
 
+## 2026-11-14 - November OT editor and dated availability checkpoint
+
+Completed N07/N08 input/precedence contracts and N10/N11 native OT calendar editor
+and canonical dated availability, bringing the tracker to 7/50 Done. Added preview
+and saved-day coverage APIs with explicit scope: ordinary unit/call reserve minima
+are not yet evaluated. No first-read rule initialization in this preview; no
+operational migration/deployment or model/cloud changes. Feature defaults off.
+
+Covered midnight posting/call changes, pooled calls, simultaneous identity use,
+approved versus pending leave, duty-specific elective blocks, cross-month/extended
+rest, explicit zero versus missing/partial area demand, strict dates and data gaps.
+The editor preserves drafts on stale/uncertain responses, invalidates previews on
+new edits and prevents save-modal Escape/navigation during an in-flight mutation.
+
+Evidence: final focused OT suite 75 passed; broader rules/compute regression 104
+passed before final edge refinements; frontend 127 passed; native editor browser
+10 workflows + six theme/viewport/accessibility checks passed; build/Ruff passed.
+Counts overlap. See docs/allocation-progress/ot-calendar-contract.md, final XML and
+browser JSON/screenshots. Next: N12 combined reserve/qualification feasibility,
+N14 all-path enforcement, and N13 monthly pressure views; full goal remains active.
+
+## 2026-11-14 - Approved November allocation implementation, first checkpoint
+
+User approved implementation/testing of all 50 actions and requested a graphical
+progress window on every resume. Added root AGENTS.md resume rule and dedicated
+read-only loopback dashboard (5201), with workstream charts, searchable tracker,
+elapsed wall time, estimate calibration, journal and verification evidence.
+
+Completed N01/N03 source/constraint registers and N09 versioned OT persistence/admin
+APIs. Added immutable OT recurring/date contracts and identity-level simultaneous
+reservation matcher under test; these are not yet integrated into operational
+allocation. New OT feature defaults off; no operational migration was applied.
+
+Fresh evidence: 93 baseline backend tests; 124 frontend unit tests; production build;
+desktop/390/320 dashboard browser checks; 35 OT oracle/scenario tests; final focused
+OT/compute/security suite 99 passed; disposable PostgreSQL migration/sentinel and
+concurrency run 15 passed, including simultaneous OT calendar edits. Counts overlap
+and must not be summed as unique tests. Detailed evidence, initial fixture failure
+and its correction, limitations, and next steps are in the 50-item tracker and
+docs/allocation-progress. Fresh 96-member benchmark preserved October artifacts.
+
+3/50 accepted; full objective remains active. Next: N10 admin calendar UI and N11
+canonical dated availability, then all-path OT protection and holistic optimization.
+Existing unrelated frontend work was preserved.
+
+## 2026-11-14 - November allocation improvement planning (approval pending)
+
+Reviewed `Plan/to do/NOvember26.txt`, the preceding allocation/WebGPU/AI report,
+current allocation and leave services, and the amended call-level/fairness contracts.
+Created `Plan/to do/November26_allocation_action_tracker.md` with exactly 50
+dependency-linked action items, acceptance evidence, policy decisions, rollout gates,
+approval record, and an append-only implementation log. It covers OT demand by
+unit/weekday/call, integrated profile leave history, holistic unit/person allocation,
+measured GPU work, optional multimodel assistance, and regression/disaster testing.
+
+All 50 items await user approval. The attached notes were treated as requirements
+input, not implementation authorization. No application code, operational data,
+models, or deployment was changed; no runtime tests were run for this planning step.
+Existing unrelated working-tree changes were preserved.
+
 ## 2026-10-17 - Department Member Workspace
 
 User approved implementing the full 65-item profile/UI/CSV plan. Scope and verification

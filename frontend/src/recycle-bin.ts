@@ -46,7 +46,8 @@ function batchCard(batch: RecycleBinBatch, outcome: Outcome | undefined, busy: b
       ${restored ? badge("Restored", "success") : ""}
     </div>
     ${batch.labels.length ? `<ul class="rb-batch__labels">${batch.labels.map((label) => `<li>${esc(label)}</li>`).join("")}${more > 0 ? `<li class="rb-batch__more">and ${more} more</li>` : ""}</ul>` : ""}
-    <p class="rb-batch__meta">Deleted ${esc(when(batch.deleted_at))}${batch.deleted_by ? ` by ${esc(batch.deleted_by)}` : ""}</p>
+    <p class="rb-batch__meta">Deletion batch: ${esc(batch.batch_id)}</p>
+    <p class="rb-batch__meta">Deleted ${esc(when(batch.deleted_at))}${batch.deleted_by ? ` by ${esc(batch.deleted_by)}` : " · Account not recorded"}</p>
     ${restored
       ? `<p class="rb-batch__meta">Restored ${esc(when(batch.restored_at))}${batch.restored_by ? ` by ${esc(batch.restored_by)}` : ""}</p>`
       : `<p class="rb-batch__meta">Removed for good on ${esc(formatDate(batch.purge_after, { weekday: false }))}</p>`}
@@ -54,9 +55,9 @@ function batchCard(batch: RecycleBinBatch, outcome: Outcome | undefined, busy: b
       <p>${esc(outcome.text)}</p>
       ${outcome.failed?.length ? `<ul>${outcome.failed.map((item) => `<li><strong>${esc(item.label)}</strong>: ${esc(item.reason)}</li>`).join("")}</ul>` : ""}
     </div>` : ""}
-    ${restored ? "" : `<div class="rb-batch__actions">
-      <button type="button" class="primary btn-sm" data-rb-restore="${esc(batch.batch_id)}" ${busy ? "disabled" : ""}>Restore</button>
-      <button type="button" class="icon-button danger-button btn-sm" data-rb-purge="${esc(batch.batch_id)}" ${busy ? "disabled" : ""}>Delete forever…</button>
+    ${restored ? "" : `<p class="rb-batch__meta">Restore attempts only the records in this deletion batch. Conflicts are reported below. Delete forever permanently removes this batch from recovery.</p><div class="rb-batch__actions">
+      <button type="button" class="primary btn-sm" data-rb-restore="${esc(batch.batch_id)}" aria-label="Restore ${esc(kindText(batch.kind, batch.count))} from deletion batch ${esc(batch.batch_id)}" ${busy ? "disabled" : ""}>Restore</button>
+      <button type="button" class="icon-button danger-button btn-sm" data-rb-purge="${esc(batch.batch_id)}" aria-label="Delete ${esc(kindText(batch.kind, batch.count))} forever from deletion batch ${esc(batch.batch_id)}" ${busy ? "disabled" : ""}>Delete forever…</button>
     </div>`}
   </li>`;
 }
@@ -153,7 +154,7 @@ export async function renderRecycleBin(root: HTMLElement): Promise<void> {
   async function act(batchId: string, kind: "restore" | "purge") {
     const batch = batches.find((item) => item.batch_id === batchId);
     if (!batch || busy || refreshRequired || !alive()) return;
-    if (kind === "purge" && !window.confirm(`Delete ${kindText(batch.kind, batch.count)} forever? This cannot be undone.`)) return;
+    if (kind === "purge" && !window.confirm(`Delete ${kindText(batch.kind, batch.count)} forever from deletion batch ${batchId}? This cannot be undone.`)) return;
     const restoreFocus = focusAfterAction();
     busy = true;
     notice = "";
@@ -165,16 +166,16 @@ export async function renderRecycleBin(root: HTMLElement): Promise<void> {
         const failed = result.failed ?? [];
         outcomes.set(batchId, {
           tone: failed.length ? (result.restored ? "warning" : "danger") : "success",
-          text: `Restored ${result.restored} of ${batch.count}.${failed.length ? ` ${failed.length} could not be restored:` : ""}`,
+          text: `Restored ${result.restored} of ${batch.count} from deletion batch ${batchId}.${failed.length ? ` ${failed.length} could not be restored:` : ""}`,
           failed,
         });
-        notice = `Restore finished: ${result.restored} of ${batch.count} restored.${failed.length ? ` ${failed.length} could not be restored; see the details below.` : ""}`;
+        notice = `Restore finished for deletion batch ${batchId}: ${result.restored} of ${batch.count} restored.${failed.length ? ` ${failed.length} could not be restored; see the details below.` : ""}`;
       } else {
         const result = await purgeRecycleBatch(batchId);
         if (!alive()) return;
         outcomes.delete(batchId);
         batches = batches.filter((item) => item.batch_id !== batchId);
-        notice = `Deleted forever: ${kindText(batch.kind, result.purged ?? batch.count)}.`;
+        notice = `Deleted forever: ${kindText(batch.kind, result.purged ?? batch.count)} from deletion batch ${batchId}.`;
       }
       refreshRequired = true;
       loadError = "";
@@ -190,7 +191,7 @@ export async function renderRecycleBin(root: HTMLElement): Promise<void> {
       }
     } catch (error) {
       if (!alive()) return;
-      outcomes.set(batchId, { tone: "danger", text: messageOf(error, kind === "restore" ? "Restore failed." : "Delete failed.") });
+      outcomes.set(batchId, { tone: "danger", text: `${kind === "restore" ? "Restore" : "Permanent deletion"} for deletion batch ${batchId}: ${messageOf(error, kind === "restore" ? "Restore failed." : "Delete failed.")}` });
     } finally {
       busy = false;
       render();

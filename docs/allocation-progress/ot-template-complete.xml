@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="92" time="66.394" timestamp="2026-11-14T13:55:35.716721+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_template" name="test_capacity_checks_all_proposed_slots_without_queries_or_assignments" time="0.765"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB81E80B10&gt;, &lt;app.models.unit.Unit object at 0x000001EB82A2D950&gt;, [...50&gt;, &lt;app.models.person.Person object at 0x000001EB83C958D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB83D22CD0&gt;)
+
+    def test_capacity_checks_all_proposed_slots_without_queries_or_assignments(environment):
+        db, _unit, _people, target = environment
+        checker = TemplateOtCapacity(db, "2026-11", (target,))
+        other = SimpleNamespace(**{name: getattr(target, name) for name in (
+            "unit_id", "duty_date", "duty_type", "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")}, id=uuid4())
+        def refuse_sql(*args):
+            pytest.fail("Template capacity check attempted SQL after snapshot load")
+        event.listen(db.get_bind(), "before_cursor_execute", refuse_sql)
+        try:
+&gt;           assert checker.check([target])["status"] == "feasible"
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_ot_template.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB82AC2F10&gt;
+slots = [&lt;app.models.rota.DutySlot object at 0x000001EB83D22CD0&gt;]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_capacity_budget_failure_is_unknown_and_is_not_cached_as_shortage" time="0.300"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB81D31610&gt;, &lt;app.models.unit.Unit object at 0x000001EB8225F4D0&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001EB827878D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB83F33F90&gt;)
+
+    def test_capacity_budget_failure_is_unknown_and_is_not_cached_as_shortage(environment):
+        db, _unit, _people, target = environment
+        checker = TemplateOtCapacity(db, "2026-11", (target,))
+        assert checker.check([target], seconds=0)["status"] == "not_evaluated"
+&gt;       assert checker.check([target])["status"] == "feasible"
+               ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_ot_template.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB83E43550&gt;
+slots = [&lt;app.models.rota.DutySlot object at 0x000001EB83F33F90&gt;]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_template_cannot_force_ot_shortage_or_unknown_into_a_unit[False]" time="0.299"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB81DE8F10&gt;, &lt;app.models.unit.Unit object at 0x000001EB83F40DD0&gt;, [...10&gt;, &lt;app.models.person.Person object at 0x000001EB82995010&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB8411BB50&gt;)
+missing = False
+
+    @pytest.mark.parametrize("missing", [False, True])
+    def test_template_cannot_force_ot_shortage_or_unknown_into_a_unit(environment, missing):
+        db, unit, _people, _target = environment
+        lock_scope(db, unit)
+        if missing:
+            db.query(OtCalendar).delete()
+            db.commit()
+        else:
+            demand(db, unit, minimum=4)
+&gt;       result = generate_empty_template(db, "2026-11", TemplateGenerationOptions(
+            duty_keys=[KEY], starts_on=DAY, ends_on=DAY))
+
+tests\test_ot_template.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB840BEE90&gt;
+slots = [namespace(id=UUID('0afbfbe5-bf49-51a9-9e99-1ac5c2e4466b'), unit_id=UUID('2292c13b-640d-48ce-8351-cbb1e6c2c143'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_template_cannot_force_ot_shortage_or_unknown_into_a_unit[True]" time="0.367" /><testcase classname="tests.test_ot_template" name="test_template_does_not_double_book_people_for_second_simultaneous_duty" time="0.280"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EBFFE767D0&gt;, &lt;app.models.unit.Unit object at 0x000001EB8400ED10&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001EB8426DA90&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB842A4410&gt;)
+
+    def test_template_does_not_double_book_people_for_second_simultaneous_duty(environment):
+        db, unit, _people, _target = environment
+        lock_scope(db, unit)
+        extra = add_second_duty(db)
+&gt;       result = generate_empty_template(db, "2026-11", TemplateGenerationOptions(
+            duty_keys=[KEY, extra], starts_on=DAY, ends_on=DAY))
+
+tests\test_ot_template.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB84266250&gt;
+slots = [namespace(id=UUID('05eb9a21-dda7-5ea7-b55d-98432c1f5a56'), unit_id=UUID('8383adbb-1f66-402c-999d-8544a16d45ef'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_template_retains_protected_existing_assignments" time="0.239"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB8249E190&gt;, &lt;app.models.unit.Unit object at 0x000001EB8246A750&gt;, [...10&gt;, &lt;app.models.person.Person object at 0x000001EB845D8D10&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB842C0C50&gt;)
+
+    def test_template_retains_protected_existing_assignments(environment):
+        db, unit, people, target = environment
+        saved = DutyAssignment(person=people[0], duty_slot=target, status="assigned")
+        db.add(saved)
+        db.commit()
+        checker = TemplateOtCapacity(db, "2026-11", (target,))
+        other = SimpleNamespace(**{name: getattr(target, name) for name in (
+            "unit_id", "duty_date", "duty_type", "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")}, id=uuid4())
+&gt;       assert checker.check([other])["status"] == "infeasible"
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_ot_template.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB84371B90&gt;
+slots = [namespace(unit_id=UUID('7144adff-9eb7-462e-a160-8f212b57aba4'), duty_date=datetime.date(2026, 11, 19), duty_type='MAI... 11, 20, 8, 0), is_24hr=True, call_level='3RD_CALL', max_assignees=1, id=UUID('ec929e03-d5a5-4d98-a9b1-7d07b824dbb3'))]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people[False-server]" time="0.362"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB8254D350&gt;, &lt;app.models.unit.Unit object at 0x000001EB8221D990&gt;, [...90&gt;, &lt;app.models.person.Person object at 0x000001EB842A6710&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB840A48D0&gt;)
+engine = 'server', changed_calendar = False
+
+    @pytest.mark.parametrize("engine", ["server", "local_gpu"])
+    @pytest.mark.parametrize("changed_calendar", [False, True])
+    def test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people(environment, engine, changed_calendar):
+        from uuid import UUID
+        from app.models import RotaComputeJob
+        from app.services import rota_compute as compute, template_compute as template
+        from app.services.compute_kernels import ranks
+        db, unit, _people, target = environment
+        original_id = target.id
+        lock_scope(db, unit)
+        operator = UserAccount(username="template-ot-admin", display_name="Template administrator",
+            role="computer_admin", password_hash="fixture")
+        db.add(operator)
+        db.commit()
+        config = {"duty_keys": [KEY], "starts_on": str(DAY), "ends_on": str(DAY), "replace_existing": True}
+        started = template.start(db, "2026-11", operator, config, engine)
+        job = db.get(RotaComputeJob, UUID(started["id"]))
+        for _ in range(8):
+            if job.status == "completed":
+                break
+            frame = compute.serialize(job)["frame"]
+&gt;           compute.advance(db, job, job.revision,
+                ranks(frame["rows"], frame["ties"]).index(0) if frame else None,
+                frame["token"] if frame else None)
+
+tests\test_ot_template.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_compute.py:350: in advance
+    return advance_template(db, job, revision, selection, token, fallback,selections)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:209: in advance
+    result = preview(db, job.month, template["options"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:124: in preview
+    result = generate_empty_template(
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB83F5B890&gt;
+slots = [namespace(id=UUID('0a92b3d9-81f9-5cbd-b26e-605eb2e79fc0'), unit_id=UUID('4a5e52bf-dfef-4d3f-8b93-5448827d1bd2'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people[False-local_gpu]" time="0.550"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB8223C8D0&gt;, &lt;app.models.unit.Unit object at 0x000001EB83FB6810&gt;, [...10&gt;, &lt;app.models.person.Person object at 0x000001EB8435E8D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB841D5550&gt;)
+engine = 'local_gpu', changed_calendar = False
+
+    @pytest.mark.parametrize("engine", ["server", "local_gpu"])
+    @pytest.mark.parametrize("changed_calendar", [False, True])
+    def test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people(environment, engine, changed_calendar):
+        from uuid import UUID
+        from app.models import RotaComputeJob
+        from app.services import rota_compute as compute, template_compute as template
+        from app.services.compute_kernels import ranks
+        db, unit, _people, target = environment
+        original_id = target.id
+        lock_scope(db, unit)
+        operator = UserAccount(username="template-ot-admin", display_name="Template administrator",
+            role="computer_admin", password_hash="fixture")
+        db.add(operator)
+        db.commit()
+        config = {"duty_keys": [KEY], "starts_on": str(DAY), "ends_on": str(DAY), "replace_existing": True}
+        started = template.start(db, "2026-11", operator, config, engine)
+        job = db.get(RotaComputeJob, UUID(started["id"]))
+        for _ in range(8):
+            if job.status == "completed":
+                break
+            frame = compute.serialize(job)["frame"]
+&gt;           compute.advance(db, job, job.revision,
+                ranks(frame["rows"], frame["ties"]).index(0) if frame else None,
+                frame["token"] if frame else None)
+
+tests\test_ot_template.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_compute.py:350: in advance
+    return advance_template(db, job, revision, selection, token, fallback,selections)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:209: in advance
+    result = preview(db, job.month, template["options"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:124: in preview
+    result = generate_empty_template(
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB8472D750&gt;
+slots = [namespace(id=UUID('b456d33a-4b21-57c5-b2a4-0d80530dee7d'), unit_id=UUID('d13617f8-8547-4476-9060-48d1d4dbf8cf'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people[True-server]" time="0.406"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB824A8AD0&gt;, &lt;app.models.unit.Unit object at 0x000001EB84195950&gt;, [...10&gt;, &lt;app.models.person.Person object at 0x000001EB83DA9F10&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB83D2CF50&gt;)
+engine = 'server', changed_calendar = True
+
+    @pytest.mark.parametrize("engine", ["server", "local_gpu"])
+    @pytest.mark.parametrize("changed_calendar", [False, True])
+    def test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people(environment, engine, changed_calendar):
+        from uuid import UUID
+        from app.models import RotaComputeJob
+        from app.services import rota_compute as compute, template_compute as template
+        from app.services.compute_kernels import ranks
+        db, unit, _people, target = environment
+        original_id = target.id
+        lock_scope(db, unit)
+        operator = UserAccount(username="template-ot-admin", display_name="Template administrator",
+            role="computer_admin", password_hash="fixture")
+        db.add(operator)
+        db.commit()
+        config = {"duty_keys": [KEY], "starts_on": str(DAY), "ends_on": str(DAY), "replace_existing": True}
+        started = template.start(db, "2026-11", operator, config, engine)
+        job = db.get(RotaComputeJob, UUID(started["id"]))
+        for _ in range(8):
+            if job.status == "completed":
+                break
+            frame = compute.serialize(job)["frame"]
+&gt;           compute.advance(db, job, job.revision,
+                ranks(frame["rows"], frame["ties"]).index(0) if frame else None,
+                frame["token"] if frame else None)
+
+tests\test_ot_template.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_compute.py:350: in advance
+    return advance_template(db, job, revision, selection, token, fallback,selections)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:209: in advance
+    result = preview(db, job.month, template["options"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:124: in preview
+    result = generate_empty_template(
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB846DBD10&gt;
+slots = [namespace(id=UUID('be44b2f8-b6f0-5a81-a9f2-a399f7c9b5db'), unit_id=UUID('7f32c223-e871-4dee-b0cb-d58ec1c8cf7c'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people[True-local_gpu]" time="0.423"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EBE362C8D0&gt;, &lt;app.models.unit.Unit object at 0x000001EB8417B3D0&gt;, [...90&gt;, &lt;app.models.person.Person object at 0x000001EB8417B750&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB8462F610&gt;)
+engine = 'local_gpu', changed_calendar = True
+
+    @pytest.mark.parametrize("engine", ["server", "local_gpu"])
+    @pytest.mark.parametrize("changed_calendar", [False, True])
+    def test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people(environment, engine, changed_calendar):
+        from uuid import UUID
+        from app.models import RotaComputeJob
+        from app.services import rota_compute as compute, template_compute as template
+        from app.services.compute_kernels import ranks
+        db, unit, _people, target = environment
+        original_id = target.id
+        lock_scope(db, unit)
+        operator = UserAccount(username="template-ot-admin", display_name="Template administrator",
+            role="computer_admin", password_hash="fixture")
+        db.add(operator)
+        db.commit()
+        config = {"duty_keys": [KEY], "starts_on": str(DAY), "ends_on": str(DAY), "replace_existing": True}
+        started = template.start(db, "2026-11", operator, config, engine)
+        job = db.get(RotaComputeJob, UUID(started["id"]))
+        for _ in range(8):
+            if job.status == "completed":
+                break
+            frame = compute.serialize(job)["frame"]
+&gt;           compute.advance(db, job, job.revision,
+                ranks(frame["rows"], frame["ties"]).index(0) if frame else None,
+                frame["token"] if frame else None)
+
+tests\test_ot_template.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_compute.py:350: in advance
+    return advance_template(db, job, revision, selection, token, fallback,selections)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:209: in advance
+    result = preview(db, job.month, template["options"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\template_compute.py:124: in preview
+    result = generate_empty_template(
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB846C3C90&gt;
+slots = [namespace(id=UUID('aea5d7ff-8b63-5102-87a6-b2afeba7df2e'), unit_id=UUID('dd35729f-8a3a-407e-a87d-a76a50310f03'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ot_template" name="test_reviewed_zero_ot_keeps_existing_non_ot_forced_review_semantics" time="0.439" /><testcase classname="tests.test_ot_template" name="test_feature_off_keeps_existing_template_behavior" time="0.235" /><testcase classname="tests.test_ot_template" name="test_vertical_shuffle_cannot_move_duty_into_unit_whose_people_are_all_reserved" time="0.723"><failure message="AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB82593190&gt;, &lt;app.models.unit.Unit object at 0x000001EBFFE84D90&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001EB847C6710&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB845564D0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001EB83DF8B90&gt;
+
+    def test_vertical_shuffle_cannot_move_duty_into_unit_whose_people_are_all_reserved(environment, monkeypatch):
+        from copy import deepcopy
+        from app.models import Person, PersonPosting, Unit
+        from app.services.ot_calendar_store import CalendarConfiguration, canonical, revision
+        db, unit, _people, _target = environment
+        lock_scope(db, unit)
+        other = Unit(code="UNIT_V", name="Unit V", minimum_free_people=0)
+        db.add(other)
+        db.flush()
+        for home, count in ((unit, 4), (other, 8)):
+            for index in range(count):
+                person = Person(canonical_name=f"Anonymous {home.code} {index}", active_status="active", call_level="3RD_CALL")
+                db.add(person)
+                db.flush()
+                db.add(PersonPosting(person=person, unit=home, posting_type="3RD_CALL",
+                    starts_on=date(2026, 10, 1), source="unit_board"))
+        _, scope = monthly_setup(db, "2026-11")
+        db.add(MonthlyGenerationScopeUnit(scope=scope, unit=other, status="included"))
+        db.commit()
+        demand(db, unit, minimum=2)
+        demand(db, other, minimum=2)
+        row = db.query(OtCalendar).filter_by(unit_id=other.id).one()
+        config = deepcopy(row.configuration)
+        config["exceptions"] = [{"id": str(uuid4()), "unit_id": str(other.id), "area_key": "main",
+            "day": str(DAY), "closed": False, "bands": [{"key": "senior", "start_minute": 480,
+                "end_minute": 960, "call_levels": ["3RD_CALL"], "minimum": 8, "target": 8}]}]
+        row.configuration = canonical(CalendarConfiguration.model_validate(config))
+        row.revision = revision(row.configuration)
+        db.commit()
+        extra = add_second_duty(db)
+        attempted = []
+        original = TemplateOtCapacity.check
+        def record(self, slots, **kwargs):
+            result = original(self, slots, **kwargs)
+            if len(slots) == 4 and any(s.unit_id == other.id and s.duty_date == DAY for s in slots):
+                attempted.append(result["status"])
+            return result
+        monkeypatch.setattr(TemplateOtCapacity, "check", record)
+&gt;       result = generate_empty_template(db, "2026-11", TemplateGenerationOptions(
+            duty_keys=[KEY, extra], starts_on=DAY, ends_on=DAY + timedelta(days=1)))
+
+tests\test_ot_template.py:220: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_template.py:1444: in generate_empty_template
+    selected, allocations = choose_balanced_unit(
+app\services\rota_template.py:1039: in choose_balanced_unit
+    protection = ot_assessment(unit, day, rule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\rota_template.py:1432: in ot_assessment
+    return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+tests\test_ot_template.py:215: in record
+    result = original(self, slots, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.services.ot_template.TemplateOtCapacity object at 0x000001EB84BC6710&gt;
+slots = [namespace(id=UUID('6899f8a1-7968-5874-b096-c0a56d7c1bd8'), unit_id=UUID('c1b9555f-938e-4712-817c-832d4affa33d'), duty...t=datetime.datetime(2026, 11, 19, 8, 0), ends_at=datetime.datetime(2026, 11, 20, 8, 0), is_24hr=True, max_assignees=1)]
+
+    def check(self, slots, *, seconds=5.0):
+        """Prove all unit-assigned, unfilled slots together with preserved duties."""
+        ordered = sorted(slots, key=slot_signature)
+        count = len(ordered)
+        if count &gt; 512:
+            return self.report("not_evaluated", count, "Template capacity exceeds the supported duty count.")
+        if self.guard is None or self.guard.unresolved or not self.guard.reviewed_complete:
+            return self.report("not_evaluated", count, "Reviewed OT demand and dated availability are incomplete.")
+        if any(slot.unit_id is None for slot in ordered):
+            return self.report("not_evaluated", count, "An unallocated duty has no unit capacity to verify.")
+        if not any(row.minimum for row in (*self.guard.requirements, *self.guard.reserves)):
+            return self.report("feasible", count, "Reviewed OT and reserve demand is zero.")
+        signature = tuple(slot_signature(slot) for slot in ordered)
+        if signature in self.cache:
+            return deepcopy(self.cache[signature])
+        deadline = perf_counter() + seconds
+        model = cp_model.CpModel()
+        slot_map = {str(index): SimpleNamespace(
+            id=slot.id or uuid5(NAMESPACE_URL, f"template-slot:{index}:{slot_signature(slot)}"),
+            **{name: getattr(slot, name) for name in ("unit_id", "duty_date", "duty_type",
+                "starts_at", "ends_at", "is_24hr", "call_level", "max_assignees")})
+            for index, slot in enumerate(ordered)}
+        choices, by_person = {}, defaultdict(list)
+        try:
+            for key, slot in slot_map.items():
+                if perf_counter() &gt;= deadline:
+                    return self.report("not_evaluated", count, "Template OT capacity reached its work budget.")
+                fingerprint = slot_signature(slot)
+                if fingerprint not in self.candidates:
+                    if len(self.candidates) &gt;= 2048:
+                        self.candidates.pop(next(iter(self.candidates)))
+                    if len(self.physical._eligibility) &gt;= 200000:
+                        self.physical._eligibility.clear()
+                    self.candidates[fingerprint] = tuple(sorted((person_id for person_id in
+&gt;                       self.physical.unit_members(slot.duty_date, slot.unit_id)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        if not strict_blockers(self.physical, person_id, slot, slot.unit_id)), key=str))
+E                       AttributeError: 'ExtraDutyContext' object has no attribute 'unit_members'
+
+app\services\ot_template.py:92: AttributeError</failure></testcase><testcase classname="tests.test_rota_template" name="test_generate_empty_template_forces_hard_blocked_slots_for_review" time="0.220" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_requires_locked_scope" time="0.134" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_balances_duties_across_units" time="0.237" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_balances_duty_families_and_call_buckets" time="1.272" /><testcase classname="tests.test_rota_template" name="test_duty_rules_rotate_family_order_by_day" time="0.005" /><testcase classname="tests.test_rota_template" name="test_allocation_statistics_includes_generation_diagnostics" time="1.496" /><testcase classname="tests.test_rota_template" name="test_template_generation_supports_unit_people_and_hybrid_fairness_policies" time="2.037" /><testcase classname="tests.test_rota_template" name="test_vertical_shuffle_reduces_same_day_group_duplicates_without_changing_counts" time="0.429" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_balances_saturdays_and_sundays_across_units" time="0.564" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_counts_previous_24hr_duty_as_next_day_unavailable" time="0.539" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_forces_and_balances_when_all_units_hard_blocked" time="0.351" /><testcase classname="tests.test_rota_template" name="test_allocation_statistics_summarizes_units_dates_and_blocked_events" time="0.528" /><testcase classname="tests.test_rota_template" name="test_cluster_specific_duties_show_cluster_suffix_in_unit_assignment_label" time="0.303" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_uses_unit_minimum_free_people" time="0.281" /><testcase classname="tests.test_rota_template" name="test_generate_empty_template_uses_call_wise_unit_minimum_free_people" time="0.700" /><testcase classname="tests.test_rota_template" name="test_template_month_excludes_historical_import_slots" time="0.335" /><testcase classname="tests.test_rota_template" name="test_clear_template_cache_removes_generated_slots_and_runs_only" time="0.244" /><testcase classname="tests.test_rota_template" name="test_clear_template_cache_blocks_assigned_generated_slots" time="0.275" /><testcase classname="tests.test_rota_template" name="test_clear_template_cache_can_remove_assignments_when_explicitly_requested" time="0.347" /><testcase classname="tests.test_rota_template" name="test_rota_template_api_generates_and_returns_template_month" time="1.583" /><testcase classname="tests.test_rota_template" name="test_rota_template_api_returns_allocation_statistics" time="1.690" /><testcase classname="tests.test_rota_template" name="test_rota_template_api_clears_cache" time="1.574" /><testcase classname="tests.test_rota_template" name="test_rota_template_api_clears_cache_with_assignments_when_requested" time="2.013" /><testcase classname="tests.test_rota_template" name="test_rota_template_eagle_eye_export_downloads_workbook" time="1.139" /><testcase classname="tests.test_rota_template" name="test_rota_template_call_wise_export_downloads_workbook" time="1.289" /><testcase classname="tests.test_rota_template" name="test_eagle_eye_export_groups_duties_with_divider_rows" time="0.158" /><testcase classname="tests.test_rota_template" name="test_call_wise_export_splits_slots_by_required_person_call_level" time="0.169" /><testcase classname="tests.test_template_compute" name="test_preview_has_no_operational_writes_apply_is_atomic_idempotent[server]" time="0.681" /><testcase classname="tests.test_template_compute" name="test_preview_has_no_operational_writes_apply_is_atomic_idempotent[local_gpu]" time="0.576" /><testcase classname="tests.test_template_compute" name="test_rejects_wrong_gpu_choice_then_recovers_without_apply" time="0.348" /><testcase classname="tests.test_template_compute" name="test_stale_input_rejects_template_apply" time="0.663" /><testcase classname="tests.test_template_compute" name="test_published_generation_and_clear_are_rejected" time="0.132" /><testcase classname="tests.test_template_compute" name="test_signed_lexicographic_extremes_and_ordered_objectives" time="0.001" /><testcase classname="tests.test_rota_candidates" name="test_slot_candidates_rank_low_burden_person_and_explain_blockers" time="0.274" /><testcase classname="tests.test_rota_candidates" name="test_shift_slot_with_unassigned_call_level_is_unresolved_and_offers_nobody" time="0.189" /><testcase classname="tests.test_rota_candidates" name="test_weekend_slot_prefers_member_with_fewer_weekend_duties" time="0.268" /><testcase classname="tests.test_rota_candidates" name="test_rota_candidate_month_api_returns_ranked_candidates" time="1.307" /><testcase classname="tests.test_ot_assignment_integration" name="test_context_preserves_future_duties_through_extended_ot_horizon[ordinary]" time="1.018" /><testcase classname="tests.test_ot_assignment_integration" name="test_context_preserves_future_duties_through_extended_ot_horizon[verifier]" time="0.255" /><testcase classname="tests.test_ot_assignment_integration" name="test_context_preserves_future_duties_through_extended_ot_horizon[extra]" time="0.528" /><testcase classname="tests.test_ot_assignment_integration" name="test_manual_override_cannot_consume_mandatory_ot_and_does_not_write" time="0.206" /><testcase classname="tests.test_ot_assignment_integration" name="test_month_optimizer_models_joint_ot_scarcity_before_final_validation_cuts" time="0.292" /><testcase classname="tests.test_ot_assignment_integration" name="test_month_optimizer_retains_safe_partial_coverage_and_independent_validation" time="0.417" /><testcase classname="tests.test_ot_assignment_integration" name="test_month_optimizer_reports_unresolved_joint_context_without_certifying_empty_plan" time="0.207" /><testcase classname="tests.test_ot_assignment_integration" name="test_intelligent_job_surfaces_unknown_joint_ot_context_as_unresolved_decisions" time="0.410" /><testcase classname="tests.test_ot_assignment_integration" name="test_reviewed_intelligent_apply_preserves_ot_with_cpu_or_verified_gpu_hints[False-server]" time="1.083" /><testcase classname="tests.test_ot_assignment_integration" name="test_reviewed_intelligent_apply_preserves_ot_with_cpu_or_verified_gpu_hints[False-local_gpu]" time="0.900" /><testcase classname="tests.test_ot_assignment_integration" name="test_reviewed_intelligent_apply_preserves_ot_with_cpu_or_verified_gpu_hints[True-server]" time="0.868" /><testcase classname="tests.test_ot_assignment_integration" name="test_reviewed_intelligent_apply_preserves_ot_with_cpu_or_verified_gpu_hints[True-local_gpu]" time="0.713" /><testcase classname="tests.test_ot_assignment_integration" name="test_candidate_ranking_marks_ot_consumers_blocked" time="0.216" /><testcase classname="tests.test_ot_assignment_integration" name="test_context_is_loaded_once_and_preserved_when_optimizer_removes_slots" time="0.218" /><testcase classname="tests.test_ot_assignment_integration" name="test_final_plan_rejects_combination_of_individually_safe_choices" time="0.234" /><testcase classname="tests.test_ot_assignment_integration" name="test_replacement_releases_previous_holder_before_reserving_new_person" time="0.324" /><testcase classname="tests.test_ot_assignment_integration" name="test_month_end_assignment_protects_next_month_ot_despite_closed_duty_date" time="0.215" /><testcase classname="tests.test_ot_assignment_integration" name="test_missing_demand_is_unresolved_and_feature_off_retains_legacy_behavior" time="0.190" /><testcase classname="tests.test_ot_assignment_integration" name="test_extra_duty_strict_check_and_independent_verifier_protect_ot" time="0.598" /><testcase classname="tests.test_ot_assignment_integration" name="test_extra_duty_planner_recomputes_everyones_ot_alternatives_after_each_choice" time="0.327" /><testcase classname="tests.test_ot_assignment_integration" name="test_specialized_guards_keep_missing_calendar_unresolved" time="0.188" /><testcase classname="tests.test_ot_assignment_integration" name="test_superadmin_actual_write_cannot_bypass_ot_but_retains_published_month_authority" time="0.354" /><testcase classname="tests.test_ot_assignment_integration" name="test_publish_exposes_ot_deficit_and_preserves_attributed_superadmin_publish_override" time="0.956" /><testcase classname="tests.test_ot_assignment_integration" name="test_exchange_approval_rechecks_ot_after_calendar_changes_and_keeps_original_holder" time="0.311" /><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_checks_complete_set_and_excludes_replaced_duties" time="0.296" /><testcase classname="tests.test_ot_assignment_integration" name="test_archival_and_elapsed_restoration_remain_facts_without_demand" time="0.134" /><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_filters_cancelled_duties_and_feature_off_keeps_existing_behavior" time="0.179" /><testcase classname="tests.test_ot_assignment_integration" name="test_superadmin_undo_preview_and_apply_refuse_unsafe_restoration_atomically" time="1.166" /><testcase classname="tests.test_ot_assignment_integration" name="test_balance_undo_preview_and_apply_reject_ot_conflict_before_changing_rows" time="0.552" /><testcase classname="tests.test_ot_assignment_integration" name="test_generation_reversal_rejects_ot_conflict_in_preview_and_apply" time="0.280" /><testcase classname="tests.test_ot_assignment_integration" name="test_generation_reversal_previews_and_restores_safe_original_without_partial_writes" time="0.264" /><testcase classname="tests.test_ot_assignment_integration" name="test_recycle_restore_rolls_back_unsafe_recent_duty_but_preserves_archival_facts[False]" time="0.198" /><testcase classname="tests.test_ot_assignment_integration" name="test_recycle_restore_rolls_back_unsafe_recent_duty_but_preserves_archival_facts[True]" time="0.133" /><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_preview_neither_flushes_nor_discards_unrelated_pending_edits" time="0.193" /><testcase classname="tests.test_ot_joint_reservations" name="test_two_individually_safe_duties_cannot_consume_the_same_ot_reserve" time="0.005" /><testcase classname="tests.test_ot_joint_reservations" name="test_joint_duty_cannot_share_included_or_additional_reserve_staff[included-expected0]" time="0.004" /><testcase classname="tests.test_ot_joint_reservations" name="test_joint_duty_cannot_share_included_or_additional_reserve_staff[additional-expected1]" time="0.004" /><testcase classname="tests.test_ot_joint_reservations" name="test_reserve_can_handover_at_planned_duty_boundary_but_ot_band_cannot" time="0.008" /><testcase classname="tests.test_ot_joint_reservations" name="test_fixed_duties_and_unrelated_existing_deficits_are_handled_consistently" time="0.008" /><testcase classname="tests.test_ot_joint_reservations" name="test_missing_context_and_out_of_horizon_proposal_never_become_zero_demand" time="0.003" /><testcase classname="tests.test_ot_joint_reservations" name="test_joint_reservations_include_full_post_duty_rest_at_exact_boundary" time="0.003" /><testcase classname="tests.test_ot_joint_reservations" name="test_joint_model_matches_independent_guard_over_generated_final_sets" time="0.091" /></testsuite></testsuites>

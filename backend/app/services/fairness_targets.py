@@ -297,12 +297,28 @@ def target_by_level(
     """``{call_level: exact slots/members}`` for ranking (levels without members are absent).
     ``postings`` / ``leaves`` may be passed preloaded (``postings_for_month`` /
     ``leaves_by_day_and_person`` shapes) to avoid reloading them."""
+    targets, _member_levels = objective_target_basis(
+        db, month, rules, postings=postings, leaves=leaves
+    )
+    return targets
+
+
+def objective_target_basis(
+    db: Session, month: str, rules: Any = None, *, postings=None, leaves=None
+) -> tuple[dict[str, float], dict[UUID, str]]:
+    """Uniform targets and their canonical monthly member-level membership.
+
+    Eligibility remains dated. The monthly load objective uses the same first
+    posted-day membership as reporting, including its existing unposted tier;
+    it must not switch targets when candidate slots are iterated in another order.
+    """
     data = _Month(db, month, rules, postings=postings, leaves=leaves)
-    return {
+    targets = {
         level: data.slots_by_level[level] / len(data.members_by_level[level])
         for level in data.levels()
         if data.members_by_level.get(level)
     }
+    return targets, dict(data.level_of)
 
 
 def call_level_spread(db: Session, month: str, rules: Any = None) -> list[dict[str, Any]]:

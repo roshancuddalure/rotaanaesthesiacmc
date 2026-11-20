@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="57.239" timestamp="2026-11-20T05:50:36.089249+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_allocation_workload_and_pools" name="test_workload_normalization_beats_contrary_preferences_after_equality" time="2.317"><failure message="KeyError: '35e8098e-f07e-4b58-991e-403b22987d89'">compute_db = (&lt;sqlalchemy.orm.session.Session object at 0x0000014B26196990&gt;, &lt;app.models.auth.UserAccount object at 0x0000014B27BC9090&gt;)
+
+    def test_workload_normalization_beats_contrary_preferences_after_equality(compute_db):
+        db, _ = compute_db
+        unit, people = clear_fixture(db)
+        flexible, early, late = [people[name] for name in ("Safe Member", "Spare One", "Spare Two")]
+        people["Blocked Member"].active_status = "inactive"
+        _, rules = get_phase_one_rules(db)
+        rules.duty_rules.append(day_rule("AUDIT_DAY", ["1ST_CALL"]))
+        first = day_slot(db, unit, 5, "AUDIT_DAY", "1ST_CALL")
+        second = day_slot(db, unit, 8, "AUDIT_DAY", "1ST_CALL")
+        db.add_all([
+            LeaveRequest(person=early, leave_type="ANNUAL_LEAVE", leave_slot="FULL_DAY",
+                         starts_on=date(2026, 5, 8), ends_on=date(2026, 5, 8), status="approved"),
+            LeaveRequest(person=late, leave_type="ANNUAL_LEAVE", leave_slot="FULL_DAY",
+                         starts_on=date(2026, 5, 5), ends_on=date(2026, 5, 5), status="approved"),
+        ])
+        db.commit()
+        slots = {str(row.id): row for row in (first, second)}
+        context = candidate_context(db, "2026-05", rules=rules)
+        result = solve_month(
+            db, context, slots, seconds=5,
+            preferences={f"{first.id}:{early.id}": -1_000_000,
+                         f"{second.id}:{late.id}": -1_000_000},
+        )
+        # Independently enumerate the four compatible identity sequences. Equal load
+        # prefers two distinct people; among those, one flexible person costs50 and
+        # one single-opportunity person100. Early+late costs200 despite preferences.
+        plans = [
+            (a, b) for a in ("flexible", "early") for b in ("flexible", "late")
+        ]
+        opportunities = {"flexible": 2, "early": 1, "late": 1}
+        losses = {}
+        for plan in plans:
+            counts = Counter(plan)
+            equality = sum((Fraction(counts[name]) - Fraction(2, 3)) ** 2 for name in opportunities)
+            workload = sum(Fraction(counts[name] ** 2 * 100, opportunities[name]) for name in opportunities)
+            losses[plan] = (equality, workload)
+        best = min(losses.values())
+        expected = {plan for plan, loss in losses.items() if loss == best}
+        labels = {str(flexible.id): "flexible", str(early.id): "early", str(late.id): "late"}
+&gt;       actual = tuple(labels[result["choices"][str(row.id)]] for row in (first, second))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_allocation_workload_and_pools.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+.0 = &lt;tuple_iterator object at 0x0000014B2686A830&gt;
+
+&gt;   actual = tuple(labels[result["choices"][str(row.id)]] for row in (first, second))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: '35e8098e-f07e-4b58-991e-403b22987d89'
+
+tests\test_allocation_workload_and_pools.py:81: KeyError</failure></testcase><testcase classname="tests.test_allocation_workload_and_pools" name="test_dated_pool_uses_canonical_monthly_targets_without_eligibility_leak[False]" time="1.801" /><testcase classname="tests.test_allocation_workload_and_pools" name="test_dated_pool_uses_canonical_monthly_targets_without_eligibility_leak[True]" time="0.970" /></testsuite></testsuites>

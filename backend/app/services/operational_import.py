@@ -7,6 +7,7 @@ import json
 from collections import defaultdict
 import re
 from datetime import date, datetime, timedelta
+from types import SimpleNamespace
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -28,6 +29,7 @@ from app.models import (
     PersonPosting,
     UnitCallMinimum,
     ReferenceValue,
+    RotaPeriod,
     Unit,
 )
 from app.services.import_errors import blocking_rows_message, row_label
@@ -84,6 +86,7 @@ def fingerprint(db: Session) -> str:
         LeaveRequest,
         DutySlot,
         DutyAssignment,
+        RotaPeriod,
     ]:
         for row in db.execute(select(model.__table__).order_by(model.__table__.c.id)).mappings():
             state.append(
@@ -317,6 +320,7 @@ def normalize_rows(
     result = []
     index = MemberIndex.load(db)
     for row in rows:
+        duties = []
         values = {**row["values"], **corrections.get(row["key"], {})}
         person_id = values.get("person_id") or repeated.get("members", {}).get(
             member_key(values.get("member_name", ""))
@@ -477,27 +481,30 @@ def normalize_rows(
                             ):
                                 errors.append("Overlapping leave exists for the same session")
             if kind == "leave" and after.get("status") not in {"cancelled", "rejected"}:
-                conflicts = list(
-                    db.scalars(
-                        select(DutyAssignment)
-                        .join(DutySlot)
-                        .where(
-                            DutyAssignment.person_id == UUID(after["person_id"]),
-                            DutySlot.duty_date >= start,
-                            DutySlot.duty_date <= end,
-                        )
-                    )
-                )
-                from app.services.rota_safety import slot_leave_blocks
+                from app.services.leave_impact import affected_duties
 
-                proposal = LeaveRequest(leave_slot=after.get("leave_slot", "FULL_DAY"))
-                conflicts = [
-                    assignment
-                    for assignment in conflicts
-                    if slot_leave_blocks(proposal, assignment.duty_slot)
-                ]
-                if conflicts:
-                    warnings.append(f"{len(conflicts)} existing duties overlap this leave range")
+                # Detached prospective values share the manual/monthly impact
+                # calculation, including prior-month overnight commitments.
+                proposal = SimpleNamespace(
+                    id=target.id if target else row["key"],
+                    person_id=UUID(after["person_id"]),
+                    person=SimpleNamespace(canonical_name=person["canonical_name"]),
+                    starts_on=start, ends_on=end,
+                    leave_slot=after.get("leave_slot", "FULL_DAY"),
+                )
+                try:
+                    duties = affected_duties(db, [proposal])
+                except ValueError as exc:
+                    errors.append(str(exc))
+                if duties:
+                    warnings.append(f"{len(duties)} existing duties overlap this leave range")
+                    for impact in duties:
+                        protection = "protected " if impact["protected_period"] else ""
+                        warnings.append(
+                            f"Review {protection}{impact['period_status']} duty {impact['date']} "
+                            f"{impact['duty']}: {', '.join(impact['reasons'])}. "
+                            "Import preserves this assignment; any repair needs separate authorized review."
+                        )
         result.append(
             {
                 **row,
@@ -510,6 +517,7 @@ def normalize_rows(
                 "action": "needs_review" if errors else action,
                 "issues": errors,
                 "warnings": warnings,
+                "affected_duties": duties,
                 "remember_person_alias": bool(values.get("remember_person_alias")),
                 "remember_unit_alias": bool(values.get("remember_unit_alias")),
                 "normalizations": [
@@ -627,6 +635,9 @@ def apply_batch(
     if batch.created_at < datetime.utcnow() - timedelta(hours=2):
         raise HTTPException(409, "Review expired; preview the file again")
     lock_namespace(db, "operational-import")
+    if batch.kind == "leave":
+        from app.services.scheduling_inputs import lock_inputs
+        lock_inputs(db)
     if batch.fingerprint != fingerprint(db):
         raise HTTPException(409, "Reference or operational records changed; preview again")
     selected = [r for r in batch.rows if r["key"] not in excluded]
@@ -661,6 +672,9 @@ def apply_batch(
         raise HTTPException(422, "Acknowledge the reviewed replacement scope before applying")
     if any(r["warnings"] for r in selected) and not acknowledge_warnings:
         raise HTTPException(422, "Review and acknowledge the affected duties before applying leave")
+    if batch.kind == 'leave':
+        from app.services.leave_import_ot_impact import validate_review
+        validate_review(db, batch, selected)
     kind = batch.kind
     model = PersonPosting if kind == "units" else LeaveRequest
     result = {
@@ -702,7 +716,18 @@ def apply_batch(
                 }
                 if kind == "units":
                     right["unit_id"] = record.unit_id
-                db.add(model(**right, source=record.source))
+                split_record = model(**right, source=record.source)
+                if kind == "leave":
+                    split_record.raw_person_name = record.raw_person_name
+                db.add(split_record)
+                if kind == "leave":
+                    # Keep the canonical child linked to the original import/audit evidence.
+                    # This stays in the reviewed import transaction; no second leave store.
+                    db.flush()
+                    audit(db, operator, "leave_split", split_record.id, {
+                        "parent_leave_id": str(record.id), "batch_id": str(batch.id),
+                        "before": None, "after": record_values(split_record, kind),
+                    })
                 record.ends_on = start - timedelta(days=1)
             elif record.starts_on < start:
                 record.ends_on = start - timedelta(days=1)

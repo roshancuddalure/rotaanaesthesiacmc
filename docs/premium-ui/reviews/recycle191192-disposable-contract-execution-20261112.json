@@ -1,0 +1,65 @@
+{
+  "recorded_at_utc": "2026-11-11T18:58:33.267298+00:00",
+  "scope": "Supplementary actual existing recycle router/service integration; SQLite :memory: only; frontend goal verification, no backend source edits",
+  "passed": true,
+  "execution": {
+    "test": "tmp/recycle191192-disposable-v4/run_contract_readback.py",
+    "report": "tmp/recycle191192-disposable-v4/contract-readback.json",
+    "exit_code": 0,
+    "command": "backend/.venv/Scripts/python.exe -X utf8 tmp/recycle191192-disposable-v4/run_contract_readback.py"
+  },
+  "checks": {
+    "recorded_request_and_destination_events": 78,
+    "supported_kinds_verified": [
+      "member",
+      "leave",
+      "posting",
+      "past_duty"
+    ],
+    "same_ids_fields_and_dependencies_restored": true,
+    "operational_destination_get_readbacks": true,
+    "genuine_require_admin_refusal": true,
+    "purge_absence_and_restore404": true,
+    "duplicate_member_restore_conflict": true,
+    "source_held": true
+  },
+  "isolation": "Exact memory-only SQLAlchemy engine gate before application imports; new FastAPI app mounts only existing relevant routers; get_db RAM override; no real application startup. General socket connections blocked; Windows stdlib internal loopback socketpair only permitted under thread-local direct-caller guard.",
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read config/db/router imports and complete integration harness, verified gates and unique report versioning, ran V1/V2 failures then V3/V4 successful executions, inspected destination assertions and current source bindings."
+  },
+  "prior_failed_runs": [
+    {
+      "version": 1,
+      "cause": "Blanket socket block also blocked Windows asyncio internal socketpair before any requests; retained."
+    },
+    {
+      "version": 2,
+      "cause": "Disposable committed then detached fixture identity had expired SQLAlchemy attributes; no product error. Retained; V3 uses expire_on_commit=False in fixture only."
+    }
+  ],
+  "limitations": [
+    "Fixture identity bypasses token login; actual require_admin executes. No production authorization certification.",
+    "In-process HTTP TestClient, not a browser-to-server restore transaction. Browser recovery/cancel evidence is separate and mocked.",
+    "No production database, network API, persisted disk database, migration, backend source edit, commit or deployment.",
+    "Conflict screenshots and responsive checks remain separate; requirements191/192 not accepted from this supplement alone."
+  ],
+  "source_sha256": {
+    "frontend/src/recycle-bin.ts": "8d8cf469c4262444e0d4fbd3bb9764177bd0e7fe09076edeca03b583a531a03a",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "backend/app/api/v1/admin_delete.py": "ab2a709737eafb927e636f532983aa3b8c61ce3a877be6d2ef3e19cbf2d29455",
+    "backend/app/services/recycle_bin.py": "824f61ba8a2d99e60af242f41ee3ba874514c9a379ea42cd155dee66a7260696",
+    "backend/app/api/v1/members.py": "011d7b44dc6ad2f99a34be6cb027114f19680b6b5bb4d7779e9fec1b58e9f618",
+    "backend/app/api/v1/auth.py": "076fa6deb5fdad2d8da478a7e1fae7e70bac80df53fa1b02de87a9467bdb2321",
+    "backend/app/api/v1/leave.py": "580458e5f676e5726b184952aae23f2f23afeee2e214ad46269eb02be9228c56",
+    "backend/app/api/v1/unit_management.py": "077ef8f7158cfe1b880c8a99eba601d05a4c11d7afd51e905405bdb4afa4aaee"
+  },
+  "evidence_sha256": {
+    "tmp/recycle191192-disposable-v4/contract-readback.json": "cc4af24d00679a3299c5b86a79bc4b2b6f869358a04304aea0ca8ee22050d97f",
+    "tmp/recycle191192-disposable-v4/run_contract_readback.py": "58bb207b6778d1a788668e22e814ab30b521ee8fd3b88d48f8733b136f003f1c",
+    "tmp/recycle191192-disposable-v4/authoring.json": "07e181a6c24d7515cb708db927bb6c7998e425e6ff26bab9be1a03860230edca",
+    "tmp/recycle191192-disposable-v3/contract-readback.json": "1f221402c58c75abb43c67fc9b17686d6c4329ec97fd9bd57f8da3cb3c22e1f1",
+    "tmp/recycle191192-disposable-v1/contract-readback.json": "955b66ac38bfc4be85c94dd3b64d87f70b5150cfe4e3771e6d67941f947218e7",
+    "tmp/recycle191192-disposable-v2/contract-readback.json": "a46ee9edad1435a61c217c6a43cce2f1928be7edba4f28408aa93142a031ba36"
+  }
+}

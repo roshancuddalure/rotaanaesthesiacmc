@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="4" time="62.168" timestamp="2026-11-19T15:01:47.946506+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_rota_review_export" name="test_selected_proposal_workbook_is_readonly_and_contains_zero_load_members" time="3.193" /><testcase classname="tests.test_rota_review_export" name="test_export_tracks_alternative_revision_and_rejects_stale_inputs" time="1.214" /><testcase classname="tests.test_rota_review_export" name="test_saved_draft_uses_full_final_format_without_publishing" time="2.366" /><testcase classname="tests.test_rota_review_export" name="test_review_excel_http_owner_revision_and_authentication" time="1.654"><failure message="AssertionError: assert 'no-store, no-store' == 'no-store'&#10;  &#10;  - no-store&#10;  + no-store, no-store">compute_db = (&lt;sqlalchemy.orm.session.Session object at 0x0000025345569D10&gt;, &lt;app.models.auth.UserAccount object at 0x00000253484D6B50&gt;)
+
+    def test_review_excel_http_owner_revision_and_authentication(compute_db):
+        db, user = compute_db
+        job = complete(db, user)
+        overrides = dict(app.dependency_overrides)
+        app.dependency_overrides[get_db] = lambda: db
+        app.dependency_overrides[current_user] = lambda: user
+        path = f"/api/v1/rota-compute/jobs/{job.id}/review.xlsx?revision={job.revision}"
+        try:
+            with TestClient(app) as client:
+                result = client.get(path)
+                assert result.status_code == 200, result.text
+                assert result.content[:2] == b"PK"
+&gt;               assert result.headers["cache-control"] == "no-store"
+E               AssertionError: assert 'no-store, no-store' == 'no-store'
+E                 
+E                 - no-store
+E                 + no-store, no-store
+
+tests\test_rota_review_export.py:100: AssertionError</failure></testcase></testsuite></testsuites>

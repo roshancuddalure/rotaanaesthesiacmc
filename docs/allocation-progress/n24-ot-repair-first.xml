@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="17" time="104.397" timestamp="2026-11-19T18:15:00.863519+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_leave_ot_repair_scope" name="test_ot_only_candidate_is_other_person_and_removal_restores_joint_feasibility" time="1.578" /><testcase classname="tests.test_leave_ot_repair_scope" name="test_unrelated_deficit_is_not_used_to_broaden_repair_scope" time="0.005"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for OtRequirement&#10;  Value error, OT target must cover its minimum and have an explicit call pool [type=value_error, input_value={'id': 'later', 'unit_id'...inimum': 4, 'target': 2}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/value_error">def test_unrelated_deficit_is_not_used_to_broaden_repair_scope():
+        current, before, assignments, leaves, rules = scenario()
+&gt;       unrelated = need(id='later', starts_at=DAY+timedelta(days=3,hours=8),
+                         ends_at=DAY+timedelta(days=3,hours=16), minimum=4)
+
+tests\test_leave_ot_repair_scope.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+changes = {'ends_at': datetime.datetime(2026, 12, 4, 16, 0), 'id': 'later', 'minimum': 4, 'starts_at': datetime.datetime(2026, 12, 4, 8, 0)}
+values = {'area_key': 'theatre', 'band_key': 'senior', 'call_levels': ('3RD_CALL',), 'ends_at': datetime.datetime(2026, 12, 4, 16, 0), ...}
+
+    def need(**changes):
+        values = dict(id="ot", unit_id=UNIT, area_key="theatre", band_key="senior",
+                      starts_at=DAY + timedelta(hours=8), ends_at=DAY + timedelta(hours=16),
+                      call_levels=("3RD_CALL",), minimum=1, target=2)
+        values.update(changes)
+&gt;       return OtRequirement(**values)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for OtRequirement
+E         Value error, OT target must cover its minimum and have an explicit call pool [type=value_error, input_value={'id': 'later', 'unit_id'...inimum': 4, 'target': 2}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+tests\test_ot_assignment_guard.py:29: ValidationError</failure></testcase><testcase classname="tests.test_leave_ot_repair_scope" name="test_unknown_or_excessive_work_does_not_authorize_partial_candidates[unknown]" time="0.004" /><testcase classname="tests.test_leave_ot_repair_scope" name="test_unknown_or_excessive_work_does_not_authorize_partial_candidates[incomplete]" time="0.003" /><testcase classname="tests.test_leave_ot_repair_scope" name="test_unknown_or_excessive_work_does_not_authorize_partial_candidates[different_demands]" time="0.003" /><testcase classname="tests.test_leave_ot_repair_scope" name="test_unknown_or_excessive_work_does_not_authorize_partial_candidates[too_many_assignments]" time="0.004" /><testcase classname="tests.test_leave_ot_repair_scope" name="test_cancelled_and_temporally_unrelated_duties_are_not_candidates" time="0.050" /><testcase classname="tests.test_leave_ot_repair_scope" name="test_previous_day_rest_consuming_another_person_is_a_candidate" time="0.016" /><testcase classname="tests.test_leave_repair" name="test_review_is_read_only_and_exposes_explicit_selection_and_locks" time="3.606" /><testcase classname="tests.test_leave_repair" name="test_only_selected_duty_changes_after_separate_reviewed_apply" time="3.724" /><testcase classname="tests.test_leave_repair" name="test_changed_input_requires_fresh_review_before_creating_job" time="1.236" /><testcase classname="tests.test_leave_repair" name="test_unresolved_repair_cannot_cancel_the_original_assignment" time="2.620" /><testcase classname="tests.test_leave_repair" name="test_protected_periods_are_visible_but_never_selected[published]" time="1.676" /><testcase classname="tests.test_leave_repair" name="test_protected_periods_are_visible_but_never_selected[archived]" time="1.059" /><testcase classname="tests.test_leave_repair" name="test_pending_leave_and_unaffected_slots_cannot_define_repair" time="1.073" /><testcase classname="tests.test_leave_repair" name="test_api_roles_unknown_ids_duplicate_ids_and_feature_gate" time="4.928" /><testcase classname="tests.test_leave_repair" name="test_api_proposal_uses_existing_validate_and_apply_workflow" time="5.889" /></testsuite></testsuites>

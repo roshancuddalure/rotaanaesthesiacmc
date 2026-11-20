@@ -1,0 +1,80 @@
+{
+  "recorded_at_utc": "2026-11-11T01:20:55.350127+00:00",
+  "reviewer": "/root/progress_eta_verify_nov11",
+  "independence": "Did not author the candidates or these original browser matrices; read-only independent UX/accessibility/responsive review. No browsers executed for this review.",
+  "item_id": 186,
+  "requirement": "Present import history and rejection reports with reliable filtering, readable timestamps and working download controls.",
+  "status": "Scoped review; no new exact-requirement blocker found, execution completion and boundaries remain explicit. Not acceptance.",
+  "source_sha256": {
+    "frontend/src/history-filter.ts": "9f4540aabab34b3eb4732b28f415f40281f393d92e49c988c77b9e57d4e5310e",
+    "frontend/src/member-import-history.ts": "7a97dcafc17024d438d2c4c0353c0d6f5073a87bb02e0933b853de1a7f13a762",
+    "frontend/src/workflow-import-history.ts": "b04102c7dd2578e3ccc417920c83d6ff67a8f483059f17ae157e52ce5ff34b18",
+    "frontend/src/past-duties.ts": "5256b39117157b89e9fd1b0f802a604307629211266a0223b22bcac42e9dd9f8",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/styles.css": "ae0e796c684efc9d3b861265ebf5934401f15f74d6180e7e338fcb4cdddeffc0",
+    "frontend/src/premium-theme.css": "6642ff90299a96ac8f4ecbf941be45f3b3f413c2a647ba8192ebf949b4b65e34"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-174-260.json": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac",
+    "tmp/import186-member-browser-v1/report.json": "3733ebc2ecdf2338dd8cda85bba625ddd2553db26647151d8c0e00fcca6ce2c2",
+    "tmp/import186-past-browser-v1/report-2026-11-11T00-53-42-545Z.json": "edfb560b84c1d00b04fb3f93910ec7947adb55a5c7a374fa56c3e29dcb8625ef",
+    "tmp/import186-workflow-browser-v2/chromium.json": "68d7f615300cae6f2c4ee2a52e0be262641d34155ebfe52e9a0fe0e2d6d59614",
+    "tmp/import186-workflow-browser-v2/firefox.json": "4c824a37942404c175919120e09218bf7b84e27a6dd616ea03fede8450c18ea3",
+    "tmp/import186-workflow-browser-v1/webkit.json": "b5cc798488005b16c20546f03b086b8477e6671e083d0206759e2c6acbe979d7",
+    "tmp/import186-member-applied-v1/report.json": "7d6b8923c770b5f7b21ef6e07f7567c94adaf4406787b14708808ba67be36958",
+    "tmp/import186-past-applied-v1/report-2026-11-11T01-18-21-178Z.json": "389115f952cc2ab0cc907bd7ae67e484f45f3bb790c8242c3e2e98944adbf81e",
+    "tmp/import186-member-applied-v1/member-history.browser.mjs": "8291be53b20d7ef6b7de60e37fa760b8fdef77e0e822da5081ec4b7efad108e0",
+    "tmp/import186-past-applied-v1/past-history.browser.mjs": "61f582d51804cf51f9d171aebeb42d486efffd3a334b21ebea5d0d8338e0ce42",
+    "tmp/import186-workflow-applied-v1/workflow.browser.mjs": "097589712036ea3dfdcec548f923e5031f64339158ab20482065e0c44b16eed3"
+  },
+  "images_personally_inspected_sha256": {
+    "tmp/import186-member-applied-v1/chromium-320-dark-200pct.png": "61ce0ad2e31077232b0dd7673c116ab65d57618bb1270f4932d36bef853baf9e",
+    "tmp/import186-member-applied-v1/chromium-1280-light-200pct.png": "1aaa9009ead4757dc4a399887da1aef079d39a06285238eb3068c7efeb6981ad",
+    "tmp/import186-workflow-browser-v2/artifacts/chromium-320-dark.png": "3f1e0e14506c6226271caf6f379eff8d9ab61ab47d75ec23b0b1237d380d9474"
+  },
+  "findings": [
+    {
+      "area": "Labels and loaded-list scope",
+      "finding": "All three searches have enclosing visible labels and literal displayed-field matching. Member explicitly describes the returned list, workflow loaded page, past loaded list; counts and empty states avoid implying global server search. No stored normalization or ID changes."
+    },
+    {
+      "area": "Focus and selection",
+      "finding": "Member toggles existing row.hidden and keeps input/caret. Workflow retains shell/input while replacing list regions; past updates history-only rows/count, handles search/change before upload draft invalidation. Clear controls focus their search. retainActionFocus ownership prevents delayed response stealing newer focus. Applied member twelve and applied past twelve contexts are terminal passing at review capture."
+    },
+    {
+      "area": "Retained details",
+      "finding": "Member and workflow explicitly name filename/batch when outside filtered results; past always labels loaded batch and states its identity survives filtering. Failed new member read retains previous separately labelled details; selected retry ID remains distinct."
+    },
+    {
+      "area": "Months, paging and date clarity",
+      "finding": "Workflow month context stays in heading/file rows and server previous/next batch controls remain even zero local matches; page size25 and detail size50 unchanged. Member/past explicit Asia/Kolkata labels and workflow browser-zone labels use unchanged formatter, including offset/zone, unavailable and unzoned warnings. GMT versus GMT+00:00 is a retained platform difference, not a changed instant."
+    },
+    {
+      "area": "Mobile table behavior",
+      "finding": "Inspected member mobile/desktop and workflow mobile screenshots show contained local horizontal tables rather than document spill. Clipped columns require local scrolling. Member scroll regions have role=region, accessible names and tabindex; workflow wrappers have tabindex/name but no explicit region role. Past wrappers retain inherited unnamed/nonfocusable component markup; do not claim all-table keyboard accessibility complete."
+    },
+    {
+      "area": "Text enlargement evidence limitation",
+      "finding": "Member test sets html font-size:200% and asserts only root computed size>=32. body uses --text-base, a fixed-pixel token; screenshots retain approximately16px content. This proves root-font stress and no document overflow, NOT doubling actual history labels/cells/controls. Workflow checks normal-size document/input geometry; past checks search within history container only. Full actual-text200% across all three is unproven."
+    }
+  ],
+  "execution_boundary": {
+    "staged_contexts": 36,
+    "applied_member_contexts": 12,
+    "applied_past_contexts": 12,
+    "applied_workflow": "Still running at review; not counted as passed here.",
+    "download_scope": "Workflow staged named artifacts and empty/unavailable visible recovery reviewed from test/report. No independent reparse performed by this reviewer. Member has no invented rejection-download control.",
+    "role": "Admin component fixtures and intercepted transports; not authenticated app-shell/server permission proof."
+  },
+  "blockers": [],
+  "remaining_boundaries": [
+    "Applied workflow terminal report and parsed artifacts need root review.",
+    "Actual text enlargement beyond root-font stress remains open; separate authored test will target member first.",
+    "Past table scroll naming/keyboard focus and full section overflow need separate programme work.",
+    "No native assistive technology, physical device, native browser zoom or comprehensive WCAG conformance claim.",
+    "Not all operational import kinds/huge production datasets/locales are runtime exercised.",
+    "Screenshot fixtures omit full app-shell context; native-looking controls here do not certify final integrated premium styling."
+  ],
+  "root_decision": "Root retains acceptance authority and must use exact source/build-bound executed evidence; this review does not change ledger or product."
+}

@@ -16,6 +16,7 @@ import { announceToast } from "./ui-feedback";
 import { callLevelText, ruleLabel } from "./extra-duty";
 import { codeLabel, formatDate, formatMonth } from "./ui";
 import { setRoleSource } from "./session-role";
+import { formatAuditTimestamp } from "./audit-time";
 
 const API = "/api/v1/superadmin-allocation";
 const REASON_MIN = 5;
@@ -134,7 +135,7 @@ export function publishOverrideNotice(publish: RotaPublishMonth): string {
   return `<section class="superadmin-published-notice" role="note" aria-labelledby="superadmin-published-title" data-published-with-override>
     <span class="superadmin-published-notice__icon" aria-hidden="true">!</span>
     <div><h3 id="superadmin-published-title">Published with superadmin override</h3>
-      <p>Published by ${esc(by)}${publish.latest_publish?.created_at ? ` on ${esc(formatDate(publish.latest_publish.created_at.slice(0, 10)))}` : ""} with ${plural(open, "open slot")}${blockers ? ` and ${plural(blockers, "unresolved blocker")}` : ""}. Open slots show as “Unfilled”.</p>
+      <p>Published by ${esc(by)}${publish.latest_publish?.created_at ? ` on ${esc(formatAuditTimestamp(publish.latest_publish.created_at))}` : ""} with ${plural(open, "open slot")}${blockers ? ` and ${plural(blockers, "unresolved blocker")}` : ""}. Open slots show as “Unfilled”.</p>
       ${summary.override_reason ? `<p class="superadmin-published-notice__reason"><strong>Reason:</strong> ${esc(summary.override_reason)}</p>` : ""}</div></section>`;
 }
 

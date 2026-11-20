@@ -684,6 +684,9 @@ export interface LeaveRequest {
 }
 
 export interface LeaveSummary {
+  interval_coverage?: unknown;
+  attribution_warnings?: unknown;
+  total_leave_days_basis?: string;
   month: string;
   starts_on: string;
   ends_on: string;
@@ -735,6 +738,8 @@ export interface LeavePressure {
 }
 
 export interface LeaveImportPreview {
+  affected_duties?: unknown;
+  ot_impact?: unknown;
   preview_hash: string;
   filename: string;
   month: string;
@@ -897,6 +902,8 @@ export interface UnitAssignment {
 }
 
 export interface UnitSummary {
+  unresolved_leave_person_dates?: number;
+  leave_days_basis?: string;
   unit_id: string;
   assigned_members: number;
   people_with_leave: number;
@@ -1860,12 +1867,13 @@ export async function previewLeaveImport(month: string, file: File): Promise<Lea
   return readUploadResult<LeaveImportPreview>(response, "/api/v1/leave/import-preview", generation, false);
 }
 
-export async function applyLeaveImport(month: string, file: File, previewHash: string): Promise<LeaveImportApplyResult> {
+export async function applyLeaveImport(month: string, file: File, previewHash: string, acknowledgeDuties=false): Promise<LeaveImportApplyResult> {
   assertSessionCanSubmit('/api/v1/leave/import-apply');
   const generation = authGeneration;
   const formData = new FormData();
   formData.append("file", file);
   formData.append("preview_hash", previewHash);
+  formData.append("acknowledge_duties", String(acknowledgeDuties));
   const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-apply?month=${encodeURIComponent(month)}`, {
     method: "POST",
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
@@ -2455,6 +2463,18 @@ async function downloadSpreadsheet(path: string, fallback: string): Promise<{ bl
 
 export async function downloadRotaExport(month: string): Promise<{ blob: Blob; filename: string }> {
   return downloadSpreadsheet(`/api/v1/rota-publish/export?month=${encodeURIComponent(month)}`, `final-rota-${month}.xlsx`);
+}
+
+export async function downloadRotaReviewExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-publish/review-export?month=${encodeURIComponent(month)}`, `review-rota-${month}.xlsx`);
+}
+
+export async function downloadElectiveMembersExport(month: string, starts: string, ends: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-publish/elective-members-export?month=${encodeURIComponent(month)}&starts=${encodeURIComponent(starts)}&ends=${encodeURIComponent(ends)}`, `elective-list-members-${month}.xlsx`);
+}
+
+export async function downloadProposalReviewExport(id: string, revision: number): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-compute/jobs/${encodeURIComponent(id)}/review.xlsx?revision=${revision}`, 'rota-review.xlsx');
 }
 
 export async function downloadRotaTemplateEagleEyeExport(month: string): Promise<{ blob: Blob; filename: string }> {

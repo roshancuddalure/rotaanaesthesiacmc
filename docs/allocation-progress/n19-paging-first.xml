@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="20" time="17.522" timestamp="2026-11-14T19:10:27.354731+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_leave_history" name="test_manual_edit_approval_cancel_reconstructs_actual_actor_and_states" time="0.575" /><testcase classname="tests.test_leave_history" name="test_upload_then_manual_correction_retains_original_file_reference" time="0.557" /><testcase classname="tests.test_leave_history" name="test_retained_delete_restore_and_merge_evidence_without_live_record" time="0.061" /><testcase classname="tests.test_leave_history" name="test_missing_history_is_explicit_and_read_does_not_flush_or_create_events" time="0.059" /><testcase classname="tests.test_leave_history" name="test_lineage_uses_exact_ids_and_projections_tolerate_malformed_legacy_details" time="0.059" /><testcase classname="tests.test_leave_history" name="test_history_role_and_unknown_record" time="0.073" /><testcase classname="tests.test_leave_history" name="test_optional_cancellation_reason_is_attributed_and_old_clients_still_work" time="0.115" /><testcase classname="tests.test_leave_history" name="test_actual_reviewed_month_split_links_original_import_source" time="0.147" /><testcase classname="tests.test_leave_history" name="test_actual_delete_restore_remains_attributed_after_bin_payload_removed" time="0.103" /><testcase classname="tests.test_leave_history" name="test_actual_identity_merge_and_undo_preserve_original_leave_evidence[False]" time="0.091" /><testcase classname="tests.test_leave_history" name="test_actual_identity_merge_and_undo_preserve_original_leave_evidence[True]" time="0.085"><failure message="AssertionError: assert 'merge_duplicate_survivor_link_unavailable' in ['legacy_history_may_be_incomplete']">registry = (&lt;starlette.testclient.TestClient object at 0x00000208D4152F90&gt;, sessionmaker(class_='Session', bind=Engine(sqlite:///:memory:), autoflush=True, expire_on_commit=True), &lt;app.models.auth.UserAccount object at 0x00000208D3F4E010&gt;)
+duplicate = True
+
+    @pytest.mark.parametrize("duplicate", [False, True])
+    def test_actual_identity_merge_and_undo_preserve_original_leave_evidence(registry, duplicate):
+        from app.services.member_merge import run_merge, undo_merge
+    
+        _, sessions, operator = registry
+        with sessions() as db:
+            original = Person(canonical_name="Original identity")
+            kept = Person(canonical_name="Surviving identity")
+            row = LeaveRequest(person=original, leave_type="ANNUAL_LEAVE", leave_slot="AM",
+                               starts_on=date(2026, 11, 10), ends_on=date(2026, 11, 10),
+                               status="approved", source="import")
+            db.add_all([original, kept, row])
+            if duplicate:
+                db.add(LeaveRequest(person=kept, leave_type="ANNUAL_LEAVE", leave_slot="AM",
+                                    starts_on=row.starts_on, ends_on=row.ends_on, status="approved"))
+            db.flush()
+            source_person_id, target_person_id, leave_id = original.id, kept.id, row.id
+            batch = ImportBatch(source_filename="identity-source.csv", import_kind="leave_upload", status="completed")
+            db.add(ImportSourceRecord(batch=batch, normalized_table="leave_requests", normalized_id=leave_id,
+                                      record_type="leave_upload", cleaned_value=json.dumps({
+                                          "person_id": str(source_person_id), "status": "approved", "notes": "PRIVATE"})))
+            db.commit()
+            result = run_merge(db, target_person_id, [source_person_id], operator=operator)
+            db.commit()
+            body = history(db, leave_id)
+            merged, = [e for e in body["events"] if e["action"] == "leave_identity_merged"]
+            assert merged["before"]["person_id"] == str(source_person_id)
+            assert merged["actor"]["id"] == str(operator.id)
+            assert body["sources"][0]["filename"] == "identity-source.csv"
+            assert body["record_present"] is (not duplicate)
+            if duplicate:
+&gt;               assert "merge_duplicate_survivor_link_unavailable" in body["coverage"]["warnings"]
+E               AssertionError: assert 'merge_duplicate_survivor_link_unavailable' in ['legacy_history_may_be_incomplete']
+
+tests\test_leave_history.py:290: AssertionError</failure></testcase><testcase classname="tests.test_leave_history" name="test_history_discloses_event_limit_without_modifying_retained_evidence" time="0.075" /><testcase classname="tests.test_member_merge" name="test_merge_handles_every_overlap_and_undo_restores_exactly" time="0.158" /><testcase classname="tests.test_member_merge" name="test_conflict_choice_keeps_the_merged_records_value" time="0.090" /><testcase classname="tests.test_member_merge" name="test_stale_preview_is_refused_and_nothing_changes" time="0.130" /><testcase classname="tests.test_member_merge" name="test_undo_refuses_when_records_changed_after_the_merge" time="0.243" /><testcase classname="tests.test_member_merge" name="test_bad_requests_give_clear_errors" time="0.058" /><testcase classname="tests.test_member_merge" name="test_api_preview_merge_list_and_undo" time="0.215" /><testcase classname="tests.test_member_merge" name="test_non_admin_cannot_merge_or_undo" time="0.064" /><testcase classname="tests.test_member_merge" name="test_every_person_reference_is_known" time="0.001" /></testsuite></testsuites>

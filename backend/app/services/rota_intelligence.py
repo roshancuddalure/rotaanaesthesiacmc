@@ -69,7 +69,7 @@ def active_learning(db):
 def input_snapshot(context):
     """Freeze scheduling evidence without leave reasons or private profile notes."""
     return {
-        "rules": context.rules.model_dump(),
+        "rules": context.rules.model_dump(exclude={"notes"}),
         "availability": {
             "postings": [
                 {
@@ -106,9 +106,10 @@ def input_snapshot(context):
     }
 
 
-def start(db, month, user, options):
+def start(db, month, user, options, *, origin=None):
     if options["mode"] not in {"balanced", "repair", "preferences"}:
         raise HTTPException(422, "Unknown planning mode")
+    compute.prepare_planning_inputs(db, month)
     period, _ = compute.writable_period(db, month)
     slots = {str(s.id): s for s in compute.open_slots_for_period(db, period.id)}
     repair = set(options.get("repair_slots", []))
@@ -131,6 +132,7 @@ def start(db, month, user, options):
     learning = active_learning(db)
     job.state = {
         **job.state,
+        **({"origin": copy.deepcopy(origin)} if origin is not None else {}),
         "benchmark_context_hash": benchmark_context_hash(job.context_hash, learning),
         "intelligence": {
             "version": 1,
@@ -159,6 +161,7 @@ def advance(db, job, revision, selection=None, token=None, fallback=False, selec
         return compute.serialize(job)
     if revision != job.revision:
         raise HTTPException(409, "Reload before continuing")
+    compute.lock_operational_inputs(db)
     compute.check_current(db, job)
     state = copy.deepcopy(job.state)
     intelligence = state["intelligence"]
@@ -354,7 +357,8 @@ def advance(db, job, revision, selection=None, token=None, fallback=False, selec
         )
     report["rejected"] = result["rejected"]
     report["changed"] = sum(
-        d.get("original") is not None and d["person_id"] != d["original"]["person_id"]
+        d.get("original") is not None and d.get("person_id") is not None
+        and d["person_id"] != d["original"]["person_id"]
         for d in decisions
     )
     if not previous or (
@@ -617,6 +621,9 @@ def evaluate(db, version, user, months):
 
 def activate(db, version, user, rollback=False):
     lock_namespace(db, "rota-learning-activation")
+    # Evaluation freshness and the preference change share one serialized input
+    # transaction with reviewed apply, including rollback to an earlier version.
+    compute.lock_operational_inputs(db)
     db.refresh(version)
     evaluation = version.data.get("evaluation")
     if not rollback and (not evaluation or not evaluation.get("passed")):

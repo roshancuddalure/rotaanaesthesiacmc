@@ -66,7 +66,7 @@ test("malformed storage and old tests cannot enable GPU", () => {
   }
 });
 function pref() { return { enabled: true, mode: "auto", power: "high-performance", test: device(), proof: {
-  server_ms: 1000, local_ms: 700, parity: true, at: Date.now(), version: 2, adapter: "Test GPU", signature: "test-signature",
+  server_ms: 1000, local_ms: 700, parity: true, at: Date.now(), version: 2, measurement_version:2, adapter: "Test GPU", signature: "test-signature",
   browser: "test-browser", month: "2026-05", context_hash: "same" } }; }
 test("automatic mode requires live verification, roles, matching context and faster measured time", () => {
   reset(); compute.savePreference(pref()); const context = { month: "2026-05", hash: "same" };
@@ -76,7 +76,7 @@ test("automatic mode requires live verification, roles, matching context and fas
   assert.equal(compute.selectedEngine(true, false, context), "server");
   assert.equal(compute.selectedEngine(true, true, { ...context, hash: "changed" }), "server");
   for (const patch of [{ at: Date.now() + 10000 }, { at: Date.now() - 8 * 86400000 }, { local_ms: -1 }, { local_ms: 900 },
-    { server_ms: 0 }, { parity: false }, { version: 1 }, { signature: "another" }, { browser: "another-browser" }]) {
+    { server_ms: 0 }, { parity: false }, { version: 1 }, {measurement_version:undefined}, {measurement_version:1}, { signature: "another" }, { browser: "another-browser" }]) {
     const p = pref(); Object.assign(p.proof, patch); compute.savePreference(p); assert.equal(compute.selectedEngine(true, true, context), "server");
   }
 });
@@ -108,6 +108,18 @@ for (const kind of ["crash", "decode", "unknown-id", "bad-result", "transfer"]) 
 test("timeout terminates worker and rejects once", async () => {
   reset(); behavior = () => {}; globalThis.window.setTimeout = callback => setTimeout(callback, 5);
   const w = new compute.ComputeWorker(); await assert.rejects(w.call("test"), /timed out/); assert.equal(workers[0].closed, true);
+});
+
+test("cold GPU setup has a separate bounded budget from numeric scoring", async () => {
+  reset();
+  const budgets = [];
+  globalThis.window.setTimeout = (callback, delay) => { budgets.push(delay); return setTimeout(callback, delay); };
+  const w = new compute.ComputeWorker();
+  try {
+    await w.call("test");
+    await w.call("score", valid());
+    assert.deepEqual(budgets, [60000, 15000]);
+  } finally { w.close(); reset(); }
 });
 test("invalid numeric input never reaches GPU", async () => {
   reset(); const w = new compute.ComputeWorker(); await assert.rejects(w.call("score", { rows: [], ties: [] }));
@@ -179,6 +191,67 @@ test("automatic proofs cannot cross workloads, configurations or kernels",()=>{
   assert.equal(compute.selectedEngine(true,true,{...context,estimatedRows:8}),'server');
   assert.equal(compute.selectedEngine(true,true,{...context,workload:'optimizer'}),'server');
   p.proofs.template.kernel_version=2;compute.savePreference(p);assert.equal(compute.selectedEngine(true,true,context),'server');
+});
+test('optimizer proof binds mode, time, locks, repairs and preferences to benchmark configuration',()=>{
+  reset();const p=pref();p.test.kernel_checks={members:true,template:true,optimizer:true};
+  const measured={mode:'balanced',seconds:5};
+  const configuration=compute.optimizerConfiguration(measured);
+  p.proofs={optimizer:{...p.proof,workload:'optimizer',kernel_version:3,configuration}};
+  compute.savePreference(p);compute.rememberTest(p.test);
+  const context={month:'2026-05',hash:'same',workload:'optimizer',configuration,estimatedRows:256};
+  assert.equal(compute.selectedEngine(true,true,context),'local_gpu');
+  for(const patch of [{mode:'repair'},{mode:'preferences'},{seconds:30},{locked_slots:['s1']},{repair_slots:['s1']},{preferences:[{slot_id:'s1',person_id:'p1',penalty:-100}]}]){
+    assert.equal(compute.selectedEngine(true,true,{...context,configuration:compute.optimizerConfiguration({...measured,...patch})}),'server');
+  }
+  assert.equal(compute.selectedEngine(true,true,{...context,configuration:undefined}),'server');
+  const unordered={...measured,locked_slots:['b','a'],repair_slots:['d','c'],preferences:[{slot_id:'b',person_id:'p2',penalty:1},{slot_id:'a',person_id:'p1',penalty:-1}]};
+  const original=JSON.stringify(unordered);
+  assert.equal(compute.optimizerConfiguration(unordered),compute.optimizerConfiguration({...unordered,locked_slots:['a','b'],repair_slots:['c','d'],preferences:[...unordered.preferences].reverse()}));
+  assert.equal(JSON.stringify(unordered),original,'Fingerprint must not mutate form options');
+  const duplicate=[{slot_id:'s',person_id:'p',penalty:1},{slot_id:'s',person_id:'p',penalty:9}];
+  assert.notEqual(compute.optimizerConfiguration({...measured,preferences:duplicate}),compute.optimizerConfiguration({...measured,preferences:[...duplicate].reverse()}));
+  assert.equal(compute.optimizerConfiguration({...measured,preferences:duplicate}),compute.optimizerConfiguration({...measured,preferences:[duplicate[1]]}));
+});
+test('legacy proof cannot impersonate another workload or kernel and adapter labels must agree',()=>{
+  reset();const context={month:'2026-05',hash:'same'};
+  for(const patch of [{workload:'optimizer',kernel_version:3},{workload:'template',kernel_version:3},{kernel_version:3},{adapter:'Changed GPU'},{configuration:{injected:true}},{context_hash:''}]){
+    const p=pref();Object.assign(p.proof,patch);compute.savePreference(p);compute.rememberTest(p.test);
+    assert.equal(compute.selectedEngine(true,true,context),'server');
+  }
+  for(const workload of ['template','optimizer']){
+    const p=pref();p.test.kernel_checks={members:true,template:true,optimizer:true};p.proofs={[workload]:{...p.proof,workload,kernel_version:3}};
+    compute.savePreference(p);compute.rememberTest(p.test);
+    assert.equal(compute.selectedEngine(true,true,{...context,workload}),'server');
+  }
+});
+test('Automatic keeps exact20percent threshold, seven-day expiry and bounded workload estimates',()=>{
+  reset();const context={month:'2026-05',hash:'same',estimatedRows:256};
+  const now=Date.now, fixed=1800000000000;Date.now=()=>fixed;
+  try{
+    for(const [patch,expected] of [[{local_ms:800},'local_gpu'],[{local_ms:800.001},'server'],[{at:fixed-7*86400000+1},'local_gpu'],[{at:fixed-7*86400000},'server'],[{at:fixed+1},'server']]){
+      const p=pref();Object.assign(p.proof,patch);compute.savePreference(p);compute.rememberTest(p.test);
+      assert.equal(compute.selectedEngine(true,true,context),expected);
+    }
+    const p=pref();compute.savePreference(p);compute.rememberTest(p.test);
+    for(const estimatedRows of [0,255,-1,NaN,Infinity,256.5])assert.equal(compute.selectedEngine(true,true,{...context,estimatedRows}),'server');
+    assert.equal(compute.selectedEngine(true,true,{...context,estimatedRows:256}),'local_gpu');
+  }finally{Date.now=now;}
+});
+test('unmatched Automatic proof skips worker startup; matching proof still needs live device verification',async()=>{
+  reset();const p=pref();compute.savePreference(p);
+  assert.equal(await compute.prepareEngine(true,true,{month:'2026-05',hash:'changed'}),'server');
+  assert.equal(await compute.prepareEngine(true,true,{month:'2026-05',hash:'same',configuration:'changed'}),'server');
+  assert.equal(workers.length,0);
+  assert.equal(await compute.prepareEngine(true,true,{month:'2026-05',hash:'same'}),'local_gpu');
+  assert.equal(workers.length,1);assert.equal(workers[0].closed,true);
+  behavior=(w,m)=>w.respond(m,{...device(),signature:'new-adapter-signature',adapter:'Another GPU'});
+  assert.equal(await compute.prepareEngine(true,true,{month:'2026-05',hash:'same'}),'server');
+});
+test('optimizer whole-workflow comparisons cannot combine different or missing learning contexts',()=>{
+  const before={context_hash:'same-data',benchmark_context_hash:'learning-A'};
+  assert.equal(compute.sameOptimizerBenchmarkContext(before,{...before}),true);
+  for(const after of [{context_hash:'changed-data',benchmark_context_hash:'learning-A'},{context_hash:'same-data',benchmark_context_hash:'learning-B'},{context_hash:'same-data'}])assert.equal(compute.sameOptimizerBenchmarkContext(before,after),false);
+  assert.equal(compute.sameOptimizerBenchmarkContext({context_hash:'same-data'},{context_hash:'same-data'}),false);
 });
 test("frozen cross-language golden fixtures preserve scores and canonical winners",async()=>{
   const cases=JSON.parse(await readFile(new URL('../../backend/tests/fixtures/generation_numeric_goldens.json',import.meta.url),'utf8'));

@@ -15,7 +15,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import DutyAssignment, DutySlot, RotaAutoFillEvent, RotaAutoFillRun
+from app.models import DutyAssignment, DutySlot, RotaAutoFillEvent, RotaAutoFillRun, RotaPeriod
 from app.services.rota_assignment import (
     RotaAssignmentError,
     active_assignment,
@@ -159,6 +159,19 @@ def _run_safe_auto_fill(
     db.commit()
     db.refresh(run)
     db.info["auto_fill_run"] = run.id
+    from app.services.reference_registry import lock_namespace
+    from app.services.rota_compute import lock_operational_inputs
+    lock_namespace(db, "rota-auto-fill")
+    lock_operational_inputs(db)
+    # The audit-run bootstrap above intentionally commits. Acquire the final
+    # input lock afterwards and reload before building any cached context.
+    period = db.scalar(select(RotaPeriod).where(RotaPeriod.id == period.id))
+    if period is None or period.status.lower() != "draft":
+        raise ValueError("Only an unpublished draft month can be auto-filled")
+    slots = open_slots_for_period(db, period.id)
+    if options.limit_slots is not None:
+        slots = slots[:options.limit_slots]
+    run.total_slots = len(slots)
     context = candidate_context(db, month) if options.use_cached_context else None
 
     assigned = 0

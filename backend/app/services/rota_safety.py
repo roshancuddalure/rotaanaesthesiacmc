@@ -34,13 +34,12 @@ from app.models import (
 )
 from app.services.history_fairness import OFFICIAL_STATUSES, unique_assignments
 from app.services.leave import (
-    ACTIVE_LEAVE_STATUSES,
-    BLOCKING_LEAVE_STATUSES,
     date_range,
     leave_requests_for_month,
     month_bounds,
 )
 from app.services.rota_call_levels import normalize_call_level
+from app.services.leave_semantics import duty_leave_blocks, is_active, is_approved
 from app.services.rota_eligibility import (
     active_group_keys_on,
     attached_groups,
@@ -131,19 +130,8 @@ def rules_groups(rules: RotaPhaseOneRules, slot: DutySlot | None = None, context
 def slot_leave_blocks(leave: LeaveRequest, slot: DutySlot) -> bool:
     """Does this leave overlap the slot? Any partial-day leave blocks a 24h duty; for shorter
     duties AM/PM/NIGHT are compared with the slot start hour; unknown slot values block."""
-    leave_slot = leave.leave_slot.upper()
-    if slot.is_24hr:
-        return True
-    start_hour = slot.starts_at.hour
-    if leave_slot == "FULL_DAY":
-        return True
-    if leave_slot == "AM":
-        return start_hour < 12
-    if leave_slot == "PM":
-        return start_hour >= 12
-    if leave_slot == "NIGHT":
-        return start_hour >= 18 or start_hour < 8
-    return True
+    return duty_leave_blocks(leave.leave_slot, is_24hr=slot.is_24hr,
+                             start_hour=0 if slot.is_24hr else slot.starts_at.hour)
 
 
 def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[PersonPosting]:
@@ -158,6 +146,7 @@ def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[Pers
             )
             .options(
                 selectinload(PersonPosting.person).selectinload(Person.call_level_changes),
+                selectinload(PersonPosting.person).selectinload(Person.call_changes),
                 selectinload(PersonPosting.person)
                 .selectinload(Person.call_cluster_memberships)
                 .selectinload(PersonCallClusterMembership.cluster),
@@ -196,7 +185,7 @@ def leaves_by_day_and_person(db: Session, month: str) -> dict[date, dict[UUID, l
     starts_on, ends_on = month_bounds(month)
     indexed: dict[date, dict[UUID, list[LeaveRequest]]] = {}
     for leave in leave_requests_for_month(db, month):
-        if leave.status.lower() not in ACTIVE_LEAVE_STATUSES:
+        if not is_active(leave.status):
             continue
         first = max(leave.starts_on, starts_on)
         last = min(leave.ends_on, ends_on)
@@ -367,13 +356,13 @@ def person_blockers(
         entry = {
             "type": "leave",
             "label": "Approved leave"
-            if leave.status.lower() in BLOCKING_LEAVE_STATUSES
+            if is_approved(leave.status)
             else "Leave pending review",
             "leave_type": leave.leave_type,
             "leave_slot": leave.leave_slot,
             "status": leave.status,
         }
-        if leave.status.lower() in BLOCKING_LEAVE_STATUSES:
+        if is_approved(leave.status):
             hard.append(entry)
         else:
             warnings.append(entry)

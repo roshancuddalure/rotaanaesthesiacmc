@@ -314,6 +314,17 @@ def validate_assignment(
         )
     )
     validation_issues: list[dict[str, str]] = []
+    from app.services.allocation_scope import locked_unit_ids
+    included = locked_unit_ids(db, slot.rota_period_id, context)
+    if included is not None:
+        if slot.unit_id not in included:
+            validation_issues.append(issue("blocked", "scope_unit_excluded",
+                "This duty's unit is outside the month's locked included scope."))
+        elif not any(p.person_id == person.id and p.unit_id in included
+                     and p.starts_on <= slot.duty_date and (p.ends_on is None or p.ends_on >= slot.duty_date)
+                     for p in postings):
+            validation_issues.append(issue("blocked", "scope_member_excluded",
+                "This member has no dated posting in the month's locked included units."))
     for other in nearby_duties(
         db,
         slot,
@@ -449,6 +460,17 @@ def validate_assignment(
         )
     )
 
+    from app.services.ot_assignment_validation import validate_ot_assignment
+
+    ot_protection = validate_ot_assignment(db, slot, person, rules,
+        replace_existing=replace_existing, context=context)
+    if ot_protection is not None and ot_protection["status"] != "feasible":
+        uncertain = ot_protection["status"] != "infeasible"
+        validation_issues.append(issue("blocked",
+            "ot_capacity_unresolved" if uncertain else "ot_reservation_conflict",
+            "OT capacity cannot be verified for this assignment; review calendar and eligibility data."
+            if uncertain else "This assignment would leave affected mandatory OT or staffing reserves uncovered."))
+
     if any(item["severity"] == "blocked" for item in validation_issues):
         status = "blocked"
     elif any(item["severity"] in {"error", "warning"} for item in validation_issues):
@@ -456,12 +478,15 @@ def validate_assignment(
     else:
         status = "clear"
 
-    return {
+    result = {
         "status": status,
         "issues": validation_issues,
         "slot_safety": safety,
         "requires_override": status == "needs_override",
     }
+    if ot_protection is not None:
+        result["ot_protection"] = ot_protection
+    return result
 
 
 def assign_person_to_slot(
@@ -480,6 +505,11 @@ def assign_person_to_slot(
     KNOWN ISSUES: works on published months too (handbook B1); the acting user is not stored
     on ``DutyAssignment`` so manual changes are not attributable (handbook S6).
     """
+    if context is None:
+        from app.services.reference_registry import lock_namespace
+        from app.services.rota_compute import lock_operational_inputs
+        lock_namespace(db, "rota-assignment")
+        lock_operational_inputs(db)
     slot = hydrate_slot(db, slot_id)
     person = db.get(Person, person_id)
     if slot.rota_period.status.lower() != "draft":

@@ -105,6 +105,11 @@ async def preview(
             )
         if len(raw) > 5000:
             raise ValueError(f"The file has {len(raw):,} rows; import at most 5,000 rows at a time")
+        if kind == "leave":
+            from app.services.reference_registry import lock_namespace
+            from app.services.scheduling_inputs import lock_inputs
+            lock_namespace(db, "operational-import")
+            lock_inputs(db)
         rows = normalize_rows(db, kind, month, raw, settings)
         settings["file_hash"] = hashlib.sha256(content).hexdigest()
         replace = []
@@ -122,6 +127,11 @@ async def preview(
                 in ({"unit_board"} if kind == "units" else {"import", "normalized_import"})
             ]
         settings["replacement_scope"] = replace
+        ot_impact = None
+        if kind == 'leave':
+            from app.services.leave_import_ot_impact import review_import
+            ot_impact, settings['ot_review'] = review_import(
+                db, month, mode, rows, settings.get('excluded', []))
     except MemberResolutionError as exc:
         raise HTTPException(422, resolution_detail(exc)) from exc
     except WORKBOOK_ERRORS as exc:
@@ -148,6 +158,7 @@ async def preview(
         "headers": headers,
         "rows": rows,
         "replacement_scope": replace,
+        "ot_impact": ot_impact,
         "fields": list(FIELDS),
     }
 

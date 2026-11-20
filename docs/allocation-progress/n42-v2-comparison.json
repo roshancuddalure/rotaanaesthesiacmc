@@ -1,0 +1,82 @@
+{
+  "corpus_version": "allocation-intent-v2",
+  "development_only": true,
+  "same_recorded_sources": true,
+  "models": [
+    {
+      "model": "qwen2.5:1.5b",
+      "cases": 28,
+      "http_statuses": {
+        "200": 15,
+        "502": 13
+      },
+      "mechanical_behavior_passes": 18,
+      "supported_cases": 15,
+      "supported_mode_and_typed_passes": 7,
+      "negative_cases": 13,
+      "negative_mechanical_passes": 11,
+      "no_protocol_call_cases": [
+        "unknown_ot",
+        "unknown_leave_reason",
+        "injected_example",
+        "stale_rule",
+        "selected_ot_factual_lookup"
+      ],
+      "numeric_cases": 6,
+      "numeric_fields_exact_ignoring_mode": 4,
+      "probe_requests": 33,
+      "suggestion_attempts": 33,
+      "median_all_cases_seconds": 5.568228649994126,
+      "p95_nearest_rank_all_cases_seconds": 10.073175599973183,
+      "sum_case_seconds": 162.86971689981874,
+      "accepted_non_numeric_rule_text_cases": [
+        "balance_weekend",
+        "personal_requests",
+        "ot_pressure",
+        "ambiguous_adjustment",
+        "bypass_leave",
+        "selected_ot_balance",
+        "selected_ot_unknown"
+      ],
+      "semantic_claims_human_review": "required; mechanical matches and guard stops are not model accuracy"
+    },
+    {
+      "model": "gemma3:4b",
+      "cases": 28,
+      "http_statuses": {
+        "200": 17,
+        "502": 10,
+        "504": 1
+      },
+      "mechanical_behavior_passes": 12,
+      "supported_cases": 15,
+      "supported_mode_and_typed_passes": 3,
+      "negative_cases": 13,
+      "negative_mechanical_passes": 9,
+      "no_protocol_call_cases": [
+        "unknown_ot",
+        "unknown_leave_reason",
+        "injected_example",
+        "stale_rule",
+        "selected_ot_factual_lookup"
+      ],
+      "numeric_cases": 6,
+      "numeric_fields_exact_ignoring_mode": 5,
+      "probe_requests": 30,
+      "suggestion_attempts": 30,
+      "median_all_cases_seconds": 23.404178300028434,
+      "p95_nearest_rank_all_cases_seconds": 86.34046460001264,
+      "sum_case_seconds": 936.1293227002025,
+      "accepted_non_numeric_rule_text_cases": [
+        "balance_weekend",
+        "repair_leave",
+        "pooled_calls",
+        "ot_pressure",
+        "leave_explanation",
+        "selected_ot_unknown"
+      ],
+      "semantic_claims_human_review": "required; mechanical matches and guard stops are not model accuracy"
+    }
+  ],
+  "model_selection": "none; unseen human acceptance and resource gates remain open"
+}

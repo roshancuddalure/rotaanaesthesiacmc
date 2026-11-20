@@ -2,19 +2,21 @@
 
 import hashlib
 import hmac
+import json
 
 from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
-from app.models import DutyAssignment, DutySlot, LeaveRequest, MemberActivity
+from app.models import LeaveRequest, MemberActivity
 from app.services.leave import month_bounds
+from app.services.leave_semantics import PENDING_LEAVE_STATUSES as PENDING_STATUSES
+from app.services.leave_impact import affected_duties
+from app.services.leave_projection import LeaveProjection
+from app.services.leave_ot_impact import review_impacts
 from app.services.operational_import import fingerprint
 from app.services.reference_registry import audit, lock_namespace
-from app.services.rota_safety import ACTIVE_ASSIGNMENT_STATUSES, slot_leave_blocks
-
-PENDING_STATUSES = {"requested", "imported_pending_review"}
-
+from app.services.scheduling_inputs import lock_inputs
 
 def pending_requests(db, month):
     start, end = month_bounds(month)
@@ -34,39 +36,18 @@ def pending_requests(db, month):
 
 def preview(db, month, user):
     lock_namespace(db, "operational-import")
+    lock_inputs(db)
     leaves = pending_requests(db, month)
-    duties = {}
-    if leaves:
-        assignments = db.scalars(
-            select(DutyAssignment)
-            .join(DutySlot)
-            .where(
-                DutyAssignment.person_id.in_({leave.person_id for leave in leaves}),
-                func.lower(DutyAssignment.status).in_(ACTIVE_ASSIGNMENT_STATUSES),
-                DutySlot.duty_date >= min(leave.starts_on for leave in leaves),
-                DutySlot.duty_date <= max(leave.ends_on for leave in leaves),
-            )
-            .options(selectinload(DutyAssignment.duty_slot))
-        )
-        by_person = {}
-        for leave in leaves:
-            by_person.setdefault(leave.person_id, []).append(leave)
-        for assignment in assignments:
-            slot = assignment.duty_slot
-            if any(
-                leave.starts_on <= slot.duty_date <= leave.ends_on
-                and slot_leave_blocks(leave, slot)
-                for leave in by_person[assignment.person_id]
-            ):
-                duties[str(assignment.id)] = {
-                    "id": str(assignment.id),
-                    "person_id": str(assignment.person_id),
-                    "person_name": by_person[assignment.person_id][0].person.canonical_name,
-                    "date": str(slot.duty_date),
-                    "duty": slot.slot_label,
-                }
+    try:
+        duties = affected_duties(db, leaves)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    ot_impact = review_impacts(db, tuple(LeaveProjection(
+        row.id, row.person_id, row.starts_on, row.ends_on, row.leave_slot, "approved") for row in leaves))
     token = hashlib.sha256(
-        f"leave-approval-v1:{user.id}:{month}:{fingerprint(db)}".encode()
+        json.dumps({"version": "leave-approval-v2", "user": str(user.id), "month": month,
+                    "context": fingerprint(db), "affected_duties": duties,
+                    "ot_context": ot_impact["context_digest"]}, sort_keys=True).encode()
     ).hexdigest()
     return {
         "month": month,
@@ -82,11 +63,14 @@ def preview(db, month, user):
             }
             for leave in leaves
         ],
-        "affected_duties": sorted(duties.values(), key=lambda duty: (duty["date"], duty["id"])),
+        "affected_duties": duties,
+        "ot_impact": ot_impact,
+        "impact_basis": "Existing duty-date policy and actual interval overlap are shown separately. "
+                        "Acknowledging an impact does not reassign duties or waive a validator.",
     }
 
 
-def approve_month(db, month, user, review_token, acknowledge_duties=False):
+def approve_month(db, month, user, review_token, acknowledge_duties=False, *, reason=None):
     lock_namespace(db, "operational-import")
     review = preview(db, month, user)
     if not review["pending_count"]:
@@ -106,6 +90,7 @@ def approve_month(db, month, user, review_token, acknowledge_duties=False):
                 "month": month,
                 "before": {"status": leave.status},
                 "after": {"status": "approved"},
+                "reason": reason.strip() or None if reason else None,
                 "starts_on": str(leave.starts_on),
                 "ends_on": str(leave.ends_on),
                 "affected_duties": [

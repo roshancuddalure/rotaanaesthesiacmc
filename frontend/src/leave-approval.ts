@@ -1,12 +1,24 @@
 import { request } from './services/api';
 import { workspaceDialog } from './member-workspace';
 import { formatDateRange, formatMonth, codeLabel, retainActionFocus } from './ui';
+import { dutyImpacts, renderDutyImpact, otImpact, renderOtImpact, object, integer, id, digest, type DutyImpact } from './leave-impact-view';
 
 type Review = {
   month: string; pending_count: number; review_token: string;
   requests: {id: string; person_name: string; starts_on: string; ends_on: string; status: string}[];
-  affected_duties: {id: string; person_id: string; person_name: string; date: string; duty: string}[];
+  affected_duties: DutyImpact[];
+  ot_impact: ReturnType<typeof otImpact>;
 };
+function parsed(value:unknown,month:string):Review {
+  if(!object(value)||value.month!==month||!integer(value.pending_count)||!digest(value.review_token)
+    ||!Array.isArray(value.requests)||value.requests.length!==value.pending_count||value.requests.length>5000
+    ||!value.requests.every(row=>object(row)&&id(row.id)&&typeof row.person_name==='string'
+      &&typeof row.starts_on==='string'&&typeof row.ends_on==='string'&&typeof row.status==='string'
+      &&['requested','imported_pending_review'].includes(row.status.toLowerCase()))
+    ||new Set(value.requests.map(row=>row.id)).size!==value.requests.length)
+    throw new Error('Approval review was incomplete or belongs to another month. Refresh before approving.');
+  return {...value,affected_duties:dutyImpacts(value.affected_duties),ot_impact:otImpact(value.ot_impact)} as Review;
+}
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]!);
 
 export function openMonthlyLeaveApproval(month: string, onApproved: (count: number) => void) {
@@ -22,7 +34,8 @@ export function openMonthlyLeaveApproval(month: string, onApproved: (count: numb
       <p role="status" aria-live="polite">${loading ? 'Loading approval review...' : review ? `${review.pending_count} pending request${review.pending_count === 1 ? '' : 's'} to approve.` : ''}</p>
       ${error ? `<p role="alert" class="mw-error">${esc(error)}</p>` : ''}
       ${review ? `<div class="table-scroll"><table><caption>Requests included in this approval</caption><thead><tr><th scope="col">Member</th><th scope="col">Dates</th><th scope="col">Status</th></tr></thead><tbody>${review.requests.map(leave => `<tr><td data-label="Member">${esc(leave.person_name)}</td><td data-label="Dates">${esc(formatDateRange(leave.starts_on, leave.ends_on))}</td><td data-label="Status">${esc(codeLabel(leave.status.toUpperCase()))}</td></tr>`).join('')}</tbody></table></div>
-      ${review.affected_duties.length ? `<section><h3>Assigned duties need review</h3><p>${review.affected_duties.length} existing assignment${review.affected_duties.length === 1 ? ' overlaps' : 's overlap'} these requests. Approval blocks availability but does not remove or reassign duties.</p><ul>${review.affected_duties.map(duty => `<li>${esc(duty.person_name)}: ${esc(duty.date)} - ${esc(duty.duty)}</li>`).join('')}</ul><label><input type="checkbox" data-duty-ack> I reviewed the affected duties and will arrange any necessary changes</label></section>` : ''}
+      ${renderOtImpact(review.ot_impact)}
+      ${review.affected_duties.length ? `<section><h3>Assigned duties need review</h3><p>${review.affected_duties.length} existing assignment${review.affected_duties.length === 1 ? ' overlaps' : 's overlap'} these requests. Approval blocks availability but does not remove or reassign duties.</p><ul>${review.affected_duties.map(duty => `<li>${renderDutyImpact(duty)}</li>`).join('')}</ul><label><input type="checkbox" data-duty-ack> I reviewed the affected duties and will arrange any necessary changes</label></section>` : ''}
       ${review.pending_count ? '<label><input type="checkbox" data-confirm> I reviewed these requests and want to approve them all</label>' : '<p>No pending leave requests to approve for this month.</p>'}` : ''}</div>
       <footer class="mw-footer"><button type="button" data-refresh ${loading || applying ? 'disabled' : ''}>Refresh review</button><button type="button" class="primary" data-approve disabled>${applying ? 'Approving...' : `Approve all ${review?.pending_count ?? ''} pending requests`}</button></footer>`;
     if (focused && (document.activeElement === document.body || document.activeElement === dialog))
@@ -37,7 +50,7 @@ export function openMonthlyLeaveApproval(month: string, onApproved: (count: numb
     const restoreFocus = initiator
       ? retainActionFocus(dialog, initiator, () => dialog.querySelector('[data-refresh]')) : () => {};
     loading = true; review = undefined; error = ''; render();
-    try { review = await request<Review>('/api/v1/leave/approval-preview', {method: 'POST', body: JSON.stringify({month}), signal: AbortSignal.timeout(30000)}); }
+    try { review = parsed(await request<unknown>('/api/v1/leave/approval-preview', {method: 'POST', body: JSON.stringify({month}), signal: AbortSignal.timeout(30000)}),month); }
     catch (e) { error = e instanceof Error ? e.message : 'Could not load approval review. Try again.'; }
     finally { loading = false; render(); restoreFocus(); }
   }

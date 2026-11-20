@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="18.594" timestamp="2026-11-19T15:59:20.446612+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_elective_members_export" name="test_daily_tabs_exclude_leave_duty_rest_inactive_and_outside_scope_readonly" time="0.372"><failure message="fastapi.exceptions.HTTPException: 409: Configure rota rules before exporting elective availability">compute_db = (&lt;sqlalchemy.orm.session.Session object at 0x000002015B1DD790&gt;, &lt;app.models.auth.UserAccount object at 0x000002015D0F1710&gt;)
+
+    def test_daily_tabs_exclude_leave_duty_rest_inactive_and_outside_scope_readonly(compute_db):
+        db, _ = compute_db
+        period, _, unit = seed(db)
+        db.query(LeaveRequest).delete()
+        outside = Unit(code="OUT", name="Excluded Unit")
+        db.add(outside)
+        db.flush()
+        person(db, outside, "OUTSIDE MUST NEVER APPEAR")
+        person(db, unit, "INACTIVE MUST NEVER APPEAR", active=False)
+        leave_person = person(db, unit, "Approved leave")
+        db.add(LeaveRequest(person=leave_person, leave_type="ANNUAL_LEAVE", leave_slot="FULL_DAY",
+            starts_on=date(2026, 5, 2), ends_on=date(2026, 5, 2), status="approved", notes="PRIVATE"))
+        duty_person = person(db, unit, "Duty holder")
+        start = datetime(2026, 5, 2, 8)
+        duty = DutySlot(rota_period=period, unit=unit, duty_date=start.date(), duty_type="MAIN_1ST_24HR",
+            starts_at=start, ends_at=start+timedelta(days=1), is_24hr=True, source="phase4_template")
+        db.add(DutyAssignment(person=duty_person, duty_slot=duty, status="assigned"))
+        db.commit()
+        sql = []
+        def watch(_conn, _cursor, statement, *_):
+            if statement.lstrip().split()[0].upper() in {"INSERT", "UPDATE", "DELETE"}:
+                sql.append(statement)
+        event.listen(db.get_bind(), "before_cursor_execute", watch)
+        try:
+&gt;           filename, payload = elective_members_export(db, "2026-05")
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_elective_members_export.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+db = &lt;sqlalchemy.orm.session.Session object at 0x000002015B1DD790&gt;
+month = '2026-05', starts = '08:00', ends = '17:00'
+
+    def elective_members_export(db, month, starts="08:00", ends="17:00"):
+        first, last = month_bounds(month)
+        try:
+            start, end = time.fromisoformat(starts), time.fromisoformat(ends)
+            if len(starts) != 5 or len(ends) != 5 or start.tzinfo or end.tzinfo or start &gt;= end:
+                raise ValueError()
+        except ValueError as exc:
+            raise HTTPException(422, "Choose an increasing same-day elective window as HH:MM") from exc
+        lock_namespace(db, "elective-members-export")
+        lock_inputs(db)
+        scope = db.scalar(select(MonthlyGenerationScope).join(MonthlyGenerationScope.rota_period).where(
+            RotaPeriod.starts_on == first, RotaPeriod.ends_on == last).options(selectinload(MonthlyGenerationScope.units)))
+        if scope is None or not scope.is_locked:
+            raise HTTPException(409, "Lock the month's unit scope before exporting elective members")
+        units = sorted((row.unit for row in scope.units if row.status == "included" and row.unit
+                        and row.unit.active_status == "active"), key=lambda u: (u.name, str(u.id)))
+        if not units:
+            raise HTTPException(409, "The locked scope has no active included units")
+        requirements = [OtRequirement(id=f"{day}:{unit.id}", unit_id=unit.id, area_key="availability",
+            band_key="export", starts_at=datetime.combine(day, start), ends_at=datetime.combine(day, end),
+            call_levels=LEVELS, minimum=0, target=0)
+            for day in date_range(first, last) for unit in units]
+        if len(requirements) &gt; 3100:
+            raise HTTPException(422, "Export is limited to 100 included units per month")
+        rules = read_phase_one_rules(db)
+        if rules is None:
+&gt;           raise HTTPException(409, "Configure rota rules before exporting elective availability")
+E           fastapi.exceptions.HTTPException: 409: Configure rota rules before exporting elective availability
+
+app\services\elective_members_export.py:51: HTTPException</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,55 @@
+{
+  "selector_contracts": [
+    {
+      "name": "legacy-unscoped",
+      "expected_engine": "server",
+      "actual_engine": "server",
+      "worker_tests": 0,
+      "synthetic_worker": true,
+      "no_apply": true,
+      "page_errors": 0
+    },
+    {
+      "name": "different-budget",
+      "expected_engine": "server",
+      "actual_engine": "server",
+      "worker_tests": 0,
+      "synthetic_worker": true,
+      "no_apply": true,
+      "page_errors": 0
+    },
+    {
+      "name": "matching-options",
+      "expected_engine": "local_gpu",
+      "actual_engine": "local_gpu",
+      "worker_tests": 1,
+      "synthetic_worker": true,
+      "no_apply": true,
+      "page_errors": 0
+    },
+    {
+      "name": "different-mode",
+      "expected_engine": "server",
+      "actual_engine": "server",
+      "worker_tests": 0,
+      "synthetic_worker": true,
+      "no_apply": true,
+      "page_errors": 0
+    },
+    {
+      "name": "changed-adapter",
+      "expected_engine": "server",
+      "actual_engine": "server",
+      "worker_tests": 1,
+      "synthetic_worker": true,
+      "no_apply": true,
+      "page_errors": 0
+    }
+  ],
+  "native_probe": {
+    "supported": false,
+    "code": "no-adapter",
+    "message": "The browser returned no GPU adapter. Check browser GPU diagnostics or use the server."
+  },
+  "limits": "Synthetic worker/API selector contracts; native probe separate. No full-workflow speedup, actual optimizer GPU job or new safety proof inferred."
+}

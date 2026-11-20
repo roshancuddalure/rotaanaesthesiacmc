@@ -9,6 +9,10 @@ import { request, requestMultipartJSON, type DepartmentMember } from "./services
 import { applyBlocker, memberMatch, memberIdentityText, importRecoveryText, updateMemberMatchPending, retainActionFocus, steps, formatCalendarDate, type MemberMatchView } from "./ui";
 import { formatAuditTimestamp } from "./audit-time";
 import { installFormValidation } from "./form-validation";
+import { filterMemberLeave, leaveFilterError, publicLeaveFields, type LeaveFilter } from "./member-leave-filters";
+import { openMemberLeaveHistory } from "./member-leave-history";
+import { openMemberLeaveCancellation } from "./member-leave-cancel";
+import { openMemberLeaveStatistics } from "./member-leave-statistics";
 
 const MEMBER_IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
@@ -385,6 +389,7 @@ export async function openMemberWorkspace(
   let dutyMonths: string[] = [];
   let dutyFrom = "";
   let dutyUntil = "";
+  let leaveFilter: LeaveFilter = {search: "", status: "", type: "", from: "", until: ""};
   const dirty = () => JSON.stringify(draft) !== JSON.stringify(member);
 
   function validateDraft(): boolean {
@@ -564,7 +569,7 @@ export async function openMemberWorkspace(
             })
             .join("")
         : "<p>No changes recorded yet.</p>";
-    const rows = cache[tab]!.filter(
+    const rows = tab === "leave" ? filterMemberLeave(cache.leave!, leaveFilter) : cache[tab]!.filter(
       (row) =>
         tab !== "duties" ||
         ((!dutyFrom || String(row.date) >= dutyFrom) &&
@@ -598,7 +603,7 @@ export async function openMemberWorkspace(
         : "";
     return (
       analysis +
-      filter +
+      filter + (tab === "leave" ? leaveFilters() : "") +
       (tab === "postings" || tab === "leave" ? `<p class="mw-date-context">Date labels are compared with ${recordedDateMarkup(localCalendarToday())} on this device.</p>` : "") +
       (rows.length
         ? rows
@@ -612,7 +617,7 @@ export async function openMemberWorkspace(
                 return `<article class="mw-history">${range ? `<h3 class="mw-record-heading" id="${contextId}-heading">${esc(heading)}</h3><p class="mw-record-dates" id="${contextId}-dates">${range.markup}</p><span class="mw-period-badge mw-date-state">${range.state}</span>${tab === "leave" ? `<p class="mw-record-status">Status: ${esc(statusLabel(row.status))}</p>` : ""}` : row.starts_on || row.effective_from ? `<span class="mw-period-badge">${periodLabel(String(row.starts_on || row.effective_from), (row.ends_on || row.effective_to) as string | null)}</span>` : ""}<dl>${Object.entries(
                   row,
                 )
-                  .filter(([key]) => key !== "id" && !["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key))
+                  .filter(([key]) => key !== "id" && (tab !== "leave" || publicLeaveFields.has(key)) && !["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key))
                   .map(
                     ([key, value]) =>
                       `<div><dt>${esc(key.replace(/_/g, " "))}</dt><dd>${typeof value === "object" && value !== null ? `<pre>${esc(JSON.stringify(value, null, 2))}</pre>` : esc(key === "call_level" || key === "posting_type" ? callLabel(value) : ["type", "slot", "source", "status"].includes(key) ? statusLabel(value) : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "string" && ["date", "duty_date", "starts_on", "ends_on", "effective_from", "effective_to"].includes(key) ? formatCalendarDate(value) : (value ?? (["ends_on", "effective_to"].includes(key) ? "Ongoing" : "Not recorded")))}</dd></div>`,
@@ -622,19 +627,34 @@ export async function openMemberWorkspace(
                   )}</dl>${Object.keys(row).some(key => ["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key)) ? `<details data-member-record-provenance data-profile-disclosure="record-${esc(tab)}-${esc(row.id)}"><summary>Record provenance</summary><dl>${Object.entries(
                   row,
                 )
-                  .filter(([key]) => ["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key))
+                  .filter(([key]) => (tab !== "leave" || publicLeaveFields.has(key)) && ["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key))
                   .map(
                     ([key, value]) =>
                       `<div><dt>${esc(key.replace(/_/g, " "))}</dt><dd>${typeof value === "object" && value !== null ? `<pre>${esc(JSON.stringify(value, null, 2))}</pre>` : esc(key === "call_level" || key === "posting_type" ? callLabel(value) : ["type", "slot", "source", "status"].includes(key) ? statusLabel(value) : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "string" && ["date", "duty_date", "starts_on", "ends_on", "effective_from", "effective_to"].includes(key) ? formatCalendarDate(value) : (value ?? (["ends_on", "effective_to"].includes(key) ? "Ongoing" : "Not recorded")))}</dd></div>`,
                   )
                   .join(
                     "",
-                  )}</dl></details>` : ""}${["postings", "leave"].includes(tab) ? `<button type="button" data-edit-record="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Edit ${tab === "postings" ? "posting" : "leave"}</button>${tab === "leave" && row.status !== "cancelled" ? `<button type="button" class="danger-button" data-cancel-profile-leave="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Cancel leave</button>` : ""}` : ""}</article>`;
+                  )}</dl></details>` : ""}${tab === "leave" && admin ? `<button type="button" data-leave-lifecycle="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">View leave history and sources</button>` : ""}${["postings", "leave"].includes(tab) ? `<button type="button" data-edit-record="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Edit ${tab === "postings" ? "posting" : "leave"}</button>${tab === "leave" && row.status !== "cancelled" ? `<button type="button" class="danger-button" data-cancel-profile-leave="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Cancel leave</button>` : ""}` : ""}</article>`;
               },
             )
             .join("")
         : `<p class="empty-state">No ${esc(labels[tab].toLowerCase())} records in this range.</p>`)
     );
+  }
+  function leaveFilters() {
+    const all = cache.leave || [];
+    const options = (field: "status" | "type", value: string) => [...new Set(all.map(row => String(row[field] ?? (field === "type" ? row.leave_type : "") ?? "")))].filter(Boolean).sort()
+      .map(option => `<option value="${esc(option)}" ${option === value ? "selected" : ""}>${esc(statusLabel(option))}</option>`).join("");
+    const error = leaveFilterError(leaveFilter);
+    const count = filterMemberLeave(all, leaveFilter).length;
+    return `<div data-member-leave-filters role="group" aria-label="Filter member leave records">
+      <label>Search leave records<input type="search" data-leave-filter="search" value="${esc(leaveFilter.search)}" placeholder="Type, session, status, source or record ID"></label>
+      <div class="mw-date-filter"><label>Approval status<select data-leave-filter="status"><option value="">All statuses</option>${options("status", leaveFilter.status)}</select></label>
+      <label>Leave type<select data-leave-filter="type"><option value="">All types</option>${options("type", leaveFilter.type)}</select></label>
+      <label>Overlaps from<input type="date" data-leave-filter="from" value="${esc(leaveFilter.from)}"></label>
+      <label>Overlaps until<input type="date" data-leave-filter="until" value="${esc(leaveFilter.until)}"></label></div>
+      <button type="button" data-apply-leave-filters>Apply leave filters</button><button type="button" data-clear-leave-filters>Clear leave filters</button>
+      ${error ? `<p role="alert">${esc(error)}</p>` : ""}<p role="status" data-member-leave-filter-count>${count} of ${all.length} loaded records shown. Date filters include any overlapping request; they do not change its stored dates.</p></div>`;
   }
   function content() {
     const call = memberCallPresentation(member);
@@ -650,7 +670,7 @@ export async function openMemberWorkspace(
     if (tab === "postings")
       return `<button type="button" class="primary" data-add-record>Add Posting</button><p>Dated postings determine monthly unit and call-level overrides. Base department default: ${esc(callLabel(member.call_level))}.</p>${history()}`;
     if (tab === "leave")
-      return `<button type="button" class="primary" data-add-record>Add Leave</button><p>Review the returned approval state and session for each leave record. Pending requests are not confirmed absence. Availability depends on the operation; use its returned blocking counts and duty safety checks.</p>${history()}`;
+      return `<button type="button" class="primary" data-add-record>Add Leave</button><button type="button" data-member-leave-statistics>Leave statistics</button><p>Review the returned approval state and session for each leave record. Pending requests are not confirmed absence. Availability depends on the operation; use its returned blocking counts and duty safety checks.</p>${history()}`;
     // Extra-duty ledger (docs/extra_duty_contract.md §8), filled after render.
     if (tab === "duties" && admin)
       return `${history()}<section data-extra-duties-host aria-label="Extra duties"></section>`;
@@ -884,6 +904,37 @@ export async function openMemberWorkspace(
         dutyFrom = (e.target as HTMLInputElement).value;
         render();
       });
+    dialog.querySelector<HTMLButtonElement>("[data-apply-leave-filters]")?.addEventListener("click", event => {
+      event.preventDefault();
+      const next = {...leaveFilter};
+      dialog.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-leave-filter]").forEach(input => {
+        const key = input.dataset.leaveFilter as keyof LeaveFilter;
+        next[key] = input.value;
+      });
+      leaveFilter = next;
+      render();
+      dialog.querySelector<HTMLElement>("[data-member-leave-filter-count]")?.setAttribute("tabindex", "-1");
+      dialog.querySelector<HTMLElement>("[data-member-leave-filter-count]")?.focus();
+    });
+    dialog.querySelector<HTMLElement>("[data-member-leave-filters]")?.addEventListener("keydown", event => {
+      if (event.key === "Enter" && event.target instanceof HTMLInputElement) {
+        event.preventDefault();
+        dialog.querySelector<HTMLButtonElement>("[data-apply-leave-filters]")?.click();
+      }
+    });
+    dialog.querySelectorAll<HTMLButtonElement>("[data-leave-lifecycle]").forEach(button => {
+      button.onclick = () => {
+        if (admin) void openMemberLeaveHistory(button.dataset.leaveLifecycle!).catch(error => {
+          if (alive()) dialog.querySelector("#mw-error")!.textContent = error instanceof Error ? error.message : "Leave history could not open.";
+        });
+      };
+    });
+    dialog.querySelector<HTMLButtonElement>("[data-member-leave-statistics]")?.addEventListener("click",()=>openMemberLeaveStatistics(id));
+    dialog.querySelector<HTMLButtonElement>("[data-clear-leave-filters]")?.addEventListener("click", () => {
+      leaveFilter = {search: "", status: "", type: "", from: "", until: ""};
+      render();
+      dialog.querySelector<HTMLInputElement>('[data-leave-filter="search"]')?.focus();
+    });
     dialog.querySelectorAll<HTMLButtonElement>("[data-duty-month]").forEach(button => {
       button.onclick = () => {
         const month = button.dataset.dutyMonth || "";
@@ -943,7 +994,7 @@ export async function openMemberWorkspace(
       .querySelectorAll<HTMLButtonElement>("[data-cancel-profile-leave]")
       .forEach(
         (button) =>
-          (button.onclick = async () => {
+          (button.onclick = () => {
             const leave = cache.leave?.find(
               (row) => String(row.id) === button.dataset.cancelProfileLeave,
             );
@@ -954,26 +1005,13 @@ export async function openMemberWorkspace(
             }
             const cancelledPersonId = id;
             const cancelledRecordId = String(leave.id);
-            if (
-              !confirm(
-                `Cancel leave for ${member.canonical_name}?\nFrom: ${leave.starts_on ?? "Not recorded"}\nUntil: ${leave.ends_on ?? "Not recorded"}\nCategory: ${statusLabel(leave.type)}\nRecord ID: ${leave.id}\n\nIt will no longer block availability. History is retained. Existing duties remain assigned and may need review.`,
-              )
-            )
-              return;
-            button.disabled = true;
-            try {
-              await request(
-                `/api/v1/leave/requests/${button.dataset.cancelProfileLeave}/cancel`,
-                { method: "POST" },
-              );
+            openMemberLeaveCancellation(cancelledRecordId,
+              `${member.canonical_name}: ${leave.starts_on ?? "Not recorded"} to ${leave.ends_on ?? "Not recorded"}, ${statusLabel(leave.type)}.`, () => {
               notifyParent({kind: "leave", personId: cancelledPersonId, recordId: cancelledRecordId, operation: "cancel"});
               delete cache.leave;
               delete cache.activity;
-              await loadTab();
-            } catch (error) {
-              errors.leave = (error as Error).message;
-              render();
-            }
+              void loadTab();
+            });
           }),
       );
     dialog

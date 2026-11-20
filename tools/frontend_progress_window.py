@@ -17,6 +17,13 @@ def snapshot():
     audit = read('acceptance-audit-current.json')
     verification = read('verification-current.json')
     live = read('live-work.json') if (DOCS / 'live-work.json').exists() else {}
+    # The UI labels this historical checkpoint count explicitly. Never present
+    # cached audit counts as fresh current-source hash verification.
+    recorded_acceptances = sum(
+        item.get('implementation_status') == 'complete'
+        and item.get('acceptance', {}).get('status') == 'accepted'
+        for item in ledger['items']
+    )
     batches = []
     for entry in audit.get('additional_bounded_batches', [])[-16:][::-1]:
         relative = entry.get('report', '')
@@ -38,7 +45,7 @@ def snapshot():
                       'limitations': item.get('limitations', [])})
     return {'read_at': datetime.now(timezone.utc).isoformat(), 'ledger_recorded_at': verification.get('recorded_at_utc'),
             'counts': dict(Counter(i['status'] for i in items)), 'total': len(items),
-            'certified': audit.get('counts', {}).get('whole_requirement_completion_proven', 0),
+            'certified': recorded_acceptances,
             'live': live, 'batches': batches, 'items': items,
             'unit_tests': verification.get('current_unit_tests', {}), 'build': verification.get('build', {}),
             'snapshot_note': verification.get('snapshot_note', ''),

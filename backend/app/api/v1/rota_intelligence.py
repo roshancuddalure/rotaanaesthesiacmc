@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from app.api.v1.auth import current_user
+from app.api.v1.auth import current_user, require_admin
 from app.core.config import settings
 from app.db.session import get_db
 from app.models import UserAccount, RotaTeachingExample, RotaLearningVersion, RotaPeriod
@@ -15,6 +15,7 @@ from app.services import rota_compute as compute, rota_intelligence as service
 from app.services.auth import ADMIN_ROLES
 from app.services.leave import month_bounds
 from app.services.rota_candidates import candidate_context
+from app.services.assistant_sources import assistant_source_context
 from app.api.v1.rota_compute import limit_start, limit_work
 
 router = APIRouter(prefix="/rota-intelligence", dependencies=[Depends(current_user)])
@@ -123,7 +124,9 @@ def assistant_context(month: str, instruction: str = "", db: Session = Depends(g
         month_bounds(month)
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
-    context = candidate_context(db, month)
+    from app.services.rota_rules import read_phase_one_rules, default_phase_one_rules
+
+    rules = read_phase_one_rules(db) or default_phase_one_rules()
     terms = set(instruction.lower().split())
     rows = list(
         db.scalars(
@@ -134,29 +137,28 @@ def assistant_context(month: str, instruction: str = "", db: Session = Depends(g
         )
     )
     rows.sort(
-        key=lambda r: len(terms & set((r.data["reason"] + " " + r.data["note"]).lower().split())),
+        key=lambda r: len(terms & set(str(r.data.get("reason", "")).lower().split())) if isinstance(r.data, dict) else 0,
         reverse=True,
     )
-    # Names, IDs, leave reasons and entire schedules never enter the model context.
-    return {
-        "month": month,
-        "constraints": {
-            "limits": context.rules.duty_count_limits.model_dump(),
-            "rest": context.rules.rest_rules.model_dump(),
-            "staffing": context.rules.unit_staffing_rules.model_dump(),
-        },
-        "examples": [
-            {
-                "reason": r.data["reason"],
-                "kind": r.data["kind"],
-                "weekend": r.data["decision"].get("weekend"),
-                "proposed_score_components": r.data["decision"].get("score_parts", {}),
-                "preferred_score_components": r.data.get("preferred_features"),
-            }
-            for r in rows[:5]
-        ],
-        "instruction": "All proposed policies require administrator review. Never bypass constraints.",
-    }
+    return assistant_source_context(month, rules, rows)
+
+
+@router.get("/assistant-context/ot")
+def assistant_ot_context(month: str, unit_id: UUID, day: date, instruction: str = "",
+                         db: Session = Depends(get_db), user: UserAccount = Depends(require_admin)):
+    from app.api.v1.ot_calendar import enabled as ot_enabled
+    from app.services.assistant_ot_reference import ot_demand_reference, with_ot_reference
+
+    enabled()
+    ot_enabled()
+    try:
+        first, last = month_bounds(month)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    if not first <= day <= last:
+        raise HTTPException(422, "Select an OT date in the requested month")
+    reference = ot_demand_reference(db, unit_id, day)
+    return with_ot_reference(assistant_context(month, instruction, db), reference)
 
 
 @router.get("/history-months")

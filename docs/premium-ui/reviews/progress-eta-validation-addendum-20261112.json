@@ -1,0 +1,866 @@
+{
+  "recorded_at_utc": "2026-11-11T18:56:27.715939+00:00",
+  "reviewer": "/root/account_diagnostics_review_nov12",
+  "scope": "Independent lightweight validation of updated progress-only ETA guards; exact JS function with text-only DOM stubs and exact PowerShell ETA block with captured Write-Host, no viewer loop, browser or build execution.",
+  "source_sha256": {
+    "docs/premium-ui/progress-window.html": "39088e83671b84579295441411e2acd228bc763109f3d69798286ec337ed9871",
+    "tools/show_frontend_progress.ps1": "a752629763b7c8b20b82bd667ce440959f25c463b2f54358b8e34328cd91b4f1",
+    "docs/premium-ui/live-work.json": "7536b0144fa507470d3c6fbb8f9ea9933d73f7d28b5f3c5ee128d6766dcf22b4"
+  },
+  "sources_unchanged": true,
+  "previous_immutable_review": {
+    "path": "docs/premium-ui/reviews/progress-eta-independent-20261112.json",
+    "sha256": "973157e0025a7cec00d4d5e0c596b53652bbfb994199b0b4f2d6929603d0c8aa"
+  },
+  "current_normal_estimate_hours": [
+    90,
+    180
+  ],
+  "unfinished_items": 196,
+  "javascript_cases": [
+    {
+      "name": "normal",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "About 90\u2013180 active working hours"
+        },
+        "eta-batch": {
+          "textContent": "Current repair batch: Context help verification, conflict evidence and disposable restore testing: roughly 2\u20134 additional active working hours. Overall: roughly 12\u201323 working days at 8 active hours/day."
+        },
+        "eta-basis": {
+          "textContent": "196 unfinished items excluding external dependencies; allowance of 0.4\u20130.8 hours/item plus 8\u201316 hours for integration and final checks. Reviewed 2026-11-11T18:55:53.772019+00:00. This is a manual scope allowance, not a measured throughput forecast; parallel work is already assumed."
+        }
+      }
+    },
+    {
+      "name": "missing",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "No estimate has been recorded."
+        }
+      }
+    },
+    {
+      "name": "null",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "No estimate has been recorded."
+        }
+      }
+    },
+    {
+      "name": "empty",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "missing_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "string_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "nan_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "infinite_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_infinite_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "boolean_hours_per_item_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "missing_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "string_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "nan_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "infinite_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_infinite_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "boolean_hours_per_item_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "missing_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "string_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "nan_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "infinite_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_infinite_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "boolean_integration_hours_low",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "missing_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "string_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "nan_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "infinite_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "negative_infinite_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "boolean_integration_hours_high",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "reversed_item_range",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "reversed_integration_range",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "Estimate awaiting review"
+        },
+        "eta-batch": {
+          "textContent": ""
+        },
+        "eta-basis": {
+          "textContent": "Estimate values are incomplete or invalid; awaiting review."
+        }
+      }
+    },
+    {
+      "name": "invalid_metadata",
+      "passed": true,
+      "text": {
+        "eta-total": {
+          "textContent": "About 90\u2013180 active working hours"
+        },
+        "eta-batch": {
+          "textContent": "Current repair batch: Awaiting review. Overall: roughly 12\u201323 working days at 8 active hours/day."
+        },
+        "eta-basis": {
+          "textContent": "196 unfinished items excluding external dependencies; allowance of 0.4\u20130.8 hours/item plus 8\u201316 hours for integration and final checks. Reviewed Not recorded. This is a manual scope allowance, not a measured throughput forecast; parallel work is already assumed."
+        }
+      }
+    }
+  ],
+  "powershell_cases": [
+    {
+      "name": "normal",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: 90-180 active working hours",
+        "  Current batch: Context help verification, conflict evidence and disposable restore testing: roughly 2\u20134 additional active working hours",
+        "  Low-confidence scope estimate | Reviewed: 2026-11-11T18:55:53.772019+00:00",
+        "  Not a countdown or promised finish date; external device checks excluded.",
+        ""
+      ]
+    },
+    {
+      "name": "missing",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "empty",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "missing_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "string_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "nan_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "infinite_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_infinite_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "boolean_hours_per_item_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "missing_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "string_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "nan_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "infinite_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_infinite_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "boolean_hours_per_item_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "missing_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "string_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "nan_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "infinite_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_infinite_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "boolean_integration_hours_low",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "missing_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "string_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "nan_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "infinite_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "negative_infinite_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "boolean_integration_hours_high",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "reversed_item_range",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    },
+    {
+      "name": "reversed_integration_range",
+      "passed": true,
+      "lines": [
+        "  ESTIMATED TIME LEFT: awaiting review",
+        "  Estimate values are missing or invalid; no duration inferred.",
+        ""
+      ]
+    }
+  ],
+  "javascript_case_count": 35,
+  "powershell_case_count": 33,
+  "findings": [
+    "All missing/empty/partial/negative/string/NaN/positive or negative Infinity/boolean/reversed numeric bounds tested reach awaiting-review fallback without displaying an inferred duration in both implementations.",
+    "Valid normal estimate remains90\u2013180 active working hours in both implementations.",
+    "HTML malformed batch and invalid reviewed timestamp safely display Awaiting review/Not recorded. PowerShell still displays raw optional metadata; numeric durations remain guarded. This is a metadata consistency limitation, not the repaired duration bug.",
+    "Input-finiteness validation does not establish absence of arithmetic overflow for astronomically large but finite inputs; operational estimates are small. No such output is claimed tested in this bounded addendum."
+  ],
+  "blocking_findings_for_requested_guard_matrix": [],
+  "limitations": [
+    "No browser layout/refresh/network-error execution or native PowerShell appearance test.",
+    "Actual optional metadata validation beyond HTML is not claimed.",
+    "No guarantee or measured throughput established by passing arithmetic/fallback checks."
+  ],
+  "test_harness_sha256": {
+    "tmp/progress-eta-extracted-block-validation-20261112.ps1": "e779f1a3a5176953804e9cc253666a15c01e5c7da1afdee7471a1c795bae9509"
+  },
+  "product_changes_by_reviewer": false
+}

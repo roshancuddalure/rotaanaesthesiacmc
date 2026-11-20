@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="26" time="38.911" timestamp="2026-11-14T11:35:00.529083+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_assignment_integration" name="test_manual_override_cannot_consume_mandatory_ot_and_does_not_write" time="0.612" /><testcase classname="tests.test_ot_assignment_integration" name="test_candidate_ranking_marks_ot_consumers_blocked" time="0.565" /><testcase classname="tests.test_ot_assignment_integration" name="test_context_is_loaded_once_and_preserved_when_optimizer_removes_slots" time="0.394" /><testcase classname="tests.test_ot_assignment_integration" name="test_final_plan_rejects_combination_of_individually_safe_choices" time="0.475" /><testcase classname="tests.test_ot_assignment_integration" name="test_replacement_releases_previous_holder_before_reserving_new_person" time="0.514" /><testcase classname="tests.test_ot_assignment_integration" name="test_month_end_assignment_protects_next_month_ot_despite_closed_duty_date" time="0.312" /><testcase classname="tests.test_ot_assignment_integration" name="test_missing_demand_is_unresolved_and_feature_off_retains_legacy_behavior" time="0.274" /><testcase classname="tests.test_ot_assignment_integration" name="test_extra_duty_strict_check_and_independent_verifier_protect_ot" time="0.687" /><testcase classname="tests.test_ot_assignment_integration" name="test_extra_duty_planner_recomputes_everyones_ot_alternatives_after_each_choice" time="0.931"><failure message="AssertionError: assert 'other' == 'ot_reservations'&#10;  &#10;  - ot_reservations&#10;  + other">environment = (&lt;sqlalchemy.orm.session.Session object at 0x00000185220F7890&gt;, &lt;app.models.unit.Unit object at 0x000001852203FE50&gt;, [...50&gt;, &lt;app.models.person.Person object at 0x0000018522142890&gt;], &lt;app.models.rota.DutySlot object at 0x00000185222C6C90&gt;)
+
+    def test_extra_duty_planner_recomputes_everyones_ot_alternatives_after_each_choice(environment):
+        from app.services.extra_duty import plan_extra_duties
+    
+        db, unit, _, _ = environment
+        slot(db, unit)
+        _, scope = monthly_setup(db, "2026-11")
+        scope.is_locked = True
+        db.add(MonthlyGenerationScopeUnit(scope=scope, unit=unit, status="included"))
+        db.commit()
+        plan = plan_extra_duties(db, "2026-11")
+        # Either duty alone is safe, but both would leave only two of the three
+        # mandatory OT seniors. Cached pools must not let the second one through.
+        assert plan["summary"]["filled"] == 1
+        assert plan["summary"]["unfilled"] == 1
+        unfilled = next(row for row in plan["decisions"] if row["action"] == "unfilled")
+&gt;       assert unfilled["cause"] == "ot_reservations"
+E       AssertionError: assert 'other' == 'ot_reservations'
+E         
+E         - ot_reservations
+E         + other
+
+backend\tests\test_ot_assignment_integration.py:190: AssertionError</failure></testcase><testcase classname="tests.test_ot_assignment_integration" name="test_specialized_guards_keep_missing_calendar_unresolved" time="0.358" /><testcase classname="tests.test_ot_assignment_integration" name="test_superadmin_actual_write_cannot_bypass_ot_but_retains_published_month_authority" time="0.607" /><testcase classname="tests.test_ot_assignment_integration" name="test_publish_exposes_ot_deficit_and_preserves_attributed_superadmin_publish_override" time="0.231"><failure message="ImportError: cannot import name 'approve_publish' from 'app.services.rota_publish' (D:\Coding\Duty Rota software\backend\app\services\rota_publish.py)">environment = (&lt;sqlalchemy.orm.session.Session object at 0x0000018522329210&gt;, &lt;app.models.unit.Unit object at 0x0000018521EACA10&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x00000185222AEFD0&gt;], &lt;app.models.rota.DutySlot object at 0x0000018521DE7450&gt;)
+
+    def test_publish_exposes_ot_deficit_and_preserves_attributed_superadmin_publish_override(environment):
+        from app.models import RotaPublishApproval, UserAccount
+&gt;       from app.services.rota_publish import approve_publish, rota_publish_checklist, RotaPublishError
+E       ImportError: cannot import name 'approve_publish' from 'app.services.rota_publish' (D:\Coding\Duty Rota software\backend\app\services\rota_publish.py)
+
+backend\tests\test_ot_assignment_integration.py:236: ImportError</failure></testcase><testcase classname="tests.test_rota_publish" name="test_assignment_exports_and_stale_approval" time="2.458" /><testcase classname="tests.test_rota_publish" name="test_assignment_export_api_errors_are_actionable" time="1.746" /><testcase classname="tests.test_rota_publish" name="test_publish_checklist_blocks_open_slots" time="0.529" /><testcase classname="tests.test_rota_publish" name="test_publish_records_approval_and_exports_workbook" time="1.101" /><testcase classname="tests.test_rota_publish" name="test_rota_publish_api_publishes_and_downloads_export" time="1.446" /><testcase classname="tests.test_rota_publish" name="test_publish_checklist_warns_members_over_individual_limit_never_blocks" time="0.972" /><testcase classname="tests.test_rota_publish" name="test_publish_checklist_has_no_over_limit_warning_within_limits" time="0.526" /><testcase classname="tests.test_rota_publish" name="test_over_limit_detail_truncates_to_five_names" time="0.001" /><testcase classname="tests.test_rota_publish" name="test_superadmin_override_publishes_with_blockers_and_stores_summary" time="1.544" /><testcase classname="tests.test_rota_publish" name="test_override_requires_superadmin_and_a_reason" time="1.121" /><testcase classname="tests.test_rota_publish" name="test_normal_publish_records_no_override_fields" time="0.996" /><testcase classname="tests.test_rota_publish" name="test_publish_anyway_api" time="2.161" /><testcase classname="tests.test_rota_publish" name="test_publish_checklist_blocks_call_level_mismatches" time="0.629" /><testcase classname="tests.test_rota_publish" name="test_publish_checklist_warns_uneven_duties_within_call_level" time="0.696" /></testsuite></testsuites>

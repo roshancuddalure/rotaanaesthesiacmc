@@ -37,7 +37,36 @@ test('guide deep links admit only public section IDs and never treat arbitrary h
   const source=await readFile(new URL('../src/navigation-history.ts',import.meta.url),'utf8');
   const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext}}).outputText;
   const {guideSectionFromHash,GUIDE_SECTION_IDS}=await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
-  assert.equal(GUIDE_SECTION_IDS.length,10);
+  assert.deepEqual([...GUIDE_SECTION_IDS], [
+    "guide-phase-1",
+    "guide-phase-2",
+    "guide-duty-eligibility",
+    "guide-monthly-workflow",
+    "guide-sections",
+    "guide-admin",
+    "guide-terms",
+    "guide-suggestions",
+    "guide-problems",
+    "guide-checklist",
+    "guide-overview",
+    "guide-analysis",
+    "guide-members",
+    "guide-leave",
+    "guide-units",
+    "guide-rota-setup",
+    "guide-rota-template",
+    "guide-rota-review",
+    "guide-rota-publish",
+    "guide-rota-rules",
+    "guide-limits",
+    "guide-call-clusters",
+    "guide-mappings",
+    "guide-imports",
+    "guide-accounts",
+    "guide-diagnostics",
+    "guide-compute-settings",
+    "guide-recycle-bin",
+  ]);
   for(const section of GUIDE_SECTION_IDS)assert.equal(guideSectionFromHash('#view=user-guide&section='+section),section);
   for(const hash of ['#guide-phase-1','#view=members&section=guide-admin','#view=user-guide&section=private-record','#view=user-guide&section=%3Cimg%20src=x%3E','#view=user-guide&section=../../admin','#view=user-guide'])assert.equal(guideSectionFromHash(hash),null);
 });

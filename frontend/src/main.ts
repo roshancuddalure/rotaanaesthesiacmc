@@ -1,8 +1,10 @@
 import { installListPagination } from "./list-pagination";
+import { dutyImpacts, otImpact } from "./leave-impact-view";
 import { createMappingReferenceDetails } from "./mapping-reference-details";
 import { saveUnitSettingsWithRecovery } from "./unit-settings-recovery";
 import { bindUnitModalAccessibility } from "./unit-modal-accessibility";
 import { bindLeaveCalendarFocus } from "./leave-calendar-focus";
+import { renderLeaveCoverage, renderUnitLeaveBasis, renderLeaveAttributionWarnings, renderUnitLeaveOverview } from "./leave-counting-basis";
 import { decorativeIcon } from "./decorative-icons";
 import { bindConnectionStatus } from './connection-status';
 import { shareableDiagnostics } from './diagnostics-summary';
@@ -15,6 +17,7 @@ import { installManualScrollRestoration, routeFromHash, guideSectionFromHash, wr
 import { installShellOverlayAccessibility } from './shell-accessibility';
 import { installFrontendRuntime, markFrontendReady, safeLocalStorage, isValidWorkingMonth, frontendBuildIdentity } from './frontend-runtime';
 import { openRotaCompute, openAutoassign, renderComputeSettings } from "./rota-compute";
+import { renderOtCalendar, otCalendarHasUnsavedChanges, otCalendarIsSaving, disposeOtCalendarPage } from "./ot-calendar";
 import { openMonthlyLeaveApproval } from "./leave-approval";
 import { openExtraDuty, openFillAll, overLimitTable, auditReportLinks, renderUnitFallbacks, prepareUnitFallbackReadback } from "./extra-duty";
 import { balanceStageHtml, openBalanceDuties } from "./balance-duties";
@@ -126,6 +129,8 @@ import {
   createUnitAssignment,
   createUserAccount,
   downloadRotaExport,
+  downloadRotaReviewExport,
+  downloadElectiveMembersExport,
   downloadRotaTemplateCallWiseExport,
   downloadRotaTemplateEagleEyeExport,
   forgotPassword,
@@ -596,6 +601,7 @@ const NAV_ITEMS: NavItem[] = [
   { view: "accounts", label: "Login Accounts", group: "Admin Tools", adminOnly: true },
   { view: "diagnostics", label: "Diagnostics", group: "Admin Tools", adminOnly: true },
   { view: "compute-settings", label: "Compute Settings", group: "Admin Tools", adminOnly: true },
+  { view: "ot-calendars", label: "Unit OT Calendars", group: "Admin Tools", adminOnly: true },
   { view: "recycle-bin", label: "Recycle bin", group: "Admin Tools", adminOnly: true },
 ];
 
@@ -1123,6 +1129,7 @@ function renderShell() {
           </div>
         </div>
         <div class="topbar-tools">
+          <a class="icon-button context-help-link" id="section-help" target="_blank" rel="noopener noreferrer" hidden>Section help</a>
           <label class="working-month" id="working-month-field" hidden>
             <span>Month</span>
             <input type="month" id="working-month" value="${escapeHtml(rotaPublishMonth)}" aria-label="Working month for leave, units and the monthly rota" />
@@ -1434,6 +1441,21 @@ function refreshShellRefs() {
 function setHeader(eyebrow: string, title: string) {
   if (sectionEyebrow) sectionEyebrow.textContent = eyebrow;
   if (sectionTitle) sectionTitle.textContent = title;
+  const help = document.querySelector<HTMLAnchorElement>('#section-help');
+  if (help) {
+    const section = guideSectionFromHash(`#view=user-guide&section=guide-${activeView}`);
+    help.hidden = !section;
+    if (section) {
+      const destination = new URL(window.location.href);
+      destination.search = '';
+      destination.hash = `view=user-guide&section=${section}`;
+      help.href = destination.href;
+      help.setAttribute('aria-label', `Section help for ${NAV_ITEMS.find(item => item.view === activeView)?.label ?? title}. Opens in a new tab.`);
+    } else {
+      help.removeAttribute('href');
+      help.removeAttribute('aria-label');
+    }
+  }
 }
 
 function mappingTypeLabel(type: string): string {
@@ -1782,7 +1804,7 @@ const STAT_HELP: Record<string, string> = {
   "Pressure By Unit": "Generator-facing leave pressure grouped by assigned unit.",
   Assignments: "Current monthly unit assignment records.",
   "Active units": "Units currently marked active in Unit Management.",
-  "Unit leave days": "Total leave days affecting members assigned to units this month.",
+  "Unit leave person-dates": "Distinct people on each active leave date during their dated unit-board posting. Partial dates count as touched dates, not entitlement days; conflicting units are unresolved.",
   "Errors / warnings": "Unit setup issues found before rota generation.",
   "Duty types": "Configurable duty categories available to the rota generator.",
   "Rest hours": "Minimum rest gap after a 24-hour duty.",
@@ -3916,7 +3938,7 @@ function displayRotaUnitLabel(slot: {
   unit_code: string | null;
   unit_assignment_label?: string | null;
 }): string {
-  return slot.unit_assignment_label || displayUnitText(slot.unit_name || slot.unit_code, "Unit");
+  return slot.unit_assignment_label || displayUnitText(slot.unit_name || slot.unit_code, "Unallocated unit");
 }
 
 function displayPostingLabel(value: string | null): string {
@@ -4184,7 +4206,7 @@ function renderLeavePressurePanel(): string {
     <section class="leave-pressure-summary">
       <h3>Reported leave pressure</h3>
       <p>In this summary, approved requests are blocking; pending requests are shown for review. Final duty validation remains authoritative.</p>
-      <p>Group totals count leave entries across their recorded dates, rather than unique people for the month.</p>
+      <p>Group totals count distinct people on each recorded date. Repeated or overlapping requests do not multiply a person-date; these are not unique people for the month.</p>
       <div class="leave-pressure-groups">
         ${groups("By call level", leavePressure.call_level_totals, "calls")}
         ${groups("By unit", leavePressure.unit_totals, "units")}
@@ -4238,6 +4260,7 @@ function renderLeaveSnapshot(): string {
         <button type="button" class="primary" data-add-operational-record="leave">Add leave</button>
         <button type="button" class="icon-button" data-open-normalized-import="leave">Import leave CSV</button>
         ${isAdminUser() ? `<button type="button" class="icon-button" data-approve-month-leave ${pendingApprovals ? "" : "disabled"}>Approve all pending (${pendingApprovals})</button>` : ""}
+        ${isAdminUser() ? `<button type="button" class="icon-button" data-leave-repairs>Review approved-leave repairs</button>` : ""}
         <details class="row-menu">
           <summary class="icon-button" aria-label="More leave tools">More</summary>
           <div class="row-menu__list" role="menu">
@@ -4252,9 +4275,11 @@ function renderLeaveSnapshot(): string {
     <section class="summary-grid four-col board-metrics">
       ${metricCard(summary.total_requests, "Leave requests")}
       ${metricCard(summary.people_on_leave, "People with leave records", STAT_HELP["People on leave"])}
-      ${metricCard(summary.total_leave_days, "Total leave days")}
+      ${metricCard(summary.total_leave_days, "Active request-days", "Inclusive dates per active request. Overlapping and partial requests remain separate; this is not leave taken.")}
       ${metricCard(busiest?.count ?? 0, busiest?.count ? `Busiest day · ${formatDate(busiest.date, { weekday: true }).replace(/ \d{4}$/, "")}` : "Highest day pressure", STAT_HELP["Highest day pressure"], (busiest?.count ?? 0) >= 6 ? "is-warn" : "")}
     </section>
+    ${renderLeaveCoverage(summary.interval_coverage)}
+    ${renderLeaveAttributionWarnings(summary.attribution_warnings)}
     <section class="panel leave-calendar" aria-labelledby="leave-calendar-title">
       <div class="table-caption leave-calendar__head">
         <h3 id="leave-calendar-title">${monthName}</h3>
@@ -4281,6 +4306,7 @@ function renderLeaveSnapshot(): string {
       ${renderLeaveBreakdown("By Call Level", summary.call_level_counts)}
       ${renderLeaveBreakdown("By Unit", summary.unit_counts)}
     </section>
+    <p>Breakdowns count active request-days using each date's posting and call level. Overlapping requests remain separate here; use interval coverage for time without double counting.</p>
     <details class="panel disclosure-panel leave-pressure-details">
       <summary>Leave pressure used by the rota generator</summary>
       ${renderLeavePressurePanel()}
@@ -4833,8 +4859,9 @@ function renderUnitModal(unit: UnitRead): string {
             ${unitMonthlyPeopleCountsAvailable(summary) ? `<span><strong>${assigned}</strong> assigned this month</span><span><strong>${onLeave}</strong> with active leave records</span><span><strong>${available}</strong> without active leave records</span>` : `<span data-unit-monthly-unavailable>Monthly leave record totals are unavailable.</span>`}
             <span><strong>${unit.minimum_free_people}</strong> configured fallback min free</span>
             <span><strong>${callRuleCount}</strong> call-wise rules</span>
-            ${summary && Object.prototype.hasOwnProperty.call(summary, "leave_days") && Number.isInteger(summary.leave_days) && summary.leave_days >= 0 ? `<span><strong>${summary.leave_days}</strong> recorded leave days</span>` : `<span data-unit-leave-days-unavailable>Leave-day total unavailable</span>`}
+            ${summary && Object.prototype.hasOwnProperty.call(summary, "leave_days") && Number.isInteger(summary.leave_days) && summary.leave_days >= 0 ? `<span><strong>${summary.leave_days}</strong> active leave person-dates</span>` : `<span data-unit-leave-days-unavailable>Leave-date total unavailable</span>`}
           </div>
+          ${renderUnitLeaveBasis(summary)}
           <form class="leave-form unit-settings-form" id="unit-settings-form" data-unit-id="${unit.id}">
             <label>
               <span>Fallback minimum free people</span>
@@ -4875,8 +4902,14 @@ function refreshUnitBoardReadback() {
   const metrics = viewRoot.querySelector<HTMLElement>('.board-metrics');
   if (metrics) metrics.innerHTML = metricCard(unitAssignments.length, "Postings", "Member postings to units and special cards for this month.")
     + metricCard(unitManagement.units.length, "Active units")
-    + metricCard(unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0), "Unit leave days")
+    + metricCard(unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0), "Unit leave person-dates", STAT_HELP["Unit leave person-dates"])
     + metricCard(errors + warnings, "Setup issues", `${errors} errors and ${warnings} warnings found in this month's postings.`, errors ? "is-alert" : warnings ? "is-warn" : "is-good");
+  const leaveBasis = viewRoot.querySelector<HTMLElement>('[data-unit-leave-overview]');
+  if (leaveBasis) {
+    const next = document.createElement("template");
+    next.innerHTML = renderUnitLeaveOverview(unitManagement.unit_summaries);
+    leaveBasis.replaceWith(next.content);
+  }
   const issues = viewRoot.querySelector<HTMLDetailsElement>('#unit-setup-issues');
   if (issues) {
     const next = document.createElement("template"); next.innerHTML = renderUnitValidationIssues();
@@ -5167,9 +5200,10 @@ async function renderUnitManagement(forceReload = false) {
     <section class="summary-grid four-col board-metrics">
       ${metricCard(unitAssignments.length, "Postings", "Member postings to units and special cards for this month.")}
       ${metricCard(unitManagement.units.length, "Active units")}
-      ${metricCard(leaveDays, "Unit leave days")}
+      ${metricCard(leaveDays, "Unit leave person-dates", STAT_HELP["Unit leave person-dates"])}
       ${metricCard(errors + warnings, "Setup issues", `${errors} errors and ${warnings} warnings found in this month's postings.`, errors ? "is-alert" : warnings ? "is-warn" : "is-good")}
     </section>
+    ${renderUnitLeaveOverview(unitManagement.unit_summaries)}
     ${renderUnitValidationIssues()}
     <section class="panel unit-board-filters" aria-label="Find unit postings">
       <div class="unit-board-filters__controls">
@@ -5742,7 +5776,7 @@ async function renderRotaSetup() {
         </td>
         <td class="num">${unit.assigned_members}</td>
         <td>${callMix}</td>
-        <td>${unit.people_with_leave ? `${unit.people_with_leave} people · ${unit.leave_days} days` : "—"}</td>
+        <td>${unit.people_with_leave ? `${unit.people_with_leave} people · ${unit.leave_days} active leave person-dates` : "—"}</td>
         <td>${readiness}</td>
         <td>${unit.warnings.map((warning) => `<small>${reviewButton({
           title: "Resolve Unit Readiness Warning",
@@ -8166,7 +8200,15 @@ async function renderRotaReview() {
         <div class="page-toolbar__actions">
           <button class="icon-button" type="button" data-view-shortcut="rota-template">Open template</button>
           <button class="icon-button" type="button" data-view-shortcut="rota-publish">Go to Publish</button>
+          <button class="icon-button" type="button" id="download-review-rota-export">Download formatted Excel for review</button>
+          <button class="icon-button" type="button" id="download-review-eagle-eye-export">Export Eagle Eye Excel</button>
+          <button class="icon-button" type="button" id="download-elective-members-export">Export elective list members</button>
         </div>
+      </section>
+      <section class="panel" aria-label="Elective availability export window">
+        <p>Elective list availability window (hospital-local time). Each date has its own Excel tab, grouped by locked included unit. Availability does not reserve members or confirm elective skills.</p>
+        <label>From <input type="time" id="elective-export-start" value="08:00" required></label>
+        <label>Until <input type="time" id="elective-export-end" value="17:00" required></label>
       </section>
       <section class="summary-grid four-col">
         ${metricCard(summary.hard_blocked_items ?? 0, "Hard-blocked items", undefined, summary.hard_blocked_items ? "is-alert" : "")}
@@ -8456,7 +8498,16 @@ async function renderAccounts(confirmedCreation = false) {
     <section class="panel action-panel">
       <div>
         <h3>Create Account</h3>
-        <p>Roles: rota board member, HOD, computer admin, or superadmin.</p>
+        <p>Choose access for the account holder's work. The server checks permissions for every protected action.</p>
+        <details class="account-role-guide" id="account-role-guide"><summary>What each role can do</summary>
+          <dl>
+            <dt>Rota board member</dt><dd>Prepare and review rotas, manage leave and postings, and publish the rota.</dd>
+            <dt>Head of Department</dt><dd>Rota workflow and publishing access, plus member profile management.</dd>
+            <dt>Computer admin</dt><dd>Manage accounts, member records, imports, rules and diagnostics. This role does not grant rota publishing.</dd>
+            ${currentUser.role === "superadmin" ? '<dt>Superadmin</dt><dd>Administrative and publishing access, including granting superadmin access.</dd>' : ""}
+          </dl>
+        </details>
+        ${confirmedCreation ? '<p role="status" data-account-created>Account created. The refreshed list below shows the returned accounts.</p>' : ''}
       </div>
       <form class="account-create-form" id="account-form">
         <div class="account-create-field"><label for="account-username">Username</label>
@@ -8467,15 +8518,17 @@ async function renderAccounts(confirmedCreation = false) {
         <input id="account-password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required placeholder="Password (8–128 characters)" aria-label="Password" aria-describedby="account-password-hint" />
         <small id="account-password-hint">8–128 characters. Share directly with the account holder.</small></div>
         <div class="account-create-field"><label for="account-role">Role</label>
-        <select id="account-role" aria-label="Role">
+        <select id="account-role" aria-label="Role" aria-describedby="account-role-guide">
           <option value="rota_board_member">Rota board member</option>
           <option value="hod">Head of Department</option>
           <option value="computer_admin">Computer admin</option>
           ${currentUser.role === "superadmin" ? '<option value="superadmin">Superadmin</option>' : ""}
         </select></div>
         <button class="primary" type="submit" id="create-account">Create</button>
+        <p role="status" data-account-create-status aria-atomic="true" hidden></p>
       </form>
     </section>
+    <p class="panel" role="status" data-account-recovery-status aria-atomic="true" hidden></p>
     <section class="panel table-panel hide-mobile">
       <table class="accounts-table">
         <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Recovery</th></tr></thead>
@@ -8556,9 +8609,10 @@ function renderUserGuide() {
   viewRoot.innerHTML = `
     <section class="board-hero guide-hero">
       <div>
-        <span class="board-kicker">No-brainer operating guide</span>
-        <h3>How to run the Duty Rota website from start to finish</h3>
+        <span class="board-kicker">Operating guide</span>
+        <h3>Plan, review and publish your rota</h3>
         <p>Use this section when a new rota board member needs to understand the whole workflow, the terms on screen, and what to fix when something looks wrong.</p>
+        <p>Section help opens this guide in a separate tab. Keep your working tab open and close the guide tab to return. Shortcuts below navigate within the guide tab.</p>
       </div>
       <div class="board-hero-actions">
         <button class="primary" type="button" data-view-shortcut="members">Start With Members</button>
@@ -8682,7 +8736,7 @@ function renderUserGuide() {
     <section class="panel wide guide-section" id="guide-monthly-workflow">
       <h3>Monthly Workflow</h3>
       ${guideSteps([
-        "Sign in and open Overview to confirm the API is online.",
+        "Sign in and open Overview to review workload. If data does not load, open Server in the header and choose Check server.",
         "Open Department Members and confirm active people, historical people, position, and call level.",
         "Open Leave and enter or import all leave for the target month.",
         "Open Unit Management and enter or import each person's unit posting for the month.",
@@ -8696,47 +8750,47 @@ function renderUserGuide() {
     </section>
 
     <section class="analytics-grid guide-grid" id="guide-sections">
-      <article class="panel">
+      <article class="panel" id="guide-overview">
         <h3>Overview</h3>
-        <p>The starting dashboard. Use it to confirm workload trends, API health, and quick entry points before doing detailed rota work.</p>
-        ${guideBullets(["If Overview cannot load, the backend or analysis API may be offline.", "Use it as a quick health check, not as the final rota approval page."])}
+        <p>The starting dashboard. Review workload trends and use the shortcuts to begin detailed rota work.</p>
+        ${guideBullets(["If Overview cannot load, open Server in the header and choose Check server. A successful check describes the latest connection check; other pages may still be unavailable.", "Use Rota Review to check readiness before final approval in Publish & Export."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-analysis">
         <h3>Duty Analysis</h3>
         <p>Shows historical duty burden, weekend load, duty categories, postings, promotions, and manual review items.</p>
         ${guideBullets(["Fix invalid names or unmapped duties before trusting historical fairness.", "Open a person profile when a number looks unusual."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-members">
         <h3>Department Members</h3>
         <p>The master people list. A person must be correct here before they can be safely used in leave, unit posting, and rota assignment.</p>
         ${guideBullets(["Check active status, call level, designation, aliases, and duplicates.", "Historical members should not be used for new monthly duties unless intentionally reactivated."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-leave">
         <h3>Leave</h3>
         <p>Records who is unavailable and why. Leave affects candidate selection, warnings, hard blocks, and publish readiness.</p>
         ${guideBullets(["Import leave into the correct month.", "Resolve unknown names before generating or reviewing the rota.", "Check leave pressure when many people are unavailable on the same date."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-units">
         <h3>Unit Management</h3>
         <p>Stores monthly unit postings. Unit availability controls which people are suitable for unit-specific duties.</p>
-        ${guideBullets(["Import unit postings after member names are clean.", "Resolve unknown units and unknown people.", "Check unit staffing warnings before template generation."])}
+        ${guideBullets(["Administrators can use Add unit to create a department unit. Open More, then Manage units, to review the unit registry.", "Unit creation and monthly postings are separate: choose the working month before adding or importing postings.", "Import unit postings after member names are clean.", "Resolve unknown units and unknown people.", "Check unit staffing warnings before template generation."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-rota-setup">
         <h3>Rota Setup</h3>
         <p>Defines the month scope, included units, and configuration used to create the duty template.</p>
         ${guideBullets(["Confirm month, included units, and rules before generating.", "Do not keep changing setup after assignments unless you understand the impact."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-rota-template">
         <h3>Rota Template</h3>
         <p>The main work area for daily duties. Open a day, review slots under each duty, check allocation statistics, and assign people in call-wise order.</p>
         ${guideBullets(["Look at Main, CB, RC, PAC, and other duty groups separately.", "Unit labels with (3A), (3B), or (3C) are restricted to that matching 3rd-call eligibility subgroup.", "Use Statistics to confirm the split by unit, day, Saturday, Sunday, duty type, call level, and forced review slots.", "Forced review means every unit was hard blocked, so the engine filled the least damaging unit instead of leaving the duty empty.", "Use candidates as guidance; lower priority score means the system prefers that person first.", "Override only with a clear reason.", "Fast mode is useful when a heavy month loads slowly."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-rota-review">
         <h3>Rota Review</h3>
         <p>The validation dashboard for open slots, warnings, hard blocks, workload balance, and exchange approvals.</p>
-        ${guideBullets(["A hard block means fix the rota or enter a justified override.", "Open slots must be assigned before publish.", "If review loads too long, use the template and check backend status."])}
+        ${guideBullets(["A hard block means fix the rota or enter a justified override.", "Open slots must be assigned before publish.", "If Rota Review does not load, open Server in the header and choose Check server. Ask your department administrator for help if the problem continues."])}
       </article>
-      <article class="panel">
+      <article class="panel" id="guide-rota-publish">
         <h3>Publish & Export</h3>
         <p>The final approval page. It checks whether the rota is ready, records approval, and exports the Excel output.</p>
         ${guideBullets(["Do not publish with unresolved blockers.", "Warnings should be fixed or intentionally accepted.", "Download Excel only after the final published state is correct."])}
@@ -8746,12 +8800,15 @@ function renderUserGuide() {
     <section class="panel wide guide-section" id="guide-admin">
       <h3>Admin Tools</h3>
       <div class="guide-term-grid">
-        <div><strong>Rota Rules</strong><span>Controls each duty's allowed call levels, restricted eligibility groups, and duty category.</span></div>
-        <div><strong>Eligibility Groups</strong><span>Creates selected member pools inside a parent call level for special duties such as Schell, PAC, Main Shift, RC Shift, or PB Shift.</span></div>
-        <div><strong>Mappings</strong><span>Connects messy imported duty names or member labels to clean system terms.</span></div>
-        <div><strong>Historical Import</strong><span>Loads older rota data for analysis and fairness context.</span></div>
-        <div><strong>Login Accounts</strong><span>Creates and manages rota board, computer admin, and superadmin access.</span></div>
-        <div><strong>Diagnostics</strong><span>Shows backend counts, health signals, and raw diagnostic payloads for troubleshooting.</span></div>
+        <div id="guide-rota-rules"><h4>Rota Rules</h4><span>Controls each duty's allowed call levels, restricted eligibility groups, and duty category.</span></div>
+        <div id="guide-call-clusters"><h4>Eligibility Groups</h4><span>Creates selected member pools inside a parent call level for special duties such as Schell, PAC, Main Shift, RC Shift, or PB Shift.</span></div>
+        <div id="guide-mappings"><h4>Mappings</h4><span>Connects messy imported duty names or member labels to clean system terms.</span></div>
+        <div id="guide-imports"><h4>Past Duties</h4><span>Choose the historical month and workbook, then Read Worksheets and Preview Past Duties. Review dates, row actions, warnings and corrections before Apply Reviewed Past Duties. Changing selections requires another preview.</span></div>
+        <div id="guide-accounts"><h4>Login Accounts</h4><span>Create accounts with an available role, review the returned status, or issue a recovery code after verifying identity. Available roles include rota board member, HOD and computer admin; only a superadmin can grant superadmin access. The server checks permissions. This page does not offer role-change or activation controls.</span></div>
+        <div id="guide-diagnostics"><h4>Diagnostics</h4><span>Review aggregate counts, then expand Shareable diagnostics JSON for support. Personal details, credentials and rule text are excluded from that shared view. Counts do not certify service health or rota readiness.</span></div>
+        <div id="guide-limits"><h4>Limits</h4><span>Read each setting's explanation, saved value and validation feedback. Save limits… opens the change review; check the changes, problems and selected month before confirming. This section is available to superadmins.</span></div>
+        <div id="guide-compute-settings"><h4>Compute Settings</h4><span>Review Device preferences and the reported readiness before computing. Test Device checks the selected browser device; comparison is a separate step for the selected workload and month. Unavailable or disabled GPU methods are explained on screen. Server computation remains the fallback.</span></div>
+        <div id="guide-recycle-bin"><h4>Recycle bin</h4><span>Match the deletion batch, record type and labels before Restore. Conflicts are shown for records that cannot be restored. Delete forever permanently removes that batch from recovery and requires a separate confirmation. Refresh list reloads results without repeating the action.</span></div>
       </div>
     </section>
 
@@ -8795,7 +8852,7 @@ function renderUserGuide() {
       <article class="panel">
         <h3>Common Problems</h3>
         ${guideBullets([
-          "Page keeps loading: refresh once, check API status, then try a lighter view or fast mode.",
+          "Page keeps loading: keep your working tab open to protect unsaved entries. Open Server in the header and choose Check server. If the problem continues, ask your department administrator for help.",
           "Person is missing: open Department Members and confirm active status and spelling.",
           "Wrong call level: update the member call level before assigning duties.",
           "No candidates: check leave, unit posting, call level, and rota setup scope.",
@@ -8899,7 +8956,7 @@ function revealGuideSection(): boolean {
   if (!id) return false;
   const section = document.getElementById(id);
   if (!section || !viewRoot.contains(section)) return false;
-  const heading = section.querySelector<HTMLElement>('h3') ?? section;
+  const heading = section.querySelector<HTMLElement>('h3, h4') ?? section;
   cancelScrollRestore?.();
   heading.tabIndex = -1;
   heading.focus({preventScroll: true});
@@ -8934,6 +8991,19 @@ function navigateToView(selectedView: string, historyMode: "push" | "replace" = 
     historyMode = 'replace';
   }
   // Leaving (or reloading) Rota Rules with unsaved edits asks first; the edits live only on that page.
+  if (activeView === "ot-calendars") {
+    if (otCalendarIsSaving()) {
+      showToast("Wait for the reviewed OT calendar save to finish before leaving this page.");
+      writeRoute(activeView, true);
+      return;
+    }
+    if (otCalendarHasUnsavedChanges() && !window.confirm("You have unsaved OT calendar changes. Leave this page and discard them?")) {
+      updateNavigationState(activeView);
+      writeRoute(activeView, true);
+      return;
+    }
+    disposeOtCalendarPage();
+  }
   if (activeView === "rota-rules" && rotaRulesHasUnsavedChanges()
       && !window.confirm("You have unsaved rota rule changes. Leave this page and discard them?")) {
     updateNavigationState(activeView);
@@ -9014,6 +9084,8 @@ function navigateToView(selectedView: string, historyMode: "push" | "replace" = 
     void renderAccounts();
   } else if (selectedView === "compute-settings" && isAdminUser()) {
     if (viewRoot) { const host = document.createElement("section"); viewRoot.replaceChildren(host); void renderComputeSettings(host); }
+  } else if (selectedView === "ot-calendars" && isAdminUser()) {
+    if (viewRoot) { const host = document.createElement("section"); viewRoot.replaceChildren(host); void renderOtCalendar(host); }
   } else if (selectedView === "diagnostics") {
     void renderDiagnostics();
   } else if (selectedView === "recycle-bin" && isAdminUser()) {
@@ -9164,6 +9236,8 @@ function bindViewEvents() {
         showToast("Username and password are required", "warning");
         return;
       }
+      const createStatus = form.querySelector<HTMLElement>('[data-account-create-status]');
+      if (createStatus) { createStatus.hidden = false; createStatus.setAttribute('role', 'status'); createStatus.textContent = `Creating account ${username}…`; }
       setButtonLoading(btn, true, "Create");
       form.setAttribute('aria-busy', 'true');
       try {
@@ -9173,6 +9247,10 @@ function bindViewEvents() {
         await renderAccounts(true);
       } catch (error) {
         if (!current()) return;
+        if (createStatus) {
+          createStatus.setAttribute('role', 'alert');
+          createStatus.textContent = `${error instanceof Error ? error.message : "Failed to create account"} The request was not confirmed. Your entries are retained; check the account list before submitting again.`;
+        }
         showToast(error instanceof Error ? error.message : "Failed to create account", "error");
         resetButton(btn);
       } finally {
@@ -9467,6 +9545,8 @@ function bindViewEvents() {
       try {
         leaveImportFile = file;
         leaveImportPreview = await previewLeaveImport(leaveMonth, file);
+        dutyImpacts(leaveImportPreview.affected_duties);
+        otImpact(leaveImportPreview.ot_impact);
         showToast("Leave import preview ready", "success");
         await renderLeave();
       } catch (error) {
@@ -9808,13 +9888,21 @@ function bindViewEvents() {
       if (!account || !window.confirm(`Issue a recovery code for ${account.username}? Verify the person's identity before sharing the code.`)) return;
       const operator = currentUser, submittedView = viewSeq, submittedRender = renderSeq;
       const current = () => !signal.aborted && operator === currentUser && submittedView === viewSeq && submittedRender === renderSeq && activeView === 'accounts' && recoveryButton.isConnected;
+      const recoveryStatus = viewRoot?.querySelector<HTMLElement>('[data-account-recovery-status]');
+      if (recoveryStatus) { recoveryStatus.hidden = false; recoveryStatus.setAttribute('role', 'status'); recoveryStatus.textContent = `Requesting a recovery code for ${account.username}…`; }
       recoveryButton.disabled = true;
       recoveryButton.setAttribute('aria-busy', 'true');
       try {
         const result = await issueAccountRecoveryCode(account.id);
         if (!current()) return;
+        if (recoveryStatus) recoveryStatus.textContent = `Recovery code issued for ${account.username}. Expires in ${result.expires_in_minutes} minutes. Share directly after verifying identity.`;
         window.prompt(`Recovery code for ${account.username}. Expires in ${result.expires_in_minutes} minutes. Share directly after verifying identity.`, result.reset_token);
-      } catch (error) { if (current()) showToast(error instanceof Error ? error.message : "Recovery failed", "error"); }
+      } catch (error) {
+        if (current()) {
+          if (recoveryStatus) { recoveryStatus.setAttribute('role', 'alert'); recoveryStatus.textContent = `Recovery for ${account.username} was not confirmed. ${error instanceof Error ? error.message : "Recovery failed"} No automatic retry was sent.`; }
+          showToast(error instanceof Error ? error.message : "Recovery failed", "error");
+        }
+      }
       finally { if (current()) { recoveryButton.disabled = false; recoveryButton.removeAttribute('aria-busy'); } }
       return;
     }
@@ -10265,6 +10353,21 @@ function bindViewEvents() {
       return;
     }
 
+    if (target.closest("[data-leave-repairs]") && isAdminUser()) {
+      const repairMonth = leaveMonth;
+      const repairAccount = currentUser;
+      const repairRoot = viewRoot;
+      const { openLeaveRepairs } = await import("./leave-repair");
+      if (repairAccount !== currentUser || activeView !== "leave" || leaveMonth !== repairMonth || viewRoot !== repairRoot) return;
+      openLeaveRepairs(repairMonth, () => {
+        if (repairAccount !== currentUser || activeView !== "leave" || leaveMonth !== repairMonth || viewRoot !== repairRoot || !repairRoot?.isConnected) return;
+        showToast("Reviewed duty repairs applied. The month remains unpublished.", "success");
+        const parent = createDependentParentLifecycle("Duty repairs applied. Refreshing current leave information.");
+        if (parent) { parent.confirmed(); parent.closed(); } else void renderLeave();
+      }, () => viewRoot?.querySelector<HTMLElement>("[data-leave-repairs]") ?? null);
+      return;
+    }
+
     if (target.closest("[data-approve-month-leave]") && isAdminUser()) {
       const approvalMonth = leaveMonth;
       const approvalAccount = currentUser;
@@ -10294,10 +10397,24 @@ function bindViewEvents() {
         showToast("Preview a leave file before applying import", "warning");
         return;
       }
-      if (!confirmAction("Create leave records for all safely matched preview rows?")) return;
+      let acknowledgeDuties=false;
+      try {
+        const duties=dutyImpacts(leaveImportPreview?.affected_duties);
+        const impact=otImpact(leaveImportPreview?.ot_impact);
+        const detail=duties.map(row=>`${row.person_name}: ${row.date} ${row.duty}; ${row.month} ${row.period_status}${row.protected_period?' (protected)':''}.`).join('\n');
+        const coverageState=(status:string)=>status==='feasible'?'feasible':status==='infeasible'?'shortage':'unknown';
+        const coverage=impact.status==='disabled'?'OT impact was not evaluated: integration disabled.':impact.months.length
+          ?impact.months.map(row=>`${row.month}: before ${coverageState(row.before.status)}, after ${coverageState(row.after.status)}.`).join('\n')
+          :'OT impact is unknown; this review does not certify adequate coverage.';
+        if (!confirmAction(`${coverage}\n${detail}\nCreate leave records for all safely matched preview rows? Existing duties remain unchanged; protected periods need separate authorized resolution.`)) return;
+        acknowledgeDuties=duties.length>0;
+      } catch(error) {
+        showToast(error instanceof Error?error.message:'Refresh the leave impact preview before applying.', 'warning');
+        return;
+      }
       setButtonLoading(btn, true, "Apply Matched Rows");
       try {
-        const result = await applyLeaveImport(leaveMonth, leaveImportFile, leaveImportPreview?.preview_hash ?? "");
+        const result = await applyLeaveImport(leaveMonth, leaveImportFile, leaveImportPreview?.preview_hash ?? "", acknowledgeDuties);
         leaveImportPreview = result.preview;
         showToast(result.replayed ? "This reviewed leave batch was already applied; no additional records created." : `Imported ${result.created_rows} leave row(s); skipped ${result.skipped_rows}`, "success");
         await renderLeave();
@@ -10547,11 +10664,28 @@ function bindViewEvents() {
       return;
     }
 
-    if (target.id === "download-rota-export") {
-      const btn = target.closest<HTMLButtonElement>("#download-rota-export");
+    if (target.id === "download-elective-members-export") {
+      const starts = document.querySelector<HTMLInputElement>('#elective-export-start')?.value || '';
+      const ends = document.querySelector<HTMLInputElement>('#elective-export-end')?.value || '';
+      if (!starts || !ends || starts >= ends) { showToast('Choose an increasing same-day elective window.', 'error'); return; }
+      const btn = target.closest<HTMLButtonElement>('button');
+      setButtonLoading(btn, true, 'Preparing elective members');
+      try {
+        const {blob,filename} = await downloadElectiveMembersExport(rotaReviewMonth, starts, ends);
+        const url = URL.createObjectURL(blob), link = document.createElement('a');
+        link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+        showToast('Elective list members Excel sent to your browser', 'success');
+      } catch (error) { showToast(error instanceof Error ? error.message : 'Unable to export elective members', 'error'); }
+      finally { resetButton(btn); }
+      return;
+    }
+
+    if (target.id === "download-rota-export" || target.id === "download-review-rota-export") {
+      const reviewDownload = target.id === "download-review-rota-export";
+      const btn = target.closest<HTMLButtonElement>("button");
       setButtonLoading(btn, true, "Download Excel");
       try {
-        const { blob, filename } = await downloadRotaExport(rotaPublishMonth);
+        const { blob, filename } = await (reviewDownload ? downloadRotaReviewExport(rotaReviewMonth) : downloadRotaExport(rotaPublishMonth));
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -10560,7 +10694,7 @@ function bindViewEvents() {
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-        showToast("Final Excel export sent to your browser", "success");
+        showToast(reviewDownload ? "Draft Excel workbook sent to your browser for review" : "Final Excel export sent to your browser", "success");
         resetButton(btn);
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to download export", "error");
@@ -10569,11 +10703,11 @@ function bindViewEvents() {
       return;
     }
 
-    if (target.id === "download-eagle-eye-export" || target.id === "download-draft-assignment-export") {
+    if (target.id === "download-eagle-eye-export" || target.id === "download-draft-assignment-export" || target.id === "download-review-eagle-eye-export") {
       const btn = target.closest<HTMLButtonElement>("button");
       setButtonLoading(btn, true, "Export Eagle Eye");
       try {
-        const { blob, filename } = await downloadRotaTemplateEagleEyeExport(target.id === "download-draft-assignment-export" ? rotaPublishMonth : rotaTemplateMonth);
+        const { blob, filename } = await downloadRotaTemplateEagleEyeExport(target.id === "download-review-eagle-eye-export" ? rotaReviewMonth : target.id === "download-draft-assignment-export" ? rotaPublishMonth : rotaTemplateMonth);
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;

@@ -119,11 +119,17 @@ def test_postgres_learning_activation_has_one_active_version(postgres_client):
 
     def activate(index):
         with factory() as db:
-            intelligence.activate(
-                db, db.get(RotaLearningVersion, ids[index]), db.get(UserAccount, user_id)
-            )
+            try:
+                intelligence.activate(
+                    db, db.get(RotaLearningVersion, ids[index]), db.get(UserAccount, user_id)
+                )
+                return "activated"
+            except HTTPException as error:
+                assert error.status_code == 409
+                return "stale"
 
-    simultaneous([lambda: activate(0), lambda: activate(1)])
+    results = simultaneous([lambda: activate(0), lambda: activate(1)])
+    assert sorted(results) == ["activated", "stale"]
     with factory() as db:
         assert db.query(RotaLearningVersion).filter_by(status="active").count() == 1
 

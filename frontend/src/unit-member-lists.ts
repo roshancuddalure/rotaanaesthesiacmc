@@ -21,7 +21,7 @@ function listBody(key: string, items: MemberItem[], printing = false): string {
   const shown = matching.length ? matching : items;
   const limit = printing ? Math.max(1, shown.length) : limits.get(key) ?? 10;
   const page = printing ? 0 : Math.max(0, Math.min(pages.get(key) ?? 0, Math.ceil(shown.length / limit) - 1));
-  pages.set(key, page);
+  if (!printing) pages.set(key, page);
   const visible = shown.slice(page * limit, (page + 1) * limit);
   const action = (mode: string, text: string, disabled: boolean) => `<button type="button" ${disabled ? 'disabled' : ''} aria-describedby="unit-member-count-${esc(key)}" data-unit-member-action="${mode}" data-unit-member-key="${esc(key)}">${text}</button>`;
   return `<p class="unit-member-list__count" id="unit-member-count-${esc(key)}">${shown.length ? page * limit + 1 : 0}&ndash;${Math.min((page + 1) * limit, shown.length)} of ${shown.length} postings</p><div class="unit-chip-row">${visible.map(item => item.html).join('')}</div>

@@ -46,6 +46,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+from types import SimpleNamespace
 from typing import Any, Iterable
 from uuid import UUID
 
@@ -63,7 +64,8 @@ from app.models import (
     Unit,
 )
 from app.models.extra_duty import ExtraDutyRecord
-from app.services.leave import ACTIVE_LEAVE_STATUSES, month_bounds
+from app.services.leave import month_bounds
+from app.services.leave_semantics import is_active
 from app.services.rota_eligibility import (
     eligibility,
     eligibility_issue_code,
@@ -111,7 +113,8 @@ CHECKS: list[tuple[str, tuple[str, ...]]] = [
     ("Slot capacity", ("slot_full",)),
     ("Active members", ("inactive_member",)),
 ]
-CHECK_FOR_CODE = {code: name for name, codes in CHECKS for code in codes}
+OT_CHECK = ("OT reservations", ("ot_reservation_conflict", "ot_capacity_unresolved"))
+CHECK_FOR_CODE = {code: name for name, codes in [*CHECKS, OT_CHECK] for code in codes}
 STRICT_CODES = frozenset(CHECK_FOR_CODE)
 
 
@@ -203,6 +206,21 @@ class MonthState:
     # Assignment ids whose source is a superadmin allocation (exempt per SUPERADMIN_EXEMPT_CODES).
     superadmin_assignment_ids: set = field(default_factory=set)
     _flags: dict = field(default_factory=dict)
+    ot_guard: object | None = None
+
+    def ot_blockers(self, person_id, slot, *, replace_existing=False):
+        if self.ot_guard is None:
+            return []
+        from app.services.ot_assignment_validation import check_ot_placement
+        assignments = [SimpleNamespace(person_id=duty.person_id, duty_slot_id=duty.slot.id,
+            duty_slot=duty.slot, status="assigned") for duties in self.duties_by_person.values() for duty in duties]
+        result = check_ot_placement(self.ot_guard, assignments, slot, person_id, self.rules,
+                                    replace_existing=replace_existing)
+        if result["status"] == "feasible":
+            return []
+        return [("ot_reservation_conflict", "Mandatory OT or staffing reserve would be uncovered.")
+                if result["status"] == "infeasible" else
+                ("ot_capacity_unresolved", "OT staffing capacity cannot be verified.")]
 
     def _slot_flags(self, slot: DutySlot) -> tuple[Any, bool, bool]:
         """(rule, blocks same day, blocks next day) per duty type and 24h flag, memoised."""
@@ -339,6 +357,7 @@ class MonthState:
             active = [d for d in self.active_by_slot.get(slot.id, []) if d.key != exclude_key]
             if len(active) >= int(slot.max_assignees or 1):
                 problems.append(("slot_full", f"Slot already has {len(active)} of {slot.max_assignees} people."))
+        problems.extend(self.ot_blockers(person_id, slot))
         return problems
 
     def feasible(self, person_id: UUID, slot: DutySlot, unit_id: UUID | None) -> bool:
@@ -358,6 +377,18 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         gap = float(rules.rest_rules.minimum_gap_after_24hr_hours)
         pad = timedelta(days=int(gap // 24) + 3)
         window_start, window_end = starts_on - pad, ends_on + pad
+        from app.core.config import settings
+        ot_guard = None
+        if settings.ot_calendar_enabled:
+            from app.services.ot_assignment_context import load_assignment_guard
+            ot_guard = load_assignment_guard(db, month, rules)
+            if ot_guard.horizon_start is not None:
+                window_start = min(window_start, (ot_guard.horizon_start - pad).date())
+                window_end = max(window_end, ot_guard.horizon_end.date())
+        context_bounds = (DutySlot.duty_date >= window_start, DutySlot.duty_date <= window_end)
+        if ot_guard is not None:
+            context_bounds = (DutySlot.ends_at >= datetime.combine(window_start, datetime.min.time()),
+                              DutySlot.starts_at < datetime.combine(window_end + timedelta(days=1), datetime.min.time()))
 
         period = db.scalar(
             select(RotaPeriod)
@@ -382,8 +413,7 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
                 select(DutySlot)
                 .outerjoin(DutySlot.rota_period)
                 .where(
-                    DutySlot.duty_date >= window_start,
-                    DutySlot.duty_date <= window_end,
+                    *context_bounds,
                     or_(DutySlot.source == _PHASE4_SOURCE, RotaPeriod.status.in_(_CONTEXT_PERIOD_STATUSES)),
                 )
                 .options(selectinload(DutySlot.assignments))
@@ -433,7 +463,7 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         for leave in db.scalars(
             select(LeaveRequest).where(LeaveRequest.starts_on <= ends_on, LeaveRequest.ends_on >= starts_on)
         ):
-            if (leave.status or "").lower() in ACTIVE_LEAVE_STATUSES:
+            if is_active(leave.status):
                 leaves_by_person[leave.person_id].append(leave)
         units = {unit.id: unit for unit in db.scalars(select(Unit))}
         month_assignment_ids = {a.id for a in month_assignments}
@@ -478,6 +508,7 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         state.duties_by_person.setdefault(a.person_id, []).append(
             _Duty(key=a.id, slot=s, person_id=a.person_id, in_month=False)
         )
+    state.ot_guard = ot_guard
     return state
 
 
@@ -545,7 +576,7 @@ def check_state(state: MonthState, assignment_ids: Iterable[UUID] | None = None)
 
     violations.sort(key=lambda v: (v["duty_date"], v["duty_type"], v["slot_id"], v["person_id"] or "", v["code"], v["message"]))
     checks = []
-    for name, codes in CHECKS:
+    for name, codes in [*CHECKS, *([OT_CHECK] if state.ot_guard is not None else [])]:
         count = sum(1 for v in violations if v["code"] in codes)
         checked = len(checked_slots) if name == "Slot capacity" else len(targets)
         checks.append({"name": name, "passed": count == 0, "checked": checked, "violations": count})

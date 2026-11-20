@@ -5,7 +5,7 @@ Any signed-in user may publish (handbook S6). Publishing sets ``RotaPeriod.statu
 live tables each time it is downloaded.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -92,6 +92,41 @@ def publish_rota(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return RotaPublishMonthRead(**result)
+
+
+@router.get("/rota-publish/elective-members-export")
+def export_elective_members(
+    month: str = Query(pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+    starts: str = Query(default="08:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$"),
+    ends: str = Query(default="17:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$"),
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    from app.services.elective_members_export import elective_members_export
+    try:
+        filename, payload = elective_members_export(db, month, starts, ends)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    return StreamingResponse(iter([payload]), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-store"})
+
+
+@router.get("/rota-publish/review-export")
+def export_review_rota(
+    month: str,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    try:
+        month_bounds(month)
+        filename, payload = final_rota_export(db, month, review_only=True)
+    except RotaPublishError as exc:
+        raise publish_http_error(exc) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return StreamingResponse(iter([payload]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-store"})
 
 
 @router.get("/rota-publish/export")

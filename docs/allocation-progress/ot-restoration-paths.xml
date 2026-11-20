@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="8" time="334.517" timestamp="2026-11-14T11:51:52.253885+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_checks_complete_set_and_excludes_replaced_duties" time="22.867" /><testcase classname="tests.test_ot_assignment_integration" name="test_archival_and_elapsed_restoration_remain_facts_without_demand" time="1.819" /><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_filters_cancelled_duties_and_feature_off_keeps_existing_behavior" time="0.750" /><testcase classname="tests.test_ot_assignment_integration" name="test_superadmin_undo_preview_and_apply_refuse_unsafe_restoration_atomically" time="4.414"><failure message="assert ([])">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001B99302EC10&gt;, &lt;app.models.unit.Unit object at 0x000001B9FFE30510&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001B9934EF1D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001B9935E94D0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001B993422E90&gt;
+
+    def test_superadmin_undo_preview_and_apply_refuse_unsafe_restoration_atomically(environment, monkeypatch):
+        from app.models import ExtraDutyBatch, UserAccount
+        from app.services.superadmin_allocation import allocate, undo, SuperadminAllocationError
+    
+        db, unit, people, target = environment
+        monkeypatch.setattr("app.services.ot_restoration.local_today", lambda: date(2026, 11, 1))
+        demand(db, unit, minimum=1)
+        original = DutyAssignment(person=people[1], duty_slot=target, status="assigned")
+        operator = UserAccount(username="undo-superadmin", display_name="Undo administrator", role="superadmin", password_hash="fixture")
+        db.add_all([original, operator])
+        db.commit()
+        applied = allocate(db, slot_id=target.id, person_id=people[0].id, reason="Reviewed replacement", user=operator)
+        people[2].active_status = people[3].active_status = "inactive"
+        db.query(PersonPosting).filter_by(person_id=people[0].id).update({"ends_on": date(2026, 11, 18)})
+        db.commit()
+        batch_id = UUID(applied["batch_id"])
+&gt;       preview = undo(db, batch_id, operator, dry_run=True)
+E       assert ([])
+
+backend\tests\test_ot_assignment_integration.py:354: AssertionError</failure></testcase><testcase classname="tests.test_ot_assignment_integration" name="test_balance_undo_preview_and_apply_reject_ot_conflict_before_changing_rows" time="27.947"><failure message="assert False&#10; +  where False = any(&lt;generator object test_balance_undo_preview_and_apply_reject_ot_conflict_before_changing_rows.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001B993C629B0&gt;)">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001B9935B9490&gt;, &lt;app.models.unit.Unit object at 0x000001B9935B1190&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001B993509790&gt;], &lt;app.models.rota.DutySlot object at 0x000001B993C07350&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001B99359CD50&gt;
+
+    
+    def test_balance_undo_preview_and_apply_reject_ot_conflict_before_changing_rows(environment, monkeypatch):
+        from app.models import ExtraDutyBatch, UserAccount
+        from app.services.balance_duties import BALANCE_SOURCE, undo, BalanceError
+    
+        db, unit, people, target = environment
+        monkeypatch.setattr("app.services.ot_restoration.local_today", lambda: date(2026, 11, 1))
+        demand(db, unit, minimum=1)
+        people[2].active_status = people[3].active_status = "inactive"
+        db.query(PersonPosting).filter_by(person_id=people[0].id).update({"ends_on": date(2026, 11, 18)})
+        assignment = DutyAssignment(person=people[0], duty_slot=target, status="assigned", source=BALANCE_SOURCE)
+        operator = UserAccount(username="balance-undo-admin", display_name="Balance administrator", role="superadmin", password_hash="fixture")
+        db.add_all([assignment, operator])
+        db.flush()
+        batch = ExtraDutyBatch(rota_period_id=target.rota_period_id, month="2026-11", plan_hash="a" * 64,
+            context_hash="b" * 64, summary={"mode": "balance"}, before_image=[{
+                "slot_id": str(target.id), "assignment_id": str(assignment.id),
+                "person_id_before": str(people[1].id), "person_id_after": str(people[0].id),
+                "unit_id_before": str(unit.id), "unit_id_after": str(unit.id),
+                "source_before": "safe_auto_fill_draft", "source_after": BALANCE_SOURCE,
+                "status_before": "assigned", "override_reason_before": None}])
+        db.add(batch)
+&gt;       db.commit()
+E       assert False
+E        +  where False = any(&lt;generator object test_balance_undo_preview_and_apply_reject_ot_conflict_before_changing_rows.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001B993C629B0&gt;)
+
+backend\tests\test_ot_assignment_integration.py:393: AssertionError</failure></testcase><testcase classname="tests.test_ot_assignment_integration" name="test_generation_reversal_rejects_ot_conflict_in_preview_and_apply" time="4.604"><failure message="KeyError: 'person_id'">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001B993D0F010&gt;, &lt;app.models.unit.Unit object at 0x000001B993DF6250&gt;, [...50&gt;, &lt;app.models.person.Person object at 0x000001B993DF44D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001B993E20B10&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001B993DF6FD0&gt;
+
+    
+    
+    def test_generation_reversal_rejects_ot_conflict_in_preview_and_apply(environment, monkeypatch):
+        from fastapi import HTTPException
+        from app.models import RotaComputeJob, UserAccount
+        from app.services.generation_undo import revert
+        from app.services.rota_compute import context_hash
+    
+        db, unit, people, target = environment
+        monkeypatch.setattr("app.services.ot_restoration.local_today", lambda: date(2026, 11, 1))
+        demand(db, unit, minimum=1)
+        people[2].active_status = people[3].active_status = "inactive"
+        db.query(PersonPosting).filter_by(person_id=people[0].id).update({"ends_on": date(2026, 11, 18)})
+        old = DutyAssignment(person=people[1], duty_slot=target, status="cancelled")
+        current = DutyAssignment(person=people[0], duty_slot=target, status="assigned")
+        operator = UserAccount(username="generation-undo-admin", display_name="Generation administrator", role="superadmin", password_hash="fixture")
+        db.add_all([old, current, operator])
+        db.commit()
+        digest = context_hash(db)
+        job = RotaComputeJob(month="2026-11", operator_id=operator.id, status="applied", revision=2,
+            context_hash=digest, state={"result": {"after_context_hash": digest,
+                "assignment_ids": [str(current.id)]}, "intelligence": {"originals": {
+                    str(target.id): {"assignment_id": str(old.id), "status": "assigned"}}}})
+        db.add(job)
+&gt;       db.commit()
+                ^^^^
+
+backend\tests\test_ot_assignment_integration.py:429: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\app\services\generation_undo.py:49: in revert
+    return {**compute.serialize(job), "reversal_validated": True}
+              ^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\rota_compute.py:126: in serialize
+    "burden": burden_comparison(state),
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+state = {'intelligence': {'originals': {'af230b1e-b164-4bd5-ba44-63f1a9e6f61a': {'assignment_id': '8e389146-216b-4f20-b268-21c...1c95b2aff7c21a99b9d346587915ec2f428e7584f0999de761c90f13', 'assignment_ids': ['53454ed5-2ea4-42ce-86e0-ed5d321c5a59']}}
+
+    def burden_comparison(state):
+        before = state.get("baseline_loads", [])
+        after = copy.deepcopy(before)
+        people = {p["person_id"]: p for p in after}
+        for sid, original in state.get("intelligence", {}).get("originals", {}).items():
+&gt;           if original["person_id"] in people:
+               ^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'person_id'
+
+backend\app\services\rota_compute.py:137: KeyError</failure></testcase><testcase classname="tests.test_ot_assignment_integration" name="test_recycle_restore_rolls_back_unsafe_recent_duty_but_preserves_archival_facts[False]" time="1.808" /><testcase classname="tests.test_ot_assignment_integration" name="test_recycle_restore_rolls_back_unsafe_recent_duty_but_preserves_archival_facts[True]" time="1.483" /></testsuite></testsuites>

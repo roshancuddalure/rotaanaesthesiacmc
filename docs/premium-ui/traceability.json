@@ -19833,7 +19833,7 @@
     {
       "item_id": 185,
       "requirement": "Make past-duty import steps consistent with operational CSV workflows while retaining their distinct historical-data explanations.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/past-duties.ts"
       ],
@@ -19843,52 +19843,63 @@
         "frontend/tests/premium-past-recovery-independent.browser.mjs",
         "frontend/tests/premium-past-actions.browser.mjs"
       ],
-      "limitations": [],
+      "limitations": [
+        "Acceptance is the exact185 recorded checkpoint; broader UX/accessibility/export hardening and affected earlier current-source applicability remain separately open."
+      ],
       "reviews": {
         "visual": {
-          "status": "partial",
+          "status": "passed",
+          "reviewer": "/root/exact185_visual_signoff_nov11",
           "evidence": [
-            "docs/premium-ui/reviews/visual-current.json"
+            "docs/premium-ui/reviews/original185-visual-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
           ],
-          "reviewer": "action_contracts_admin independent visual review",
-          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+          "scope": "Exact185 conditions at recorded source only; native AT/physical/whole-app and other current-source sign-offs excluded. Specialist artifact review, root-attributed runtime."
         },
         "responsive": {
-          "status": "partial",
+          "status": "passed",
+          "reviewer": "/root/exact185_responsive_nov11",
           "evidence": [
-            "docs/premium-ui/reviews/responsive-current.json"
+            "docs/premium-ui/reviews/original185-responsive-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
           ],
-          "reviewer": "action_contracts_members",
-          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+          "scope": "Exact185 conditions at recorded source only; native AT/physical/whole-app and other current-source sign-offs excluded. Specialist artifact review, root-attributed runtime."
         },
         "accessibility": {
-          "status": "partial",
+          "status": "passed",
+          "reviewer": "/root/exact185_accessibility_nov11",
           "evidence": [
-            "docs/premium-ui/reviews/accessibility-current.json"
+            "docs/premium-ui/reviews/original185-accessibility-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
           ],
-          "reviewer": "accessibility_final_review",
-          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+          "scope": "Exact185 conditions at recorded source only; native AT/physical/whole-app and other current-source sign-offs excluded. Specialist artifact review, root-attributed runtime."
         },
         "reliability": {
-          "status": "partial",
+          "status": "passed",
+          "reviewer": "/root/exact185_recovery_nov11",
           "evidence": [
-            "docs/premium-ui/reviews/reliability-current.json"
+            "docs/premium-ui/reviews/original185-recovery-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
           ],
-          "reviewer": "remaining_plan_review",
-          "scope": "Requirement-specific source/evidence review, not whole-item completion; snapshot and remaining acceptance in review."
+          "scope": "Exact185 conditions at recorded source only; native AT/physical/whole-app and other current-source sign-offs excluded. Specialist artifact review, root-attributed runtime."
         },
         "interaction": {
-          "status": "partial",
+          "status": "passed",
+          "reviewer": "/root/exact185_data_security_nov11",
           "evidence": [
-            "docs/premium-ui/reviews/interaction-current.json"
+            "docs/premium-ui/reviews/original185-data-security-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
           ],
-          "reviewer": "action_contracts_generation",
-          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+          "scope": "Exact185 conditions at recorded source only; native AT/physical/whole-app and other current-source sign-offs excluded. Specialist artifact review, root-attributed runtime."
         },
         "independent_qa": {
-          "status": "pending",
-          "evidence": [],
-          "reviewer": null
+          "status": "passed",
+          "reviewer": "Five independent specialist source/artifact reviews; root execution",
+          "evidence": [
+            "docs/premium-ui/reviews/original185-data-security-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact185 conditions at recorded source only; native AT/physical/whole-app and other current-source sign-offs excluded. Specialist artifact review, root-attributed runtime."
         }
       },
       "followups": [
@@ -19909,34 +19920,40 @@
             "docs/premium-ui/reviews/history-controls-cleanup-current.json"
           ],
           "limit": "No whole-item or native-device certification."
+        },
+        {
+          "recorded_at_utc": "2026-11-11T01:01:47.320639+00:00",
+          "scope": "Exact185 accepted after33 applied contexts,117-unit/held-build bridge and five specialist perspective reviews; no reacceptance of earlier61.",
+          "evidence": [
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json",
+            "docs/premium-ui/reviews/original185-current-applied-r4-execution-20261111.json",
+            "docs/premium-ui/reviews/original185-accessibility-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-data-security-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-recovery-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-responsive-independent-20261111.json",
+            "docs/premium-ui/reviews/original185-visual-independent-20261111.json"
+          ]
+        },
+        {
+          "recorded_at_utc": "2026-11-11T01:53:43.712675+00:00",
+          "scope": "Current-source185compatibility bridge; historical five reviews remain unchanged and scope-limited",
+          "evidence": [
+            "docs/premium-ui/reviews/original185-current-compatibility-acceptance-20261111.json",
+            "docs/premium-ui/reviews/history185186-compatibility-text-execution-20261111.json",
+            "docs/premium-ui/reviews/original185-exact-acceptance-20261111.json"
+          ]
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
         "item_id": 185,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
-      }
-    },
-    {
-      "item_id": 186,
-      "requirement": "Present import history and rejection reports with reliable filtering, readable timestamps and working download controls.",
-      "implementation_status": "partial",
-      "files": [
-        "frontend/src/member-import-history.ts",
-        "frontend/src/workflow-import-history.ts",
-        "frontend/src/ui.ts",
-        "frontend/src/past-duties.ts"
-      ],
-      "action_ids": [],
-      "screenshots": [],
-      "tests": [
-        "frontend/tests/premium-history-focus-independent.browser.mjs",
-        "frontend/tests/premium-past-recovery-independent.browser.mjs",
-        "frontend/tests/premium-past-actions.browser.mjs",
-        "frontend/tests/premium-preview-rejections.browser.mjs"
-      ],
-      "limitations": [],
-      "reviews": {
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/original185-current-compatibility-acceptance-20261111.json"
+      },
+      "perspective_reviews_before_exact185": {
         "visual": {
           "status": "partial",
           "evidence": [
@@ -19981,6 +19998,92 @@
           "status": "pending",
           "evidence": [],
           "reviewer": null
+        }
+      }
+    },
+    {
+      "item_id": 186,
+      "requirement": "Present import history and rejection reports with reliable filtering, readable timestamps and working download controls.",
+      "implementation_status": "complete",
+      "files": [
+        "frontend/src/member-import-history.ts",
+        "frontend/src/workflow-import-history.ts",
+        "frontend/src/ui.ts",
+        "frontend/src/past-duties.ts"
+      ],
+      "action_ids": [],
+      "screenshots": [],
+      "tests": [
+        "frontend/tests/premium-history-focus-independent.browser.mjs",
+        "frontend/tests/premium-past-recovery-independent.browser.mjs",
+        "frontend/tests/premium-past-actions.browser.mjs",
+        "frontend/tests/premium-preview-rejections.browser.mjs"
+      ],
+      "limitations": [
+        "All API transport intercepted fixtures; not live database, authorization or workbook-parser verification.",
+        "Member root-font enlargement did not independently establish visible-text doubling. Actual-text stress is a separate pending check.",
+        "Mobile viewports are emulated; physical devices and native assistive technology pending.",
+        "Normal responsive checks vary by component: member document/input geometry; workflow document/input geometry; past input/container geometry. No blanket accessibility or whole-app responsive certification.",
+        "Prior acceptance checkpoints need separate current-source bridges;185compatibility rerun separate.",
+        "Earlier failed unit harness load retained; no product guards relaxed to fix test doubles.",
+        "Actual member-text doubling subsequently passed12contexts in compatibility seal; past/workflow enlargement remains open.",
+        "Existing past unnamed/nonfocusable comparison wrappers, malformed numeric-schema HTML trust and template XLSX-signature flag remain separate frontend work.",
+        "Older shared-source acceptance applicability and physical/native AT remain unproven; no whole-app or all260completion claim."
+      ],
+      "reviews": {
+        "visual": {
+          "status": "passed",
+          "reviewer": "/root/history186_visual_responsive_signoff_nov11",
+          "evidence": [
+            "docs/premium-ui/reviews/history185186-visual-responsive-independent-20261111.json",
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact186 only; bounded source/artifact review plus root-attributed execution. Native/physical/general accessibility excluded."
+        },
+        "responsive": {
+          "status": "passed",
+          "reviewer": "/root/history186_visual_responsive_signoff_nov11",
+          "evidence": [
+            "docs/premium-ui/reviews/history185186-visual-responsive-independent-20261111.json",
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact186 only; bounded source/artifact review plus root-attributed execution. Native/physical/general accessibility excluded."
+        },
+        "accessibility": {
+          "status": "passed",
+          "reviewer": "/root/progress_eta_verify_nov11",
+          "evidence": [
+            "docs/premium-ui/reviews/history186-applied-ux-independent-20261111.json",
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact186 only; bounded source/artifact review plus root-attributed execution. Native/physical/general accessibility excluded."
+        },
+        "reliability": {
+          "status": "passed",
+          "reviewer": "/root/history186_applied_harness_nov11",
+          "evidence": [
+            "docs/premium-ui/reviews/history186-applied-security-preservation-runtime-addendum-20261111.json",
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact186 only; bounded source/artifact review plus root-attributed execution. Native/physical/general accessibility excluded."
+        },
+        "interaction": {
+          "status": "passed",
+          "reviewer": "/root/progress_eta_verify_nov11",
+          "evidence": [
+            "docs/premium-ui/reviews/history186-applied-ux-independent-20261111.json",
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact186 only; bounded source/artifact review plus root-attributed execution. Native/physical/general accessibility excluded."
+        },
+        "independent_qa": {
+          "status": "passed",
+          "reviewer": "/root/history186_applied_harness_nov11",
+          "evidence": [
+            "docs/premium-ui/reviews/history186-applied-security-preservation-runtime-addendum-20261111.json",
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+          ],
+          "scope": "Exact186 only; bounded source/artifact review plus root-attributed execution. Native/physical/general accessibility excluded."
         }
       },
       "followups": [
@@ -20075,12 +20178,72 @@
             "docs/premium-ui/reviews/reference-template-contracts-current.json"
           ],
           "limit": "Bounded component/action tests; no whole-item completion."
+        },
+        {
+          "recorded_at_utc": "2026-11-11T01:53:43.712675+00:00",
+          "scope": "Exact186 accepted:36applied contexts/36CSVparsed/124unit/heldbuild and scoped perspectives",
+          "evidence": [
+            "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json",
+            "docs/premium-ui/reviews/history186-current-applied-execution-20261111.json",
+            "docs/premium-ui/reviews/history185186-compatibility-text-execution-20261111.json"
+          ]
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
         "item_id": 186,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/original186-exact-acceptance-20261111.json"
+      },
+      "perspective_reviews_before_exact186": {
+        "visual": {
+          "status": "partial",
+          "evidence": [
+            "docs/premium-ui/reviews/visual-current.json"
+          ],
+          "reviewer": "action_contracts_admin independent visual review",
+          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+        },
+        "responsive": {
+          "status": "partial",
+          "evidence": [
+            "docs/premium-ui/reviews/responsive-current.json"
+          ],
+          "reviewer": "action_contracts_members",
+          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+        },
+        "accessibility": {
+          "status": "partial",
+          "evidence": [
+            "docs/premium-ui/reviews/accessibility-current.json"
+          ],
+          "reviewer": "accessibility_final_review",
+          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+        },
+        "reliability": {
+          "status": "partial",
+          "evidence": [
+            "docs/premium-ui/reviews/reliability-current.json"
+          ],
+          "reviewer": "remaining_plan_review",
+          "scope": "Requirement-specific source/evidence review, not whole-item completion; snapshot and remaining acceptance in review."
+        },
+        "interaction": {
+          "status": "partial",
+          "evidence": [
+            "docs/premium-ui/reviews/interaction-current.json"
+          ],
+          "reviewer": "action_contracts_generation",
+          "scope": "Perspective review only; not whole-item completion. Snapshot and remaining gaps in linked review."
+        },
+        "independent_qa": {
+          "status": "pending",
+          "evidence": [],
+          "reviewer": null
+        }
       }
     },
     {
@@ -20544,6 +20707,15 @@
             "docs/premium-ui/reviews/history-controls-cleanup-current.json"
           ],
           "limit": "No whole-item or native-device certification."
+        },
+        {
+          "recorded_at_utc": "2026-11-11T19:10:01.797713+00:00",
+          "status": "bounded_execution_checkpoint_not_whole_requirement_acceptance",
+          "summary": "Conflict screenshots, measured text stress and actual RAM restore destination/refusal evidence",
+          "evidence": [
+            "docs/premium-ui/reviews/recycle191192-conflict-execution-20261112.json",
+            "docs/premium-ui/reviews/recycle191192-disposable-contract-execution-20261112.json"
+          ]
         }
       ],
       "acceptance_definition": {
@@ -20623,6 +20795,15 @@
             "docs/premium-ui/reviews/recycle-diagnostics-export-current.json"
           ],
           "limit": "Per-report actual controls/intercepted requests/emulation only; no whole-requirement, nativeassistive, physical or livepersistence acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-11-11T19:10:01.797713+00:00",
+          "status": "bounded_execution_checkpoint_not_whole_requirement_acceptance",
+          "summary": "Conflict screenshots, measured text stress and actual RAM restore destination/refusal evidence",
+          "evidence": [
+            "docs/premium-ui/reviews/recycle191192-conflict-execution-20261112.json",
+            "docs/premium-ui/reviews/recycle191192-disposable-contract-execution-20261112.json"
+          ]
         }
       ],
       "acceptance_definition": {
@@ -20700,6 +20881,14 @@
             "docs/premium-ui/reviews/history-compute-current.json"
           ],
           "limit": "Per-report browser/emulation scope only. Full requirement and six-perspective acceptance remain unproven."
+        },
+        {
+          "recorded_at_utc": "2026-11-11T19:10:01.797713+00:00",
+          "status": "bounded_execution_checkpoint_not_whole_requirement_acceptance",
+          "summary": "Fresh contextual-help integration and guide checks",
+          "evidence": [
+            "docs/premium-ui/reviews/context193-current-applied-execution-20261112.json"
+          ]
         }
       ],
       "acceptance_definition": {
@@ -20767,7 +20956,16 @@
           "reviewer": null
         }
       },
-      "followups": [],
+      "followups": [
+        {
+          "recorded_at_utc": "2026-11-11T19:10:01.797713+00:00",
+          "status": "bounded_execution_checkpoint_not_whole_requirement_acceptance",
+          "summary": "Fresh contextual-help integration and guide checks",
+          "evidence": [
+            "docs/premium-ui/reviews/context193-current-applied-execution-20261112.json"
+          ]
+        }
+      ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
         "item_id": 194,

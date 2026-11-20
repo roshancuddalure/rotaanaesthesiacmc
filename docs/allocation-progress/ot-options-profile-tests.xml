@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="139.323" timestamp="2026-11-14T13:01:49.179278+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_superadmin_allocation" name="test_options_fast_for_two_hundred_people" time="18.873"><failure message="AssertionError: 6.997245999984443&#10;assert 6.997245999984443 &lt; 2.0">api = (&lt;starlette.testclient.TestClient object at 0x000001593A168350&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...memory:), autoflush=True, expire_on_commit=True), {'user': &lt;app.models.auth.UserAccount object at 0x0000015939F126D0&gt;})
+
+    def test_options_fast_for_two_hundred_people(api):
+        client, sessions, _state = api
+        ids = seed(sessions)
+        with sessions() as db:
+            u1 = db.get(Unit, ids["u1"])
+            period = db.get(RotaPeriod, ids["period"])
+            people = [make_person(db, f"Member {i:03d}", u1) for i in range(200)]
+            for i, person in enumerate(people[:120]):
+                s = make_slot(db, period, u1, date(2026, 5, 1) + timedelta(days=i % 28), "OT_DAY", hour=8 + i % 3,
+                              hours=4, call_level=None, label=f"perf-{i}")
+                db.add(DutyAssignment(duty_slot=s, person=person, status="assigned", source="manual"))
+            db.commit()
+        started = clock.perf_counter()
+        response = client.get(f"{BASE}/options", params={"slot_id": str(ids["slot"])})
+        elapsed = clock.perf_counter() - started
+        assert response.status_code == 200 and len(response.json()["people"]) &gt;= 200
+&gt;       assert elapsed &lt; 2.0, elapsed
+E       AssertionError: 6.997245999984443
+E       assert 6.997245999984443 &lt; 2.0
+
+backend\tests\test_superadmin_allocation.py:226: AssertionError</failure></testcase></testsuite></testsuites>

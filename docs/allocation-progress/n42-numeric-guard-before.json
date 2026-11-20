@@ -1,0 +1,177 @@
+{
+  "complete": true,
+  "source_unchanged": true,
+  "scope": "Canned model responses through real companion guard; no actual inference, DB access, policy changes or network requests.",
+  "source_sha256": {
+    "tools/audit_ai_numeric_guard.py": "fef8e18b48033b50d78d6b5d222cac4a82c4e4502ea5a4e7cf4c8a28827dfd29",
+    "tools/local_rota_assistant.py": "1644456eb48db04888dcc9fc5ca3aa168775cf228881a60ee533f82039994545"
+  },
+  "runs": [
+    {
+      "case": "negative_sign_lost",
+      "instruction": "Propose max_24hr_per_month -1.",
+      "canned_model_proposal": [
+        {
+          "key": "max_24hr_per_month",
+          "value": 1
+        }
+      ],
+      "expected_http": 502,
+      "actual_http": 200,
+      "matches_expected": false,
+      "model_calls_mocked": 1,
+      "response": {
+        "mode": "balanced",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 1"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 1,
+            "evidence": "Propose max_24hr_per_month -1."
+          }
+        ],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "fraction_truncated",
+      "instruction": "Propose a maximum of 2.5 weekend duties per month.",
+      "canned_model_proposal": [
+        {
+          "key": "max_weekend_24hr_per_month",
+          "value": 2
+        }
+      ],
+      "expected_http": 502,
+      "actual_http": 200,
+      "matches_expected": false,
+      "model_calls_mocked": 1,
+      "response": {
+        "mode": "balanced",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum weekend 24-hour duties per month: 2"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_weekend_24hr_per_month",
+            "value": 2,
+            "evidence": "Propose a maximum of 2.5 weekend duties per month."
+          }
+        ],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "unresolved_alternatives",
+      "instruction": "Propose a maximum of 2 weekend duties per month, or make the maximum 5; I have not decided.",
+      "canned_model_proposal": [
+        {
+          "key": "max_weekend_24hr_per_month",
+          "value": 2
+        }
+      ],
+      "expected_http": 502,
+      "actual_http": 200,
+      "matches_expected": false,
+      "model_calls_mocked": 1,
+      "response": {
+        "mode": "balanced",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum weekend 24-hour duties per month: 2"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_weekend_24hr_per_month",
+            "value": 2,
+            "evidence": "Propose a maximum of 2 weekend duties per month, or make the maximum 5; I have not decided."
+          }
+        ],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "weekend_scope_lost",
+      "instruction": "Propose a maximum of 2 weekend 24-hour duties per month for review.",
+      "canned_model_proposal": [
+        {
+          "key": "max_24hr_per_month",
+          "value": 2
+        }
+      ],
+      "expected_http": 502,
+      "actual_http": 200,
+      "matches_expected": false,
+      "model_calls_mocked": 1,
+      "response": {
+        "mode": "balanced",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 2"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 2,
+            "evidence": "Propose a maximum of 2 weekend 24-hour duties per month for review."
+          }
+        ],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "valid_exact_count",
+      "instruction": "Propose at most 8 twenty-four-hour duties per month for review.",
+      "canned_model_proposal": [
+        {
+          "key": "max_24hr_per_month",
+          "value": 8
+        }
+      ],
+      "expected_http": 200,
+      "actual_http": 200,
+      "matches_expected": true,
+      "model_calls_mocked": 1,
+      "response": {
+        "mode": "balanced",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 8"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 8,
+            "evidence": "Propose at most 8 twenty-four-hour duties per month for review."
+          }
+        ],
+        "model": "gemma3:4b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    }
+  ],
+  "unexpected_acceptances": 4
+}

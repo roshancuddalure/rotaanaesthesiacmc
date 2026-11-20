@@ -4,10 +4,20 @@ export type { DeviceTest, PowerPreference } from "./compute-protocol";
 export type ComputeMode = "server" | "auto" | "local_gpu";
 export type Workload = "members" | "template" | "optimizer";
 export interface ComputeContext { month: string; hash: string; workload?: Workload; configuration?: string; estimatedRows?: number }
-export interface EngineProof { server_ms: number; local_ms: number; parity: boolean; at: number; version: number; adapter: string;
+export interface EngineProof { server_ms: number; local_ms: number; parity: boolean; at: number; version: number; measurement_version?:number; adapter: string;
   month: string; context_hash: string; signature: string; browser: string; workload?: Workload; kernel_version?: number; configuration?: string;
   stage_timings?:Record<string,string|number>[] }
 export interface ComputePreference { enabled: boolean; mode: ComputeMode; power: PowerPreference; test?: DeviceTest; proof?: EngineProof; proofs?: Partial<Record<Workload, EngineProof>> }
+export function optimizerConfiguration(options:{mode?:string;seconds?:number;locked_slots?:string[];repair_slots?:string[];preferences?:{slot_id:string;person_id:string;penalty:number}[]}) {
+  // Match the backend's last-value-wins map for duplicate slot/person requests.
+  const effectivePreferences=new Map((options.preferences || []).map(p=>[`${p.slot_id}:${p.person_id}`,{slot_id:p.slot_id,person_id:p.person_id,penalty:p.penalty}]));
+  return JSON.stringify({version:1,mode:options.mode || 'balanced',seconds:options.seconds ?? 30,
+    locked_slots:[...new Set(options.locked_slots || [])].sort(),repair_slots:[...new Set(options.repair_slots || [])].sort(),
+    preferences:[...effectivePreferences.values()].sort((a,b)=>a.slot_id.localeCompare(b.slot_id)||a.person_id.localeCompare(b.person_id))});
+}
+export function sameOptimizerBenchmarkContext(before:{context_hash:string;benchmark_context_hash?:string},after:{context_hash:string;benchmark_context_hash?:string}):boolean {
+  return before.context_hash===after.context_hash && typeof before.benchmark_context_hash==='string' && before.benchmark_context_hash.length>0 && before.benchmark_context_hash===after.benchmark_context_hash;
+}
 const KEY = "duty_rota_compute_device_v1";
 const verified = new Set<string>();
 let lastFailure: { code: ComputeErrorCode; at: number } | undefined;
@@ -24,18 +34,19 @@ export function preference(): ComputePreference {
     if (powerPreference(p.power)) result.power = p.power;
     if (deviceTest(p.test) && p.test.preference === result.power) result.test = p.test;
     const validProof = (proof: unknown): proof is EngineProof => {
-    return record(proof) && proof.version === COMPUTE_VERSION && typeof proof.parity === "boolean" &&
+    return record(proof) && proof.version === COMPUTE_VERSION && proof.measurement_version===2 && typeof proof.parity === "boolean" &&
         finiteTime(proof.server_ms) && proof.server_ms > 0 && finiteTime(proof.local_ms) && proof.local_ms > 0 &&
         typeof proof.at === "number" && Number.isFinite(proof.at) && proof.at <= Date.now() && Date.now() - proof.at < 7 * 86400000 &&
         typeof proof.month === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(proof.month) &&
-        typeof proof.context_hash === "string" && proof.context_hash.length <= 128 && typeof proof.adapter === "string" && proof.adapter.length <= 160 &&
-        typeof proof.signature === "string" && proof.signature === result.test?.signature && proof.browser === browser();
+        typeof proof.context_hash === "string" && proof.context_hash.length > 0 && proof.context_hash.length <= 128 && typeof proof.adapter === "string" && proof.adapter === result.test?.adapter && proof.adapter.length <= 160 &&
+        (proof.configuration===undefined || typeof proof.configuration==="string" && proof.configuration.length<=2000) &&
+        typeof proof.signature === "string" && proof.signature.length > 0 && proof.signature === result.test?.signature && proof.browser === browser();
     };
-    if(validProof(p.proof)) result.proof=p.proof;
+    if(validProof(p.proof) && (p.proof.workload===undefined || p.proof.workload==='members') && (p.proof.kernel_version===undefined || p.proof.kernel_version===2)) result.proof=p.proof;
     if(record(p.proofs)) for(const workload of ["members","template","optimizer"] as Workload[]) {
       const proof=p.proofs[workload];
       if(validProof(proof) && proof.workload===workload && proof.kernel_version===(workload==="members"?2:3) &&
-        (proof.configuration===undefined || typeof proof.configuration==="string" && proof.configuration.length<=2000))
+        (workload==='members' || typeof proof.configuration==='string' && proof.configuration.length>0))
         (result.proofs ||= {})[workload]=proof;
     }
   } catch { /* Missing, blocked or corrupt storage always defaults to server. */ }
@@ -59,24 +70,25 @@ export function rememberTest(test: DeviceTest) {
   p.test = test; savePreference(p); verified.add(test.signature);
   lastFailure = undefined;
 }
+function automaticProofMatches(p:ComputePreference,context?:ComputeContext):boolean {
+  const workload=context?.workload || 'members';
+  if(context?.estimatedRows!==undefined && (!Number.isSafeInteger(context.estimatedRows) || context.estimatedRows<256))return false;
+  const proof=p.proofs?.[workload] || (workload==='members'?p.proof:undefined);
+  return p.mode==='auto' && !!proof?.parity && proof.month===context?.month && proof.context_hash===context?.hash
+    && (proof.configuration || '')===(context?.configuration || '') && proof.local_ms<=proof.server_ms*0.8;
+}
 export function selectedEngine(admin: boolean, gpuEnabled: boolean, context?: ComputeContext): "server" | "local_gpu" {
   const p = preference();
   if (!admin || !gpuEnabled || !p.enabled || !p.test?.supported || !p.test.parity || p.test.software || !verified.has(p.test.signature)) return "server";
   const workload=context?.workload || "members";
   if(workload!=="members" && !p.test.kernel_checks?.[workload]) return "server";
   if (p.mode === "local_gpu") return "local_gpu";
-  if(context?.estimatedRows!==undefined && context.estimatedRows<256) return "server";
-  const proof = p.proofs?.[workload] || (workload==="members"?p.proof:undefined);
-  return p.mode === "auto" && proof?.parity && proof.month === context?.month && proof.context_hash === context?.hash
-    && (proof.configuration || "") === (context?.configuration || "")
-    && proof.local_ms <= proof.server_ms * 0.8 ? "local_gpu" : "server";
+  return automaticProofMatches(p,context) ? "local_gpu" : "server";
 }
 export async function prepareEngine(admin: boolean, gpuEnabled: boolean, context: ComputeContext, signal?: AbortSignal) {
   const p = preference();
   if (signal?.aborted || !admin || !gpuEnabled || !p.enabled || p.mode === "server") return "server" as const;
-  const workload=context.workload || "members";
-  if(p.mode==="auto" && (!(p.proofs?.[workload] || (workload==="members"?p.proof:undefined)) ||
-      context.estimatedRows!==undefined && context.estimatedRows<256))return "server" as const;
+  if(p.mode==='auto' && !automaticProofMatches(p,context))return 'server' as const;
   let worker: ComputeWorker | undefined;
   const abort = () => worker?.close();
   try {
@@ -123,7 +135,9 @@ export class ComputeWorker {
       let input: ScoreInput | undefined;
       try { if (type === "score") input = scoreInput(payload); } catch (error) { reject(error); return; }
       const id = ++this.id;
-      const timer = window.setTimeout(() => this.close(new ComputeError("timeout", "GPU timed out. Continue on the server.")), 15000);
+      // Cold adapter discovery and shader compilation can exceed 15 seconds on
+      // dual-GPU Windows laptops. Keep scoring bounded separately from setup.
+      const timer = window.setTimeout(() => this.close(new ComputeError("timeout", "GPU timed out. Continue on the server.")), type === "test" ? 60000 : 15000);
       this.pending = { id, type, input, resolve, reject, timer };
       try { this.worker.postMessage({ id, type, preference: this.power, ...input }); }
       catch { this.close(new ComputeError("protocol", "GPU request could not be transferred. Continue on the server.")); }

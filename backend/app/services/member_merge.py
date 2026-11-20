@@ -79,14 +79,18 @@ class Step:
     before: dict | None = None
     changes: dict = field(default_factory=dict)  # column -> new value (move/modify)
     note: str = ""
+    survivor_id: str | None = None  # Explicit duplicate-leave provenance; old payloads remain valid.
 
     def key(self) -> list:
         """What the step does, without values that differ each run (new ids, timestamps)."""
         if self.action == "insert":
             return [self.table, self.action, sorted((k, str(v)) for k, v in self.changes.items()
                                                     if k not in {"id", "created_at"})]
-        return [self.table, self.action, sorted((k, str(v)) for k, v in self.pk.items()),
-                sorted((k, str(v)) for k, v in self.changes.items())]
+        result = [self.table, self.action, sorted((k, str(v)) for k, v in self.pk.items()),
+                  sorted((k, str(v)) for k, v in self.changes.items())]
+        if self.survivor_id is not None:
+            result.append(["survivor_id", self.survivor_id])
+        return result
 
 
 # -- row (de)serialisation -------------------------------------------------------------------
@@ -178,9 +182,10 @@ class _Merger:
                         .values(**row_values(table, changes)))
         self.steps.append(Step(table.name, "move", pk_of(table, row), row, changes, note))
 
-    def drop(self, table: Table, row: dict, note: str):
+    def drop(self, table: Table, row: dict, note: str, *, survivor_id: str | None = None):
         self.db.execute(delete(table).where(pk_clause(table, pk_of(table, row))))
-        self.steps.append(Step(table.name, "drop", pk_of(table, row), row, {}, note))
+        self.steps.append(Step(table.name, "drop", pk_of(table, row), row, {}, note,
+                               survivor_id=survivor_id))
         if note:
             self.combined.append(note)
 
@@ -263,8 +268,11 @@ class _Merger:
                         self.move(table, row, column)
                 elif name == "leave_requests":
                     sig = ("starts_on", "ends_on", "leave_slot", "leave_type")
-                    if any(all(t[k] == row[k] for k in sig) for t in self.target_rows(table)):
-                        self.drop(table, row, f"Same leave ({row['starts_on']} to {row['ends_on']}) on both records")
+                    same = [t for t in self.target_rows(table) if all(t[k] == row[k] for k in sig)]
+                    if same:
+                        survivor = min(same, key=lambda item: str(item["id"]))
+                        self.drop(table, row, f"Same leave ({row['starts_on']} to {row['ends_on']}) on both records",
+                                  survivor_id=str(survivor["id"]))
                     else:
                         self.move(table, row, column)
                 elif name == "member_resolution_rules":
@@ -423,7 +431,12 @@ def run_merge(db: Session, target_id: UUID, source_ids: list[UUID], *, choices: 
     record = MemberMerge(
         target_id=target_id, target_name=target.canonical_name,
         source_ids=[str(s.id) for s in sources], source_names=names, summary=summary,
-        payload={"steps": [s.__dict__ for s in merger.steps]},
+        # Keep recovery step dictionaries readable by the existing undo format.
+        # Provenance is additive top-level metadata, not an extra undo-step argument.
+        payload={"steps": [{k: v for k, v in s.__dict__.items() if k != "survivor_id"}
+                           for s in merger.steps],
+                 "leave_survivors": {str(s.pk["id"]): s.survivor_id for s in merger.steps
+                                     if s.table == "leave_requests" and s.survivor_id is not None}},
         operator_id=getattr(operator, "id", None),
         operator_name=(getattr(operator, "display_name", None) or getattr(operator, "username", None) or "system"),
     )

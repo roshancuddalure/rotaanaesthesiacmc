@@ -247,7 +247,8 @@ def get_or_create_phase_one_rule_version(db: Session) -> RuleVersion:
         is_active=True,
     )
     db.add(rule_version)
-    db.commit()
+    from app.services.scheduling_inputs import finish_bootstrap
+    finish_bootstrap(db)
     db.refresh(rule_version)
     return rule_version
 
@@ -295,9 +296,15 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
             description="Rota generator Phase 1 duty dictionary and guardrail defaults.",
         )
         db.add(setting)
-        db.commit()
+        from app.services.scheduling_inputs import finish_bootstrap
+        finish_bootstrap(db)
     else:
         rules = RotaPhaseOneRules.model_validate(setting.value)
+    return rule_version, effective_phase_one_rules(db, rules)
+
+
+def effective_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> RotaPhaseOneRules:
+    """Merge current registry/default metadata without persisting any changes."""
     default_rules = default_phase_one_rules()
     default_rules_by_key = default_rules.duty_rules_by_key
     existing_keys = {rule.key for rule in rules.duty_rules}
@@ -322,7 +329,19 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
         key=lambda rule: DEFAULT_DUTY_ORDER.get(rule.key, len(DEFAULT_DUTY_ORDER))
     )
     attach_groups(rules, db=db)
-    return rule_version, rules
+    return rules
+
+
+def read_phase_one_rules(db: Session) -> RotaPhaseOneRules | None:
+    """Load effective saved rules without the first-read initialization writes."""
+    version = db.scalar(select(RuleVersion).where(RuleVersion.name == PHASE_ONE_RULE_VERSION_NAME))
+    if version is None:
+        return None
+    setting = db.scalar(select(RuleSetting).where(RuleSetting.rule_version_id == version.id,
+                                                 RuleSetting.key == PHASE_ONE_SETTING_KEY))
+    if setting is None:
+        return None
+    return effective_phase_one_rules(db, RotaPhaseOneRules.model_validate(setting.value))
 
 
 def save_phase_one_rules(

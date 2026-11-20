@@ -1,0 +1,97 @@
+{
+  "recorded_utc": "2026-11-11T00:50:23.873461+00:00",
+  "review_perspective": "Independent accessibility review of exact requirement 185; source, existing R4 assertion/report inspection and two rendered artifact observations; no new browser execution or ledger edit.",
+  "item_id": 185,
+  "verdict": "Supports the bounded requirement-185 shared historical-import interaction and context criteria at the bound current source. Does not certify overall accessibility, other 61 sign-offs, full application roles or programme completion.",
+  "requirements": [
+    {
+      "pass_condition": "Past-duty upload, preview, correction, review and apply use the shared import interaction patterns.",
+      "support": [
+        "past-duties.ts render calls the actual ui.ts steps helper with Select workbook, Set up, Review, Apply. operational-import.ts uses the same helper for its distinct CSV workflow.",
+        "ui.ts steps renders an ol with accessible name Progress; li current uses aria-current=step, decorative dots are aria-hidden, completed items include visually-hidden (done). Step labels remain readable text; these informational steps are not misleading interactive tabs.",
+        "R4 recovery progress() asserts all four data-state values and exactly one aria-current before completion, none when all four are done. Native focused Enter activates initial retry, template/rejection downloads, inspect, preview, apply and saved-detail recovery.",
+        "Held Apply asserts native disabled state at stage 3 and pressing Enter again produces one mutation. Confirmed response sets stage 4; saved readback failure and repeated GET-only recovery retain completion. Unknown Apply remains review stage with explicit fresh-preview message and no repeated mutation.",
+        "R4 boundary correction fixture exercises row-details opening, changed duty type, stale preview, blocked Apply, re-preview and explicit warnings/correction confirmation. These retain stage 2 until actual Apply response."
+      ],
+      "limits": [
+        "Recovery keyboard helper calls focus() then real page.keyboard.press(Enter); it proves native activation of exercised buttons, not a complete sequential Tab/Space/arrow-key matrix or touch equivalence.",
+        "File selection uses Playwright setInputFiles rather than native operating-system picker interaction; selectOption/check cover resulting state, not every native key path."
+      ]
+    },
+    {
+      "pass_condition": "Historical-data explanations and date context remain distinct, and existing historical import payloads and outcomes are preserved.",
+      "support": [
+        "Current markup explicitly states selected historical month, returned preview month and worksheet, consequences for statistics/scoring and unchanged existing call levels; review describes corrections, dates, start/end times and local hospital time.",
+        "Saved outcome is a separately named Last applied import section with role=status outcome and escaped filename/selected month/returned month/worksheet. It remains explicitly scoped when a same-file re-inspection or different unsaved file starts a new draft. Missing returned context reads Not returned.",
+        "Boundary fixtures cover previous December on January 1, leap February, explicit current-month correction, selected/returned-month mismatch with replayed outcome, and missing returned month/worksheet. Assertions compare saved context and require filename as text, never injected historical markup.",
+        "R4 recovery and boundaries inspect actual multipart File bytes/options/preview_hash and exact template/rejection download bytes. This is frontend transport preservation under intercepted requests, not backend parsing or persisted-outcome certification."
+      ],
+      "limits": [
+        "All API responses are intercepted in an Administrator component fixture. Server authorisation, backend parser, real production permissions and actual database outcomes are outside these tests."
+      ]
+    }
+  ],
+  "accessibility_findings": {
+    "focus_owner_support": [
+      "retainActionFocus records whether the trigger owned focus, listens for deliberate focus movement, checks connected/current ownership before restoration, and restores only when active focus has fallen to body or remains trigger.",
+      "R4 assertions verify repeated failed safe-read retry retains retry focus; blocked unknown-outcome Apply retains Apply focus; superseded initial load and superseded Apply retain outside focus and do not inject stale outcomes.",
+      "No new keydown interception or interactive step-rail behavior was introduced by the requirement-185 presentation."
+    ],
+    "text_resize_support": [
+      "Visual suite uses real computed font sizes for each current host element and writes doubled sizes; it asserts the chosen step-label computed size doubled exactly, then measures glyph bounding boxes inside round step dots and progress scrollWidth<=clientWidth+1.",
+      "12 visual contexts cover Chromium/Firefox/WebKit at 320 and 844 emulated widths in light/dark. Normal preview plus actual doubled-step screenshots are produced for each.",
+      "Independent visual observation of Chromium 320 dark doubled-text screenshot: all four labels readable, wrapped in order, no visibly clipped circle glyphs. WebKit 320 light preview screenshot: heading, historical context, setup controls, review information and Apply button readable within the panel; comparison table scrolls locally."
+    ],
+    "honest_remaining_gaps": [
+      "No native screen-reader/assistive-technology execution, announcement-order verification or browser accessibility-tree snapshot. Status/alert semantics are inspected in source and used by locators; this does not prove announcement delivery after whole-host replacement.",
+      "No physical-device run, operating-system file picker walkthrough, mobile software-keyboard/rotation check or real touch pass; desktop viewport emulation only.",
+      "No forced-colors/high-contrast execution in R4 and no measured foreground/background contrast matrix. Light/dark screenshots alone cannot establish WCAG contrast compliance.",
+      "Enlarged geometry assertions are specific to progress container and step dots. They do not prove full-panel/body reflow, label clipping across every language, browser zoom equivalence, sticky-shell focus visibility or every field at 200 percent. Two screenshots were visually inspected by this reviewer; all 24 were not independently viewed.",
+      "Existing onchange branches replace host.innerHTML after filter/confirmation/setup/row edits without using retainActionFocus. Sequential field focus/caret preservation across those changes is not asserted here. Baseline already contains the filter/confirmation render pattern, so this is an existing accessibility concern, not established as a new 185 regression.",
+      "Existing member-import-table comparison wrappers have no explicit tabindex or accessible region name. Native-engine scroll behavior may differ; R4 does not establish keyboard-only horizontal table access. Baseline has the same wrapper; this is a separate existing accessibility task.",
+      "The fixture mounts the component inside a minimal main element as Administrator. It does not exercise actual shell navigation, role variations, dialogs, sticky rails, all route headings or permission-based control exposure.",
+      "The progress ol itself has no live region. Working/outcome messages use role=status and failures may use role=alert, but step changes being announced intelligibly and without duplication remain native-AT work."
+    ]
+  },
+  "evidence_integrity": {
+    "all_current_source_files_match_R4_checkpoint": true,
+    "current_source_files_checked": 60,
+    "test_hashes_match_checkpoint": true,
+    "report_hashes_match_checkpoint": true,
+    "report_context_counts": {
+      "docs/premium-ui/qa-original185-steps-v2-applied-r4-recovery-20261110.json": 6,
+      "docs/premium-ui/qa-original185-steps-v2-applied-r4-boundaries-20261110.json": 15,
+      "docs/premium-ui/qa-original185-steps-v2-applied-r4-visual-r1-20261110.json": 12
+    },
+    "new_tests_launched": 0,
+    "new_product_edits": 0,
+    "acceptance_ledger_edits": 0,
+    "screenshots_independently_viewed": [
+      "tmp/past185-steps-v2-applied-r4/steps-chromium-320-dark-computed-text200-r1.png",
+      "tmp/past185-steps-v2-applied-r4/preview-webkit-320-light-r1.png"
+    ]
+  },
+  "historical_limit": "R1 stylesheet timeout, R2 native Chromium crash and R3 template-download timeout remain retained failures with causes unproven. This review does not overwrite them or reaccept older 61 checkpoint sign-offs.",
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/original185-current-applied-r4-execution-20261111.json": "4d762e87a5c04b1accc898d70b05a1fcfbbaf1d53cb5449b6a94360743426c18",
+    "docs/premium-ui/acceptance-criteria/items-174-260.json": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac",
+    "frontend/src/past-duties.ts": "ca145769e2d8d4c00d37de57852acc2ab83c321d1761a5c5545c3da888fa729d",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/styles.css": "ae0e796c684efc9d3b861265ebf5934401f15f74d6180e7e338fcb4cdddeffc0",
+    "frontend/src/premium-theme.css": "6642ff90299a96ac8f4ecbf941be45f3b3f413c2a647ba8192ebf949b4b65e34",
+    "frontend/src/operational-import.ts": "d98a64b3e73ac13f1d2eb40e5c646a8bad02b608134d2b2ae217e5d2ec97afdd",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "tmp/past185-v2-integration-before/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
+    "tmp/past185-steps-v2-applied-r4/steps-chromium-320-dark-computed-text200-r1.png": "01c3cae7c98dc2eefbf3809fab9976e61409c09224b7a0b1e6b8089b67fb4001",
+    "tmp/past185-steps-v2-applied-r4/preview-webkit-320-light-r1.png": "97330e0c53073819a2d69dc9338ed49087e90d6cd1795f2984e9fc23b29adb1a",
+    "frontend/tests/premium-original185-steps-v2-applied-r4-recovery-20261110.browser.mjs": "9e3a72445bf02f05eef1b7d7f902d47b275abab531a05031b7b6705bd7a7c54d",
+    "docs/premium-ui/qa-original185-steps-v2-applied-r4-recovery-20261110.json": "22e0be389732f4ec6f5f175e86e055ad2475c99bd3000cc1fe848120d1cc30b1",
+    "tmp/past185-steps-v2-applied-r4/recovery.log": "a88bea71a126ec2a2d4062d01174a07aa0f6add05073646f4c51b9a0955736c1",
+    "frontend/tests/premium-original185-steps-v2-applied-r4-boundaries-20261110.browser.mjs": "e1211a67de60bc130dd74677444ad3836c285f7ae8b44d7c3a7aa35037a47f27",
+    "docs/premium-ui/qa-original185-steps-v2-applied-r4-boundaries-20261110.json": "723359a446bfcc39c9ac470af87bb8869559c9c359ffc3985b5e84222a8774e7",
+    "tmp/past185-steps-v2-applied-r4/boundaries.log": "1435958e6a0270110e9b795116574c2e8de114ea76ca9ed3dc9c0599f2b1ea64",
+    "frontend/tests/premium-original185-steps-v2-applied-r4-visual-r1-20261110.browser.mjs": "37d5132ffe7fdbddd2a81b5aad46283459dabc41085532fab46555f6e79fac96",
+    "docs/premium-ui/qa-original185-steps-v2-applied-r4-visual-r1-20261110.json": "de4f4bc044e4e9f765d20630beb6e89fb4fbda64d48667b7124aba0e684b1dcf",
+    "tmp/past185-steps-v2-applied-r4/visual-r1.log": "00b801e8d5f58a81a2144123747346446cdf44c605506aede61066a7ca2fa8b6"
+  }
+}

@@ -58,7 +58,8 @@ try {
         const settings = body.match(/name="settings_json"\r?\n\r?\n([^\r\n]+)/)?.[1];
         if (settings) sentChoice = JSON.parse(settings).corrections?.["CSV:2"]?.person_id ?? sentChoice;
         json = { id: "batch", kind: "leave", month: "2026-10", mode: "append", headers: ["Employee", "Beginning"],
-                 fields: ["member_name", "starts_on"], replacement_scope: [], rows: [row(previews > 1)] };
+                 fields: ["member_name", "starts_on"], replacement_scope: [], rows: [row(previews > 1)],
+                 ot_impact: {status:"disabled",context_digest:null,months:[],basis:"OT integration disabled in this identity-resolution fixture."} };
       }
       return route.fulfill({ json });
     });

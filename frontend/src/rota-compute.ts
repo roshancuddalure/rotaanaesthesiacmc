@@ -1,6 +1,6 @@
 import { request } from "./services/api";
 import { workspaceDialog } from "./member-workspace";
-import { ComputeWorker, RecoveringCompute, preference, savePreference, resetPreference, prepareEngine, rememberTest, invalidateDevice, diagnostics, selectedEngine,scoreFrame } from "./compute-device";
+import { ComputeWorker, RecoveringCompute, preference, savePreference, resetPreference, prepareEngine, rememberTest, invalidateDevice, diagnostics, selectedEngine,scoreFrame,optimizerConfiguration,sameOptimizerBenchmarkContext } from "./compute-device";
 import { COMPUTE_VERSION } from "./compute-protocol";
 import type { ComputeMode, Workload } from "./compute-device";
 import { conflictsFromError, showProposalConflict } from "./compute-conflict";
@@ -142,6 +142,7 @@ export async function renderComputeSettings(host: HTMLElement) {
         workload==="template" && (!caps.template_compute || !caps.template_gpu) || workload==="optimizer" && !caps.optimizer_gpu ||
         workload!=="members" && !p.test?.kernel_checks?.[workload] ? "disabled" : ""}>Compare engines on this month</button>
       <p>Comparison creates and cancels six proposals. It never applies assignments or publishes a rota.</p>
+      ${workload==='optimizer'?'<p data-optimizer-comparison-scope>Optimiser comparisons measure Balanced planning with a 30-second search budget, no locks and no personal preferences. Automatic uses this comparison only for matching options; other options use the server.</p>':''}
       <p id="compute-comparison-help" data-compute-comparison-help>${escape(comparisonReason)}</p>
       ${p.proof ? `<p>Last comparison: server ${(p.proof.server_ms / 1000).toFixed(2)} s;
       local ${(p.proof.local_ms / 1000).toFixed(2)} s; matching decisions: ${p.proof.parity ? "yes" : "no"}.</p>` : ""}
@@ -209,12 +210,23 @@ export async function renderComputeSettings(host: HTMLElement) {
         }
         const reports: { job: Job; elapsed: number; engine: Engine; timings: Record<string,number> }[] = [];
         for (const engine of ["server", "local_gpu", "local_gpu", "server", "server", "local_gpu"] as Engine[]) {
-          if (engine === "local_gpu") { testWorker.close(); testWorker = new ComputeWorker(); }
           let job: Job | undefined;
-          const timings:Record<string,number>={gpu_initialization_ms:0,gpu_encode_upload_ms:0,gpu_dispatch_readback_ms:0,cpu_verification_ms:0,gpu_total_ms:0,final_validation_ms:0};
+          const timings:Record<string,number>={device_verification_ms:0,gpu_initialization_ms:0,gpu_encode_upload_ms:0,gpu_dispatch_readback_ms:0,cpu_verification_ms:0,gpu_total_ms:0,final_validation_ms:0};
           const began = performance.now();
           try {
-            job = workload==="optimizer" ? await request<Job>("/api/v1/rota-intelligence/jobs",{method:"POST",body:JSON.stringify({month,engine,mode:"balanced",seconds:5})}) : await start(month, engine, configuration);
+            if(engine==='local_gpu'){
+              const verificationStarted=performance.now();
+              const verificationWorker=new ComputeWorker();
+              try{
+                const current=await verificationWorker.call('test');
+                if(current.signature!==test.signature || current.software || workload!=='members' && !current.kernel_checks?.[workload])throw new Error('Browser-selected GPU or kernel readiness changed. Retest before comparing engines.');
+              }finally{verificationWorker.close();}
+              timings.device_verification_ms=performance.now()-verificationStarted;
+              // Generation verifies in a disposable worker, then scores in a
+              // fresh one. Measure that same cold path rather than a warm test.
+              testWorker.close();testWorker=new ComputeWorker();
+            }
+            job = workload==="optimizer" ? await request<Job>("/api/v1/rota-intelligence/jobs",{method:"POST",body:JSON.stringify({month,engine,mode:"balanced",seconds:30})}) : await start(month, engine, configuration);
             while (["queued", "running"].includes(job.status)) {
               if (!host.isConnected) throw new Error("Comparison stopped after leaving settings. Proposals were cancelled.");
               const result = job.frame ? await scoreFrame(job.frame,frame=>testWorker!.call("score",frame)) : undefined;
@@ -231,20 +243,21 @@ export async function renderComputeSettings(host: HTMLElement) {
             await post(`jobs/${job.id}/validate`, { revision: job.revision });
             timings.final_validation_ms=performance.now()-validationStarted;
             const elapsed=performance.now()-began;
-            timings.http_and_server_ms=Math.max(0,elapsed-timings.gpu_total_ms);
+            timings.http_and_server_ms=Math.max(0,elapsed-timings.gpu_total_ms-timings.device_verification_ms);
             reports.push({ job, elapsed, engine,timings });
           } finally { if (job) await post(`jobs/${job.id}/cancel`); }
         }
         const choices = (job: Job) => job.decisions.map(d => [d.slot_id, d.person_id, d.action, d.score]);
         if (!reports[0].job.total || (workload!=="template" && !reports[0].job.proposed)) throw new Error("This month has no eligible workload to benchmark. Choose a populated draft month.");
         const same = reports.every(r => r.job.context_hash === reports[0].job.context_hash
+          && (workload!=='optimizer' || sameOptimizerBenchmarkContext(reports[0].job,r.job))
           && JSON.stringify(choices(r.job)) === JSON.stringify(choices(reports[0].job)));
         const median = (engine: Engine) => reports.filter(r => r.engine === engine).map(r => r.elapsed).sort((a,b) => a-b)[1];
         const latest = preference();
         const proof = { server_ms: median("server"), local_ms: median("local_gpu"),
           month, context_hash: workload==="optimizer"?(reports[0].job.benchmark_context_hash || reports[0].job.context_hash):reports[0].job.context_hash,
-          parity: same, at: Date.now(), version: COMPUTE_VERSION, adapter: test.adapter, signature: test.signature, browser: navigator.userAgent,
-          workload,kernel_version:workload==="members"?2:3,configuration:configuration?configurationKey(configuration,month):"",
+          parity: same, at: Date.now(), version: COMPUTE_VERSION, measurement_version:2, adapter: test.adapter, signature: test.signature, browser: navigator.userAgent,
+          workload,kernel_version:workload==="members"?2:3,configuration:workload==='optimizer'?optimizerConfiguration({mode:'balanced',seconds:30}):configuration?configurationKey(configuration,month):"",
           stage_timings:reports.map(r=>({engine:r.engine,total_ms:r.elapsed,...r.timings})) };
         (latest.proofs ||= {})[workload]=proof;
         if(workload==="members") latest.proof=proof;

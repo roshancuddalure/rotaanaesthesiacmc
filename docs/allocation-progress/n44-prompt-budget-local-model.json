@@ -1,0 +1,94 @@
+{
+  "synthetic_only": true,
+  "runtime": "owned loopback11438/existing Gemma3:4b",
+  "source_sha256": {
+    "tools/probe_ot_prompt_budget.py": "86b8e88306ef1e31facf2309b850f468bfb60d62638fc1638f5940ad17d7c228",
+    "tools/local_ai_claim_guard.py": "89ef0559cfe40712ae77d3b9ab8ef227d2b1d737da14038769b84af74d7658da",
+    "tools/local_ai_numeric_policy.py": "9152b826cae8bd6401503f1d77f9653533c80cdf86bd5e296d616f1d67ab1b44",
+    "tools/local_ai_ot_reference.py": "4328cda8c4f122e276bd3865f8929b28bd8bfa38b8860fcb797cec076357d8ff",
+    "tools/local_ai_prompt_budget.py": "fb595d857b4238ef0b59b46a5c2f59e93b328bec28b3f7e67732b3734dd8a4ed",
+    "tools/local_ai_reference_context.py": "d54654bcd77ca0134bc0a1991f8c1f616f934f0c04a15c4726f1bfe8a2ed3cd2",
+    "tools/local_rota_assistant.py": "b4eb813e7628e59624edef34faafabc9c7227d3aebbee939a84bc35a71ee0466"
+  },
+  "cases": [
+    {
+      "case": "small",
+      "status": 200,
+      "calls": [
+        {
+          "path": "version",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null,
+          "version": "0.40.16"
+        },
+        {
+          "path": "tags",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null
+        },
+        {
+          "path": "chat",
+          "num_predict": 1,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "length",
+          "prompt_eval_count": 972,
+          "prompt_eval_cached_count": 459,
+          "eval_count": 1
+        },
+        {
+          "path": "chat",
+          "num_predict": 600,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "stop",
+          "prompt_eval_count": 972,
+          "prompt_eval_cached_count": 967,
+          "eval_count": 53
+        }
+      ],
+      "measured_seconds": 19.742873800045345,
+      "needs_review": true,
+      "guard_detail": null
+    },
+    {
+      "case": "oversized",
+      "status": 502,
+      "calls": [
+        {
+          "path": "version",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null,
+          "version": "0.40.16"
+        },
+        {
+          "path": "tags",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null
+        },
+        {
+          "path": "chat",
+          "num_predict": 1,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "length",
+          "prompt_eval_count": 3854,
+          "prompt_eval_cached_count": 459,
+          "eval_count": 1
+        }
+      ],
+      "measured_seconds": 24.94342520000646,
+      "needs_review": null,
+      "guard_detail": "Selected OT reference and request exceed the local prompt budget. Choose a smaller reference or shorter request; nothing was truncated."
+    }
+  ],
+  "complete": true,
+  "source_unchanged": true
+}

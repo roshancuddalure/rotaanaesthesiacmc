@@ -15,7 +15,9 @@ from sqlalchemy.orm import Session, selectinload
 from app.models import LeaveRequest, PersonPosting, Unit
 from app.services.rota_call_levels import normalize_call_level
 from app.services.member_profiles import call_level_on
-from app.services.leave import ACTIVE_LEAVE_STATUSES, count_leave_days, month_bounds
+from app.services.leave import date_range, month_bounds
+from app.services.leave_attribution import LeaveAttribution
+from app.services.leave_semantics import is_active
 
 UNIT_BOARD_SOURCE = "unit_board"
 
@@ -108,7 +110,7 @@ def active_leaves_for_month(db: Session, month: str) -> list[LeaveRequest]:
     return [
         leave
         for leave in db.scalars(statement)
-        if leave.status.lower() in ACTIVE_LEAVE_STATUSES
+        if is_active(leave.status)
     ]
 
 
@@ -119,17 +121,13 @@ def unit_leave_summary(
 ) -> dict[UUID, dict[str, object]]:
     starts_on, ends_on = month_bounds(month)
     assignment_list = assignments if assignments is not None else monthly_unit_assignments(db, month)
-    person_to_units: dict[UUID, set[UUID]] = defaultdict(set)
-    for assignment in assignment_list:
-        if assignment.unit_id is not None:
-            person_to_units[assignment.person_id].add(assignment.unit_id)
-
     summaries: dict[UUID, dict[str, object]] = defaultdict(
         lambda: {
             "assigned_members": 0,
             "people_with_leave": 0,
             "leave_days": 0,
             "leave_by_call_level": Counter(),
+            "unresolved_leave_person_dates": 0,
         }
     )
 
@@ -143,18 +141,33 @@ def unit_leave_summary(
         summaries[unit_id]["assigned_members"] = len(people)
 
     leave_people_by_unit: dict[UUID, set[UUID]] = defaultdict(set)
-    for leave in active_leaves_for_month(db, month):
+    leaves = active_leaves_for_month(db, month)
+    context = LeaveAttribution(db, {row.person_id for row in leaves}, starts_on, ends_on,
+                               postings=assignment_list)
+    counted, unresolved = set(), defaultdict(set)
+    for leave in leaves:
         first = max(leave.starts_on, starts_on)
         last = min(leave.ends_on, ends_on)
-        days = count_leave_days(first, last)
-        for unit_id in person_to_units.get(leave.person_id, set()):
+        for day in date_range(first, last):
+            identity = (leave.person_id, day)
+            if identity in counted:
+                continue
+            counted.add(identity)
+            attribution = context.resolve(leave.person_id, day)
+            unit_id = attribution.unit_id
+            if unit_id is None:
+                for posting in context.postings.get(leave.person_id, ()):
+                    if posting.unit_id and posting.starts_on <= day <= (posting.ends_on or ends_on):
+                        unresolved[posting.unit_id].add(identity)
+                continue
             leave_people_by_unit[unit_id].add(leave.person_id)
-            summaries[unit_id]["leave_days"] = int(summaries[unit_id]["leave_days"]) + days
-            call_level = call_level_on(leave.person, leave.starts_on) or "Unassigned"
-            summaries[unit_id]["leave_by_call_level"][call_level] += days  # type: ignore[index]
+            summaries[unit_id]["leave_days"] = int(summaries[unit_id]["leave_days"]) + 1
+            summaries[unit_id]["leave_by_call_level"][attribution.call_level] += 1  # type: ignore[index]
 
     for unit_id, people in leave_people_by_unit.items():
         summaries[unit_id]["people_with_leave"] = len(people)
+    for unit_id, identities in unresolved.items():
+        summaries[unit_id]["unresolved_leave_person_dates"] = len(identities)
 
     return summaries
 

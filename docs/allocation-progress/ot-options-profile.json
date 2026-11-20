@@ -1,0 +1,63 @@
+{
+  "scenario": "existing in-memory 200-person superadmin options gate",
+  "pytest_exit_code": 1,
+  "wall_seconds": 158.5930600000429,
+  "cpu_seconds": 11.859375,
+  "stages": {
+    "app.services.superadmin_allocation._load_slot": {
+      "calls": 1,
+      "wall_seconds": 0.026053600013256073,
+      "cpu_seconds": 0.015625
+    },
+    "app.services.superadmin_allocation._load_state": {
+      "calls": 1,
+      "wall_seconds": 4.2585968999774195,
+      "cpu_seconds": 0.34375
+    },
+    "app.services.superadmin_allocation._month_duties": {
+      "calls": 607,
+      "wall_seconds": 0.00579699978698045,
+      "cpu_seconds": 0.0
+    },
+    "_Overrides.__init__": {
+      "calls": 1,
+      "wall_seconds": 0.6588803000049666,
+      "cpu_seconds": 0.171875
+    },
+    "app.services.superadmin_allocation.strict_blocks": {
+      "calls": 206,
+      "wall_seconds": 0.15248330042231828,
+      "cpu_seconds": 0.015625
+    },
+    "app.services.superadmin_allocation._member_context": {
+      "calls": 401,
+      "wall_seconds": 0.01146780012641102,
+      "cpu_seconds": 0.0
+    },
+    "app.services.superadmin_allocation.cross_level": {
+      "calls": 206,
+      "wall_seconds": 0.011543900240212679,
+      "cpu_seconds": 0.0
+    },
+    "app.services.superadmin_allocation._person_unit": {
+      "calls": 206,
+      "wall_seconds": 0.005316799622960389,
+      "cpu_seconds": 0.015625
+    },
+    "_Overrides.for_person": {
+      "calls": 195,
+      "wall_seconds": 0.02235610008938238,
+      "cpu_seconds": 0.015625
+    },
+    "app.services.superadmin_allocation.options": {
+      "calls": 1,
+      "wall_seconds": 5.197647399967536,
+      "cpu_seconds": 0.578125
+    }
+  },
+  "options_sql": {
+    "calls": 53,
+    "wall_seconds": 1.666175099904649
+  },
+  "limitations": "Instrumented timings include profiling overhead. Nested stage totals overlap; process CPU includes all threads. Not a production benchmark."
+}

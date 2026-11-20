@@ -36,7 +36,8 @@ import {
 import { workspaceDialog } from "./member-workspace";
 import { announceToast } from "./ui-feedback";
 import { callLevelText } from "./extra-duty";
-import { emptyState, esc, formatDate, formatMonth, pageSkeleton } from "./ui";
+import { emptyState, esc, formatMonth, pageSkeleton } from "./ui";
+import { formatAuditTimestamp } from "./audit-time";
 
 const API = "/api/v1/admin/limits";
 const NOTE_MAX = 500;
@@ -317,10 +318,7 @@ function localChanges(st: State): LimitChange[] {
 
 function formatWhen(iso: string | null | undefined): string {
   if (!iso) return "";
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return String(iso);
-  const time = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(date);
-  return `${formatDate(iso, { weekday: false })}, ${time}`;
+  return formatAuditTimestamp(iso);
 }
 
 type ApiError = Error & { status?: number; detail?: unknown; kind?: string };

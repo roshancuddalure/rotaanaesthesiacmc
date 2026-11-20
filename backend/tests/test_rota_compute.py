@@ -213,7 +213,10 @@ def test_changed_snapshot_rejects_apply_without_partial_writes(compute_db, chang
         from app.models import RuleSetting
 
         setting = db.scalars(select(RuleSetting)).first()
-        setting.description = "Edited after preview"
+        from copy import deepcopy
+        value = deepcopy(setting.value)
+        value["rest_rules"]["minimum_gap_after_24hr_hours"] += 24
+        setting.value = value
     elif change == "publish":
         compute.monthly_setup(db, "2026-05")[0].status = "published"
     else:

@@ -2,7 +2,6 @@
 
 import copy
 import hashlib
-import json
 from datetime import datetime, timedelta
 from time import perf_counter
 from uuid import UUID
@@ -11,18 +10,12 @@ from fastapi import HTTPException
 from sqlalchemy import select
 
 from app.models import (
-    CallCluster,
     DutyAssignment,
     MemberActivity,
     MonthlyGenerationScope,
-    MonthlyGenerationScopeUnit,
-    PersonCallClusterMembership,
     RotaComputeJob,
     RotaPeriod,
-    RuleSetting,
-    RuleVersion,
 )
-from app.services.operational_import import fingerprint
 from app.services.reference_registry import lock_namespace
 from app.services.rota_assignment import validate_assignment
 from app.services.rota_auto_fill import open_slots_for_period, active_slot_assignments
@@ -50,20 +43,8 @@ SCORE_FIELDS = [
 
 
 def context_hash(db):
-    state = [fingerprint(db)]
-    for model in [
-        RuleVersion,
-        RuleSetting,
-        CallCluster,
-        PersonCallClusterMembership,
-        RotaPeriod,
-        MonthlyGenerationScope,
-        MonthlyGenerationScopeUnit,
-    ]:
-        state.append(
-            [dict(r) for r in db.execute(select(model.__table__).order_by(model.id)).mappings()]
-        )
-    return hashlib.sha256(json.dumps(state, sort_keys=True, default=str).encode()).hexdigest()
+    from app.services.scheduling_snapshot import capture
+    return capture(db).digest
 
 
 def writable_period(db, month):
@@ -176,7 +157,24 @@ def conflict_summary(db, job, operator):
     }
 
 
+def prepare_planning_inputs(db, month):
+    """Bootstrap before locking, then acquire fresh scheduling inputs as one unit.
+
+    Use the same global/month namespace order as job ownership. A cold bootstrap
+    may commit, so advisory and input locks are acquired only after it finishes.
+    """
+    writable_period(db, month)
+    from app.services.rota_rules import get_phase_one_rules
+    get_phase_one_rules(db)
+    db.flush()
+    lock_namespace(db, "rota-compute")
+    lock_namespace(db, "rota-compute:" + month)
+    lock_operational_inputs(db)
+    return writable_period(db, month)
+
+
 def create_job(db, month, operator, engine="server", *, commit=True):
+    period, _ = prepare_planning_inputs(db, month)
     lock_namespace(db, "rota-compute")
     active = list(db.scalars(select(RotaComputeJob).where(
         RotaComputeJob.operator_id == operator.id, RotaComputeJob.status.in_(ACTIVE),
@@ -194,7 +192,7 @@ def create_job(db, month, operator, engine="server", *, commit=True):
         )
     lock_namespace(db, "rota-compute:" + month)
     period, _ = writable_period(db, month)
-    # Materialize defaults before freezing the snapshot.
+    # Defaults, fresh ORM fields and the hash now share the input-lock lifetime.
     context = candidate_context(db, month)
     db.flush()
     lock_namespace(db, "rota-compute:" + month)
@@ -356,6 +354,7 @@ def advance(db, job, revision, selection=None, token=None, fallback=False, batch
     if job.status not in {"queued", "running"}:
         return serialize(job)
     lock_namespace(db, "rota-compute:" + job.month)
+    lock_operational_inputs(db)
     check_current(db, job)
     started = perf_counter()
     state = copy.deepcopy(job.state)
@@ -440,45 +439,8 @@ def cancel(db, job):
 
 
 def lock_operational_inputs(db):
-    if db.get_bind().dialect.name == "postgresql":
-        # Protect the final snapshot even from older writers that do not use advisory locks.
-        from sqlalchemy import text
-        from app.db.session import Base
-
-        names = [
-            "persons",
-            "person_aliases",
-            "person_designations",
-            "member_call_level_changes",
-            "person_call_changes",
-            "units",
-            "unit_call_minimums",
-            "admin_mappings",
-            "reference_values",
-            "person_postings",
-            "leave_requests",
-            "duty_slots",
-            "duty_assignments",
-            "rule_versions",
-            "rule_settings",
-            "call_clusters",
-            "person_call_cluster_memberships",
-            "rota_periods",
-            "monthly_generation_scopes",
-            "monthly_generation_scope_units",
-        ]
-        tables = sorted(n for n in names if n in Base.metadata.tables)
-        bind = db.get_bind()
-        schema = bind.get_execution_options().get("schema_translate_map", {}).get(None)
-        quote = bind.dialect.identifier_preparer.quote
-        prefix = quote(schema) + "." if schema else ""
-        db.execute(
-            text(
-                "LOCK TABLE "
-                + ", ".join(prefix + quote(n) for n in tables)
-                + " IN SHARE ROW EXCLUSIVE MODE"
-            )
-        )
+    from app.services.scheduling_inputs import lock_inputs
+    lock_inputs(db)
 def apply_job(db, job, revision, operator=None, dry_run=False):
     if job.state.get("template"):
         from app.core.config import settings
@@ -516,6 +478,11 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
                     409, "An original assignment changed. Generate a fresh proposal."
                 )
     proposals = [d for d in job.state["decisions"] if d.get("person_id")]
+    if set(originals) - {d["slot_id"] for d in proposals}:
+        raise HTTPException(
+            409, "A selected repair has no reviewed replacement. Original assignments are retained; "
+                 "resolve the uncovered repairs or generate a narrower proposal before applying."
+        )
     for d in proposals:
         slot = slots.get(d["slot_id"])
         person = context.people.get(UUID(d["person_id"]))
@@ -562,7 +529,7 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
         }
     changed_originals = {
         d["slot_id"]
-        for d in job.state["decisions"]
+        for d in proposals
         if d["slot_id"] in originals and d.get("person_id") != originals[d["slot_id"]]["person_id"]
     }
     for sid in changed_originals:

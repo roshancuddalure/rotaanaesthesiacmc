@@ -93,12 +93,17 @@ class CandidateContext:
     timings: dict
     # ``{call_level: slots / members}`` for the month (fairness_targets), loaded on first use.
     fairness_targets: dict | None = None
+    # Monthly objective membership, distinct from each duty's dated eligibility.
+    fairness_member_levels: dict | None = None
+    # Immutable OT inputs; retained when optimizer copies/removes mutable duties.
+    ot_guard: object | None = None
 
 
-def candidate_context(db: Session, month: str) -> CandidateContext:
+def candidate_context(db: Session, month: str, *, prospective_slots=(), rules=None) -> CandidateContext:
     began = perf_counter()
     starts_on, ends_on = month_bounds(month)
-    _rule_version, rules = get_phase_one_rules(db)
+    if rules is None:
+        _rule_version, rules = get_phase_one_rules(db)
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leaves_by_day_and_person(db, month)
     assignments = assignments_for_month(db, starts_on, ends_on)
@@ -116,14 +121,24 @@ def candidate_context(db: Session, month: str) -> CandidateContext:
         else 0.0
     )
     buffer = timedelta(hours=rules.rest_rules.minimum_gap_after_24hr_hours + 48)
+    nearby_start = datetime.combine(starts_on, time.min) - buffer
+    nearby_end = datetime.combine(ends_on, time.max) + buffer
+    from app.core.config import settings
+    ot_guard = None
+    if settings.ot_calendar_enabled:
+        from app.services.ot_assignment_context import load_assignment_guard
+        ot_guard = load_assignment_guard(db, month, rules, prospective_slots=prospective_slots)
+        if ot_guard.horizon_start is not None:
+            nearby_start = min(nearby_start, ot_guard.horizon_start - buffer)
+            nearby_end = max(nearby_end, ot_guard.horizon_end)
     nearby = defaultdict(list)
     for assignment in db.scalars(
         select(DutyAssignment)
         .join(DutyAssignment.duty_slot)
         .outerjoin(DutySlot.rota_period)
         .where(
-            DutySlot.ends_at >= datetime.combine(starts_on, time.min) - buffer,
-            DutySlot.starts_at <= datetime.combine(ends_on, time.max) + buffer,
+            DutySlot.ends_at >= nearby_start,
+            DutySlot.starts_at <= nearby_end,
             or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
         )
         .options(selectinload(DutyAssignment.duty_slot))
@@ -146,6 +161,7 @@ def candidate_context(db: Session, month: str) -> CandidateContext:
         people={p.person_id: p.person for p in postings},
         timings={"load_ms": 0.0, "validation_ms": 0.0, "scoring_ms": 0.0, "safety_ms": 0.0},
     )
+    result.ot_guard = ot_guard
     result.timings["load_ms"] = (perf_counter() - began) * 1000
     return result
 
@@ -335,14 +351,15 @@ def is_tight(validation: dict[str, object]) -> bool:
 def context_targets(db: Session, context: CandidateContext) -> dict:
     """The month's call-level targets, computed once per context from its preloaded data."""
     if context.fairness_targets is None:
-        from app.services.fairness_targets import target_by_level
+        from app.services.fairness_targets import objective_target_basis
 
         try:
-            context.fairness_targets = target_by_level(
+            context.fairness_targets, context.fairness_member_levels = objective_target_basis(
                 db, context.month, context.rules, postings=context.postings, leaves=context.leaves
             )
         except Exception:  # noqa: BLE001 - ranking must not fail on a reporting helper
             context.fairness_targets = {}
+            context.fairness_member_levels = {}
     return context.fairness_targets
 
 

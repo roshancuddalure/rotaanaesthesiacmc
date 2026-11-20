@@ -240,6 +240,20 @@ def rota_publish_checklist(db: Session, month: str, user: UserAccount | None = N
             )
         )
 
+    from app.core.config import settings
+    ot_protection = None
+    if settings.ot_calendar_enabled:
+        from app.services.rota_candidates import candidate_context
+        context = candidate_context(db, month)
+        ot_protection = context.ot_guard.check(
+            [assignment for rows in context.nearby_assignments.values() for assignment in rows], context.rules)
+        if ot_protection["status"] == "feasible":
+            checks.append(checklist_item("clear", "OT reservations", "Mandatory OT and configured staffing reserves are covered."))
+        else:
+            blockers.append(checklist_item("blocked", "OT reservations",
+                "Mandatory OT or staffing reserves are uncovered." if ot_protection["status"] == "infeasible"
+                else "OT capacity remains unresolved; review demand, qualifications and dated availability."))
+
     approval = latest_publish_approval(db, period.id)
     return {
         "month": month,
@@ -254,6 +268,7 @@ def rota_publish_checklist(db: Session, month: str, user: UserAccount | None = N
         "summary": summary,
         "can_publish": not blockers,
         "can_superadmin_override": bool(blockers) and is_superadmin(user),
+        **({"ot_protection": ot_protection} if ot_protection is not None else {}),
         "requires_warning_confirmation": bool(warnings),
         "checks": checks,
         "blockers": blockers,
@@ -297,6 +312,10 @@ def publish_rota_month(
             )
     elif not note:
         raise RotaPublishError("Approval note is required")
+    from app.core.config import settings
+    if settings.ot_calendar_enabled:
+        from app.services.rota_compute import lock_operational_inputs
+        lock_operational_inputs(db)
     checklist = rota_publish_checklist(db, month, approved_by)
     override_summary: dict[str, object] = {}
     if superadmin_override:
@@ -602,20 +621,20 @@ def assignment_fingerprint(slots: list[DutySlot]) -> str:
     return hashlib.sha256(json.dumps([rows, identities], default=str, sort_keys=True).encode()).hexdigest()
 
 
-def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
+def final_rota_export(db: Session, month: str, *, review_only: bool = False) -> tuple[str, bytes]:
     """Build the final Excel workbook (summary, rota, counts, fairness, safety, review, exchanges).
 
     Includes the assigned Eagle Eye matrix and the complete 360-degree audit.
     New approvals record an assignment fingerprint; later assignment changes require approval again.
     """
     checklist = rota_publish_checklist(db, month)
-    if checklist["latest_publish"] is None:
+    if not review_only and checklist["latest_publish"] is None:
         raise RotaPublishError("Publish the rota before downloading the final export", status_code=409)
     period, _scope = monthly_setup(db, month)
     slots = template_slots_for_period(db, period.id)
-    approval = checklist["latest_publish"]
+    approval = checklist["latest_publish"] or {}
     approved_fingerprint = (approval.get("summary") or {}).get("assignment_fingerprint")
-    if approved_fingerprint and approved_fingerprint != assignment_fingerprint(slots):
+    if not review_only and approved_fingerprint and approved_fingerprint != assignment_fingerprint(slots):
         raise RotaPublishError("Assignments changed after approval. Approve the updated rota before downloading the approved workbook.", status_code=409)
     safety = month_safety(db, month)
     review = rota_review_month(db, month)
@@ -623,23 +642,24 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     workbook = xlsxwriter.Workbook(output, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False})
 
     summary_rows = [
+        ["Workbook status", "DRAFT FOR REVIEW - NOT PUBLISHED" if review_only else "Approved final rota"],
         ["Month", month],
         ["Rota period", checklist["rota_period"]["name"]],
         ["Period status", checklist["rota_period"]["status"]],
         ["Starts on", checklist["rota_period"]["starts_on"]],
         ["Ends on", checklist["rota_period"]["ends_on"]],
         ["Rule version", checklist["rule_version"]["name"]],
-        ["Published by", checklist["latest_publish"]["approved_by"]],
-        ["Published at", checklist["latest_publish"]["created_at"]],
-        ["Approval note", checklist["latest_publish"]["approval_note"]],
-        ["Assignment verification", "Matches approved assignments" if approved_fingerprint else
+        ["Published by", approval.get("approved_by")],
+        ["Published at", approval.get("created_at")],
+        ["Approval note", approval.get("approval_note")],
+        ["Assignment verification", "Current saved assignments; pending final approval" if review_only else "Matches approved assignments" if approved_fingerprint else
          "Legacy approval: fingerprint unavailable; this workbook reflects current assignments."],
         [
             "Published with superadmin override",
-            "Yes" if checklist["latest_publish"].get("published_with_override") else "No",
+            "Yes" if approval.get("published_with_override") else "No",
         ],
-        ["Override reason", checklist["latest_publish"].get("override_reason")],
-        ["Override by", checklist["latest_publish"].get("override_by")],
+        ["Override reason", approval.get("override_reason")],
+        ["Override by", approval.get("override_by")],
         ["Superadmin allocations", checklist["summary"].get("superadmin_allocations", 0)],
         ["Total slots", checklist["summary"]["total_slots"]],
         ["Assigned slots", checklist["summary"]["assigned_slots"]],
@@ -825,5 +845,8 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     write_eagle_eye_matrix(workbook, slots, rules, assigned_names=True)
     report = build_report_data(db, month)
     render_xlsx(report, workbook=workbook)
+    if review_only:
+        for sheet in workbook.worksheets():
+            sheet.set_header("&CDRAFT FOR REVIEW - NOT PUBLISHED")
     workbook.close()
-    return f"final-rota-{month}.xlsx", output.getvalue()
+    return f"{'review-rota' if review_only else 'final-rota'}-{month}.xlsx", output.getvalue()

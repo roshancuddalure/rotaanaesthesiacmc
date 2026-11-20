@@ -91,6 +91,7 @@ try {
           before: null,
           review_token: "reviewed",
           duties: [],
+          ot_impact: {status:"disabled",context_digest:null,months:[],basis:"OT integration disabled in this normalization fixture."},
           availability: "Approved leave blocks availability.",
         };
       } else if (path.endsWith("/save")) {
@@ -111,6 +112,7 @@ try {
           headers: ["Employee", "Beginning"],
           fields: ["member_name", "starts_on"],
           replacement_scope: [],
+          ot_impact: {status:"disabled",context_digest:null,months:[],basis:"OT integration disabled in this normalization fixture."},
           rows: Array.from({ length: 26 }, (_, i) => ({
             key: `CSV:${i + 2}`,
             source: { sheet: "CSV", row: i + 2 },

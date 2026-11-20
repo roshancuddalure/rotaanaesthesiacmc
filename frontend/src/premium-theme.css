@@ -1150,3 +1150,9 @@ body { font-variant-numeric: tabular-nums; }
 [data-past-progress] .ds-steps__item { max-inline-size: 100%; }
 [data-past-progress] .ds-steps__item > span:nth-child(2) { min-inline-size: 0; overflow-wrap: anywhere; }
 [data-past-progress] .ds-steps__dot { min-inline-size: 1.6em; min-block-size: 1.6em; flex-shrink: 0; }
+
+/* Contextual help preserves the working page and uses public guide anchors only. */
+.context-help-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; max-width: 100%; white-space: normal; }
+.context-help-link[hidden] { display: none; }
+.guide-term-grid h4 { margin: 0 0 var(--space-1); color: var(--color-text); font-size: inherit; }
+@media print { .context-help-link { display: none !important; } }

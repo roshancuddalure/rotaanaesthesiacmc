@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="17" time="242.628" timestamp="2026-11-14T11:48:25.264740+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_assignment_integration" name="test_manual_override_cannot_consume_mandatory_ot_and_does_not_write" time="35.315" /><testcase classname="tests.test_ot_assignment_integration" name="test_candidate_ranking_marks_ot_consumers_blocked" time="4.266" /><testcase classname="tests.test_ot_assignment_integration" name="test_context_is_loaded_once_and_preserved_when_optimizer_removes_slots" time="1.280" /><testcase classname="tests.test_ot_assignment_integration" name="test_final_plan_rejects_combination_of_individually_safe_choices" time="1.442" /><testcase classname="tests.test_ot_assignment_integration" name="test_replacement_releases_previous_holder_before_reserving_new_person" time="1.140" /><testcase classname="tests.test_ot_assignment_integration" name="test_month_end_assignment_protects_next_month_ot_despite_closed_duty_date" time="0.558" /><testcase classname="tests.test_ot_assignment_integration" name="test_missing_demand_is_unresolved_and_feature_off_retains_legacy_behavior" time="1.180" /><testcase classname="tests.test_ot_assignment_integration" name="test_extra_duty_strict_check_and_independent_verifier_protect_ot" time="4.616" /><testcase classname="tests.test_ot_assignment_integration" name="test_extra_duty_planner_recomputes_everyones_ot_alternatives_after_each_choice" time="5.264" /><testcase classname="tests.test_ot_assignment_integration" name="test_specialized_guards_keep_missing_calendar_unresolved" time="0.692" /><testcase classname="tests.test_ot_assignment_integration" name="test_superadmin_actual_write_cannot_bypass_ot_but_retains_published_month_authority" time="8.177"><failure message="app.services.superadmin_allocation.SuperadminAllocationError: Anonymous senior 0 cannot take this duty: OT staffing capacity cannot be verified..">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001FF1FC08190&gt;, &lt;app.models.unit.Unit object at 0x000001FF1F96BD10&gt;, [...10&gt;, &lt;app.models.person.Person object at 0x000001FF1FDEFF50&gt;], &lt;app.models.rota.DutySlot object at 0x000001FF1F76ED10&gt;)
+
+    def test_superadmin_actual_write_cannot_bypass_ot_but_retains_published_month_authority(environment):
+        from app.models import UserAccount
+        from app.services.superadmin_allocation import allocate, SuperadminAllocationError
+    
+        db, unit, people, target = environment
+        operator = UserAccount(username="anonymous-superadmin", display_name="Administrator",
+                               role="superadmin", password_hash="fixture")
+        db.add(operator)
+        target.rota_period.status = "published"
+        db.commit()
+        demand(db, unit, minimum=4)
+        with pytest.raises(SuperadminAllocationError) as failure:
+            allocate(db, slot_id=target.id, person_id=people[0].id,
+                     reason="Reviewed clinical allocation", user=operator)
+        assert failure.value.code == "strict_blocked"
+        assert db.query(DutyAssignment).count() == 0
+        demand(db, unit, minimum=3)
+&gt;       result = allocate(db, slot_id=target.id, person_id=people[0].id,
+                          reason="Reviewed clinical allocation", user=operator)
+
+backend\tests\test_ot_assignment_integration.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+db = &lt;sqlalchemy.orm.session.Session object at 0x000001FF1FC08190&gt;
+
+    def allocate(
+        db: Session,
+        *,
+        slot_id: UUID,
+        person_id: UUID,
+        reason: str,
+        user,
+        replace_existing: bool = True,
+        confirm_cross_level: bool = False,
+    ) -&gt; dict[str, Any]:
+        """Allocate ``person_id`` to ``slot_id`` (superadmin). See the module docstring.
+    
+        A person on a different call level (or any person for a duty with no call level)
+        needs ``confirm_cross_level=True``; otherwise 409 ``cross_level_confirmation_required``.
+        """
+        reason = _clean_reason(reason)
+        slot = _load_slot(db, slot_id)
+        person = db.get(Person, person_id)
+        if person is None:
+            raise SuperadminAllocationError("person_not_found", "Department member not found.", 404)
+        if (person.active_status or "").lower() != "active":
+            raise SuperadminAllocationError("inactive_member", f"{person.canonical_name} is not an active member.", 422)
+        period = _period_for(db, slot)
+        month = _month_of(slot)
+        lock_namespace(db, f"extra-duty:{month}")
+        from app.core.config import settings
+        if settings.ot_calendar_enabled:
+            from app.services.rota_compute import lock_operational_inputs
+            lock_operational_inputs(db)
+        db.refresh(slot)
+        db.refresh(period)
+        period = _period_for(db, slot)
+        post_publish = (period.status or "").lower() == "published"
+    
+        try:
+            state, active = _load_state(db, slot)
+            s = _state_slot(state, slot)
+            blocked = strict_blocks(state, person.id, s)
+            if blocked:
+&gt;               raise SuperadminAllocationError(
+                    "strict_blocked",
+                    f"{person.canonical_name} cannot take this duty: " + "; ".join(item["detail"] for item in blocked) + ".",
+                    409,
+                    {"blocked": blocked},
+                )
+E               app.services.superadmin_allocation.SuperadminAllocationError: Anonymous senior 0 cannot take this duty: OT staffing capacity cannot be verified..
+
+backend\app\services\superadmin_allocation.py:560: SuperadminAllocationError</failure></testcase><testcase classname="tests.test_ot_assignment_integration" name="test_publish_exposes_ot_deficit_and_preserves_attributed_superadmin_publish_override" time="4.794" /><testcase classname="tests.test_ot_assignment_integration" name="test_exchange_approval_rechecks_ot_after_calendar_changes_and_keeps_original_holder" time="1.760" /><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_checks_complete_set_and_excludes_replaced_duties" time="2.567" /><testcase classname="tests.test_ot_assignment_integration" name="test_archival_and_elapsed_restoration_remain_facts_without_demand" time="1.803" /><testcase classname="tests.test_ot_assignment_integration" name="test_restoration_filters_cancelled_duties_and_feature_off_keeps_existing_behavior" time="2.031" /><testcase classname="tests.test_ot_assignment_integration" name="test_superadmin_undo_preview_and_apply_refuse_unsafe_restoration_atomically" time="5.071"><failure message="assert ([])">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001FF1FD7E650&gt;, &lt;app.models.unit.Unit object at 0x000001FF200A0710&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001FF201458D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001FF1FC3EB50&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001FF200DEB10&gt;
+
+    def test_superadmin_undo_preview_and_apply_refuse_unsafe_restoration_atomically(environment, monkeypatch):
+        from app.models import ExtraDutyBatch, UserAccount
+        from app.services.superadmin_allocation import allocate, undo, SuperadminAllocationError
+    
+        db, unit, people, target = environment
+        monkeypatch.setattr("app.services.ot_restoration.local_today", lambda: date(2026, 11, 1))
+        demand(db, unit, minimum=1)
+        original = DutyAssignment(person=people[1], duty_slot=target, status="assigned")
+        operator = UserAccount(username="undo-superadmin", display_name="Undo administrator", role="superadmin", password_hash="fixture")
+        db.add_all([original, operator])
+        db.commit()
+        applied = allocate(db, slot_id=target.id, person_id=people[0].id, reason="Reviewed replacement", user=operator)
+        people[2].active_status = people[3].active_status = "inactive"
+        db.commit()
+        batch_id = UUID(applied["batch_id"])
+        preview = undo(db, batch_id, operator, dry_run=True)
+&gt;       assert preview["conflicts"] and preview["restored"] == 0
+E       assert ([])
+
+backend\tests\test_ot_assignment_integration.py:354: AssertionError</failure></testcase></testsuite></testsuites>

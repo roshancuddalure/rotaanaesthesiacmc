@@ -57,7 +57,7 @@ try {
     if (m.selectedEngine(true, true, { month: "2026-05", hash: "same" }) !== "server") throw Error("Must default to server");
     const worker = new m.ComputeWorker(); const test = await worker.call("test"); worker.close();
     const p = { enabled: true, mode: "auto", power: "high-performance", test: { ...test, software: false },
-      proof: { server_ms: 1000, local_ms: 700, parity: true, at: Date.now(), version: 2, adapter: test.adapter, signature: test.signature,
+      proof: { server_ms: 1000, local_ms: 700, parity: true, at: Date.now(), version: 2, measurement_version:2, adapter: test.adapter, signature: test.signature,
         browser: navigator.userAgent, month: "2026-05", context_hash: "same" } };
     m.savePreference(p);
     m.rememberTest(p.test);

@@ -1,0 +1,139 @@
+{
+  "synthetic_only": true,
+  "runtime": "owned loopback11438",
+  "model": "qwen2.5:1.5b",
+  "source_sha256": {
+    "tools/probe_ot_prompt_budget.py": "b3b5ee3ae0ba923586ee29c72294c36197a711d044c8f049817c10b0347eb530",
+    "tools/local_ai_claim_guard.py": "89ef0559cfe40712ae77d3b9ab8ef227d2b1d737da14038769b84af74d7658da",
+    "tools/local_ai_numeric_policy.py": "9152b826cae8bd6401503f1d77f9653533c80cdf86bd5e296d616f1d67ab1b44",
+    "tools/local_ai_ot_reference.py": "4328cda8c4f122e276bd3865f8929b28bd8bfa38b8860fcb797cec076357d8ff",
+    "tools/local_ai_prompt_budget.py": "0c7d0bc3d94d4bd215a641add50b54478e48dd4687093f0d3838fc30034a069b",
+    "tools/local_ai_reference_context.py": "d54654bcd77ca0134bc0a1991f8c1f616f934f0c04a15c4726f1bfe8a2ed3cd2",
+    "tools/local_rota_assistant.py": "f49eccee71d329fac3c2cda0fc3e43890894375b31da94e00982675d32f8d8e7"
+  },
+  "cases": [
+    {
+      "case": "standard",
+      "status": 200,
+      "calls": [
+        {
+          "path": "version",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null,
+          "version": "0.40.16"
+        },
+        {
+          "path": "tags",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null
+        },
+        {
+          "path": "chat",
+          "num_predict": 1,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "length",
+          "prompt_eval_count": 521,
+          "prompt_eval_cached_count": 0,
+          "eval_count": 1
+        },
+        {
+          "path": "chat",
+          "num_predict": 600,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "stop",
+          "prompt_eval_count": 521,
+          "prompt_eval_cached_count": 520,
+          "eval_count": 119
+        }
+      ],
+      "measured_seconds": 38.149800000013784,
+      "needs_review": true,
+      "guard_detail": null
+    },
+    {
+      "case": "small",
+      "status": 200,
+      "calls": [
+        {
+          "path": "version",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null,
+          "version": "0.40.16"
+        },
+        {
+          "path": "tags",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null
+        },
+        {
+          "path": "chat",
+          "num_predict": 1,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "length",
+          "prompt_eval_count": 910,
+          "prompt_eval_cached_count": 345,
+          "eval_count": 1
+        },
+        {
+          "path": "chat",
+          "num_predict": 600,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "stop",
+          "prompt_eval_count": 910,
+          "prompt_eval_cached_count": 909,
+          "eval_count": 104
+        }
+      ],
+      "measured_seconds": 5.503646500001196,
+      "needs_review": true,
+      "guard_detail": null
+    },
+    {
+      "case": "oversized",
+      "status": 502,
+      "calls": [
+        {
+          "path": "version",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null,
+          "version": "0.40.16"
+        },
+        {
+          "path": "tags",
+          "num_predict": null,
+          "truncate": null,
+          "shift": null
+        },
+        {
+          "path": "chat",
+          "num_predict": 1,
+          "truncate": false,
+          "shift": false,
+          "done": true,
+          "done_reason": "length",
+          "prompt_eval_count": 3705,
+          "prompt_eval_cached_count": 519,
+          "eval_count": 1
+        }
+      ],
+      "measured_seconds": 10.379338700033259,
+      "needs_review": null,
+      "guard_detail": "The reference and request exceed the local prompt budget. Choose a smaller reference or shorter request; nothing was truncated."
+    }
+  ],
+  "complete": true,
+  "source_unchanged": true
+}

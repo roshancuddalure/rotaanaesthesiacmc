@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="77.698" timestamp="2026-11-19T19:03:08.459254+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_leave_lifecycle_reconciliation" name="test_import_approve_amend_cancel_reconciles_all_canonical_consumers" time="7.280"><failure message="AssertionError: {'leave_bulk_approved', 'leave_cancelled', 'leave_imported', 'leave_updated'}&#10;assert False&#10; +  where False = &lt;built-in method issubset of set object at 0x00000208C9D099A0&gt;({'leave_bulk_approved', 'leave_cancelled', 'leave_imported', 'leave_updated'})&#10; +    where &lt;built-in method issubset of set object at 0x00000208C9D099A0&gt; = {'leave_approved', 'leave_cancelled', 'leave_imported', 'leave_updated'}.issubset">registry = (&lt;starlette.testclient.TestClient object at 0x00000208C805D590&gt;, sessionmaker(class_='Session', bind=Engine(sqlite:///:memory:), autoflush=True, expire_on_commit=True), &lt;app.models.auth.UserAccount object at 0x00000208C8712E50&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000208C9A6F190&gt;
+
+    def test_import_approve_amend_cancel_reconciles_all_canonical_consumers(registry, monkeypatch):
+        client, factory, person_id = setup(registry, monkeypatch)
+        imported = preview(client, status="imported_pending_review")
+        endpoint = f"/api/v1/import-review/{imported['id']}/apply"
+        applied = client.post(endpoint, json={})
+        assert applied.status_code == 200, applied.text
+        assert client.post(endpoint, json={}).json() == applied.json()
+        leave_id = reconciled(
+            client,
+            factory,
+            person_id,
+            approved_hours=0,
+            pending_hours=24,
+            days=["2026-11-19"],
+            status="imported_pending_review",
+        )
+        reviewed = client.post("/api/v1/leave/approval-preview", json={"month": "2026-11"})
+        assert reviewed.status_code == 200, reviewed.text
+        approved = client.post(
+            "/api/v1/leave/approve-month",
+            json={"month": "2026-11", "review_token": reviewed.json()["review_token"]},
+        )
+        assert approved.status_code == 200, approved.text
+        assert (
+            reconciled(
+                client,
+                factory,
+                person_id,
+                approved_hours=24,
+                pending_hours=0,
+                days=["2026-11-19"],
+                status="approved",
+            )
+            == leave_id
+        )
+        values = {
+            "person_id": person_id,
+            "starts_on": "2026-11-20",
+            "ends_on": "2026-11-21",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "approved",
+            "change_reason": "Fixture amendment",
+            "notes": "PRIVATE",
+        }
+        review = client.post(
+            "/api/v1/normalization/records/leave/preview", json={"values": values, "identity": leave_id}
+        )
+        # The editor uses an identity field; keep this request aligned with its
+        # canonical endpoint rather than mutating the saved record in the fixture.
+        assert review.status_code == 200, review.text
+        saved = client.post(
+            "/api/v1/normalization/records/leave/save",
+            json={"values": values, "identity": leave_id, "review_token": review.json()["review_token"]},
+        )
+        assert saved.status_code == 200, saved.text
+        assert (
+            reconciled(
+                client,
+                factory,
+                person_id,
+                approved_hours=48,
+                pending_hours=0,
+                days=["2026-11-20", "2026-11-21"],
+                status="approved",
+            )
+            == leave_id
+        )
+        cancelled = client.post(
+            f"/api/v1/leave/requests/{leave_id}/cancel", json={"reason": "Fixture cancellation"}
+        )
+        assert cancelled.status_code == 200, cancelled.text
+        assert (
+            reconciled(
+                client,
+                factory,
+                person_id,
+                approved_hours=0,
+                pending_hours=0,
+                days=[],
+                status="cancelled",
+            )
+            == leave_id
+        )
+        history = client.get(f"/api/v1/leave/requests/{leave_id}/history")
+        assert history.status_code == 200, history.text
+        body = history.json()
+        actions = {event["action"] for event in body["events"]}
+&gt;       assert {"leave_imported", "leave_bulk_approved", "leave_updated", "leave_cancelled"}.issubset(
+            actions
+        ), actions
+E       AssertionError: {'leave_bulk_approved', 'leave_cancelled', 'leave_imported', 'leave_updated'}
+E       assert False
+E        +  where False = &lt;built-in method issubset of set object at 0x00000208C9D099A0&gt;({'leave_bulk_approved', 'leave_cancelled', 'leave_imported', 'leave_updated'})
+E        +    where &lt;built-in method issubset of set object at 0x00000208C9D099A0&gt; = {'leave_approved', 'leave_cancelled', 'leave_imported', 'leave_updated'}.issubset
+
+tests\test_leave_lifecycle_reconciliation.py:148: AssertionError</failure></testcase><testcase classname="tests.test_leave_lifecycle_reconciliation" name="test_real_identity_merge_and_undo_keep_leave_accounting_and_import_sources" time="3.376" /></testsuite></testsuites>

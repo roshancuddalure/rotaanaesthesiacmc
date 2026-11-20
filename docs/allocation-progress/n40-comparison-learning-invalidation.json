@@ -1,0 +1,181 @@
+{
+  "starts": [
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    }
+  ],
+  "validations": 12,
+  "cancels": 12,
+  "proof": {
+    "value": {
+      "server_ms": 41.5,
+      "local_ms": 33.700000047683716,
+      "month": "2026-05",
+      "context_hash": "learning-same",
+      "parity": true,
+      "at": 1795129671550,
+      "version": 2,
+      "measurement_version": 2,
+      "adapter": "Synthetic GPU",
+      "signature": "synthetic-signature",
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "workload": "optimizer",
+      "kernel_version": 3,
+      "configuration": "{\"version\":1,\"mode\":\"balanced\",\"seconds\":30,\"locked_slots\":[],\"repair_slots\":[],\"preferences\":[]}",
+      "stage_timings": [
+        {
+          "engine": "server",
+          "total_ms": 54,
+          "device_verification_ms": 0,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 25.80000001192093,
+          "http_and_server_ms": 54
+        },
+        {
+          "engine": "local_gpu",
+          "total_ms": 26.19999998807907,
+          "device_verification_ms": 0.8999999761581421,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 9,
+          "http_and_server_ms": 25.30000001192093
+        },
+        {
+          "engine": "local_gpu",
+          "total_ms": 51.5,
+          "device_verification_ms": 1.300000011920929,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 25.19999998807907,
+          "http_and_server_ms": 50.19999998807907
+        },
+        {
+          "engine": "server",
+          "total_ms": 34.80000001192093,
+          "device_verification_ms": 0,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 16.80000001192093,
+          "http_and_server_ms": 34.80000001192093
+        },
+        {
+          "engine": "server",
+          "total_ms": 41.5,
+          "device_verification_ms": 0,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 17.400000035762787,
+          "http_and_server_ms": 41.5
+        },
+        {
+          "engine": "local_gpu",
+          "total_ms": 33.700000047683716,
+          "device_verification_ms": 0.5,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 16.900000035762787,
+          "http_and_server_ms": 33.200000047683716
+        }
+      ]
+    },
+    "configurationMatches": true
+  },
+  "changed_learning": {
+    "parity": false,
+    "engine": "server"
+  },
+  "errors": [],
+  "visible_scope": true,
+  "width": 390,
+  "overflow": false,
+  "serious_critical_axe": 0,
+  "scope": "Actual comparison UI with synthetic worker/completed API results. Two six-run comparisons prove matching settings and changed-learning rejection, validation-inclusive timing and cleanup. No physical GPU speedup or actual scheduling result."
+}

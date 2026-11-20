@@ -105,7 +105,8 @@ from app.models import (
 )
 from app.services import extra_duty as ed
 from app.services.fairness_targets import split_pool_demand
-from app.services.leave import ACTIVE_LEAVE_STATUSES, month_bounds
+from app.services.leave import month_bounds
+from app.services.leave_semantics import is_active
 from app.services.reference_registry import lock_namespace
 from app.services.rota_eligibility import CALL_LEVEL_ORDER, call_level_label, eligibility, member_call_level
 from app.services.rota_rules import RotaPhaseOneRules, get_phase_one_rules
@@ -520,7 +521,7 @@ class _State:
         """Where ``pid`` could do ``slot``: its current unit if they are posted there that day,
         otherwise their in-scope posted units that day (by name)."""
         current = self.slot_unit.get(slot.id)
-        if pid in self.ctx.unit_contexts(slot.duty_date, current):
+        if current in self.included and pid in self.ctx.unit_contexts(slot.duty_date, current):
             return [current]
         units = self.ctx.person_units(slot.duty_date).get(pid, set())
         usable = [
@@ -629,7 +630,7 @@ class _State:
                 code = None if usable else (first or "not_in_unit")
             if code is None:
                 for leave in ctx.leaves.get(slot.duty_date, {}).get(pid, []):
-                    if leave.status.lower() in ACTIVE_LEAVE_STATUSES and slot_leave_blocks(leave, slot):
+                    if is_active(leave.status) and slot_leave_blocks(leave, slot):
                         code = "leave"
                         break
         self._structural[key] = code
@@ -651,7 +652,7 @@ class _State:
                 current = self.slot_unit.get(slot.id)
                 unposted = allow_unposted and self.unposted_on(pid, slot.duty_date)
                 blockers = ed.strict_blockers(self.ctx, pid, slot, current, first_only=True,
-                                              allow_unposted=unposted)
+                                              allow_unposted=unposted, ot_replace_existing=free_one)
                 if blockers:
                     return None, blockers[0]["code"]
                 if not unposted or current is None:
@@ -661,7 +662,8 @@ class _State:
                 return current, None
             first_code = None
             for unit_id in units:
-                blockers = ed.strict_blockers(self.ctx, pid, slot, unit_id, first_only=True)
+                blockers = ed.strict_blockers(self.ctx, pid, slot, unit_id, first_only=True,
+                                              ot_replace_existing=free_one)
                 if blockers:
                     first_code = first_code or blockers[0]["code"]
                     continue
@@ -940,8 +942,11 @@ class _Planner:
     # ---- primitive transfer with all checks --------------------------------------------------
 
     def precheck(self, pid: UUID, aid: UUID) -> tuple[UUID | None, str | None]:
-        """Could ``pid`` take row ``aid``'s slot if its holder gave it up? Cached per the
-        person's version (the result depends only on their own duties and the slot)."""
+        """Could ``pid`` take row ``aid``'s slot if its holder gave it up?
+
+        Personal versions suffice for legacy checks. OT alternatives also depend
+        on other holders, so successful transfers invalidate this memo globally.
+        """
         slot = self.s.rows[aid]["slot"]
         key = (pid, slot.id)
         hit = self.place_cache.get(key)
@@ -1048,6 +1053,8 @@ class _Planner:
         for _aid, frm, _ub, to, _ua in placed:
             self.version[frm] += 1
             self.version[to] += 1
+        if s.ctx.ot_guard is not None:
+            self.place_cache.clear()
         return True, None, placed
 
     # ---- search ------------------------------------------------------------------------------
@@ -1515,6 +1522,9 @@ def _refuse_active_proposal(db: Session, month: str, user) -> None:
 def preview(db: Session, month: str, user) -> dict[str, Any]:
     _ensure_enabled()
     month_bounds(month)
+    from app.services.rota_compute import prepare_planning_inputs
+    _draft(db, month)
+    prepare_planning_inputs(db, month)
     _refuse_active_proposal(db, month, user)
     plan = plan_balance(db, month)
     plan["token"] = ed.make_token(plan["plan_hash"], plan["context_hash"], month, user, BALANCE_MODE)
@@ -1558,7 +1568,7 @@ def apply(db: Session, month: str, token: str, plan_hash: str, user) -> dict[str
         if exc.code == "nothing_to_balance":
             raise BalanceError("stale_preview", "The month changed since the preview. Preview again.", 409) from exc
         raise
-    if plan["plan_hash"] != plan_hash:
+    if plan["plan_hash"] != plan_hash or token.partition(".")[0] != plan["context_hash"]:
         raise BalanceError("stale_preview", "The month changed since the preview. Preview again.", 409,
                            {"plan_hash": plan["plan_hash"]})
     if not plan["moves"]:
@@ -1700,6 +1710,10 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
         raise BalanceError("not_found", "Balance batch not found.", 404)
     lock_namespace(db, f"balance:{batch.month}")
     lock_namespace(db, f"extra-duty:{batch.month}")
+    from app.core.config import settings
+    if settings.ot_calendar_enabled:
+        from app.services.rota_compute import lock_operational_inputs
+        lock_operational_inputs(db)
     db.refresh(batch)
     if batch.status == "undone":
         return {"batch_id": str(batch.id), "restored": 0, "conflicts": [], "dry_run": dry_run,
@@ -1783,6 +1797,19 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
                      f"{label}: {names.get(UUID(item['person_id_before']))} has another row on this duty now.")
             continue
         plan.append((item, slot, assignment, record))
+    from app.core.config import settings
+    if settings.ot_calendar_enabled and not conflicts:
+        from types import SimpleNamespace
+        from app.services.ot_restoration import check_restored_duties, restoration_failure_message
+        proposals = [SimpleNamespace(id=assignment.id, person_id=UUID(item["person_id_before"]),
+            duty_slot=slot, status=item.get("status_before") or assignment.status)
+            for item, slot, assignment, _record in plan]
+        with db.no_autoflush:
+            report = check_restored_duties(db, proposals, removed_ids=[assignment.id for _i, _s, assignment, _r in plan])
+        if report is not None:
+            message = restoration_failure_message(report)
+            conflicts.append({"code": "ot_reservation_conflict" if report["status"] == "infeasible" else "ot_capacity_unresolved",
+                              "reason": message, "message": message})
     if dry_run:
         return {"batch_id": str(batch.id), "restored": 0 if conflicts else len(plan),
                 "would_restore": len(plan), "conflicts": conflicts, "dry_run": True}

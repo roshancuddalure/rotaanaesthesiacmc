@@ -1,0 +1,182 @@
+{
+  "recorded_at_utc": "2026-11-11T18:46:05.293309+00:00",
+  "reviewer": "/root/account_diagnostics_review_nov12",
+  "method": "Independent read-only inspection of exact criteria, current source bodies, local role-permission definitions, applied test bodies and reports, sealed evidence hashes, plus two rendered screenshots. No browser/build executions, product/backend edits, acceptance ledger mutation or live account operations.",
+  "perspectives": [
+    "truthful action feedback and role semantics",
+    "privacy/security of visible and copied diagnostics",
+    "async recovery and navigation isolation"
+  ],
+  "requirements": {
+    "187": {
+      "requirement": "Give login-account management clear role descriptions and pending/error feedback without implying frontend visibility enforces authorization.",
+      "pass_conditions": [
+        "Account management explains each available role and shows truthful pending, success and persistent failure feedback.",
+        "Role visibility does not claim to enforce authorization; server refusal remains visible and leaves account state unchanged."
+      ],
+      "evidence_needed": [
+        "Role-based account interaction traces, delayed failures and server read-back.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ]
+    },
+    "189": {
+      "requirement": "Improve diagnostics readability with a short service summary and expandable technical information that avoids unnecessary personal data.",
+      "pass_conditions": [
+        "Diagnostics first exposes a concise service summary and keeps detailed technical output in expandable sections.",
+        "Default and expanded diagnostics avoid unnecessary member data, credentials and pairing secrets in visible or copied output."
+      ],
+      "evidence_needed": [
+        "Summary/detail visual review and diagnostic redaction inspection.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ]
+    },
+    "190": {
+      "requirement": "Make unavailable diagnostics recoverable without turning unrelated operational screens into error pages or blank placeholders.",
+      "pass_conditions": [
+        "Unavailable diagnostics leaves unrelated operational navigation and loaded content usable.",
+        "The diagnostics surface explains failure and exposes a working retry or supported alternative without replacing the whole application with an error."
+      ],
+      "evidence_needed": [
+        "Diagnostics outage, retry and unrelated-screen interaction traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ]
+    }
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "049f90ecf94175ad1fa5a4b203cd9382091f585d9bcb0afb098d28f16baa371b",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/diagnostics-summary.ts": "2ff6394f8659735796af81a155592034537507b69c380a6351292c5d6f44e5e7",
+    "frontend/src/premium-theme.css": "6642ff90299a96ac8f4ecbf941be45f3b3f413c2a647ba8192ebf949b4b65e34",
+    "frontend/src/styles.css": "ae0e796c684efc9d3b861265ebf5934401f15f74d6180e7e338fcb4cdddeffc0",
+    "backend/app/services/auth.py": "46bfc65b8e159d2d39f998111784c9496ebbaff0e72cf32286e5daedbf6d7924"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-174-260.json": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac",
+    "docs/premium-ui/reviews/accounts187-application-20261111.json": "321cd68d2bb82052f92ce7856263e1cfe60be22f5cb4b7c2af802ca88fbea08c",
+    "docs/premium-ui/reviews/accounts187-current-applied-execution-20261111.json": "38c7737d100ec814b4c048ed52d0771080888631a4475992e4a740cbbef687b3",
+    "docs/premium-ui/reviews/diagnostics-privacy-independent.json": "3107227e82e68f19762cbeabfa6d5b93ea03175d812115e18aebeafd0fcd43b8",
+    "docs/premium-ui/reviews/diagnostics189190-current-execution-20261111.json": "bf79c687896b71eb2a37a522fad2304020b2c668027081f24f53f8b717aad74a",
+    "docs/premium-ui/reviews/frontend-build-snapshot-accounts187-20261111.json": "a4fc262f800a8832aa947a2564566c7edce6bd9ff298e552f2009647b675ec07",
+    "frontend/tests/premium-diagnostics189-current-v2-20261111.browser.mjs": "1f587bff959a9743d253092c963d79b7a61fae07a549c6e497bc6131d39fd787",
+    "tmp/accounts187-applied-build-20261111.log": "54c065cc9e45230a973e1e90cc1b5c3bbdeab5605b4f22a4081e72307fe91cd8",
+    "tmp/accounts187-applied-unit-20261111/exit.json": "b43afd1a7597bdebfd6e506a0124c2a52b24bdbfc856701eb88b8ac07254e342",
+    "tmp/accounts187-applied-unit-20261111/unit.log": "7b04c4523f39c1ea5fd17c3b75b559bf91489c34dc3dab79eab0057dad75ae47",
+    "tmp/accounts187-applied-v1/accounts-1280-dark-collapsed.png": "fce08aaa7fa5b3d45c360cd67ff7f2345cb66009aa1ad2dd60a7af759988a00d",
+    "tmp/accounts187-applied-v1/accounts-1280-dark-roles.png": "f7bf5e67442418ed960910935bae9757ac553c45b00fde9f4d897a3d82a3ad45",
+    "tmp/accounts187-applied-v1/accounts-1280-light-collapsed.png": "4ef09bb2298c17796ea4806cd4bc10f08e29663ac7ce82f921bedf63c9600adf",
+    "tmp/accounts187-applied-v1/accounts-1280-light-roles.png": "2dc31550768c4c33923696a02b0d40f8a235992d18be0fa6f1f09486c6a31c52",
+    "tmp/accounts187-applied-v1/accounts-320-dark-collapsed.png": "e5882cf6c993d1b0731f7f47b4b8665351b451730f65ebe6e441becb1bce01ab",
+    "tmp/accounts187-applied-v1/accounts-320-dark-roles.png": "929c3e19d0d24794003220b013417d487792ed805abfe896a409b09ad39d9fa9",
+    "tmp/accounts187-applied-v1/accounts-320-light-collapsed.png": "3df14671e7c7d8bb3afb10009bc4e0281cb0f21b9c3c2d8c8cd37b547f2f3629",
+    "tmp/accounts187-applied-v1/accounts-320-light-roles.png": "d7a6fbb605ae3136f9f53e5e6d9bb286663aff6cb9ff9b6ffc35b7a6deb080da",
+    "tmp/accounts187-applied-v1/harness-finalization-failure.json": "867d45ed8f5e94b714c4496eff15c2f84479cfeb5c207893ebde717d1d14a86d",
+    "tmp/accounts187-applied-v1/visual-report.json": "b36d61aece8fdaabebbc9943ceb817ef42f8ccc5a725eb2063d59513103b4327",
+    "tmp/accounts187-applied-v1/visual.browser.mjs": "b7a71aa7e2e3c659545936d54e96a533ead16243e2110e04f3958d6c747bdb1e",
+    "tmp/accounts187-applied-v2/app-report.json": "8a431a8145a3b751147e98e7857738a6c228f215770052b8bf44825db3d3311d",
+    "tmp/accounts187-applied-v2/app.browser.mjs": "da373acbb5bfd97eb01335b8ca97febe5e9a0ed9d6ba0eb067b9b3aa324a8548",
+    "tmp/accounts187-v2/app-report.json": "aea03b762f7d06aac687a5f5ef59dc305c8b3d69b6916e9bd9e4f7e77f95cb35",
+    "tmp/accounts187-v2/browser-report.json": "aa12e84e63fc1ddceb7e2edf70e3ba0d0fe6a9c06fa20d7d630706b341f1bdfe",
+    "tmp/accounts187-v3/app-report.json": "58d3b5f26af68f214b4b53dc2167ab00a84d094086150dba967a8b90647889e1",
+    "tmp/accounts187-v3/app.browser.mjs": "2b45d1e515d05e41519045cf8dd03b2f1949c410e204f3ddf958bfebe6ee3ec5",
+    "tmp/accounts187-v3/main.ts": "049f90ecf94175ad1fa5a4b203cd9382091f585d9bcb0afb098d28f16baa371b",
+    "tmp/accounts187-v3/manifest.json": "069d5f77a082ed4cf4f603bed19596d0706e68c4a6845bc2f3d6baebc4cb8a3d",
+    "tmp/accounts187-v3/typecheck-api-proof.json": "2bb165b65308bda73ec09c4045a1f0ee5756cab3ad23d4328643e24e786b03ea",
+    "tmp/diagnostics189-current-v1/failure.json": "5aca7485372900781fe901c047782c8af64a4c35d95ad573921d582ec8562930",
+    "tmp/diagnostics189-current-v2/assertion-parity.json": "16bb3f8ba1c9570437bd53ed9a0a2d63ad57c7d8a2694f919512ceb533afb1ea",
+    "tmp/diagnostics189-current-v2/browser.log": "07e7ae5b68c3228933842d4447d88e2087b578ae3d4cc1a5ddb4a3d48f153b67",
+    "tmp/diagnostics189-current-v2/diagnostics-1280-dark.png": "afb1f14735ba34af994c3f91e9d3cfa5d155a6edf0d432df04d2febbad082f7b",
+    "tmp/diagnostics189-current-v2/diagnostics-1280-light.png": "d331f6fb88b0acd11c03b10eeadf0c2cf7fde4f29a487640d3bc8bd245085c74",
+    "tmp/diagnostics189-current-v2/diagnostics-320-dark.png": "a9a9cdf8ba30b9fd72fac7ee6bd1d641d608832599224e59be56d16b32de416c",
+    "tmp/diagnostics189-current-v2/diagnostics-320-light.png": "69e2aa46c48bbffd3182587de8474cf209effb7ced57239a16d0dd9d77853e85",
+    "tmp/diagnostics189-current-v2/exit.json": "8d95d83a51cc890f5c4da10dce6dcab564a4fbb426e76cd79f9544c8cb878413",
+    "tmp/diagnostics189-current-v2/report.json": "4d34193d7e0c2bfccdff535dd6620e26b34db87cbd19f48c415998b495cf543a",
+    "tmp/diagnostics190-current-v1.browser.mjs": "9e1493ce7d859e249ec9d434f68ea270d4cbd469e705674b3375991639f4920c",
+    "tmp/diagnostics190-current-v1/browser.log": "7aa0c59d4f38e436849ce54105cb4f507500a95041c1312bc8493518977f4a9e",
+    "tmp/diagnostics190-current-v1/exit.json": "a26b767eafa6594528d9fb6e9bb781e369a6a8001f73f3714d90b4e6e11958f8",
+    "tmp/diagnostics190-current-v1/report.json": "f5e62f6492929c3d55763759b6e15dff02dfc27ec787c1b20415847133a66829",
+    "tmp/run_diagnostics190_current_v1.py": "8d14c9db468c99d375aad629667327431ae0b4f9905830e3f61b141b3d259197"
+  },
+  "seal_hash_checks": {
+    "docs/premium-ui/reviews/accounts187-current-applied-execution-20261111.json": {
+      "evidence_files_checked": 25,
+      "evidence_hash_mismatches": []
+    },
+    "docs/premium-ui/reviews/diagnostics189190-current-execution-20261111.json": {
+      "evidence_files_checked": 18,
+      "evidence_hash_mismatches": []
+    }
+  },
+  "full_source_mismatch_explicit": {
+    "docs/premium-ui/reviews/accounts187-current-applied-execution-20261111.json": {
+      "frontend/src/recycle-bin.ts": {
+        "sealed": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+        "current": "8d8cf469c4262444e0d4fbd3bb9764177bd0e7fe09076edeca03b583a531a03a"
+      }
+    },
+    "docs/premium-ui/reviews/diagnostics189190-current-execution-20261111.json": {
+      "frontend/src/recycle-bin.ts": {
+        "sealed": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+        "current": "8d8cf469c4262444e0d4fbd3bb9764177bd0e7fe09076edeca03b583a531a03a"
+      }
+    }
+  },
+  "current_applicability": "Relevant main/API/projection/CSS and all other sealed source files match. Only recycle-bin.ts differs in both historical seals. This is a scoped applicability assessment for unchanged account/diagnostics handlers, not a new full-source build certification or blind hash refresh. Recycle-bin current change needs its own review.",
+  "conditions_assessment": {
+    "187": [
+      {
+        "condition_index": 1,
+        "assessment": "supported within intercepted fixture scope",
+        "reason": "The three available computer-admin roles and fourth superadmin-only role have explicit descriptions agreeing with local ROLE_PERMISSIONS. Pending account creation and recovery are persistent text/status nodes; create refusal retains original fields and uses an alert rather than asserting rollback; confirmed creation is distinct from subsequent list-refresh failure. Applied 24 contexts span Chromium/Firefox/WebKit, 320/1280, light/dark, both admin operator roles; exact submitted body and one pending create POST are asserted."
+      },
+      {
+        "condition_index": 2,
+        "assessment": "supported for frontend behavior; live server authorization unverified",
+        "reason": "Visible guide explicitly assigns authorization checks to server. The 403 fixture reaches actual request transport and persistent UI refusal; fixture account state stays unchanged. Explicit read retry adds GET without repeating POST. Test success uses fixture read-back; it cannot prove actual backend permission enforcement or durable state. Recovery token is shown only in native prompt, excluded from persistent status; late sign-out suppresses prompt/status."
+      }
+    ],
+    "189": [
+      {
+        "condition_index": 1,
+        "assessment": "supported within captured fixtures",
+        "reason": "Current source places operational counts and a clear non-certification statement first; rules/count-only explanation, sanitized JSON and build details are native expandable disclosures. Independently viewed 320-light applied screenshot: five titled groups, meaningful counts including zero, collapsible support detail and no visible private labels. Keyboard disclosure and scoped axe assertions passed in 12 contexts; no blanket WCAG claim."
+      },
+      {
+        "condition_index": 2,
+        "assessment": "supported for tested projection contract",
+        "reason": "shareableDiagnostics constructs a new allowlisted projection rather than serializing response. Private category names are anonymized; numeric amounts retained, missing/nonfinite values null, rule text excluded, timestamp syntax/calendar checked. HTML uses escaping. Tests independently specify literal expected JSON and assert exact DOM, copied and fallback-selected output; injected credentials, pairing/member/email/rule labels are absent. Copy current-owner guards suppress stale feedback/focus after route/profile/sign-out changes; pending repeat Enter sends one synthetic clipboard call. Original connected copy button is released even after profile replaces operator object."
+      }
+    ],
+    "190": [
+      {
+        "condition_index": 1,
+        "assessment": "supported for Accounts operational navigation fixture",
+        "reason": "Both resolved 503 and 200 diagnostics requests arriving after real desktop/mobile navigation to Accounts preserve URL, username/password drafts and focus. renderTicket gates late paints by view/render generation; full app is not replaced. Twelve current-source contexts cover three engines, two widths and themes. Other operational screens and production failures are not inferred from this one tested destination."
+      },
+      {
+        "condition_index": 2,
+        "assessment": "supported within GET-only fixture scope",
+        "reason": "Visible failure displays fixed safe persistent alert, hides private server detail and exposes explicit Try again. Retry issues one additional held GET, then produces the normal summary; subsequent Accounts navigation remains usable. Test denies unexpected requests and every mutation; reported isolation contexts all passed."
+      }
+    ]
+  },
+  "visuals_personally_inspected": [
+    "tmp/accounts187-applied-v1/accounts-320-dark-roles.png",
+    "tmp/diagnostics189-current-v2/diagnostics-320-light.png"
+  ],
+  "nonblocking_followups": [
+    "The diagnostics role allowlist does not name hod, so HOD counts are retained under anonymous additional_role. This loses useful role context but does not expose private data; keep a separate semantics-reviewed followup.",
+    "Account create errors display escaped server message by existing transport contract; evidence proves the supplied refusal, not absence of sensitive content in every possible server error.",
+    "Account recovery pending release depends on unchanged operator identity; a same-account profile update during recovery is not covered by account187 applied trace. Diagnostics copy specifically covers and releases this case.",
+    "Native fixed mobile navigation intersects full-page screenshot positions; this screenshot alone does not certify every scroll/focus occlusion condition. Applied viewport interactions and overflow tests are narrower evidence."
+  ],
+  "limitations": [
+    "No live server authorization, persistence, actual account state read-back or production data used. Fixture refusal cannot demonstrate security enforcement.",
+    "No native OS clipboard, physical device, native assistive technology, full contrast or actual 200 percent text certification.",
+    "Account188 activation/role-change supported-capability analysis is separate; these tests do not invent missing endpoints.",
+    "Context-help193 stage is not applied and is outside this review.",
+    "Original account harness finalizer and diagnostic first-run fixture-path failures remain in immutable seals; no failures erased.",
+    "No acceptance mutation: root must combine this scoped review with other required perspectives and applicable current build evidence."
+  ],
+  "blocking_findings_for_scoped_frontend_conditions": [],
+  "recommendation": "Scoped frontend behavior is supported for 187,189,190 with the explicit fixture and current-source boundaries above. Do not interpret as full repository/current build acceptance or backend security certification."
+}

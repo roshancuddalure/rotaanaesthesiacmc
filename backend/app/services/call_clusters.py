@@ -138,7 +138,8 @@ def ensure_default_call_clusters(db: Session) -> list[CallCluster]:
             changed = True
         created_or_existing.append(cluster)
     if changed:
-        db.commit()
+        from app.services.scheduling_inputs import finish_bootstrap
+        finish_bootstrap(db)
         for cluster in created_or_existing:
             db.refresh(cluster)
     return created_or_existing

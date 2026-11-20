@@ -1,0 +1,18 @@
+# N23 acceptance: recorded absence and entitlement boundary
+
+Status: Done against the original N23 criteria. This item verifies the behavior already implemented under N18/N20/N22 rather than creating an unapproved entitlement system. Full50-item goal remains active.
+
+| Original criterion | Authoritative evidence |
+|---|---|
+| Report leave taken separately from balances | Person statistics label recorded absence elapsed, future absence and pending requests separately. Definitions explicitly say current canonical approval is not verified attendance or historical approval knowledge. The reporting period and facility-local as-of time are visible. |
+| No invented balance/carry-forward/deduction | Canonical accounting/statistics return entitlement_balance=null and working_days=null; there are no accrual, chargeable-day, deduction or carry-forward calculations. N23 boundary test confirms recursively absent fabricated charge/score fields, null balance and unchanged stored rows after two identical authenticated report reads. |
+| Visible counting basis and data coverage | Existing statistics interface states touched calendar dates, partial dates not full leave days, overlap/nonadditivity, unavailable working-day/calendar balances and incomplete historical coverage. Approved/pending totals and unknown precision remain separate. N22 real-backend browser evidence covers three screen sizes and matches current source hashes. |
+| Leave volume is not a disciplinary score | Reports expose recorded statuses, dates and interval measures, with no disciplinary-score field/rank. UI explicitly states this limit. Source-consumer search shows these statistics used by profile/report views, not promoted into a new ranking input. Existing availability and pro-rata fairness contracts remain unchanged; legitimate dated availability is not treated as a new conduct score. |
+
+Fresh `test_leave_entitlement_boundary.py` exercises ON_DUTY, CONFERENCE and ANNUAL_LEAVE types, duplicate AM records, NIGHT, future approval, pending and cancellation. Exact expected elapsed approval is26 clock hours (AM12 + NIGHT14), future24 and separately pending24. No conversion to chargeable days is inferred from type labels or hour/date counts. The test reads the actual authenticated API twice, asserts equal results, compares canonical before/after rows including notes and updated_at, and verifies private notes absent from the report.
+
+`n23-boundary.xml`:15passed18.21s, zero failures/errors/skips, including existing person-statistics cases. Ruff and scoped whitespace checks pass. All7files in the N22 UI/source evidence still match current hashes; its three actual-memory-backend browser workflows remain evidence for the unchanged interface. No fresh browser/build run was needed because this batch changes only tests/documentation/tracker. `n23-before.json` and `n23-source.json` record scope and result references. Counts overlap earlier suites and are not additive.
+
+P5 remains unamended. No policy authorization for entitlement, accrual, carry-forward, deductions or individual working calendars was inferred. Future balance work requires an explicit policy amendment specifying its basis; it is not silently enabled by approval of the50-item implementation plan. This restriction does not block current recorded-absence reporting or the next allocation-impact task.
+
+Rollback: this batch adds no runtime/schema changes. Preserve canonical/audit records and the current read-only reporting definitions. N24 impact/repair and N25 cross-consumer lifecycle reconciliation remain unfinished; N23 completion does not imply either is complete or that clinical allocation is universally perfect.

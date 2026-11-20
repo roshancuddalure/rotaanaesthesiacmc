@@ -15,6 +15,9 @@ from app.db.session import engine  # noqa: E402
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--full", action="store_true")
+    parser.add_argument("--extra-test", action="append", default=[],
+                        help="Additional backend test path for the same disposable database")
+    parser.add_argument("--junitxml", help="JUnit report path passed to pytest (relative to backend)")
     args = parser.parse_args()
     if engine.url.host not in {"localhost", "127.0.0.1"}:
         sys.exit("Requires a loopback PostgreSQL connection; no database was created.")
@@ -86,8 +89,11 @@ if __name__ == "__main__":
                 "tests/test_leave_approval_concurrency.py",
             ]
         )
+        if not args.full:
+            tests.extend(args.extra_test)
         result = subprocess.run(
-            [sys.executable, "-m", "pytest", *tests, "-q", "--tb=short"],
+            [sys.executable, "-m", "pytest", *tests, "-q", "--tb=short",
+             *([f"--junitxml={args.junitxml}"] if args.junitxml else [])],
             cwd=root / "backend",
             env=env,
         )

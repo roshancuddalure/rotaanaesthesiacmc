@@ -40,6 +40,7 @@ from app.models import (
 from app.services.leave import month_bounds
 from app.services.member_profiles import local_today
 from app.services.members import StalePreviewError, identity_conflict, preview_token
+from app.services.reference_registry import audit
 
 KINDS = ("member", "leave", "posting", "past_duty")
 RETENTION_DAYS = 30
@@ -414,8 +415,27 @@ def _move(db: Session, operator: UserAccount, kind: str, plan: dict) -> UUID:
         if kind == "member":
             db.add(MemberActivity(person_id=item_id, operator_id=operator.id, operator_name=_operator_name(operator),
                                   action="member_deleted", details={"batch_id": str(batch_id), "name": label}))
+        elif kind == "leave":
+            _record_leave_lifecycle(db, operator, item_id, payload, batch_id, restored=False)
         db.flush()
     return batch_id
+
+
+def _record_leave_lifecycle(db, operator, entity_id, payload, batch_id, *, restored):
+    """Keep attribution after the existing 30-day recovery payload is purged."""
+    from app.services.leave_history import snapshot
+
+    rows = payload.get("leave_requests", [])
+    saved = next((row for row in rows if str(row.get("id")) == str(entity_id)), None)
+    if saved is None:
+        return
+    action = "leave_restored" if restored else "leave_deleted"
+    details = {"record_id": str(entity_id), "batch_id": str(batch_id),
+               "before": None if restored else snapshot(saved),
+               "after": snapshot(saved) if restored else None}
+    audit(db, operator, action, entity_id, details)
+    db.add(MemberActivity(person_id=UUID(saved["person_id"]), operator_id=operator.id,
+                          operator_name=_operator_name(operator), action=action, details=details))
 
 
 def move_to_bin(db: Session, operator: UserAccount, kind: str, ids: list[UUID]) -> UUID:
@@ -536,7 +556,19 @@ def restore(db: Session, operator: UserAccount, batch_id: UUID) -> dict:
     for record_id, kind, label, entity_id, payload in work:
         try:
             lock_namespace(db, "normalization-edit")
+            from app.core.config import settings
+            if settings.ot_calendar_enabled:
+                from app.services.rota_compute import lock_operational_inputs
+                lock_operational_inputs(db)
             reason = _restore_payload(db, payload)
+            if reason is None and settings.ot_calendar_enabled and payload.get("duty_assignments"):
+                from app.services.ot_restoration import check_restored_duties, restoration_failure_message
+                ids = [UUID(row["id"]) for row in payload["duty_assignments"]]
+                duties = list(db.scalars(select(DutyAssignment).where(DutyAssignment.id.in_(ids))
+                    .execution_options(populate_existing=True)))
+                report = check_restored_duties(db, duties)
+                if report is not None:
+                    reason = restoration_failure_message(report)
             if reason is None:
                 record = db.get(DeletedRecord, record_id)
                 record.restored_at = utcnow()
@@ -545,6 +577,8 @@ def restore(db: Session, operator: UserAccount, batch_id: UUID) -> dict:
                     db.add(MemberActivity(person_id=entity_id, operator_id=operator.id,
                                           operator_name=_operator_name(operator), action="member_restored",
                                           details={"batch_id": str(batch_id), "name": label}))
+                elif kind == "leave":
+                    _record_leave_lifecycle(db, operator, entity_id, payload, batch_id, restored=True)
                 db.commit()
         except IntegrityError:
             reason = "An identical record now exists"

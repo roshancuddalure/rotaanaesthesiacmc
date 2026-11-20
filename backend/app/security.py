@@ -27,7 +27,7 @@ class ComputeSecurityMiddleware:
                         (b"x-frame-options", b"DENY"),
                     ]
                 )
-                if scope["path"].startswith("/api/v1/rota-compute"):
+                if scope["path"].startswith(("/api/v1/rota-compute", "/api/v1/admin/ot-calendars/")):
                     headers.append((b"cache-control", b"no-store"))
                 if settings.app_env.lower() == "production":
                     # Same-origin frontend/API. Optional paired assistant is loopback-only.
@@ -47,7 +47,11 @@ class ComputeSecurityMiddleware:
                 message = {**message, "headers": headers}
             await send(message)
 
-        if scope["path"].startswith("/api/v1/rota-compute") and scope["method"] in {
+        compute_body = scope["path"].startswith("/api/v1/rota-compute")
+        ot_body = scope["path"].startswith("/api/v1/admin/ot-calendars/")
+        body_limit = 1048576 if ot_body else 4096
+        body_label = "OT calendar" if ot_body else "Compute"
+        if (compute_body or ot_body) and scope["method"] in {
             "POST",
             "PUT",
             "PATCH",
@@ -60,8 +64,8 @@ class ComputeSecurityMiddleware:
                     if message["type"] == "http.disconnect":
                         return None
                     chunk = message.get("body", b"")
-                    if len(body) + len(chunk) > 4096:
-                        raise ValueError("Compute request body exceeds 4096 bytes")
+                    if len(body) + len(chunk) > body_limit:
+                        raise ValueError(f"{body_label} request body exceeds {body_limit} bytes")
                     body.extend(chunk)
                     if not message.get("more_body", False):
                         return bytes(body)
@@ -70,7 +74,7 @@ class ComputeSecurityMiddleware:
                 body = await asyncio.wait_for(read_body(), timeout=self.body_timeout)
             except (TimeoutError, ValueError) as error:
                 status = 408 if isinstance(error, TimeoutError) else 413
-                detail = "Compute request body timed out" if status == 408 else str(error)
+                detail = f"{body_label} request body timed out" if status == 408 else str(error)
                 return await JSONResponse({"detail": detail}, status_code=status)(
                     scope, receive, secured_send
                 )

@@ -1,0 +1,3290 @@
+{
+  "version": 2,
+  "recorded_at": "2026-11-19T14:07:07.297972+00:00",
+  "fixture": "Synthetic fixed specification; not departmental data or pilot acceptance.",
+  "base_head": "8ec2bda5eb17f60207e184a3f4ac39d151731982",
+  "source_sha256": {
+    "tools/benchmark_allocation_corpus.py": "1394c42750daa9af77366324a5392ae8a4cb60196be369ecc16f07d964910621",
+    "tools/benchmark_rota_compute.py": "487d6951f5dc98e612dc4c63eb3781c8472e5ebddf981ba8654bff25408dc47d",
+    "backend/app/services/allocation_scope.py": "afc29c0b4b12b550ae3d151220f02e3c46bb37053900a750090d128adbc74702",
+    "backend/app/services/analysis.py": "a843ffcba853e88c59d2b672708f0cce4f3a27d4b3b43b4be08e021335d599e9",
+    "backend/app/services/auth.py": "46bfc65b8e159d2d39f998111784c9496ebbaff0e72cf32286e5daedbf6d7924",
+    "backend/app/services/balance_duties.py": "af31fb31700aca805f41dfd2fd32c93c9bc187c440e2c658c49e8ba4c6115ba2",
+    "backend/app/services/call_clusters.py": "524db54ad69ec2e447fded5ec916a6c8841484fafcb3349d14bf73c167743f96",
+    "backend/app/services/compute_kernels.py": "8b1fcb1cf7f68d203e42aa97fe56ed6d86143f911f1749731fce48f379ffd2b6",
+    "backend/app/services/compute_limits.py": "80a36298aa28f501ff8cf3f767e5e5dcde8cadafb6c76c7ea8ff5a4f3f4920f8",
+    "backend/app/services/department_roster_reset.py": "a13a1370d536f7dc7de1d49205695bf31309cbd07583ce149f9838456bd9fc5f",
+    "backend/app/services/elective_members_export.py": "d515c12b7ea4cd2843e697cb9b5de365fb13908c90d02d9b54e965a987dd8a2d",
+    "backend/app/services/extra_duty.py": "80c0cc5971e1d8b60a525fedfea29d8efc35e18bb1e4ead1ffb7dfa5f32cf949",
+    "backend/app/services/extra_duty_hooks.py": "f8ce12df9dece53247b8b1669791e2bcaf1ca609317ba1f16a97c32b331bdb9d",
+    "backend/app/services/extra_duty_verify.py": "d1b71c459ae7b2ea7ac3d267d8d573e607d7acd372c92cbc92d94b14bb271acf",
+    "backend/app/services/fairness_targets.py": "a84f8877b2ac67556a9fdf1b5d0ef4163258753cd88c2b9ea39046f53ea57b0b",
+    "backend/app/services/generation_undo.py": "1975b3ec2da7a18a5f0f339ca8895ff24d9b585d17f0ba59e987f2293bd94605",
+    "backend/app/services/historical_analysis_dry_run.py": "ba67524864930988b3d9464ffb1a0a639aa3c3e108b49986a118796113d4de86",
+    "backend/app/services/historical_import.py": "63dc76165e08d9ec47f57ce135f7f7b58b056937a907d080c506e9806e664719",
+    "backend/app/services/historical_spellings.py": "fde4de3fd88eb00778afa0c7b7d38785171c96158ad4884b27d9ca1f802d20d7",
+    "backend/app/services/history_fairness.py": "4afa4fa78a539923fa25faae8205824416ec47d0669bbbaa878abd53a71d2b99",
+    "backend/app/services/imports.py": "0375e46eb71f2b7e1d3deba3b221bf9fac3f5bd054fbf0e6d54ea0bf26347a8b",
+    "backend/app/services/import_errors.py": "418adf7411ff07591cf9aec5b258c792bba41b8ec5f1fc3e965479fdc713d9b4",
+    "backend/app/services/leave.py": "f2382aa5614f43cc046bb1831e2185c08d31592cd26ff368a3ef1ccf06f8a3c1",
+    "backend/app/services/leave_accounting.py": "3c48cc7d03e908ff5930f2811588d2b2238e860030285454436abbb950e2feaf",
+    "backend/app/services/leave_approval.py": "42e15c54f5b0f9f1e7c276f88d35ea0a71bbaa0beda2edb9b663bd9f20e1a3d6",
+    "backend/app/services/leave_attribution.py": "50f27d5903873e1b307b8afb80da9f9dce129181ff75228ed07bde6f3cff67b0",
+    "backend/app/services/leave_history.py": "e26aeda0c9db73e5f3be4c1a6c87f3e32b20d273a3c2d8b2c47cbfdbd5eef7e0",
+    "backend/app/services/leave_impact.py": "18d750006798aab148ce88a9286574b933d905df167be16cbf365bf00f208925",
+    "backend/app/services/leave_import.py": "ea0fde06184de600d23636ba59a559c98eb6dd7e2247bb0ba4171e2411b9713a",
+    "backend/app/services/leave_import_ot_impact.py": "382e4d7afcf78798a7dbaef74f5d3ecc28c65a09343a6a9fc35ba232af09e87b",
+    "backend/app/services/leave_ot_impact.py": "448891049c2e255a6b8e1db571fd0ee9d455ae1e3b4df8f0b55630068f6b119f",
+    "backend/app/services/leave_ot_repair_scope.py": "c8afab7b003d6644e59de70d59d4359c52fb2d6e7ff522bc3636fc4bce068f1f",
+    "backend/app/services/leave_projection.py": "005e8deaed3ac10a304abcc7dd83603bc2d7671ab05a49ebda83558329600af1",
+    "backend/app/services/leave_repair.py": "2c6eeaf503423bc8ab585216da52d0280760451eea07fb7016c1322f1d20c7d9",
+    "backend/app/services/leave_semantics.py": "bbec7c5fd87b171d341b9b88f2b7cda3db8d3bca6ee4c6123c09019b61ff9961",
+    "backend/app/services/limits.py": "f9c534ea472e3516adb0674a776cdd58e391fead802b64db9707dbbc8122b952",
+    "backend/app/services/members.py": "f43dd42e4e181b7a2d89adca0376c47f28f29b46a528355da2a4b6fae7b2577a",
+    "backend/app/services/member_activity_projection.py": "ec06fa0757684901bee2334d2e16a93169e4f10ef9df897acc3a7998fe8d31f1",
+    "backend/app/services/member_bulk.py": "33348aa65634c6fb6a6a925f49b49150b079b3c4e00cfcbc59b702c9aaeb62b8",
+    "backend/app/services/member_csv.py": "2937156633b7e94febea56cd5f74e033427f65ea724d36e026c5e0e9bbeb1c5f",
+    "backend/app/services/member_import.py": "08d0dd4ab125440658a9ac4e1544fe39dc3ba02ed7775f0859ef4841b98d47c9",
+    "backend/app/services/member_leave_statistics.py": "905c160c51b48f6cbc7641df52dc16cfa43efd173b6943d46648e4e3bcc8cf0f",
+    "backend/app/services/member_merge.py": "fd6e11eb995b6332d330a92d536cc8979ec3aa8a78dc70b39ed6201dea37f76e",
+    "backend/app/services/member_profile.py": "423fb88b1fc73361578307329382477eab2965519cd41885f1d596be7b18493a",
+    "backend/app/services/member_profiles.py": "d8a00a995869f0713bac53d20c14d0655aa66b1df882c81e938e46621523d870",
+    "backend/app/services/member_resolution_rules.py": "9c3c36d8456a4d4ba63735a6f6b0b7d5c89e01bc51af2a717456a77377cfc495",
+    "backend/app/services/member_resolver.py": "bc7838b271fa8cce6bd8f0d19ee0105e885f4294804b62a43991e920f7376875",
+    "backend/app/services/normalization.py": "bd81ef93147a460041dcb151c4e3d2ddac8badc33186e0fecd686c7294de8c5f",
+    "backend/app/services/operational_import.py": "61536d31be37e9c925f5cc0b2cbc1c77d40580d7a74a3ec1329aa76633a3094d",
+    "backend/app/services/operational_records.py": "f796f20bc7db12f6754e0f534475b9231eefe97887b08e7f37fac467329de57d",
+    "backend/app/services/ot_assignment_context.py": "0b0b4d7c9949732416811cdd2e788736391631bb28e5841521afa154dbe2fbc5",
+    "backend/app/services/ot_assignment_guard.py": "bd6aa5177d34981c8c767b1277e60a9ba1b964293fc378b3a87e4df37c857849",
+    "backend/app/services/ot_assignment_validation.py": "fbb7e811a2cb2d9b59761ec1d172e535c7751e4ee5fed081233fe57c2d26b05d",
+    "backend/app/services/ot_availability.py": "4f49e93abe0d61d6bf766e43570d0e84527ed2cb53afb18ffab1c27041717585",
+    "backend/app/services/ot_calendar.py": "1e59f8774dbcf106aef6785c416199dcea760834a7cc8f122f7abcb56843b30e",
+    "backend/app/services/ot_calendar_store.py": "7b18e260c61f89ccebc32ead8942c3e5c113d2832912eba059fc4b3ef7bcedaa",
+    "backend/app/services/ot_calendar_transfer.py": "179da800a8b52c44b5568ef0f742c1eedb1179c5ecfe1f05d32d2eafb9c43eaf",
+    "backend/app/services/ot_capacity.py": "84c6344e1d34d555525f488e2e828a70661a9b64f9fd18f14a5a2c828612196d",
+    "backend/app/services/ot_capacity_preview.py": "1793e4f02edc81d18effd1d1ec5f35b94b524607e2478850224d091943b7232d",
+    "backend/app/services/ot_capacity_verify.py": "759eb80413aa88d1e2d19fc5748910df1d34211937df8c25154498b44a9998b2",
+    "backend/app/services/ot_duty_capacity.py": "ef1a74eec7f763bd49f38f520db3191165cdbdc5f6fd7ff62ec86e98d1cb4b30",
+    "backend/app/services/ot_guard_scope.py": "634f5d8cd04e0d515d9f21c46cba7c24b757d9c8d6b8cd606e9cbf64ddc4cc96",
+    "backend/app/services/ot_joint_reservations.py": "678908dc7385ce01674076d674cd6bda337d377539f813534543467bc86690c1",
+    "backend/app/services/ot_month_capacity.py": "6b5017d48103305bfc8b0bc48137bbbdc12964491906e73ec905d7ec3409308b",
+    "backend/app/services/ot_restoration.py": "5da4cfa100117f18b444536a20c7bb83691082a92c98fbfe2af6f60ce43fa9a9",
+    "backend/app/services/ot_template.py": "aef066b55e1dd4884007d2fe9d6a96661241a39624c2fb4ac08298f8ff10cc23",
+    "backend/app/services/past_duties.py": "6c52b9657742ad3d538fd5c38210ad2762bae733e6913ec36ff49b0f5c34c890",
+    "backend/app/services/recycle_bin.py": "a95364a208c4166fb66ae3439c953d6da9a453b29b8374c4ca9cfe1777b6611c",
+    "backend/app/services/reference_catalog.py": "33d6c7cbb7474d13af0777801bda9bfea3347063a4a0ace37762557556f0c875",
+    "backend/app/services/reference_registry.py": "5a82578c55bfb6afe0d1d78b62dc06a0106e6621ff09b896055cfa50a11076d1",
+    "backend/app/services/reviewed_import.py": "43f583002548dc54c11ac30b699ef2877451a10439202288fd9f096da1700130",
+    "backend/app/services/roster_reconciliation.py": "d15fe2d497dcf3a1b98d40a608099e7c9ca49f05a6cf84b14bdd87a54bd516de",
+    "backend/app/services/rota_assignment.py": "2f69f69335f578b7e45d8398f6307aa01bac1d4df82eabbfe321c8b6d5bc800e",
+    "backend/app/services/rota_auto_fill.py": "c076578a350013ea4641671e3c3cd1b5f59aafd842a2e42d2a1b4e1c5b703f63",
+    "backend/app/services/rota_call_levels.py": "63d4181dbda104925b33af5a38896e972b51555fa29694437272f8059cacc8df",
+    "backend/app/services/rota_candidates.py": "54a23473fd5b02c9f3ebc3007ab4efd052c3fe2043e713044eb9c88e7ce47e98",
+    "backend/app/services/rota_compute.py": "0fd3a0a057123f98cee53fae0989892ac7a43c2a667365a3a2c46da0dfeecb4a",
+    "backend/app/services/rota_eligibility.py": "643806f87d361bc26137c26e57bb05e43f95c200c661297603e2ee6b9b0ffe40",
+    "backend/app/services/rota_intelligence.py": "19a4368f04a17eb9fcb77c2191ee6a6c3c7e8e6bda553f10c73d98f71a22a841",
+    "backend/app/services/rota_optimizer.py": "b6aea99022a6ba6920cc15b6f2674e289780c1a68cf1eca85dce1adc3013529f",
+    "backend/app/services/rota_publish.py": "5606d0590591d71875bd1255adcd73192a8c13b300aff8cb7173339f9c3ce702",
+    "backend/app/services/rota_report_360.py": "b16d5c9b6d0423f4a2b824cbe13e8d8ef7fbc75b81831ec487035b9a86f67e3c",
+    "backend/app/services/rota_review.py": "492c56568d0e93e9d8a8f7ec8cf7d2e024419a3560d09e8be2fec7ed118fd595",
+    "backend/app/services/rota_review_export.py": "3d3939485c3e0663aa1815a610b3e25bf77883af2998cd7003a498e081230053",
+    "backend/app/services/rota_rules.py": "2a48eaae5fe9171616bce28f9f589a9d8ad67f74d0a3ab5e40739b6fc1b1df89",
+    "backend/app/services/rota_rules_admin.py": "d6da87bf98a296dea2060eb9a8251b5a08be10775f366d86ea83122174d5ce40",
+    "backend/app/services/rota_safety.py": "1f8263dd3d62e50c085ba9675004f781be73ef691b5a6bea9a874a172271c320",
+    "backend/app/services/rota_setup.py": "b0a35d2621cf7ca771e0fa37db32caa208bfd7969ede7f006d90ea8a2ae78179",
+    "backend/app/services/rota_template.py": "53fbd1d34e1364e65f07233c4b03e082e23a1e116a7b4248f1e491afe5b6c0a9",
+    "backend/app/services/scheduling_inputs.py": "1db4755056b4f5290fb8c5fb18033588d71d87569d7a6bdebbdce085dcd34055",
+    "backend/app/services/scheduling_snapshot.py": "9b7d2bae3c03fb37c398c43984eaf25da43e671bd365a949f38f72bcb84bdcd8",
+    "backend/app/services/superadmin_allocation.py": "7fe6fc07012577a19f05eeb37963379ce9a3fa0f6adadc054ad1424897944e83",
+    "backend/app/services/template_compute.py": "68869da94d38886c03ba96cd16118f970aa50e17f4677ca1b39c3d56e9072175",
+    "backend/app/services/unitwise_call_levels.py": "e9fc927e1aadfeb5a4a86edf491f48bafd28f65f6e3e1aa975b1932cddd09d4d",
+    "backend/app/services/unit_assignment_import.py": "eaf849e629058a3c2d63659f617b1abab7584604634c45f8cdc0ad8b7bfecda2",
+    "backend/app/services/unit_management.py": "cbc1c51f1983e03406e678c5331849be9c2abd21cc56beb5402dc541b2732e3b",
+    "backend/app/services/upload_limits.py": "c193cf77a4da1233f9628ec455ec40b54476131491d7e76a3686fe142fb0c143",
+    "backend/app/services/__init__.py": "58e6ba782a24ca1755faf0a8ce537477cfe1b05f99602e33162b0554cef7c09b"
+  },
+  "python": "3.11.9",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "settings": {
+    "members": 48,
+    "slots": 62,
+    "seconds": 30,
+    "cases": [
+      "control",
+      "ot_zero",
+      "ot_pressure",
+      "dated_fixed",
+      "saved_proposal"
+    ]
+  },
+  "measurement_basis": "Stage wall times include SQL; nested/internal timings are not additive. CPU only. Single uncontrolled host run.",
+  "runs": [
+    {
+      "case": "control",
+      "ot_enabled": false,
+      "status": "feasible",
+      "stages": {
+        "fixture_setup": {
+          "wall_ms": 1839.382,
+          "sql_ms": 35.2,
+          "sql_queries": 117
+        },
+        "context": {
+          "wall_ms": 310.287,
+          "sql_ms": 10.385,
+          "sql_queries": 29
+        },
+        "baseline_joint_ot_evidence": {
+          "wall_ms": 0.028,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        },
+        "optimize_including_candidates_and_internal_checks": {
+          "wall_ms": 25643.856,
+          "sql_ms": 3.202,
+          "sql_queries": 16
+        },
+        "independent_final_validation": {
+          "wall_ms": 566.873,
+          "sql_ms": 1.0,
+          "sql_queries": 4
+        },
+        "final_joint_ot_evidence": {
+          "wall_ms": 0.008,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        }
+      },
+      "context_timings_at_load": {
+        "load_ms": 310.1507000392303,
+        "validation_ms": 0.0,
+        "scoring_ms": 0.0,
+        "safety_ms": 0.0
+      },
+      "semantic_fixture_digest": "bc7656068e488bff966f7c66be0287d2d99d6fae9b487c806ed166cc73217ff5",
+      "ot_before": {
+        "status": "disabled"
+      },
+      "ot_final": {
+        "status": "disabled",
+        "capacity": null
+      },
+      "context_timings_after_direct_optimizer": {
+        "load_ms": 310.1507000392303,
+        "validation_ms": 5250.133199500851,
+        "scoring_ms": 801.9652994116768,
+        "safety_ms": 259.5831000362523
+      },
+      "assigned": 62,
+      "preserved_assignments": 0,
+      "uncovered": 0,
+      "validation_failures": 0,
+      "objectives": [
+        {
+          "name": "required_coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "call_level_equality",
+          "value": -6996,
+          "proven": false
+        },
+        {
+          "name": "weekend_burden",
+          "value": 60,
+          "proven": false
+        },
+        {
+          "name": "night_burden",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "holiday_burden",
+          "value": 6,
+          "proven": false
+        },
+        {
+          "name": "workload",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "spacing_history",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "preferences",
+          "value": 0,
+          "proven": false
+        }
+      ],
+      "warnings": [],
+      "cuts": 0,
+      "workload": {
+        "denominator": "Every active synthetic person, including zero new duties; fixed duties included.",
+        "people": 48,
+        "zero_total_duties": 0,
+        "minimum_total_duties": 1,
+        "maximum_total_duties": 2,
+        "maximum_weekends": 1,
+        "duty_histogram": {
+          "1": 34,
+          "2": 14
+        },
+        "by_person": [
+          {
+            "member": "Benchmark Member 0000",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0001",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0002",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0003",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0004",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0005",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0006",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0007",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0008",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0009",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0010",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0011",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0012",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0013",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0014",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0015",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0016",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0017",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0018",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0019",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0020",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0021",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0022",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0023",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0024",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0025",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0026",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0027",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0028",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0029",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0030",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0031",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0032",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0033",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0034",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0035",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0036",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0037",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0038",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0039",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0040",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0041",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0042",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0043",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0044",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0045",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0046",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0047",
+            "duties": 1,
+            "weekends": 1
+          }
+        ]
+      },
+      "snapshot_digest": "e6932aa029317a87473dcb292c226c1dd81e6ba36f2c75f05b6e1620bb1d1fe9",
+      "normalized_choices": [
+        [
+          "BENCH:0",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:1",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:10",
+          "Benchmark Member 0010"
+        ],
+        [
+          "BENCH:11",
+          "Benchmark Member 0011"
+        ],
+        [
+          "BENCH:12",
+          "Benchmark Member 0012"
+        ],
+        [
+          "BENCH:13",
+          "Benchmark Member 0013"
+        ],
+        [
+          "BENCH:14",
+          "Benchmark Member 0014"
+        ],
+        [
+          "BENCH:15",
+          "Benchmark Member 0015"
+        ],
+        [
+          "BENCH:16",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:17",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:18",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:19",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:2",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:20",
+          "Benchmark Member 0020"
+        ],
+        [
+          "BENCH:21",
+          "Benchmark Member 0021"
+        ],
+        [
+          "BENCH:22",
+          "Benchmark Member 0022"
+        ],
+        [
+          "BENCH:23",
+          "Benchmark Member 0023"
+        ],
+        [
+          "BENCH:24",
+          "Benchmark Member 0024"
+        ],
+        [
+          "BENCH:25",
+          "Benchmark Member 0025"
+        ],
+        [
+          "BENCH:26",
+          "Benchmark Member 0026"
+        ],
+        [
+          "BENCH:27",
+          "Benchmark Member 0027"
+        ],
+        [
+          "BENCH:28",
+          "Benchmark Member 0028"
+        ],
+        [
+          "BENCH:29",
+          "Benchmark Member 0029"
+        ],
+        [
+          "BENCH:3",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:30",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:31",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:32",
+          "Benchmark Member 0032"
+        ],
+        [
+          "BENCH:33",
+          "Benchmark Member 0033"
+        ],
+        [
+          "BENCH:34",
+          "Benchmark Member 0034"
+        ],
+        [
+          "BENCH:35",
+          "Benchmark Member 0035"
+        ],
+        [
+          "BENCH:36",
+          "Benchmark Member 0036"
+        ],
+        [
+          "BENCH:37",
+          "Benchmark Member 0037"
+        ],
+        [
+          "BENCH:38",
+          "Benchmark Member 0038"
+        ],
+        [
+          "BENCH:39",
+          "Benchmark Member 0039"
+        ],
+        [
+          "BENCH:4",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:40",
+          "Benchmark Member 0040"
+        ],
+        [
+          "BENCH:41",
+          "Benchmark Member 0041"
+        ],
+        [
+          "BENCH:42",
+          "Benchmark Member 0042"
+        ],
+        [
+          "BENCH:43",
+          "Benchmark Member 0043"
+        ],
+        [
+          "BENCH:44",
+          "Benchmark Member 0044"
+        ],
+        [
+          "BENCH:45",
+          "Benchmark Member 0045"
+        ],
+        [
+          "BENCH:46",
+          "Benchmark Member 0046"
+        ],
+        [
+          "BENCH:47",
+          "Benchmark Member 0047"
+        ],
+        [
+          "BENCH:48",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:49",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:5",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:50",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:51",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:52",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:53",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:54",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:55",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:56",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:57",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:58",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:59",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:6",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:60",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:61",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:7",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:8",
+          "Benchmark Member 0008"
+        ],
+        [
+          "BENCH:9",
+          "Benchmark Member 0009"
+        ]
+      ],
+      "uncovered_details": [],
+      "resource_limits": {
+        "search_seconds": 30,
+        "total_request_deadline": false,
+        "memory_bytes": null,
+        "memory_basis": "Not measured; no invented value."
+      }
+    },
+    {
+      "case": "ot_zero",
+      "ot_enabled": true,
+      "status": "feasible",
+      "stages": {
+        "fixture_setup": {
+          "wall_ms": 956.04,
+          "sql_ms": 30.962,
+          "sql_queries": 120
+        },
+        "context": {
+          "wall_ms": 1236.387,
+          "sql_ms": 17.687,
+          "sql_queries": 43
+        },
+        "baseline_joint_ot_evidence": {
+          "wall_ms": 1617.835,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        },
+        "optimize_including_candidates_and_internal_checks": {
+          "wall_ms": 97600.888,
+          "sql_ms": 2.392,
+          "sql_queries": 16
+        },
+        "independent_final_validation": {
+          "wall_ms": 3090.523,
+          "sql_ms": 0.419,
+          "sql_queries": 4
+        },
+        "final_joint_ot_evidence": {
+          "wall_ms": 953.529,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        }
+      },
+      "context_timings_at_load": {
+        "load_ms": 1236.3508000271395,
+        "validation_ms": 0.0,
+        "scoring_ms": 0.0,
+        "safety_ms": 0.0
+      },
+      "semantic_fixture_digest": "7fa85a35faef5636319932eb91888fc9b6c0841f3b22796c5505682264ac8fff",
+      "ot_before": {
+        "status": "feasible",
+        "code": "ot_reservation_check",
+        "reasons": [],
+        "mandatory_required": 0,
+        "mandatory_covered": 0,
+        "reserve_shortages": []
+      },
+      "ot_final": {
+        "status": "feasible",
+        "code": "ot_reservation_check",
+        "reasons": [],
+        "mandatory_required": 0,
+        "mandatory_covered": 0,
+        "reserve_shortages": []
+      },
+      "context_timings_after_direct_optimizer": {
+        "load_ms": 1236.3508000271395,
+        "validation_ms": 22409.575598605443,
+        "scoring_ms": 852.9704993707128,
+        "safety_ms": 234.6738998312503
+      },
+      "assigned": 62,
+      "preserved_assignments": 0,
+      "uncovered": 0,
+      "validation_failures": 0,
+      "objectives": [
+        {
+          "name": "required_coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "call_level_equality",
+          "value": -6996,
+          "proven": false
+        },
+        {
+          "name": "weekend_burden",
+          "value": 60,
+          "proven": false
+        },
+        {
+          "name": "night_burden",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "holiday_burden",
+          "value": 6,
+          "proven": false
+        },
+        {
+          "name": "workload",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "spacing_history",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "preferences",
+          "value": 0,
+          "proven": false
+        }
+      ],
+      "warnings": [],
+      "cuts": 0,
+      "workload": {
+        "denominator": "Every active synthetic person, including zero new duties; fixed duties included.",
+        "people": 48,
+        "zero_total_duties": 0,
+        "minimum_total_duties": 1,
+        "maximum_total_duties": 2,
+        "maximum_weekends": 1,
+        "duty_histogram": {
+          "1": 34,
+          "2": 14
+        },
+        "by_person": [
+          {
+            "member": "Benchmark Member 0000",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0001",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0002",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0003",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0004",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0005",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0006",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0007",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0008",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0009",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0010",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0011",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0012",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0013",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0014",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0015",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0016",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0017",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0018",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0019",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0020",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0021",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0022",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0023",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0024",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0025",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0026",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0027",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0028",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0029",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0030",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0031",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0032",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0033",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0034",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0035",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0036",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0037",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0038",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0039",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0040",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0041",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0042",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0043",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0044",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0045",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0046",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0047",
+            "duties": 1,
+            "weekends": 1
+          }
+        ]
+      },
+      "snapshot_digest": "80d23f5bbe75905db1a3204a12e84162b7c849f90e15c2897a6969e3df3cf09c",
+      "normalized_choices": [
+        [
+          "BENCH:0",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:1",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:10",
+          "Benchmark Member 0010"
+        ],
+        [
+          "BENCH:11",
+          "Benchmark Member 0011"
+        ],
+        [
+          "BENCH:12",
+          "Benchmark Member 0012"
+        ],
+        [
+          "BENCH:13",
+          "Benchmark Member 0013"
+        ],
+        [
+          "BENCH:14",
+          "Benchmark Member 0014"
+        ],
+        [
+          "BENCH:15",
+          "Benchmark Member 0015"
+        ],
+        [
+          "BENCH:16",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:17",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:18",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:19",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:2",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:20",
+          "Benchmark Member 0020"
+        ],
+        [
+          "BENCH:21",
+          "Benchmark Member 0021"
+        ],
+        [
+          "BENCH:22",
+          "Benchmark Member 0022"
+        ],
+        [
+          "BENCH:23",
+          "Benchmark Member 0023"
+        ],
+        [
+          "BENCH:24",
+          "Benchmark Member 0024"
+        ],
+        [
+          "BENCH:25",
+          "Benchmark Member 0025"
+        ],
+        [
+          "BENCH:26",
+          "Benchmark Member 0026"
+        ],
+        [
+          "BENCH:27",
+          "Benchmark Member 0027"
+        ],
+        [
+          "BENCH:28",
+          "Benchmark Member 0028"
+        ],
+        [
+          "BENCH:29",
+          "Benchmark Member 0029"
+        ],
+        [
+          "BENCH:3",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:30",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:31",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:32",
+          "Benchmark Member 0032"
+        ],
+        [
+          "BENCH:33",
+          "Benchmark Member 0033"
+        ],
+        [
+          "BENCH:34",
+          "Benchmark Member 0034"
+        ],
+        [
+          "BENCH:35",
+          "Benchmark Member 0035"
+        ],
+        [
+          "BENCH:36",
+          "Benchmark Member 0036"
+        ],
+        [
+          "BENCH:37",
+          "Benchmark Member 0037"
+        ],
+        [
+          "BENCH:38",
+          "Benchmark Member 0038"
+        ],
+        [
+          "BENCH:39",
+          "Benchmark Member 0039"
+        ],
+        [
+          "BENCH:4",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:40",
+          "Benchmark Member 0040"
+        ],
+        [
+          "BENCH:41",
+          "Benchmark Member 0041"
+        ],
+        [
+          "BENCH:42",
+          "Benchmark Member 0042"
+        ],
+        [
+          "BENCH:43",
+          "Benchmark Member 0043"
+        ],
+        [
+          "BENCH:44",
+          "Benchmark Member 0044"
+        ],
+        [
+          "BENCH:45",
+          "Benchmark Member 0045"
+        ],
+        [
+          "BENCH:46",
+          "Benchmark Member 0046"
+        ],
+        [
+          "BENCH:47",
+          "Benchmark Member 0047"
+        ],
+        [
+          "BENCH:48",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:49",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:5",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:50",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:51",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:52",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:53",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:54",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:55",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:56",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:57",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:58",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:59",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:6",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:60",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:61",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:7",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:8",
+          "Benchmark Member 0008"
+        ],
+        [
+          "BENCH:9",
+          "Benchmark Member 0009"
+        ]
+      ],
+      "uncovered_details": [],
+      "resource_limits": {
+        "search_seconds": 30,
+        "total_request_deadline": false,
+        "memory_bytes": null,
+        "memory_basis": "Not measured; no invented value."
+      }
+    },
+    {
+      "case": "ot_pressure",
+      "ot_enabled": true,
+      "status": "feasible",
+      "stages": {
+        "fixture_setup": {
+          "wall_ms": 971.852,
+          "sql_ms": 37.534,
+          "sql_queries": 120
+        },
+        "context": {
+          "wall_ms": 701.234,
+          "sql_ms": 20.861,
+          "sql_queries": 44
+        },
+        "baseline_joint_ot_evidence": {
+          "wall_ms": 1153.13,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        },
+        "optimize_including_candidates_and_internal_checks": {
+          "wall_ms": 94035.417,
+          "sql_ms": 3.178,
+          "sql_queries": 16
+        },
+        "independent_final_validation": {
+          "wall_ms": 2300.295,
+          "sql_ms": 0.656,
+          "sql_queries": 4
+        },
+        "final_joint_ot_evidence": {
+          "wall_ms": 764.246,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        }
+      },
+      "context_timings_at_load": {
+        "load_ms": 701.1897999909706,
+        "validation_ms": 0.0,
+        "scoring_ms": 0.0,
+        "safety_ms": 0.0
+      },
+      "semantic_fixture_digest": "9b3e992727d0a53b0cd38f5587f2866389baa82154aebec940002dc81b19b879",
+      "ot_before": {
+        "status": "feasible",
+        "code": "ot_reservation_check",
+        "reasons": [],
+        "mandatory_required": 10,
+        "mandatory_covered": 10,
+        "reserve_shortages": []
+      },
+      "ot_final": {
+        "status": "feasible",
+        "code": "ot_reservation_check",
+        "reasons": [],
+        "mandatory_required": 10,
+        "mandatory_covered": 10,
+        "reserve_shortages": []
+      },
+      "context_timings_after_direct_optimizer": {
+        "load_ms": 701.1897999909706,
+        "validation_ms": 26227.68669866491,
+        "scoring_ms": 843.2557996711694,
+        "safety_ms": 328.7794001516886
+      },
+      "assigned": 62,
+      "preserved_assignments": 0,
+      "uncovered": 0,
+      "validation_failures": 0,
+      "objectives": [
+        {
+          "name": "required_coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "call_level_equality",
+          "value": -6996,
+          "proven": false
+        },
+        {
+          "name": "weekend_burden",
+          "value": 60,
+          "proven": false
+        },
+        {
+          "name": "night_burden",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "holiday_burden",
+          "value": 6,
+          "proven": false
+        },
+        {
+          "name": "workload",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "spacing_history",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "preferences",
+          "value": 0,
+          "proven": false
+        }
+      ],
+      "warnings": [],
+      "cuts": 0,
+      "workload": {
+        "denominator": "Every active synthetic person, including zero new duties; fixed duties included.",
+        "people": 48,
+        "zero_total_duties": 0,
+        "minimum_total_duties": 1,
+        "maximum_total_duties": 2,
+        "maximum_weekends": 1,
+        "duty_histogram": {
+          "1": 34,
+          "2": 14
+        },
+        "by_person": [
+          {
+            "member": "Benchmark Member 0000",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0001",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0002",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0003",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0004",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0005",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0006",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0007",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0008",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0009",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0010",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0011",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0012",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0013",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0014",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0015",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0016",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0017",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0018",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0019",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0020",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0021",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0022",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0023",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0024",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0025",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0026",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0027",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0028",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0029",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0030",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0031",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0032",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0033",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0034",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0035",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0036",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0037",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0038",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0039",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0040",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0041",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0042",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0043",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0044",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0045",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0046",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0047",
+            "duties": 1,
+            "weekends": 1
+          }
+        ]
+      },
+      "snapshot_digest": "9380b01e26a207946593da93dede2cc6f6fb4d09920f3829a324f822b47a7fd7",
+      "normalized_choices": [
+        [
+          "BENCH:0",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:1",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:10",
+          "Benchmark Member 0010"
+        ],
+        [
+          "BENCH:11",
+          "Benchmark Member 0011"
+        ],
+        [
+          "BENCH:12",
+          "Benchmark Member 0012"
+        ],
+        [
+          "BENCH:13",
+          "Benchmark Member 0013"
+        ],
+        [
+          "BENCH:14",
+          "Benchmark Member 0014"
+        ],
+        [
+          "BENCH:15",
+          "Benchmark Member 0015"
+        ],
+        [
+          "BENCH:16",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:17",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:18",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:19",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:2",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:20",
+          "Benchmark Member 0020"
+        ],
+        [
+          "BENCH:21",
+          "Benchmark Member 0021"
+        ],
+        [
+          "BENCH:22",
+          "Benchmark Member 0022"
+        ],
+        [
+          "BENCH:23",
+          "Benchmark Member 0023"
+        ],
+        [
+          "BENCH:24",
+          "Benchmark Member 0024"
+        ],
+        [
+          "BENCH:25",
+          "Benchmark Member 0025"
+        ],
+        [
+          "BENCH:26",
+          "Benchmark Member 0026"
+        ],
+        [
+          "BENCH:27",
+          "Benchmark Member 0027"
+        ],
+        [
+          "BENCH:28",
+          "Benchmark Member 0028"
+        ],
+        [
+          "BENCH:29",
+          "Benchmark Member 0029"
+        ],
+        [
+          "BENCH:3",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:30",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:31",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:32",
+          "Benchmark Member 0032"
+        ],
+        [
+          "BENCH:33",
+          "Benchmark Member 0033"
+        ],
+        [
+          "BENCH:34",
+          "Benchmark Member 0034"
+        ],
+        [
+          "BENCH:35",
+          "Benchmark Member 0035"
+        ],
+        [
+          "BENCH:36",
+          "Benchmark Member 0036"
+        ],
+        [
+          "BENCH:37",
+          "Benchmark Member 0037"
+        ],
+        [
+          "BENCH:38",
+          "Benchmark Member 0038"
+        ],
+        [
+          "BENCH:39",
+          "Benchmark Member 0039"
+        ],
+        [
+          "BENCH:4",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:40",
+          "Benchmark Member 0040"
+        ],
+        [
+          "BENCH:41",
+          "Benchmark Member 0041"
+        ],
+        [
+          "BENCH:42",
+          "Benchmark Member 0042"
+        ],
+        [
+          "BENCH:43",
+          "Benchmark Member 0043"
+        ],
+        [
+          "BENCH:44",
+          "Benchmark Member 0044"
+        ],
+        [
+          "BENCH:45",
+          "Benchmark Member 0045"
+        ],
+        [
+          "BENCH:46",
+          "Benchmark Member 0046"
+        ],
+        [
+          "BENCH:47",
+          "Benchmark Member 0047"
+        ],
+        [
+          "BENCH:48",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:49",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:5",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:50",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:51",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:52",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:53",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:54",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:55",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:56",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:57",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:58",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:59",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:6",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:60",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:61",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:7",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:8",
+          "Benchmark Member 0008"
+        ],
+        [
+          "BENCH:9",
+          "Benchmark Member 0009"
+        ]
+      ],
+      "uncovered_details": [],
+      "resource_limits": {
+        "search_seconds": 30,
+        "total_request_deadline": false,
+        "memory_bytes": null,
+        "memory_basis": "Not measured; no invented value."
+      }
+    },
+    {
+      "case": "dated_fixed",
+      "ot_enabled": true,
+      "status": "feasible",
+      "stages": {
+        "fixture_setup": {
+          "wall_ms": 695.342,
+          "sql_ms": 37.512,
+          "sql_queries": 125
+        },
+        "context": {
+          "wall_ms": 616.685,
+          "sql_ms": 18.133,
+          "sql_queries": 57
+        },
+        "baseline_joint_ot_evidence": {
+          "wall_ms": 888.143,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        },
+        "optimize_including_candidates_and_internal_checks": {
+          "wall_ms": 88937.901,
+          "sql_ms": 3.507,
+          "sql_queries": 27
+        },
+        "independent_final_validation": {
+          "wall_ms": 2980.064,
+          "sql_ms": 0.747,
+          "sql_queries": 6
+        },
+        "final_joint_ot_evidence": {
+          "wall_ms": 964.618,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        }
+      },
+      "context_timings_at_load": {
+        "load_ms": 616.6297999443486,
+        "validation_ms": 0.0,
+        "scoring_ms": 0.0,
+        "safety_ms": 0.0
+      },
+      "semantic_fixture_digest": "373ea04eb607b07f00be5aa81a7f8572da4dbfffe451b9b7bf656bc3c59eb31b",
+      "ot_before": {
+        "status": "feasible",
+        "code": "ot_reservation_check",
+        "reasons": [],
+        "mandatory_required": 10,
+        "mandatory_covered": 10,
+        "reserve_shortages": []
+      },
+      "ot_final": {
+        "status": "feasible",
+        "code": "ot_reservation_check",
+        "reasons": [],
+        "mandatory_required": 10,
+        "mandatory_covered": 10,
+        "reserve_shortages": []
+      },
+      "context_timings_after_direct_optimizer": {
+        "load_ms": 616.6297999443486,
+        "validation_ms": 25023.072502110153,
+        "scoring_ms": 792.8319001803175,
+        "safety_ms": 211.84400020865723
+      },
+      "assigned": 60,
+      "preserved_assignments": 1,
+      "uncovered": 1,
+      "validation_failures": 0,
+      "objectives": [
+        {
+          "name": "required_coverage",
+          "value": -60,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "coverage",
+          "value": -60,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "call_level_equality",
+          "value": -6880,
+          "proven": false
+        },
+        {
+          "name": "weekend_burden",
+          "value": 62,
+          "proven": false
+        },
+        {
+          "name": "night_burden",
+          "value": 278,
+          "proven": false
+        },
+        {
+          "name": "holiday_burden",
+          "value": 6,
+          "proven": false
+        },
+        {
+          "name": "workload",
+          "value": 278,
+          "proven": false
+        },
+        {
+          "name": "spacing_history",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "preferences",
+          "value": 0,
+          "proven": false
+        }
+      ],
+      "warnings": [],
+      "cuts": 0,
+      "workload": {
+        "denominator": "Every active synthetic person, including zero new duties; fixed duties included.",
+        "people": 48,
+        "zero_total_duties": 0,
+        "minimum_total_duties": 1,
+        "maximum_total_duties": 2,
+        "maximum_weekends": 1,
+        "duty_histogram": {
+          "1": 35,
+          "2": 13
+        },
+        "by_person": [
+          {
+            "member": "Benchmark Member 0000",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0001",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0002",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0003",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0004",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0005",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0006",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0007",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0008",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0009",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0010",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0011",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0012",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0013",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0014",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0015",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0016",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0017",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0018",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0019",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0020",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0021",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0022",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0023",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0024",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0025",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0026",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0027",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0028",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0029",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0030",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0031",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0032",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0033",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0034",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0035",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0036",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0037",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0038",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0039",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0040",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0041",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0042",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0043",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0044",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0045",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0046",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0047",
+            "duties": 1,
+            "weekends": 1
+          }
+        ]
+      },
+      "snapshot_digest": "3379835d0f7f252fbd5576b51655c5a13ae863de19b1d3512db8418660965381",
+      "normalized_choices": [
+        [
+          "BENCH:0",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:1",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:10",
+          "Benchmark Member 0012"
+        ],
+        [
+          "BENCH:11",
+          "Benchmark Member 0011"
+        ],
+        [
+          "BENCH:12",
+          "Benchmark Member 0014"
+        ],
+        [
+          "BENCH:13",
+          "Benchmark Member 0013"
+        ],
+        [
+          "BENCH:14",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:15",
+          "Benchmark Member 0015"
+        ],
+        [
+          "BENCH:16",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:17",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:18",
+          "Benchmark Member 0020"
+        ],
+        [
+          "BENCH:19",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:2",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:20",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:21",
+          "Benchmark Member 0021"
+        ],
+        [
+          "BENCH:22",
+          "Benchmark Member 0022"
+        ],
+        [
+          "BENCH:23",
+          "Benchmark Member 0023"
+        ],
+        [
+          "BENCH:24",
+          "Benchmark Member 0024"
+        ],
+        [
+          "BENCH:25",
+          "Benchmark Member 0025"
+        ],
+        [
+          "BENCH:27",
+          "Benchmark Member 0027"
+        ],
+        [
+          "BENCH:28",
+          "Benchmark Member 0026"
+        ],
+        [
+          "BENCH:29",
+          "Benchmark Member 0029"
+        ],
+        [
+          "BENCH:3",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:30",
+          "Benchmark Member 0028"
+        ],
+        [
+          "BENCH:31",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:32",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:33",
+          "Benchmark Member 0033"
+        ],
+        [
+          "BENCH:34",
+          "Benchmark Member 0032"
+        ],
+        [
+          "BENCH:35",
+          "Benchmark Member 0035"
+        ],
+        [
+          "BENCH:36",
+          "Benchmark Member 0034"
+        ],
+        [
+          "BENCH:37",
+          "Benchmark Member 0037"
+        ],
+        [
+          "BENCH:38",
+          "Benchmark Member 0036"
+        ],
+        [
+          "BENCH:39",
+          "Benchmark Member 0039"
+        ],
+        [
+          "BENCH:4",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:40",
+          "Benchmark Member 0038"
+        ],
+        [
+          "BENCH:41",
+          "Benchmark Member 0041"
+        ],
+        [
+          "BENCH:42",
+          "Benchmark Member 0040"
+        ],
+        [
+          "BENCH:43",
+          "Benchmark Member 0043"
+        ],
+        [
+          "BENCH:44",
+          "Benchmark Member 0042"
+        ],
+        [
+          "BENCH:45",
+          "Benchmark Member 0045"
+        ],
+        [
+          "BENCH:46",
+          "Benchmark Member 0044"
+        ],
+        [
+          "BENCH:47",
+          "Benchmark Member 0047"
+        ],
+        [
+          "BENCH:48",
+          "Benchmark Member 0046"
+        ],
+        [
+          "BENCH:49",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:5",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:50",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:51",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:52",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:53",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:54",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:55",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:56",
+          "Benchmark Member 0020"
+        ],
+        [
+          "BENCH:57",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:58",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:59",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:6",
+          "Benchmark Member 0010"
+        ],
+        [
+          "BENCH:60",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:61",
+          "Benchmark Member 0009"
+        ],
+        [
+          "BENCH:7",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:9",
+          "Benchmark Member 0009"
+        ]
+      ],
+      "uncovered_details": [
+        {
+          "slot": "BENCH:26",
+          "date": "2026-05-14",
+          "eligible_candidates": 0,
+          "rejection_codes": {
+            "unit_safety_review": 24,
+            "leave": 1
+          }
+        }
+      ],
+      "resource_limits": {
+        "search_seconds": 30,
+        "total_request_deadline": false,
+        "memory_bytes": null,
+        "memory_basis": "Not measured; no invented value."
+      }
+    },
+    {
+      "case": "saved_proposal",
+      "ot_enabled": false,
+      "status": "feasible",
+      "stages": {
+        "fixture_setup": {
+          "wall_ms": 616.948,
+          "sql_ms": 26.164,
+          "sql_queries": 117
+        },
+        "context": {
+          "wall_ms": 185.779,
+          "sql_ms": 8.441,
+          "sql_queries": 29
+        },
+        "baseline_joint_ot_evidence": {
+          "wall_ms": 0.006,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        },
+        "proposal_start": {
+          "wall_ms": 540.912,
+          "sql_ms": 17.939,
+          "sql_queries": 100
+        },
+        "proposal_generate": {
+          "wall_ms": 19473.927,
+          "sql_ms": 13.69,
+          "sql_queries": 70
+        },
+        "proposal_reload_validate": {
+          "wall_ms": 1579.978,
+          "sql_ms": 13.511,
+          "sql_queries": 77
+        },
+        "independent_final_validation": {
+          "wall_ms": 361.107,
+          "sql_ms": 0.483,
+          "sql_queries": 4
+        },
+        "final_joint_ot_evidence": {
+          "wall_ms": 0.005,
+          "sql_ms": 0.0,
+          "sql_queries": 0
+        }
+      },
+      "context_timings_at_load": {
+        "load_ms": 185.74109999462962,
+        "validation_ms": 0.0,
+        "scoring_ms": 0.0,
+        "safety_ms": 0.0
+      },
+      "semantic_fixture_digest": "bc7656068e488bff966f7c66be0287d2d99d6fae9b487c806ed166cc73217ff5",
+      "ot_before": {
+        "status": "disabled"
+      },
+      "saved_proposal": {
+        "reloaded": true,
+        "dry_run_validated": true,
+        "status": "completed",
+        "revision": 1,
+        "context_digest": "84e4211612ac93671a7c3324ce39df0c6eddd6121bcb08008a86db4f43ad60ce",
+        "applied": false,
+        "correction_count": null,
+        "correction_basis": "No administrator corrections supplied; zero corrections is not inferred."
+      },
+      "ot_final": {
+        "status": "disabled",
+        "capacity": null
+      },
+      "context_timings_after_direct_optimizer": null,
+      "assigned": 62,
+      "preserved_assignments": 0,
+      "uncovered": 0,
+      "validation_failures": 0,
+      "objectives": [
+        {
+          "name": "required_coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "coverage",
+          "value": -62,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "call_level_equality",
+          "value": -6996,
+          "proven": false
+        },
+        {
+          "name": "weekend_burden",
+          "value": 60,
+          "proven": false
+        },
+        {
+          "name": "night_burden",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "holiday_burden",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "workload",
+          "value": 284,
+          "proven": false
+        },
+        {
+          "name": "spacing_history",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "preferences",
+          "value": 0,
+          "proven": false
+        }
+      ],
+      "warnings": [
+        "No holiday dates configured; holiday balancing was not evaluated."
+      ],
+      "cuts": 0,
+      "workload": {
+        "denominator": "Every active synthetic person, including zero new duties; fixed duties included.",
+        "people": 48,
+        "zero_total_duties": 0,
+        "minimum_total_duties": 1,
+        "maximum_total_duties": 2,
+        "maximum_weekends": 1,
+        "duty_histogram": {
+          "1": 34,
+          "2": 14
+        },
+        "by_person": [
+          {
+            "member": "Benchmark Member 0000",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0001",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0002",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0003",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0004",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0005",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0006",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0007",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0008",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0009",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0010",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0011",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0012",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0013",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0014",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0015",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0016",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0017",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0018",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0019",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0020",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0021",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0022",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0023",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0024",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0025",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0026",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0027",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0028",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0029",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0030",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0031",
+            "duties": 2,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0032",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0033",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0034",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0035",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0036",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0037",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0038",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0039",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0040",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0041",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0042",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0043",
+            "duties": 1,
+            "weekends": 0
+          },
+          {
+            "member": "Benchmark Member 0044",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0045",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0046",
+            "duties": 1,
+            "weekends": 1
+          },
+          {
+            "member": "Benchmark Member 0047",
+            "duties": 1,
+            "weekends": 1
+          }
+        ]
+      },
+      "snapshot_digest": "84e4211612ac93671a7c3324ce39df0c6eddd6121bcb08008a86db4f43ad60ce",
+      "normalized_choices": [
+        [
+          "BENCH:0",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:1",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:10",
+          "Benchmark Member 0010"
+        ],
+        [
+          "BENCH:11",
+          "Benchmark Member 0011"
+        ],
+        [
+          "BENCH:12",
+          "Benchmark Member 0012"
+        ],
+        [
+          "BENCH:13",
+          "Benchmark Member 0013"
+        ],
+        [
+          "BENCH:14",
+          "Benchmark Member 0014"
+        ],
+        [
+          "BENCH:15",
+          "Benchmark Member 0015"
+        ],
+        [
+          "BENCH:16",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:17",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:18",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:19",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:2",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:20",
+          "Benchmark Member 0020"
+        ],
+        [
+          "BENCH:21",
+          "Benchmark Member 0021"
+        ],
+        [
+          "BENCH:22",
+          "Benchmark Member 0022"
+        ],
+        [
+          "BENCH:23",
+          "Benchmark Member 0023"
+        ],
+        [
+          "BENCH:24",
+          "Benchmark Member 0024"
+        ],
+        [
+          "BENCH:25",
+          "Benchmark Member 0025"
+        ],
+        [
+          "BENCH:26",
+          "Benchmark Member 0026"
+        ],
+        [
+          "BENCH:27",
+          "Benchmark Member 0027"
+        ],
+        [
+          "BENCH:28",
+          "Benchmark Member 0028"
+        ],
+        [
+          "BENCH:29",
+          "Benchmark Member 0029"
+        ],
+        [
+          "BENCH:3",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:30",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:31",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:32",
+          "Benchmark Member 0032"
+        ],
+        [
+          "BENCH:33",
+          "Benchmark Member 0033"
+        ],
+        [
+          "BENCH:34",
+          "Benchmark Member 0034"
+        ],
+        [
+          "BENCH:35",
+          "Benchmark Member 0035"
+        ],
+        [
+          "BENCH:36",
+          "Benchmark Member 0036"
+        ],
+        [
+          "BENCH:37",
+          "Benchmark Member 0037"
+        ],
+        [
+          "BENCH:38",
+          "Benchmark Member 0038"
+        ],
+        [
+          "BENCH:39",
+          "Benchmark Member 0039"
+        ],
+        [
+          "BENCH:4",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:40",
+          "Benchmark Member 0040"
+        ],
+        [
+          "BENCH:41",
+          "Benchmark Member 0041"
+        ],
+        [
+          "BENCH:42",
+          "Benchmark Member 0042"
+        ],
+        [
+          "BENCH:43",
+          "Benchmark Member 0043"
+        ],
+        [
+          "BENCH:44",
+          "Benchmark Member 0044"
+        ],
+        [
+          "BENCH:45",
+          "Benchmark Member 0045"
+        ],
+        [
+          "BENCH:46",
+          "Benchmark Member 0046"
+        ],
+        [
+          "BENCH:47",
+          "Benchmark Member 0047"
+        ],
+        [
+          "BENCH:48",
+          "Benchmark Member 0002"
+        ],
+        [
+          "BENCH:49",
+          "Benchmark Member 0003"
+        ],
+        [
+          "BENCH:5",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:50",
+          "Benchmark Member 0004"
+        ],
+        [
+          "BENCH:51",
+          "Benchmark Member 0005"
+        ],
+        [
+          "BENCH:52",
+          "Benchmark Member 0016"
+        ],
+        [
+          "BENCH:53",
+          "Benchmark Member 0017"
+        ],
+        [
+          "BENCH:54",
+          "Benchmark Member 0018"
+        ],
+        [
+          "BENCH:55",
+          "Benchmark Member 0019"
+        ],
+        [
+          "BENCH:56",
+          "Benchmark Member 0030"
+        ],
+        [
+          "BENCH:57",
+          "Benchmark Member 0031"
+        ],
+        [
+          "BENCH:58",
+          "Benchmark Member 0000"
+        ],
+        [
+          "BENCH:59",
+          "Benchmark Member 0001"
+        ],
+        [
+          "BENCH:6",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:60",
+          "Benchmark Member 0006"
+        ],
+        [
+          "BENCH:61",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:7",
+          "Benchmark Member 0007"
+        ],
+        [
+          "BENCH:8",
+          "Benchmark Member 0008"
+        ],
+        [
+          "BENCH:9",
+          "Benchmark Member 0009"
+        ]
+      ],
+      "uncovered_details": [],
+      "resource_limits": {
+        "search_seconds": 30,
+        "total_request_deadline": false,
+        "memory_bytes": null,
+        "memory_basis": "Not measured; no invented value."
+      }
+    }
+  ],
+  "complete": true
+}

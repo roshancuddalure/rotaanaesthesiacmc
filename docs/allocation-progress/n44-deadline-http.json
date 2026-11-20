@@ -1,0 +1,67 @@
+{
+  "fixture_only": true,
+  "actual_model_inference": false,
+  "owned_pid": 30992,
+  "test_deadline_seconds": 1,
+  "production_deadline_seconds": 90,
+  "source_sha256": {
+    "tools/probe_assistant_deadline.py": "9a634d6635d38252147dfa8eb45ed89cd98324d522822e097de69544004e5dfe",
+    "tools/local_rota_assistant.py": "2a372569bebafd3f6b7a112d163d0fa685e0492c6c287d458e26471432247294",
+    "tools/local_ai_claim_guard.py": "89ef0559cfe40712ae77d3b9ab8ef227d2b1d737da14038769b84af74d7658da",
+    "tools/local_ai_deadline.py": "ec1182e23a8788a6a5207064c67eb559adad7126bd7bf1b0034bac08d39ff245",
+    "tools/local_ai_numeric_policy.py": "9152b826cae8bd6401503f1d77f9653533c80cdf86bd5e296d616f1d67ab1b44",
+    "tools/local_ai_ot_reference.py": "4328cda8c4f122e276bd3865f8929b28bd8bfa38b8860fcb797cec076357d8ff",
+    "tools/local_ai_prompt_budget.py": "0c7d0bc3d94d4bd215a641add50b54478e48dd4687093f0d3838fc30034a069b",
+    "tools/local_ai_reference_context.py": "d54654bcd77ca0134bc0a1991f8c1f616f934f0c04a15c4726f1bfe8a2ed3cd2"
+  },
+  "cases": [
+    {
+      "case": "quick",
+      "status": 200,
+      "stages_started": [
+        "version",
+        "tags",
+        "probe",
+        "suggestion"
+      ],
+      "elapsed_seconds": 0.1720000000204891,
+      "detail": null
+    },
+    {
+      "case": "cumulative_metadata",
+      "status": 504,
+      "stages_started": [
+        "version",
+        "tags"
+      ],
+      "elapsed_seconds": 1.0320000000065193,
+      "detail": "Local assistant request time budget expired during model inventory check. No suggestion was accepted. Shorten the request or use regular planning."
+    },
+    {
+      "case": "slow_measurement",
+      "status": 504,
+      "stages_started": [
+        "version",
+        "tags",
+        "probe"
+      ],
+      "elapsed_seconds": 1.0630000000237487,
+      "detail": "Local assistant request time budget expired during prompt measurement. No suggestion was accepted. Shorten the request or use regular planning."
+    },
+    {
+      "case": "slow_suggestion",
+      "status": 504,
+      "stages_started": [
+        "version",
+        "tags",
+        "probe",
+        "suggestion"
+      ],
+      "elapsed_seconds": 1.0320000000065193,
+      "detail": "Local assistant request time budget expired during suggestion. No suggestion was accepted. Shorten the request or use regular planning."
+    }
+  ],
+  "complete": true,
+  "source_unchanged": true,
+  "fixture_closed": true
+}

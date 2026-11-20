@@ -1,0 +1,49 @@
+{
+  "recorded_at_utc": "2026-11-11T18:50:16.665043+00:00",
+  "reviewer": "/root/context193_ux_review_nov12",
+  "scope": "Read-only diagnosis of terminal failed staged193 browserV3; no rerun, product change or harness change.",
+  "status": "diagnosed_test_geometry_precision_failure",
+  "evidence_sha256": {
+    "tmp/context-help193-test-v3/context-help-report.json": "5cc398f97e8166cc001b6e0c36f14f02832b759acf6cebda7557b4529e0171dc",
+    "tmp/context-help193-test-v3/context-help.browser.mjs": "87ecba42542a8101b45e8f2b1b7f5254a4cab79450113f490ab86b4c005aa349",
+    "tmp/context-help193-test-v3/exit.json": "76237463c231c1d53304872f218440246d7c58676a0de49f568d8714d2499f5b",
+    "tmp/context-help193-test-v3/browser.log": "e83ad43eb6e5a47e9d1ad7b52460269c50e0f883189b2d0a8a178e758ef6cf1d",
+    "tmp/context-help193-test-v3/authoring.json": "2fbf7c586480f73e50a1a4ac317a2c4a4a214ff2aff40e6c7e7e5e8693027484",
+    "tmp/context-help193-test-v3/manifest.json": "6d143f7da4e1507271993349c5cc874992ab66ed20ded0a7731ac21d92ddda96",
+    "tmp/context-help193-v2/premium-theme.css": "c938cc2bfb0713aca1b37522ac8ad88b5cc9d4593a26e0598fd606bcbdbb089a"
+  },
+  "observed_failure": {
+    "engine": "firefox",
+    "viewport": [
+      844,
+      390
+    ],
+    "theme": "light",
+    "view": "overview",
+    "test_line": 39,
+    "assertion": "box && box.height >= 44 && box.x >= -1 && box.x + box.width <= width + 1",
+    "bounding_box": {
+      "x": 260,
+      "y": 91.4000015258789,
+      "width": 126.7166748046875,
+      "height": 43.99999237060547
+    },
+    "height_shortfall_css_px": 7.62939453125e-06
+  },
+  "reasoning": [
+    "Only the strict height comparison is false for the logged rectangle. The horizontal constraints pass: x260>=-1 and right386.7167<=845.",
+    "The staged stylesheet declares min-height44px for this exact context-help-link selector. The logged rectangle differs by approximately7.63millionths of a CSSpixel, consistent with floating-point DOMRect representation, rather than a material touch-target reduction.",
+    "The failed context records no page errors or prohibited network requests. This failure occurred before opening its first help popup, so it supplies no navigation outcome for Firefox844light.",
+    "Unlike V2, the V3 origin guard successfully avoided the earlier aboutblank localStorage initialization errors across the completed contexts. This particular failure is a geometry assertion precision issue; it does not establish every possible later fixture path is correct."
+  ],
+  "completed_evidence": {
+    "fully_passed_contexts": 8,
+    "fully_passed_help_cases": 144,
+    "scope": "All6Chromium contexts plus Firefox320light/dark,18tasks each. These are partial executed results, not an overall passing matrix."
+  },
+  "recommended_next_action": "Retain the failedV3 artifacts. In a uniquelyversioned harness, document a tiny numerical tolerance for the minimum-height comparison (for example0.001CSSpx), with all other geometry, focus, dirty-draft, route, print, network and source guards unchanged. Run the complete intended matrix against the same pinned candidates. Do not alter productCSS merely to satisfy floating-point equality.",
+  "limits": [
+    "No browser, computed-style probe or build was run by this reviewer. Diagnosis uses recorded rectangle, exact failing assertion, CSSsource and terminal report.",
+    "No claim of complete193/194 acceptance, physical-device or nativeAT verification."
+  ]
+}

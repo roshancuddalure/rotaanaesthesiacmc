@@ -5,6 +5,7 @@ from typing import Literal, Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.responses import Response
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select, func, or_
 from sqlalchemy.orm import Session
@@ -168,6 +169,24 @@ def jobs(
 def get_job(job_id: UUID, db: Session = Depends(get_db), user: UserAccount = Depends(current_user)):
     enabled()
     return service.serialize(service.owned_job(db, job_id, user))
+
+
+@router.get("/jobs/{job_id}/review.xlsx", dependencies=[Depends(limit_work)])
+def review_workbook(
+    job_id: UUID,
+    revision: int = Query(ge=0, le=2147483647),
+    db: Session = Depends(get_db),
+    user: UserAccount = Depends(current_user),
+):
+    enabled()
+    from app.services.rota_review_export import proposal_export
+
+    job = service.owned_job(db, job_id, user)
+    if job.state.get("intelligence") and not settings.rota_intelligence_enabled:
+        raise HTTPException(503, "Intelligent planning is disabled")
+    filename, payload = proposal_export(db, job, revision)
+    return Response(payload, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-store"})
 
 
 @router.post("/jobs/{job_id}/step", dependencies=[Depends(limit_work)])

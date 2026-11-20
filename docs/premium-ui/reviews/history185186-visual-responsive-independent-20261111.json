@@ -1,0 +1,102 @@
+{
+  "recorded_at_utc": "2026-11-11T01:26:22.445586+00:00",
+  "reviewer": "/root/history186_visual_responsive_signoff_nov11",
+  "review_type": "Independent read-only visual and responsive evidence review; no browser/build rerun",
+  "scope": "Exact186 presentation and compatibility of exact185 after the four-file history integration; not whole-app or whole-goal acceptance",
+  "requirements": [
+    {
+      "item_id": 185,
+      "requirement": "Make past-duty import steps consistent with operational CSV workflows while retaining their distinct historical-data explanations.",
+      "acceptance_scope": "Historical past-duty import workflow",
+      "pass_conditions": [
+        "Past-duty upload, preview, correction, review and apply use the shared import interaction patterns.",
+        "Historical-data explanations and date context remain distinct, and existing historical import payloads and outcomes are preserved."
+      ],
+      "evidence_needed": [
+        "Historical CSV workflow traces and current/historical date boundary fixtures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-past-recovery-independent.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for historical past-duty import workflow, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 186,
+      "requirement": "Present import history and rejection reports with reliable filtering, readable timestamps and working download controls.",
+      "acceptance_scope": "Import history and rejection reports",
+      "pass_conditions": [
+        "History filters change the displayed imports correctly and timestamps retain clear recorded-time context.",
+        "Rejection downloads produce the expected named artifact and recover visibly from unavailable or empty report responses."
+      ],
+      "evidence_needed": [
+        "History filter assertions, timestamp fixtures and parsed rejection-download artifacts.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/qa-history-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for import history and rejection reports, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    }
+  ],
+  "hash_verification": {
+    "sealed_maps_checked_against_current_bytes": {
+      "docs/premium-ui/reviews/history186-current-applied-execution-20261111.json": {
+        "source_sha256": 61,
+        "evidence_sha256": 96
+      },
+      "docs/premium-ui/reviews/history185186-compatibility-text-execution-20261111.json": {
+        "source_sha256": 61,
+        "evidence_sha256": 52
+      }
+    },
+    "current_build_inputs_checked": 73,
+    "build_exit_code": 0,
+    "source_held": true
+  },
+  "personally_viewed_images": {
+    "tmp/import186-member-actual-text200-v1/chromium-320-dark-actual-text200.png": "8100be331a2184b32305179119c7024d20bfec9a7c15cd2fce6c5865d85be115",
+    "tmp/import186-workflow-applied-v1/artifacts/webkit-320-light.png": "53f8f9cd9ba0c9113a1ad8b2f88285900d85fe5457efd3595254d2961249893f",
+    "tmp/past185-steps-v2-applied-r5/preview-firefox-320-light-r1.png": "8f5ec74b2e50b67a8f81d535eb9d3c7b16fbb9c5eaaa96e900d09b515bbbeeb1",
+    "tmp/past185-steps-v2-applied-r5/steps-chromium-844-dark-computed-text200-r1.png": "1d28ba35dcbc5e3c4aa5d7a48e0c64bd19f4d909d7591bc5a10b5aafb8863b03"
+  },
+  "visual_observations": [
+    "The 320px member actual-text screenshot keeps heading, search label, help, Clear action, counts and selected filename within the panel. Enlarged comparison tables scroll locally; the captured right-scrolled position clips earlier columns intentionally. Tests separately prove named focusable regions, ArrowRight movement and viewport reachability of initially visible enabled actions.",
+    "The 320px light workflow screenshot preserves the import month heading, search input, loaded-page count and table surface. The recorded timestamp extends into the horizontally scrollable comparison table; the image alone does not prove access to every cell. Normal geometry assertions cover document and search width, not all table cell visibility.",
+    "The 320px historical preview shows shared four-step progress, distinct historical month/explanation, correction-oriented review, rejection CSV action and Apply hierarchy. The native picker says No file selected while the retained filename is separately shown; this inherited ambiguity remains follow-up work and is not silently certified.",
+    "The 844px dark computed-text200 step strip remains readable with all four stages in sequence and current Review emphasis. R5 progress geometry covers the progress root and dots rather than full-page text or every label rectangle."
+  ],
+  "condition_assessment": {
+    "185_condition_1": "Supported within the already reviewed shared steps/import presentation scope by current-source R5 recovery6/boundary15/visual12 reports, actual screenshot and exact original assertion preservation. This is compatibility support, not a replacement for prior independent static preservation review.",
+    "185_condition_2": "Supported for declared fixtures: historical explanations and month context remain visible; R5 preserves the same 49/26/33 assertion-call texts as R4. The applied186 past suite additionally proves upload nodes, File/options/hash/approved FormData and saved context survive local search and history recovery.",
+    "186_condition_1": "Supported by all three actual normally resolved components across Chromium/Firefox/WebKit,320/1280,light/dark: displayed-field literal multi-term filtering, stable selected IDs, explicit loaded-list/page scope, empty/clear states, and independent timestamp fixtures. Actual text enlargement evidence is member-only.",
+    "186_condition_2": "Supported for the exposed rejection-download paths by workflow named exact-byte artifacts, independent parsing of36 CSV files and visible503/empty200 no-file recovery; past existing rejection CSV named exact-byte output is separately asserted. Member history exposes recorded rows, not a new unsupported rejection endpoint."
+  },
+  "blockers_for_scoped_recommendation": [],
+  "remaining_limits": [
+    "No physical-device, native assistive-technology, native browser zoom, backend authorization, workbook parser or live persisted-data verification.",
+    "Member actual-text stress doubles captured computed pixel sizes and asserts each measured node; it is not system font-size or browser zoom. Workflow/past history actual-text enlargement remains untested.",
+    "Past history responsive assertion proves input containment in its section, not document-wide overflow or keyboard accessibility of every history cell; inherited unnamed/non-focusable past comparison wrappers remain separate frontend accessibility work.",
+    "Visual inspection is representative four images; all sealed image hashes were checked, but unviewed images are not claimed personally inspected.",
+    "Old185 acceptance leaf remains immutable and requires a current-source bridge; prior unrelated accepted items are not revalidated by this review.",
+    "Source/report hashes establish fixture/source provenance, not universal absence of bugs or world-class UI completion."
+  ],
+  "recommendation": "Accept exact186 within its two stated conditions and use R5 as scoped current-source185 compatibility evidence, subject to root acceptance and other independent preservation/recovery/accessibility reviews. Do not broaden this recommendation to all responsive/accessibility upgrades.",
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/history186-current-applied-execution-20261111.json": "eb7cad0ae90841e6a35ae6fe1ab378d1b84f96b4d2dd101531dceb1fcead4c15",
+    "docs/premium-ui/reviews/history185186-compatibility-text-execution-20261111.json": "23407fa4143328dcbc58b9a0f05989c2170eb6be7a9a0883f71e52d9deb1f4d4",
+    "docs/premium-ui/reviews/frontend-build-snapshot-history186-20261111.json": "d5be842bfd1d279f34815e535155f25059f02108f27bcf894fe63149c29ef63b",
+    "tmp/past185-steps-v2-applied-r5/unchanged-assertions.json": "460fbd91be873f4b5275d10cf5cf9a11df33859aaa341d428d4c0cfd243cfe8f",
+    "tmp/import186-member-actual-text200-v1/report.json": "0dda12ba6e0dc3225044bd9576d528b021216e1bc831f181ce282a04bc8b1615",
+    "tmp/import186-workflow-applied-v1/workflow.browser.mjs": "097589712036ea3dfdcec548f923e5031f64339158ab20482065e0c44b16eed3",
+    "tmp/import186-past-applied-v1/past-history.browser.mjs": "61f582d51804cf51f9d171aebeb42d486efffd3a334b21ebea5d0d8338e0ce42",
+    "frontend/src/history-filter.ts": "9f4540aabab34b3eb4732b28f415f40281f393d92e49c988c77b9e57d4e5310e",
+    "frontend/src/member-import-history.ts": "7a97dcafc17024d438d2c4c0353c0d6f5073a87bb02e0933b853de1a7f13a762",
+    "frontend/src/workflow-import-history.ts": "b04102c7dd2578e3ccc417920c83d6ff67a8f483059f17ae157e52ce5ff34b18",
+    "frontend/src/past-duties.ts": "5256b39117157b89e9fd1b0f802a604307629211266a0223b22bcac42e9dd9f8"
+  }
+}

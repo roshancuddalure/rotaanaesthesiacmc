@@ -4,6 +4,7 @@ import { workspaceDialog } from "./member-workspace";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
 import { createMemberInline, type NestedReferenceChange } from "./operational-import";
 import { workspaceLoading, workspaceLoadFailure, protectWorkspaceDraft } from "./workspace-load-state";
+import { dutyImpacts, renderDutyImpact, otImpact, renderOtImpact } from "./leave-impact-view";
 
 type Row = Record<string, any>;
 let recordEditorContextSequence = 0;
@@ -161,7 +162,7 @@ export async function openRecordEditor(
             .join(
               "",
             )}</select></label>${admin ? '<button type="button" data-new-unit>Create unit</button>' : ""}<p>A dated posting may override the department default. Leave the end date blank for an ongoing posting.</p>`
-        : `${select("leave_type", "Leave type", references.leave_type)}${select("leave_slot", "Session", references.leave_slot)}${select("status", "Approval state", references.leave_status)}<p>Review the returned approval state and session before saving. Pending requests are not confirmed absence. Availability depends on the operation; use its returned blocking counts and duty safety checks.</p>`
+        : `${select("leave_type", "Leave type", references.leave_type)}${select("leave_slot", "Session", references.leave_slot)}${select("status", "Approval state", references.leave_status)}<label>Reason for this leave change (optional)<textarea name="change_reason" maxlength="2000" rows="2">${esc(draft.change_reason)}</textarea></label><p>This administrative reason is recorded in the change history. Do not include private clinical details.</p><p>Review the returned approval state and session before saving. Pending requests are not confirmed absence. Availability depends on the operation; use its returned blocking counts and duty safety checks.</p>`
     }${admin ? '<button type="button" data-references>Manage labels and mappings</button>' : ""}<label>Effective from<input name="starts_on" type="date" required value="${esc(draft.starts_on)}"></label><label>Until<input name="ends_on" type="date" ${kind === "leave" ? "required" : ""} value="${esc(draft.ends_on)}"></label><label>Notes<textarea name="notes" rows="3">${esc(draft.notes)}</textarea></label><div data-error role="alert" class="mw-error"></div><section data-review aria-live="polite"></section><footer class="mw-footer profile-editor-footer"><div class="profile-editor-state"><span data-record-editor-status role="status">${identity ? "Editing record" : "New record"}</span><p class="profile-editor-scope" data-profile-save-scope>Review changes before saving this ${kind === "units" ? "posting" : "leave record"}. Cancel closes this editor.</p></div><div class="profile-editor-actions" role="group" aria-label="Record actions"><button type="button" data-close>Cancel</button><button type="submit">Review changes</button><button type="button" class="primary" data-save disabled>Save reviewed changes</button></div></footer></form>`;
     dialog
       .querySelectorAll<HTMLButtonElement>("[data-close]")
@@ -338,6 +339,9 @@ export async function openRecordEditor(
       form.querySelector('[data-error]')!.textContent = '';
       read();
       busy = true;
+      token = undefined;
+      dialog.querySelector<HTMLButtonElement>("[data-save]")!.disabled = true;
+      dialog.querySelector("[data-review]")!.innerHTML = "";
       const reviewedRevision = draftRevision;
       const reviewButton = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
       reviewButton.disabled = true;
@@ -355,6 +359,13 @@ export async function openRecordEditor(
           { method: "POST", body: JSON.stringify({ identity, values: draft }) },
         );
         if (!dialog.open || reviewedRevision !== draftRevision) return;
+        let leaveImpact = "";
+        if (kind === "leave") {
+          const duties = dutyImpacts(review.duties);
+          leaveImpact = renderOtImpact(otImpact(review.ot_impact), "Before change", "After proposed change")
+            + (duties.length ? `<h4>${duties.length} affected duties</h4><ul>${duties.map(duty => `<li>${renderDutyImpact(duty)}</li>`).join("")}</ul>`
+              : "<p>No existing duty conflicts in this leave range.</p>");
+        }
         token = review.review_token;
         dialog.querySelector("[data-review]")!.innerHTML =
           `<h3>Review proposed changes</h3><dl>${Object.entries(review.after)
@@ -365,7 +376,7 @@ export async function openRecordEditor(
             )
             .join(
               "",
-            )}</dl><p>${esc(review.availability)}</p>${review.duties.length ? `<h4>${review.duties.length} affected duties</h4>${review.duties.map((d: Row) => `<p>${esc(d.date)} · ${esc(d.duty)}</p>`).join("")}` : kind === "leave" ? "<p>No existing duty conflicts in this leave range.</p>" : "<p>No overlapping primary postings found.</p>"}`;
+            )}</dl>${kind === "leave" ? `<p>Recorded change reason: ${esc(review.change_reason || "Not supplied")}</p>` : ""}<p>${esc(review.availability)}</p>${kind === "leave" ? leaveImpact : "<p>No overlapping primary postings found.</p>"}`;
         dialog.querySelector<HTMLButtonElement>("[data-save]")!.disabled =
           false;
         dialog.querySelector("[data-error]")!.textContent = "";

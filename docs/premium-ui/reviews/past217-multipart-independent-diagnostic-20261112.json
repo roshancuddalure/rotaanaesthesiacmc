@@ -1,0 +1,58 @@
+{
+  "recorded_at_utc": "2026-11-11T19:29:32.006897+00:00",
+  "reviewer": "/root/recycle191_review_nov12",
+  "scope": "Independent read-only diagnosis of isolated File/FormData inspector-versus-wire probe, not actual application upload acceptance",
+  "evidence_sha256": {
+    "tmp/past217-v1/multipart-isolation-2026-11-11T19-27-30-586Z.json": "75bc5a7b46e3f00fda893e154ebbb075bfbe64eb4d4998ac14f2a0ee92436fb7",
+    "tmp/past217-v1/multipart-isolation-probe-v1.browser.mjs": "589deed75c99960de517729fc50fa53110c3d33bd40efad6f78d147bdb0d0ef1",
+    "tmp/past217-v1/keyboard-2026-11-11T19-21-31-459Z.json": "1283046a230a539ee8fc1b28337434f7372e7f8052bcc016fae05cfaf2503258",
+    "tmp/past217-v1/multipart-probe-root-v1/exit.json": "7873091eab655de3b6676f2ebd494dd79dda5d16f5b0be95326ea7aaf9f1a678",
+    "tmp/past217-v1/comparison-keyboard-v2.browser.mjs": "fab4f09685e0ddf8cb92ad9ccec0bf9909ad729aac49195ea9606315ef277c7b"
+  },
+  "probe_assertions_independently_checked": {
+    "cases": 36,
+    "wire_cases": 24,
+    "expected_file_bytes": 42,
+    "engines": {
+      "chromium": {
+        "cases": 12,
+        "dom_and_at_fetch_file_bytes": 42,
+        "independent_wire_cases": 8,
+        "independent_wire_file_bytes": 42,
+        "inspected_cases": 8,
+        "route_inspector_file_bytes": 42
+      },
+      "firefox": {
+        "cases": 12,
+        "dom_and_at_fetch_file_bytes": 42,
+        "independent_wire_cases": 8,
+        "independent_wire_file_bytes": 42,
+        "inspected_cases": 8,
+        "route_inspector_file_bytes": 42
+      },
+      "webkit": {
+        "cases": 12,
+        "dom_and_at_fetch_file_bytes": 42,
+        "independent_wire_cases": 8,
+        "independent_wire_file_bytes": 42,
+        "inspected_cases": 8,
+        "route_inspector_file_bytes": 0
+      }
+    },
+    "script_hash_held": true,
+    "source_held_during_root_execution": true
+  },
+  "findings": [
+    "All36 controls contain the exact42expected bytes in DOM input File, chosen File before FormData and actual FormData file immediately before fetch; both input-selected and constructed Files are covered with valid and angle-bracket filenames.",
+    "All24 independent HTTP receiver traces (no interception or inspect-and-continue) contain exact42file bytes in raw received body and independently parsed file. All eight WebKit wire cases carry42bytes despite all eight WebKit route inspector parsed files reporting0bytes. Chromium/Firefox inspector and wire both report42.",
+    "Inspect-and-fulfill emits no wire request by design, so those twelve traces prove only pre-fetch File/FormData contents and inspector behavior. They must not be counted as actual wire transport.",
+    "Within these isolated controls the zero-byte observation is an engine/protocol inspector representation limitation rather than proof of empty native File or failed wire transfer. Filename and input-versus-constructed controls do not change the observed WebKit distinction."
+  ],
+  "conclusion": "Retain failed217V2 unchanged. A revised actual-component test may inspect actual FormData at fetch across all engines, preserve Chromium/Firefox route-byte assertions and explicitly record WebKit inspector0 as a separately established instrumentation limitation. Do not alter product transport to satisfy the inspector.",
+  "limits": [
+    "Probe is app-free and backend-free, using owned token-scoped loopback receiver. It does not establish actual component HTTP wire contents, real XLSX parser acceptance or production upload success.",
+    "Attributing the distinction to Playwright/WebKit inspector representation is supported by this environment, not a proven upstream implementation defect or universal platform guarantee.",
+    "217 keyboard comparison-region behavior and applied candidate source preservation require their own successful component run; isolated probe counts cannot replace them."
+  ],
+  "acceptance": "No product or requirement acceptance granted. No application/backend code changed or test rerun by this reviewer."
+}

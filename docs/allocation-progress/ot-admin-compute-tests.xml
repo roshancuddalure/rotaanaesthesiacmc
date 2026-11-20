@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="63" time="43.517" timestamp="2026-11-14T09:37:30.279286+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_calendar_api" name="test_read_never_creates_configuration_and_undefined_demand_stays_unknown" time="2.603"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcc2c3090&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCDDDE910&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCC2C3090&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCC927E50&gt;)
+
+    def test_read_never_creates_configuration_and_undefined_demand_stays_unknown(api):
+        client, sessions, unit_id, _, _ = api
+&gt;       response = client.get(url(unit_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:473: in get
+    return super().get(
+backend\.venv\Lib\site-packages\httpx\_client.py:1053: in get
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BAD7139B0&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcc2c3090&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_save_resolve_history_roundtrip_and_noop_idempotency" time="0.582"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcde2ec10&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCF130350&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCDE2EC10&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCDD6BD10&gt;)
+
+    def test_save_resolve_history_roundtrip_and_noop_idempotency(api):
+        client, sessions, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+&gt;       response = client.put(url(unit_id), json={"base_revision": EMPTY_REVISION,
+                                                  "configuration": cfg, "note": "Reviewed Thursday demand"})
+
+backend\tests\test_ot_calendar_api.py:80: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BCDCA5F70&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcde2ec10&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_stale_and_cross_unit_saves_never_overwrite_current_state" time="0.624"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcf131d10&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCF576E10&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCF131D10&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCF130D50&gt;)
+
+    def test_stale_and_cross_unit_saves_never_overwrite_current_state(api):
+        client, sessions, unit_id, _, _ = api
+        payload = {"base_revision": EMPTY_REVISION, "configuration": configuration(unit_id)}
+&gt;       saved = client.put(url(unit_id), json=payload).json()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BAE640050&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcf131d10&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_invalid_api_configuration_has_no_writes[duplicate]" time="0.681"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcddaa590&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCE7FF810&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCDDAA590&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCDD6BC50&gt;)
+change = 'duplicate'
+
+    @pytest.mark.parametrize("change", ["duplicate", "negative", "extra", "no_reserve", "bool_count"])
+    def test_invalid_api_configuration_has_no_writes(api, change):
+        client, sessions, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+        if change == "duplicate":
+            cfg["weekly"].append({**cfg["weekly"][0], "id": str(UUID(int=2))})
+        elif change == "negative":
+            cfg["weekly"][0]["bands"][0]["minimum"] = -1
+        elif change == "extra":
+            cfg["automatic_override"] = True
+        elif change == "no_reserve":
+            del cfg["reserve_mode"]
+        else:
+            cfg["weekly"][0]["bands"][0]["minimum"] = True
+&gt;       assert client.put(url(unit_id), json={"base_revision": EMPTY_REVISION, "configuration": cfg}).status_code == 422
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BCE72C1D0&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcddaa590&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_invalid_api_configuration_has_no_writes[negative]" time="0.791"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcdeb0590&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCDFE0310&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCDEB0590&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCE9F0810&gt;)
+change = 'negative'
+
+    @pytest.mark.parametrize("change", ["duplicate", "negative", "extra", "no_reserve", "bool_count"])
+    def test_invalid_api_configuration_has_no_writes(api, change):
+        client, sessions, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+        if change == "duplicate":
+            cfg["weekly"].append({**cfg["weekly"][0], "id": str(UUID(int=2))})
+        elif change == "negative":
+            cfg["weekly"][0]["bands"][0]["minimum"] = -1
+        elif change == "extra":
+            cfg["automatic_override"] = True
+        elif change == "no_reserve":
+            del cfg["reserve_mode"]
+        else:
+            cfg["weekly"][0]["bands"][0]["minimum"] = True
+&gt;       assert client.put(url(unit_id), json={"base_revision": EMPTY_REVISION, "configuration": cfg}).status_code == 422
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BCE5E3AD0&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcdeb0590&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_invalid_api_configuration_has_no_writes[extra]" time="0.585"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bce8b8990&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCE5AF150&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCE8B8990&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCE19BE10&gt;)
+change = 'extra'
+
+    @pytest.mark.parametrize("change", ["duplicate", "negative", "extra", "no_reserve", "bool_count"])
+    def test_invalid_api_configuration_has_no_writes(api, change):
+        client, sessions, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+        if change == "duplicate":
+            cfg["weekly"].append({**cfg["weekly"][0], "id": str(UUID(int=2))})
+        elif change == "negative":
+            cfg["weekly"][0]["bands"][0]["minimum"] = -1
+        elif change == "extra":
+            cfg["automatic_override"] = True
+        elif change == "no_reserve":
+            del cfg["reserve_mode"]
+        else:
+            cfg["weekly"][0]["bands"][0]["minimum"] = True
+&gt;       assert client.put(url(unit_id), json={"base_revision": EMPTY_REVISION, "configuration": cfg}).status_code == 422
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BB0C3DD30&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bce8b8990&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_invalid_api_configuration_has_no_writes[no_reserve]" time="0.604"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcf1ba710&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCEDBD5D0&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCF1BA710&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCF1BA1D0&gt;)
+change = 'no_reserve'
+
+    @pytest.mark.parametrize("change", ["duplicate", "negative", "extra", "no_reserve", "bool_count"])
+    def test_invalid_api_configuration_has_no_writes(api, change):
+        client, sessions, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+        if change == "duplicate":
+            cfg["weekly"].append({**cfg["weekly"][0], "id": str(UUID(int=2))})
+        elif change == "negative":
+            cfg["weekly"][0]["bands"][0]["minimum"] = -1
+        elif change == "extra":
+            cfg["automatic_override"] = True
+        elif change == "no_reserve":
+            del cfg["reserve_mode"]
+        else:
+            cfg["weekly"][0]["bands"][0]["minimum"] = True
+&gt;       assert client.put(url(unit_id), json={"base_revision": EMPTY_REVISION, "configuration": cfg}).status_code == 422
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BCB89F830&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcf1ba710&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_invalid_api_configuration_has_no_writes[bool_count]" time="0.523"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bce9f3490&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCF5EA350&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCE9F3490&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCDD7BF90&gt;)
+change = 'bool_count'
+
+    @pytest.mark.parametrize("change", ["duplicate", "negative", "extra", "no_reserve", "bool_count"])
+    def test_invalid_api_configuration_has_no_writes(api, change):
+        client, sessions, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+        if change == "duplicate":
+            cfg["weekly"].append({**cfg["weekly"][0], "id": str(UUID(int=2))})
+        elif change == "negative":
+            cfg["weekly"][0]["bands"][0]["minimum"] = -1
+        elif change == "extra":
+            cfg["automatic_override"] = True
+        elif change == "no_reserve":
+            del cfg["reserve_mode"]
+        else:
+            cfg["weekly"][0]["bands"][0]["minimum"] = True
+&gt;       assert client.put(url(unit_id), json={"base_revision": EMPTY_REVISION, "configuration": cfg}).status_code == 422
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BB01C1670&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bce9f3490&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_admin_permission_unknown_unit_and_disabled_gate" time="1.073" /><testcase classname="tests.test_ot_calendar_api" name="test_calendar_change_invalidates_compute_snapshot_when_enabled" time="0.739"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcdf90690&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCF6C8410&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCDF90690&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCDD7A890&gt;)
+
+    def test_calendar_change_invalidates_compute_snapshot_when_enabled(api):
+        client, sessions, unit_id, _, _ = api
+        with sessions() as db:
+            before = context_hash(db)
+&gt;       saved = client.put(url(unit_id), json={"base_revision": EMPTY_REVISION,
+                                              "configuration": configuration(unit_id)}).json()
+
+backend\tests\test_ot_calendar_api.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BAE510830&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcdf90690&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_calendar_api" name="test_explicit_closure_replaces_weekly_requirement_with_traceable_zero" time="0.775"><failure message="sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcde09150&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)">api = (&lt;starlette.testclient.TestClient object at 0x0000016BCDF17150&gt;, sessionmaker(class_='Session', bind=Engine(sqlite+pys...pp.models.auth.UserAccount object at 0x0000016BCDE09150&gt;}, &lt;fastapi.applications.FastAPI object at 0x0000016BCBE12710&gt;)
+
+    def test_explicit_closure_replaces_weekly_requirement_with_traceable_zero(api):
+        client, _, unit_id, _, _ = api
+        cfg = configuration(unit_id)
+        cfg["exceptions"] = [{"id": str(UUID(int=2)), "unit_id": str(unit_id), "area_key": "main_ot",
+                               "day": str(date(2026, 11, 19)), "closed": True, "bands": []}]
+&gt;       response = client.put(url(unit_id), json={"base_revision": EMPTY_REVISION, "configuration": cfg})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_ot_calendar_api.py:165: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\.venv\Lib\site-packages\starlette\testclient.py:577: in put
+    return super().put(
+backend\.venv\Lib\site-packages\httpx\_client.py:1181: in put
+    return self.request(
+backend\.venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+backend\.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+backend\.venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+backend\.venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+backend\.venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+backend\.venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\rosha\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+backend\.venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+backend\app\security.py:89: in __call__
+    return await self.app(scope, receive, secured_send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:680: in app
+    await route.handle(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\routing.py:276: in handle
+    await self.app(scope, receive, send)
+backend\.venv\Lib\site-packages\fastapi\routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+backend\.venv\Lib\site-packages\fastapi\routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\fastapi\routing.py:457: in app
+    solved_result = await solve_dependencies(
+backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py:680: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\api\v1\auth.py:128: in require_admin
+    if user.role not in ADMIN_ROLES:
+       ^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+mapper = &lt;Mapper at 0x16bb07d7350; UserAccount&gt;
+state = &lt;sqlalchemy.orm.state.InstanceState object at 0x0000016BAD713FB0&gt;
+attribute_names = {'active_status', 'created_at', 'display_name', 'email', 'id', 'last_login_at', ...}
+passive = symbol('PASSIVE_OFF')
+
+    def load_scalar_attributes(mapper, state, attribute_names, passive):
+        """initiate a column-based attribute refresh operation."""
+    
+        # assert mapper is _state_mapper(state)
+        session = state.session
+        if not session:
+&gt;           raise orm_exc.DetachedInstanceError(
+                "Instance %s is not bound to a Session; "
+                "attribute refresh operation cannot proceed" % (state_str(state))
+            )
+E           sqlalchemy.orm.exc.DetachedInstanceError: Instance &lt;UserAccount at 0x16bcde09150&gt; is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+
+backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1607: DetachedInstanceError</failure></testcase><testcase classname="tests.test_ot_capacity" name="test_thursday_calendar_is_explicit_and_other_day_is_unknown" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_date_closure_overrides_weekly_and_preserves_reviewed_zero" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_special_opening_and_replacement_are_not_added_to_recurring_demand" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_effective_dates_and_overnight_band_cross_month_boundary" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes0]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes1]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes2]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes3]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes4]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes5]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes6]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes7]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes8]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes9]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes10]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_bands_are_rejected[changes11]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_conflicting_rules_and_duplicate_date_exceptions_are_rejected" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_closure_and_replacement_cannot_be_ambiguous[True-bands0]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_closure_and_replacement_cannot_be_ambiguous[False-bands1]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_unique_senior_is_not_counted_twice_in_simultaneous_pooled_areas" time="0.009" /><testcase classname="tests.test_ot_capacity" name="test_matching_assigns_scarce_skill_and_preserves_generalist_for_other_area" time="0.003" /><testcase classname="tests.test_ot_capacity" name="test_same_person_can_cover_adjacent_bands_but_not_overlapping_bands" time="0.004" /><testcase classname="tests.test_ot_capacity" name="test_cross_unit_posting_does_not_duplicate_the_same_person" time="0.003" /><testcase classname="tests.test_ot_capacity" name="test_leave_and_post_duty_rest_remove_identity_once_without_count_subtraction" time="0.003" /><testcase classname="tests.test_ot_capacity" name="test_partial_availability_cannot_cover_whole_band_by_unapproved_person_handover" time="0.005" /><testcase classname="tests.test_ot_capacity" name="test_mandatory_coverage_always_outranks_optional_targets" time="0.004" /><testcase classname="tests.test_ot_capacity" name="test_empty_input_is_not_a_claim_of_feasibility_and_zero_roster_is_shortage" time="0.003" /><testcase classname="tests.test_ot_capacity" name="test_invalid_search_budgets_rejected[0]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_search_budgets_rejected[-1]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_search_budgets_rejected[nan]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_search_budgets_rejected[inf]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_invalid_search_budgets_rejected[True]" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_invalid_search_budgets_rejected[31]" time="0.001" /><testcase classname="tests.test_ot_capacity" name="test_tiny_timeout_without_solution_is_never_reported_as_infeasible" time="0.002" /><testcase classname="tests.test_ot_capacity" name="test_matching_agrees_with_exhaustive_oracle_and_order_does_not_change_quality" time="0.269" /><testcase classname="tests.test_rota_compute" name="test_cached_candidates_match_reference_and_remove_queries" time="0.368" /><testcase classname="tests.test_rota_compute" name="test_cached_and_reference_validation_agree_on_hard_cases[previous]" time="0.315" /><testcase classname="tests.test_rota_compute" name="test_cached_and_reference_validation_agree_on_hard_cases[future]" time="0.289" /><testcase classname="tests.test_rota_compute" name="test_cached_and_reference_validation_agree_on_hard_cases[inactive]" time="0.222" /><testcase classname="tests.test_rota_compute" name="test_cached_and_reference_validation_agree_on_hard_cases[partial_leave]" time="0.238" /><testcase classname="tests.test_rota_compute" name="test_cancelled_duplicate_does_not_hide_an_active_duty" time="0.357" /><testcase classname="tests.test_rota_compute" name="test_plan_never_writes_and_apply_is_reviewed_atomic_idempotent" time="0.249" /><testcase classname="tests.test_rota_compute" name="test_local_gpu_frames_are_numeric_and_match_server_decisions" time="0.368" /><testcase classname="tests.test_rota_compute" name="test_gpu_failure_can_continue_on_server" time="0.479" /><testcase classname="tests.test_rota_compute" name="test_changed_snapshot_rejects_apply_without_partial_writes[leave]" time="0.328" /><testcase classname="tests.test_rota_compute" name="test_changed_snapshot_rejects_apply_without_partial_writes[rules]" time="0.257" /><testcase classname="tests.test_rota_compute" name="test_changed_snapshot_rejects_apply_without_partial_writes[assignment]" time="0.424" /><testcase classname="tests.test_rota_compute" name="test_changed_snapshot_rejects_apply_without_partial_writes[publish]" time="0.548" /><testcase classname="tests.test_rota_compute" name="test_cancel_expiry_duplicates_ownership_and_retry" time="0.453" /><testcase classname="tests.test_rota_compute" name="test_final_validation_failure_rolls_back_entire_proposal" time="0.627" /><testcase classname="tests.test_rota_compute" name="test_api_permissions_resumption_failure_state_and_feature_flags" time="1.110" /><testcase classname="tests.test_rota_compute" name="test_conflict_detail_lets_the_generator_offer_resume_and_cancel" time="0.644" /></testsuite></testsuites>

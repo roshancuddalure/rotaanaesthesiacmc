@@ -1,0 +1,69 @@
+﻿{
+    "item_id":  185,
+    "perspective":  "Independent visual review of applied historical-import shared steps and historical explanations",
+    "reviewer":  "/root/exact185_visual_signoff_nov11",
+    "scope":  "Read-only inspection of current source, exact criterion, R4 execution and visual report, three actual R4 images, and boundary-test saved-context assertions. No tests or processes launched; no product or acceptance ledger edits.",
+    "assessment":  "Visual evidence supports the shared step pattern and legible distinct historical/date explanation in the inspected fixtures. No blocking visual regression found in these inspected states. This is one perspective, not whole-item acceptance.",
+    "criterion_support":  [
+                              {
+                                  "pass_condition":  "Past-duty upload, preview, correction, review and apply use the shared import interaction patterns.",
+                                  "supported":  "Current past-duties.ts calls the same ui.ts steps helper as operational-import.ts. It uses historical-specific labels Select workbook / Set up / Review / Apply while retaining the shared ordered list, completed checks, current numbered filled dot and upcoming outline. Actual screenshots show completed selection/setup, current Review and upcoming Apply. At 320 normal text the steps wrap into two readable rows; at actual computed 200 percent text the dots expand and contain glyphs without clipping in the inspected dark screenshot. At 844 the normal steps fit one row.",
+                                  "limits":  "Screenshots depict preview/review state, not every transition or correction control state. R4 execution reports other workflow coverage, but I did not rerun it or visually inspect each transition. Payload/outcome preservation requires the root\u0027s separate behavior/static review."
+                              },
+                              {
+                                  "pass_condition":  "Historical-data explanations and date context remain distinct, and existing historical import payloads and outcomes are preserved.",
+                                  "supported":  "320 light and 844 light preview images visibly retain Historical import / Selected month 2025-12, completed-duty statistics and future scoring explanation, unchanged member-call-level explanation, table-vs-matrix instructions, and separate returned Preview month / worksheet / correction / local hospital time guidance. Source separates Last applied import into an explicitly named section with saved reviewed filename, selected month, returned preview month and worksheet. Boundary-test source asserts these fields, literal filename text, replay outcome and exact multipart values.",
+                                  "limits":  "No saved-outcome screenshot was inspected; saved-context separation is source and existing assertion support only. Historical transport fixtures are not backend workbook parser evidence. Visual review alone does not establish payload/outcome preservation."
+                              }
+                          ],
+    "inspected_images":  [
+                             {
+                                 "path":  "tmp/past185-steps-v2-applied-r4/preview-webkit-320-light-r1.png",
+                                 "observations":  "Full preview panel at 320: historical paragraphs wrap legibly, explicit month visible, review/apply visually separated from setup. Wide review table remains its own horizontal scroll scope; only left columns are visible in this static image. No inference of all row-action visibility from the screenshot."
+                             },
+                             {
+                                 "path":  "tmp/past185-steps-v2-applied-r4/steps-chromium-320-dark-computed-text200-r1.png",
+                                 "observations":  "Cropped enlarged steps: checkmarks and numbered dots stay round and contain their glyphs; labels are readable and wrap within the crop. This crop does not prove enlarged full-panel layout or form-control accessibility."
+                             },
+                             {
+                                 "path":  "tmp/past185-steps-v2-applied-r4/preview-firefox-844-light-r1.png",
+                                 "observations":  "Full 844 normal-text preview: single-row steps, distinct historical paragraphs and returned-preview context, four review-table columns, visibly distinct Preview and Apply actions."
+                             }
+                         ],
+    "concrete_nonblocking_concerns":  [
+                                          {
+                                              "finding":  "The visible native file input says No file selected while the retained workbook filename is separately displayed beside/below it after render. This can make the retention state ambiguous.",
+                                              "scope":  "Observed in both inspected normal preview screenshots; existing retained-file rendering, not established as introduced by requirement185.",
+                                              "action":  "In a separately reviewed frontend polish change, explicitly label the retained workbook filename (for example Selected workbook) and explain why the native picker may be empty after rendering, while preserving the actual retained File and request bytes."
+                                          },
+                                          {
+                                              "finding":  "At 320 the review table\u0027s Outcome and Decision columns are outside the initial viewport.",
+                                              "scope":  "Expected isolated table overflow, not page overflow. A static left-position screenshot cannot prove discoverability or keyboard reach of right-hand controls.",
+                                              "action":  "Retain the separate interaction/recovery assertions and table-accessibility review; do not treat this screenshot as proof of all mobile row actions."
+                                          }
+                                      ],
+    "limitations":  [
+                        "No physical device or native assistive-technology checks.",
+                        "No measured contrast audit or forced-colors review in this visual-only pass.",
+                        "Three representative images were viewed, not all 24 R4 captures; remaining engine/theme/text combinations are report-supported only.",
+                        "No production permission, server workbook parser, solver, GPU, backend or live database verification.",
+                        "No reacceptance of the earlier 61 signoffs; their changed-source applicability remains separately open.",
+                        "No whole-programme or requirement186 completion claim."
+                    ],
+    "hashes_sha256":  {
+                          "docs/premium-ui/reviews/original185-current-applied-r4-execution-20261111.json":  "4d762e87a5c04b1accc898d70b05a1fcfbbaf1d53cb5449b6a94360743426c18",
+                          "docs/premium-ui/acceptance-criteria/items-174-260.json":  "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac",
+                          "docs/premium-ui/qa-original185-steps-v2-applied-r4-visual-r1-20261110.json":  "de4f4bc044e4e9f765d20630beb6e89fb4fbda64d48667b7124aba0e684b1dcf",
+                          "frontend/src/past-duties.ts":  "ca145769e2d8d4c00d37de57852acc2ab83c321d1761a5c5545c3da888fa729d",
+                          "frontend/src/ui.ts":  "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+                          "frontend/src/operational-import.ts":  "d98a64b3e73ac13f1d2eb40e5c646a8bad02b608134d2b2ae217e5d2ec97afdd",
+                          "frontend/src/styles.css":  "ae0e796c684efc9d3b861265ebf5934401f15f74d6180e7e338fcb4cdddeffc0",
+                          "frontend/src/premium-theme.css":  "6642ff90299a96ac8f4ecbf941be45f3b3f413c2a647ba8192ebf949b4b65e34",
+                          "frontend/tests/premium-original185-steps-v2-applied-r4-boundaries-20261110.browser.mjs":  "e1211a67de60bc130dd74677444ad3836c285f7ae8b44d7c3a7aa35037a47f27",
+                          "tmp/past185-steps-v2-applied-r4/preview-webkit-320-light-r1.png":  "97330e0c53073819a2d69dc9338ed49087e90d6cd1795f2984e9fc23b29adb1a",
+                          "tmp/past185-steps-v2-applied-r4/steps-chromium-320-dark-computed-text200-r1.png":  "01c3cae7c98dc2eefbf3809fab9976e61409c09224b7a0b1e6b8089b67fb4001",
+                          "tmp/past185-steps-v2-applied-r4/preview-firefox-844-light-r1.png":  "aa90a68f6e3817cc95e2e27e59a0630f4040d9895b1faa659874cfd0ce1a5968"
+                      },
+    "current_source_matches_r4_checkpoint":  true,
+    "recorded_utc":  "2026-11-11T00:48:50.7405620Z"
+}

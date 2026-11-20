@@ -1,0 +1,81 @@
+{
+  "recorded_at_utc": "2026-11-11T18:45:29.717996+00:00",
+  "reviewer": "/root/context193_ux_review_nov12",
+  "perspectives": [
+    "UX",
+    "accessibility",
+    "guide terminology and return-route semantics"
+  ],
+  "scope": "Independent read-only static review of staged contextual help193/194 V2; not applied acceptance or a browser execution report.",
+  "status": "static_review_passed_with_explicit_runtime_and_documentation_limits",
+  "source_and_evidence_sha256": {
+    "tmp/context-help193-v2/main.ts": "6a8f3727295e3ff0449d5b13646b0d0d485386f22dab4a368d29b2978d5dd18c",
+    "tmp/context-help193-v2/navigation-history.ts": "1927c9196352c92e46619fa4cbd8075bcabd34febb2b0e84403d536e5623988e",
+    "tmp/context-help193-v2/premium-theme.css": "c938cc2bfb0713aca1b37522ac8ad88b5cc9d4593a26e0598fd606bcbdbb089a",
+    "tmp/context-help193-v2/manifest.json": "6d143f7da4e1507271993349c5cc874992ab66ed20ded0a7731ac21d92ddda96",
+    "tmp/context-help193-v2/typecheck-api-route-proof.json": "ef22f58694b598cd1b05c00be6d5362854de635cf9512689aa0d7ac518dfac6b",
+    "frontend/src/main.ts": "049f90ecf94175ad1fa5a4b203cd9382091f585d9bcb0afb098d28f16baa371b",
+    "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+    "frontend/src/premium-theme.css": "6642ff90299a96ac8f4ecbf941be45f3b3f413c2a647ba8192ebf949b4b65e34",
+    "frontend/src/styles.css": "ae0e796c684efc9d3b861265ebf5934401f15f74d6180e7e338fcb4cdddeffc0",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/recycle-bin.ts": "8d8cf469c4262444e0d4fbd3bb9764177bd0e7fe09076edeca03b583a531a03a",
+    "tmp/context-help193-v2/help-chromium-320-light-accounts.png": "eb2ec74292cba2afcf0e1b1161d38b1c6566d62c88968adfea009ed324a41fa6",
+    "docs/premium-ui/acceptance-criteria/items-174-260.json": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac",
+    "docs/premium-ui/reviews/accounts187-current-applied-execution-20261111.json": "38c7737d100ec814b4c048ed52d0771080888631a4475992e4a740cbbef687b3",
+    "docs/premium-ui/reviews/diagnostics189190-current-execution-20261111.json": "bf79c687896b71eb2a37a522fad2304020b2c668027081f24f53f8b717aad74a",
+    "docs/premium-ui/reviews/recycle191-current-applied-execution-20261111.json": "ad9b7409f4c0f67c2e3d3461cbe787155d1b2018060b8267ba43b5530f16020a",
+    "docs/premium-ui/reviews/original185-current-compatibility-acceptance-20261111.json": "05b51b8db652dd97435919239f8a64eeada3f011709dd2aaa512e6e148c07435"
+  },
+  "findings": [
+    {
+      "result": "pass",
+      "finding": "All18 navigation views other than the guide itself have explicitly allowlisted guide-view destinations. Nine workflow article anchors have h3 headings; nine admin destinations have real h4 headings under the Admin Tools h3. Existing10 guide-map destinations remain allowlisted."
+    },
+    {
+      "result": "pass",
+      "finding": "The contextual control is a native anchor with href, target=_blank and rel=noopener noreferrer. Its accessible name includes the section and new-tab disclosure. No click handler replaces the working view or serializes draft state; preserving the existing tab is the intended return route. Browser dirty-draft preservation still requires executed evidence."
+    },
+    {
+      "result": "pass",
+      "finding": "setHeader derives the destination from a fixed active-view allowlist, removes query parameters and replaces the entire hash. No record IDs, filenames, entered search terms or draft values enter the generated guide URL."
+    },
+    {
+      "result": "pass",
+      "finding": "revealGuideSection checks active user-guide view and connected view-root containment, targets h3 or h4 with programmatic tabindex=-1, cancels restoration and focuses without intermediate scroll before revealing the section. This supports meaningful keyboard landing and does not add every heading to sequential tab order."
+    },
+    {
+      "result": "pass",
+      "finding": "The guide introduction explicitly explains the separate guide tab and closing it to return. Neutral Operating guide copy replaces the prior No-brainer operating guide wording."
+    },
+    {
+      "result": "pass",
+      "finding": "The new CSS scopes help-link behavior, explicitly respects hidden, permits wrapping, supplies minimum44px height and suppresses the help control in print. Existing topbar flex-wrap and min-width rules remain. h4 styling uses defined light/dark color tokens and retains the previous strong-label spacing."
+    },
+    {
+      "result": "pass",
+      "finding": "Accounts wording matches existing create-role options and recovery controls, and avoids promising activation or role-edit controls. Unit wording correctly separates Add unit registry creation from monthly postings, matching the current More/Manage units labels. Past-duty step labels match the implemented shared import workflow."
+    },
+    {
+      "result": "pass",
+      "finding": "Diagnostics guidance correctly identifies Shareable diagnostics JSON and does not equate counts with service health. Recycle guidance identifies batch labels, restore conflicts, separate permanent-delete confirmation and read-only refresh. Limits and Compute Settings labels were cross-read against current source, including Save limits, Device preferences and Test Device."
+    },
+    {
+      "result": "bounded_observation",
+      "finding": "Viewed the existing V2 Chromium320light accounts screenshot: focused Login Accounts heading has a visible outline, body copy wraps within the card, and admin task cards are readable. This image is from a run with a failed overall fixture initialization report and does not establish a passing matrix or entire-page geometry."
+    }
+  ],
+  "blocking_static_findings": [],
+  "acceptance_remaining": [
+    "193 requires terminal observed task-to-help navigation outcomes tied to the applied build, fixture role and state; this review ran no browsers.",
+    "194 requires revised instructions matched to verified implemented states. Limits and Compute instructions have source support but still need the requested fresh read-only rendering evidence. The inherited detailed scheduling instructions are not newly certified by this review.",
+    "Current production source remains the pre-integration baseline at review time. Staged source/typecheck/API parity does not prove integrated runtime behavior.",
+    "Native screen-reader announcement, physical-device behavior and native zoom were not performed. Source-level focus semantics are not an accessibility conformance certification."
+  ],
+  "nonblocking_followups": [
+    "The visible Section help label does not itself disclose the new-tab behavior; the accessible name and guide introduction do. Consider a visible new-tab indicator or concise visible disclosure as a further usability refinement after runtime checks.",
+    "Public help is discoverable for restricted admin sections inside the user guide. It does not provide operational controls or change permission checks; this review does not assess server authorization."
+  ],
+  "actions_performed": "Read staged/current source, manifest and acceptance definitions; cross-read implemented control labels and prior verification-reference headers; inspected one existing screenshot. Wrote this report only. No product, ledger, old evidence, browser/build or backend edits."
+}

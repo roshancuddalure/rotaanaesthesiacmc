@@ -39,7 +39,7 @@ async function compiledModule(filename) {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 },
   }).outputText.replace('"./services/api"', JSON.stringify(apiModule))
     .replace('"./member-workspace"', JSON.stringify(workspaceModule));
-  for (const local of ["ui", "member-import", "audit-time", "member-presentation", "import-review-presentation", "decorative-icons"]) {
+  for (const local of ["ui", "member-import", "audit-time", "member-presentation", "import-review-presentation", "decorative-icons", "history-filter"]) {
     if (compiled.includes(`"./${local}"`))
       compiled = compiled.replace(`"./${local}"`, JSON.stringify(await compiledModule(`${local}.ts`)));
   }
@@ -53,7 +53,9 @@ const historyUi = await controller("member-import-history.ts");
 const pastUi = await controller("past-duties.ts");
 const profileUi = await controller("member-profile.ts");
 const click = (host, action) => host.onclick({ target: { closest: () => ({ dataset: { mi: action } }) } });
-const change = (host, dataset, extra = {}) => host.onchange({ target: { dataset, ...extra } });
+const change = (host, dataset, extra = {}) => host.onchange({ target: { dataset,
+  hasAttribute: name => name.startsWith("data-") && Object.hasOwn(dataset,
+    name.slice(5).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())), ...extra } });
 // Apply stays clickable; a blocked import shows the reason next to the button instead.
 const canApply = host => host.innerHTML.includes('data-mi="apply"') && !host.innerHTML.includes("import-apply-blocker");
 
@@ -111,14 +113,30 @@ test("import history displays prior batches and readable source changes", async 
   const detail = { innerHTML: "" };
   const status = { textContent: "" };
   const button = { dataset: { memberBatch: "batch-id" }, disabled: false };
+  const row = { dataset: { memberHistoryRow: "batch-id" }, hidden: false };
+  const search = { value: "", focus() {} };
+  const matches = { textContent: "" };
+  const noMatches = { hidden: true };
+  const detailContext = { textContent: "", hidden: true };
+  const detailRetry = { hidden: true, disabled: false };
+  const controls = new Map([
+    ["[data-member-history-search]", search],
+    ["[data-member-history-matches]", matches],
+    ["[data-member-history-no-matches]", noMatches],
+    ["[data-member-history-detail-filter-context]", detailContext],
+    ["[data-member-history-detail-retry]", detailRetry],
+    ["[data-member-history-detail]", detail],
+    ["[data-member-history-status]", status],
+  ]);
   const host = { innerHTML: "", isConnected: true,
-    querySelector: selector => selector.includes("-detail") ? detail : status,
-    querySelectorAll: () => [button] };
+    querySelector: selector => controls.get(selector) ?? null,
+    querySelectorAll: selector => selector === "[data-member-history-row]" ? [row]
+      : selector === "[data-member-batch]" ? [button] : [] };
   globalThis.memberApi = {
     history: async () => [{ id: "batch-id", filename: "members.csv", status: "completed",
       completed_at: "2026-10-12T06:00:00Z", actor: "Department Admin", sheet: "CSV",
       counts: { update: 1 }, call_changes_confirmed: true }],
-    detail: async () => ({ batch: { filename: "members.csv", call_changes_confirmed: true },
+    detail: async () => ({ batch: { id: "batch-id", filename: "members.csv", call_changes_confirmed: true },
       rows: [{ row: 2, sheet: "CSV", raw: { name: "Existing Doctor", call_level: "second" },
         normalized: { name: "Existing Doctor", call_level: "2ND_CALL" }, action: "update",
         changes: { call_level: { from: "1ST_CALL", to: "2ND_CALL" } }, errors: [] }] }),
@@ -126,7 +144,9 @@ test("import history displays prior batches and readable source changes", async 
   await historyUi.mountMemberImportHistory(host);
   assert.match(host.innerHTML, /members.csv/);
   assert.match(host.innerHTML, /Department Admin/);
-  await host.onclick({ target: { closest: () => button } });
+  assert.equal(matches.textContent, "1 of 1 returned imports shown.");
+  assert.equal(row.hidden, false);
+  await host.onclick({ target: { closest: selector => selector === "[data-member-batch]" ? button : null } });
   assert.match(detail.innerHTML, /1ST_CALL.*2ND_CALL/s);
   assert.match(detail.innerHTML, /explicitly approved/);
   assert.equal(button.disabled, false);
@@ -165,7 +185,8 @@ test("past-duty corrections need approval and update visible coverage after appl
       return { counts: preview.counts };
     },
   };
-  const clickPast = action => host.onclick({ target: { closest: () => ({ dataset: { past: action } }) } });
+  const clickPast = action => host.onclick({ target: { closest: selector =>
+    selector === "[data-past], [data-past-batch]" ? { dataset: { past: action } } : null } });
   const canApplyPast = () => host.innerHTML.includes('data-past="apply"') && !host.innerHTML.includes("import-apply-blocker");
   await pastUi.mountPastDuties(host);
   assert.match(host.innerHTML, /accept=".xls,.xlsx"/);

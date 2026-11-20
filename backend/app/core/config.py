@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     optimizer_gpu_enabled: bool = True
     rota_intelligence_enabled: bool = True
     extra_duty_layer_enabled: bool = True
+    # Enable only after migration and reviewed OT setup; old deployments remain usable.
+    ot_calendar_enabled: bool = False
 
     model_config = SettingsConfigDict(
         env_file=(REPO_DIR / ".env", BACKEND_DIR / ".env", ".env"),

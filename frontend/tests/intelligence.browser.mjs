@@ -103,12 +103,13 @@ try {
   await page.locator('[data-instruction]').fill('Balance weekend duties fairly. Preserve existing assignments.');
   const [modelResponse]=await Promise.all([page.waitForResponse(r=>r.url().includes('11437/suggest')&&r.request().method()==='POST'),page.getByRole('button',{name:'Ask local assistant'}).click()]);
   const modelResult=await modelResponse.json();
-  await page.getByText('Local suggestion received. Review before using.').waitFor({timeout:100000});
+  await page.getByText('Local suggestion received. Review its reference sources before using.').waitFor({timeout:100000});
   assert.equal(instruction(),'Balance weekend duties fairly. Preserve existing assignments.');
   assert.equal((await fixture()).assignments,0);
   const text=await page.locator('article').innerText();
   assert.match(text,/Suggested mode: balanced/);
   await page.locator('[data-use-suggestion]').click();
+  await page.locator('[data-mode]').waitFor();
   assert.equal(await page.locator('[data-mode]').inputValue(),'balanced');
   assert.deepEqual(errors,[]);
   const runtime=await(await fetch('http://127.0.0.1:11436/api/ps')).json();

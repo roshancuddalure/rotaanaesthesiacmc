@@ -1,0 +1,140 @@
+{
+  "starts": [
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "server",
+      "mode": "balanced",
+      "seconds": 30
+    },
+    {
+      "month": "2026-05",
+      "engine": "local_gpu",
+      "mode": "balanced",
+      "seconds": 30
+    }
+  ],
+  "validations": 6,
+  "cancels": 6,
+  "proof": {
+    "value": {
+      "server_ms": 41.69999998807907,
+      "local_ms": 39.80000001192093,
+      "month": "2026-05",
+      "context_hash": "learning-same",
+      "parity": true,
+      "at": 1795119740702,
+      "version": 2,
+      "adapter": "Synthetic GPU",
+      "signature": "synthetic-signature",
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "workload": "optimizer",
+      "kernel_version": 3,
+      "configuration": "{\"version\":1,\"mode\":\"balanced\",\"seconds\":30,\"locked_slots\":[],\"repair_slots\":[],\"preferences\":[]}",
+      "stage_timings": [
+        {
+          "engine": "server",
+          "total_ms": 103.40000003576279,
+          "device_verification_ms": 0,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 52.5,
+          "http_and_server_ms": 103.40000003576279
+        },
+        {
+          "engine": "local_gpu",
+          "total_ms": 46.10000002384186,
+          "device_verification_ms": 0.6000000238418579,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 20.69999998807907,
+          "http_and_server_ms": 45.5
+        },
+        {
+          "engine": "local_gpu",
+          "total_ms": 37.60000002384186,
+          "device_verification_ms": 0.19999998807907104,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 18.200000047683716,
+          "http_and_server_ms": 37.40000003576279
+        },
+        {
+          "engine": "server",
+          "total_ms": 35.59999996423721,
+          "device_verification_ms": 0,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 16.599999964237213,
+          "http_and_server_ms": 35.59999996423721
+        },
+        {
+          "engine": "server",
+          "total_ms": 41.69999998807907,
+          "device_verification_ms": 0,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 16.399999976158142,
+          "http_and_server_ms": 41.69999998807907
+        },
+        {
+          "engine": "local_gpu",
+          "total_ms": 39.80000001192093,
+          "device_verification_ms": 0.30000001192092896,
+          "gpu_initialization_ms": 0,
+          "gpu_encode_upload_ms": 0,
+          "gpu_dispatch_readback_ms": 0,
+          "cpu_verification_ms": 0,
+          "gpu_total_ms": 0,
+          "final_validation_ms": 13.5,
+          "http_and_server_ms": 39.5
+        }
+      ]
+    },
+    "configurationMatches": true
+  },
+  "errors": [],
+  "visible_scope": true,
+  "width": 390,
+  "overflow": false,
+  "serious_critical_axe": 0,
+  "scope": "Actual comparison UI with synthetic worker/completed API results. Proves options, six alternating reports, validation-inclusive wall timing, cleanup and recorded configuration; no physical GPU speedup or actual scheduling result."
+}

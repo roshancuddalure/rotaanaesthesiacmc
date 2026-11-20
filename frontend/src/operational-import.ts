@@ -1,4 +1,5 @@
 import { decorativeIcon } from "./decorative-icons";
+import { otImpact, renderOtImpact } from "./leave-impact-view";
 import { importRowAttention, importPreviewModeText, importPreviewAuthorityText, updateImportPreviewAuthority } from "./import-review-presentation";
 import { request, requestMultipartJSON, type DepartmentMember } from "./services/api";
 import { workspaceDialog, openMemberWorkspace } from "./member-workspace";
@@ -18,6 +19,7 @@ type Preview = {
   fields: string[];
   rows: Row[];
   replacement_scope: Row[];
+  ot_impact?: unknown;
 };
 const esc = (value: unknown) =>
   String(value ?? "").replace(
@@ -436,6 +438,9 @@ export async function openOperationalImport(
   async function runPreview(initiator?: HTMLElement) {
     if (!file || busy) return;
     busy = true;
+    previewDirty = true;
+    dialog.querySelector<HTMLButtonElement>('[data-apply]')?.setAttribute('aria-disabled', 'true');
+    updateImportPreviewAuthority(dialog, true);
     const alive = () => dialog.isConnected && dialog.open;
     const initiatedWithFocus = Boolean(initiator && document.activeElement === initiator);
     let focusMoved = false;
@@ -465,6 +470,7 @@ export async function openOperationalImport(
     );
     try {
       const result = await requestMultipartJSON<Preview>(`/api/v1/import-review/${kind}/preview`, data);
+      if (kind === 'leave') otImpact(result.ot_impact);
       if (submittedVersion !== draftVersion || !alive())
         throw new Error(
           "Inputs changed while the preview was loading. Refresh the preview.",
@@ -604,7 +610,7 @@ export async function openOperationalImport(
             preview!.rows.map((r) => ({ key: r.key, issues: r.issues, label: `row ${r.source.row} “${r.values.member_name ?? ""}”` })),
             excluded,
           );
-    root.innerHTML = `<h3>Resolve and review</h3><section aria-label="Server import preview scope"><p>${esc(importPreviewModeText("records", preview.mode))}</p><p>Month returned by preview: <strong>${esc(preview.month || "Not returned")}</strong>. ${preview.rows.length} ${kind === "units" ? "posting" : "leave"} rows returned for review.${preview.mode === "replace_month" ? Array.isArray(preview.replacement_scope) ? ` ${preview.replacement_scope.length} existing imported records returned in replacement scope; inspect that scope below.` : " Replacement scope was not returned." : ""}</p><p data-import-preview-authority>${importPreviewAuthorityText(previewDirty)}</p></section>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${Array.isArray(preview.replacement_scope) ? preview.replacement_scope.length : "Not returned"} existing records affected by replacement</summary>${(Array.isArray(preview.replacement_scope) ? preview.replacement_scope : []).map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager"><label>Rows per page <select data-review-page-size aria-label="Rows per page">${[10,20,30].map(size => `<option ${size === pageSize ? "selected" : ""}>${size}</option>`).join("")}</select></label><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.max(1, Math.ceil(preview.rows.length / pageSize))}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * pageSize >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
+    root.innerHTML = `<h3>Resolve and review</h3><section aria-label="Server import preview scope"><p>${esc(importPreviewModeText("records", preview.mode))}</p><p>Month returned by preview: <strong>${esc(preview.month || "Not returned")}</strong>. ${preview.rows.length} ${kind === "units" ? "posting" : "leave"} rows returned for review.${preview.mode === "replace_month" ? Array.isArray(preview.replacement_scope) ? ` ${preview.replacement_scope.length} existing imported records returned in replacement scope; inspect that scope below.` : " Replacement scope was not returned." : ""}</p><p data-import-preview-authority>${importPreviewAuthorityText(previewDirty)}</p></section>${kind === "leave" ? renderOtImpact(otImpact(preview.ot_impact), "Before import", "After proposed import") : ""}${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${Array.isArray(preview.replacement_scope) ? preview.replacement_scope.length : "Not returned"} existing records affected by replacement</summary>${(Array.isArray(preview.replacement_scope) ? preview.replacement_scope : []).map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager"><label>Rows per page <select data-review-page-size aria-label="Rows per page">${[10,20,30].map(size => `<option ${size === pageSize ? "selected" : ""}>${size}</option>`).join("")}</select></label><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.max(1, Math.ceil(preview.rows.length / pageSize))}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * pageSize >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
     // One-click member choice: save it and re-run the preview so the row is checked again.
     root.querySelectorAll<HTMLButtonElement>("[data-pick-member]").forEach(
       (button) =>

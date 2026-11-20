@@ -5,6 +5,7 @@ from app.models.compute import RotaComputeJob
 from app.models.intelligence import RotaTeachingExample, RotaLearningVersion
 from app.models.call_cluster import CallCluster, PersonCallClusterMembership
 from app.models.leave import LeaveRequest
+from app.models.ot_calendar import OtCalendar, OtCalendarVersion
 from app.models.imports import ImportBatch, ImportSourceRecord, ImportWarning
 from app.models.mappings import AdminMapping
 from app.models.normalization import ReferenceValue, NormalizationEvent, ImportReviewBatch, MemberResolutionRule
@@ -34,6 +35,8 @@ from app.models.rules import RotaRuleVersion, RuleSetting, RuleVersion
 from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
+    "OtCalendar",
+    "OtCalendarVersion",
     "DeletedRecord",
     "RotaComputeJob",
     "ReferenceValue",

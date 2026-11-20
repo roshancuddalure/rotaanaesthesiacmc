@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="14.960" timestamp="2026-11-14T14:06:03.982733+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_snapshot_freshness" name="test_lock_refreshes_clean_unit_fields_but_preserves_unrelated_pending_notes" time="0.588"><failure message="assert 0 == 3&#10; +  where 0 = &lt;app.models.unit.Unit object at 0x000001F0F12B5A90&gt;.minimum_free_people">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001F0F12B5950&gt;, &lt;app.models.unit.Unit object at 0x000001F0F12B5A90&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001F0F1AB8450&gt;], &lt;app.models.rota.DutySlot object at 0x000001F0F170B750&gt;)
+
+    def test_lock_refreshes_clean_unit_fields_but_preserves_unrelated_pending_notes(environment):
+        db, unit, _people, _target = environment
+        unit.notes = "Unrelated unsaved administrator note"
+        with Session(db.get_bind()) as editor:
+            current = editor.get(Unit, unit.id)
+            current.minimum_free_people = 3
+            editor.commit()
+        assert unit.minimum_free_people == 0
+        def refuse_flush(*args):
+            pytest.fail("Acquiring/refreshing scheduling inputs flushed an unrelated edit")
+        event.listen(db, "before_flush", refuse_flush)
+        try:
+            with db.no_autoflush:
+                lock_operational_inputs(db)
+&gt;               assert unit.minimum_free_people == 3
+E               assert 0 == 3
+E                +  where 0 = &lt;app.models.unit.Unit object at 0x000001F0F12B5A90&gt;.minimum_free_people
+
+tests\test_ot_snapshot_freshness.py:30: AssertionError</failure></testcase><testcase classname="tests.test_ot_snapshot_freshness" name="test_stale_loaded_calendar_cannot_approve_manual_duty_after_another_session_edit" time="0.953"><failure message="Failed: DID NOT RAISE &lt;class 'app.services.rota_assignment.RotaAssignmentError'&gt;">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001F0F16E8450&gt;, &lt;app.models.unit.Unit object at 0x000001F0F1741E10&gt;, [...10&gt;, &lt;app.models.person.Person object at 0x000001F0F171E310&gt;], &lt;app.models.rota.DutySlot object at 0x000001F0F1C61510&gt;)
+
+    def test_stale_loaded_calendar_cannot_approve_manual_duty_after_another_session_edit(environment):
+        db, unit, people, target = environment
+        cached = db.query(OtCalendar).filter_by(unit_id=unit.id).one()
+        old_revision = cached.revision
+        with Session(db.get_bind()) as editor:
+            current = editor.get(OtCalendar, cached.id)
+            config = deepcopy(current.configuration)
+            for row in config["weekly"]:
+                row["bands"][0]["minimum"] = row["bands"][0]["target"] = 4
+            current.configuration, current.revision = config, revision(config)
+            editor.commit()
+        assert cached.revision == old_revision
+&gt;       with pytest.raises(RotaAssignmentError) as failure:
+E       Failed: DID NOT RAISE &lt;class 'app.services.rota_assignment.RotaAssignmentError'&gt;
+
+tests\test_ot_snapshot_freshness.py:49: Failed</failure></testcase></testsuite></testsuites>

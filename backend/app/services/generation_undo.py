@@ -1,6 +1,7 @@
 """Explicit reviewed generation reversal, only while the exact applied state is unchanged."""
 
 from datetime import date, datetime
+from types import SimpleNamespace
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -29,6 +30,21 @@ def revert(db, job, revision, user, dry_run=False):
             409,
             "Rota data or rules changed after apply. Review and repair the current draft instead of automatic reversal.",
         )
+    from app.core.config import settings
+    if settings.ot_calendar_enabled and not job.state.get("template"):
+        from app.services.ot_restoration import check_restored_duties, restoration_failure_message
+        proposals = []
+        for original in job.state.get("intelligence", {}).get("originals", {}).values():
+            assignment = db.get(DutyAssignment, UUID(original["assignment_id"]))
+            if assignment is None:
+                raise HTTPException(409, "An original repaired assignment is unavailable")
+            proposals.append(SimpleNamespace(id=assignment.id, person_id=assignment.person_id,
+                duty_slot=assignment.duty_slot, status=original.get("status", "assigned")))
+        with db.no_autoflush:
+            report = check_restored_duties(db, proposals, removed_ids=result.get("assignment_ids", []))
+        if report is not None:
+            raise HTTPException(409, {"code": "ot_restoration_blocked", "message": restoration_failure_message(report),
+                                      "ot_protection": report})
     if dry_run:
         return {**compute.serialize(job), "reversal_validated": True}
     if job.state.get("template"):

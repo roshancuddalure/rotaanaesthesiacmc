@@ -28,6 +28,8 @@ from typing import Any
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from uuid import UUID
+from uuid import NAMESPACE_URL, uuid5
+from types import SimpleNamespace
 from time import perf_counter
 
 import xlsxwriter
@@ -45,7 +47,8 @@ from app.models import (
     RotaAutoFillEvent,
     Unit,
 )
-from app.services.leave import ACTIVE_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
+from app.services.leave import date_range, leave_requests_for_month, month_bounds
+from app.services.leave_semantics import duty_leave_blocks, is_active
 from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
 from app.services.rota_eligibility import call_level_missing_message, effective_call_levels
 from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
@@ -214,19 +217,8 @@ def slot_bounds(day: date, rule: DutyRule) -> tuple[datetime, datetime]:
 
 
 def leave_blocks_rule(leave_slot: str, rule: DutyRule) -> bool:
-    slot = leave_slot.upper()
-    if rule.is_24hr:
-        return True
-    start_hour = parse_rule_time(rule.start_time).hour
-    if slot == "FULL_DAY":
-        return True
-    if slot == "AM":
-        return start_hour < 12
-    if slot == "PM":
-        return start_hour >= 12
-    if slot == "NIGHT":
-        return start_hour >= 18 or start_hour < 8
-    return True
+    return duty_leave_blocks(leave_slot, is_24hr=rule.is_24hr,
+                             start_hour=0 if rule.is_24hr else parse_rule_time(rule.start_time).hour)
 
 
 def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[PersonPosting]:
@@ -305,7 +297,7 @@ def leave_by_day_and_person(db: Session, month: str) -> dict[date, dict[UUID, li
     leaves_by_day: dict[date, dict[UUID, list[LeaveRequest]]] = {}
     starts_on, ends_on = month_bounds(month)
     for leave in leave_requests_for_month(db, month):
-        if leave.status.lower() not in ACTIVE_LEAVE_STATUSES:
+        if not is_active(leave.status):
             continue
         first = max(leave.starts_on, starts_on)
         last = min(leave.ends_on, ends_on)
@@ -760,6 +752,7 @@ def optimize_template_slot_layout(
     rules: RotaPhaseOneRules,
     postings: list[PersonPosting],
     leaves: dict[date, dict[UUID, list[LeaveRequest]]],
+    capacity_validator=None,
 ) -> tuple[int, list[RotaTemplateGenerationEvent]]:
     """Greedy "vertical shuffle": repeatedly apply the best swap of units between two slots of
     the same duty on different days that lowers ``template_pattern_score`` (same-unit
@@ -880,14 +873,19 @@ def optimize_template_slot_layout(
                 first.unit_id = second_unit.id
                 second.unit = first_unit
                 second.unit_id = first_unit.id
-                candidate_score = template_pattern_score(all_slots, rules_by_key)
-                first.unit = original_first_unit
-                first.unit_id = first_unit.id
-                second.unit = original_second_unit
-                second.unit_id = second_unit.id
+                try:
+                    candidate_score = template_pattern_score(all_slots, rules_by_key)
+                    capacity_clear = True
+                    if candidate_score < current_score and capacity_validator is not None:
+                        capacity_clear = capacity_validator(all_slots)["status"] == "feasible"
+                finally:
+                    first.unit = original_first_unit
+                    first.unit_id = first_unit.id
+                    second.unit = original_second_unit
+                    second.unit_id = second_unit.id
 
                 improvement = current_score - candidate_score
-                if improvement <= 0:
+                if improvement <= 0 or not capacity_clear:
                     continue
                 if best_swap is None or improvement > best_swap[0]:
                     best_swap = (improvement, first, second, after_first, after_second)
@@ -979,6 +977,7 @@ def choose_balanced_unit(
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int],
     allocation_fairness_policy: str,
     numeric_selector=None,
+    ot_assessment=None,
 ) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
     """Pick the unit that should own one (day, duty) slot.
 
@@ -1026,6 +1025,12 @@ def choose_balanced_unit(
             ),
             minimum_free_people=unit_minimum_free_people_for_call(unit, required_calls, rules),
         )
+        if ot_assessment is not None:
+            protection = ot_assessment(unit, day, rule)
+            pressure["ot_capacity"] = protection
+            if protection["status"] != "feasible":
+                pressure.update(status="hard_block", severity="error",
+                    reason=f"{pressure['reason']} OT capacity: {protection['reason']}")
         hard_blocked = pressure["status"] == "hard_block"
         warning = pressure["status"] == "warning"
         allocations.append(
@@ -1051,9 +1056,13 @@ def choose_balanced_unit(
         )
     if not allocations:
         return None, []
-    safe_allocations = [allocation for allocation in allocations if not allocation.hard_blocked]
+    ot_eligible = [allocation for allocation in allocations
+                   if allocation.pressure.get("ot_capacity", {}).get("status", "feasible") == "feasible"]
+    if not ot_eligible:
+        return None, allocations
+    safe_allocations = [allocation for allocation in ot_eligible if not allocation.hard_blocked]
     is_weekend = day.weekday() >= 5
-    comparison_allocations = safe_allocations if safe_allocations else allocations
+    comparison_allocations = safe_allocations if safe_allocations else ot_eligible
     comparison_unit_ids = [allocation.unit.id for allocation in comparison_allocations]
     comparison_units = len(comparison_unit_ids)
     total_target_weights = allocation_target_weights(
@@ -1230,7 +1239,7 @@ def choose_balanced_unit(
         return selected, allocations
 
     selected = min(
-        allocations,
+        ot_eligible,
         key=lambda allocation: (
             forced_damage_score(allocation)[0],
             unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
@@ -1241,7 +1250,7 @@ def choose_balanced_unit(
             allocation.unit.name,
         ),
     )
-    selected = numeric_choice(allocations, lambda allocation: (
+    selected = numeric_choice(ot_eligible, lambda allocation: (
             forced_damage_score(allocation)[0],
             unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
             unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
@@ -1282,6 +1291,31 @@ def generate_empty_template(
         raise ValueError("Select at least one included unit before generating a template")
     if not duties:
         raise ValueError("Select at least one active duty rule before generating a template")
+    from app.core.config import settings
+    if settings.ot_calendar_enabled:
+        from app.models import RotaPeriod, RuleVersion
+        from app.services.rota_compute import lock_operational_inputs
+        from app.services.rota_rules import read_phase_one_rules, PHASE_ONE_RULE_VERSION_NAME
+        period_id, scope_id = period.id, scope.id
+        lock_operational_inputs(db)
+        # Bootstrap above may commit. Read every authoritative planning value
+        # again under the final lock, without first-run writes or old rule DTOs.
+        with db.no_autoflush:
+            period = db.scalar(select(RotaPeriod).where(RotaPeriod.id == period_id))
+            scope = db.scalar(select(MonthlyGenerationScope).where(MonthlyGenerationScope.id == scope_id)
+                .options(selectinload(MonthlyGenerationScope.units)))
+            if period is None or period.status.lower() != "draft":
+                raise ValueError("Only an unpublished draft month can generate a template")
+            if scope is None or not scope.is_locked:
+                raise ValueError("Monthly unit scope changed; reload and lock it before generation")
+            rules = read_phase_one_rules(db)
+            rule_version = db.scalar(select(RuleVersion).where(RuleVersion.name == PHASE_ONE_RULE_VERSION_NAME))
+            if rules is None or rule_version is None:
+                raise ValueError("Saved Rota Rules changed; reload before template generation")
+            duties = selected_duty_rules(rules, options)
+            units = included_scope_units(scope)
+            if not units or not duties:
+                raise ValueError("The locked month scope or active duty rules changed; reload before generation")
     if options.replace_existing:
         remove_existing_template_slots(db, period.id)
         db.flush()
@@ -1384,6 +1418,34 @@ def generate_empty_template(
     created_slots: list[DutySlot] = []
     events: list[RotaTemplateGenerationEvent] = []
     existing_duties={(slot.duty_date,slot.duty_type) for slot in existing_slots}
+    ot_capacity = None
+    ot_assessment = None
+    layout_capacity = None
+    if settings.ot_calendar_enabled:
+        from app.services.ot_template import TemplateOtCapacity
+        from app.services.rota_safety import ACTIVE_ASSIGNMENT_STATUSES
+
+        def trial_slot(unit, day, rule):
+            starts_at, ends_at = slot_bounds(day, rule)
+            return SimpleNamespace(id=uuid5(NAMESPACE_URL, f"template:{month}:{day}:{rule.key}:{unit.id}"),
+                unit_id=unit.id, duty_date=day, duty_type=rule.key, call_level=required_call_for_rule(rule),
+                starts_at=starts_at, ends_at=ends_at, is_24hr=rule.is_24hr, max_assignees=1)
+
+        def unfilled_layout(layout):
+            return [slot for slot in layout if slot.unit_id is not None and not any(
+                (a.status or "").lower() in ACTIVE_ASSIGNMENT_STATUSES for a in slot.assignments)]
+
+        prospective = [trial_slot(units[0], day, rule) for day in days for rule in duties]
+        ot_capacity = TemplateOtCapacity(db, month, prospective)
+
+        def ot_assessment(unit, day, rule):
+            with db.no_autoflush:
+                return ot_capacity.check([*unfilled_layout([*existing_slots, *created_slots]),
+                                          trial_slot(unit, day, rule)])
+
+        def layout_capacity(layout):
+            with db.no_autoflush:
+                return ot_capacity.check(unfilled_layout(layout))
 
     for day in days:
         day_leaves = leaves.get(day, {})
@@ -1413,22 +1475,38 @@ def generate_empty_template(
                 provisional_post_24hr_counts=provisional_post_24hr_counts,
                 allocation_fairness_policy=options.allocation_fairness_policy,
                 numeric_selector=numeric_selector,
+                ot_assessment=ot_assessment,
             )
             if selected is None:
+                by_unit = {a.unit.id: a for a in allocations}
+                if ot_capacity is not None and allocations:
+                    starts_at, ends_at = slot_bounds(day, rule)
+                    reason = "Unallocated: OT capacity is infeasible or unresolved for every applicable unit."
+                    unresolved = DutySlot(rota_period=period, duty_date=day, duty_type=rule.key,
+                        unit_id=None, call_level=required_call_for_rule(rule), slot_label="Unallocated OT capacity",
+                        starts_at=starts_at, ends_at=ends_at, is_24hr=rule.is_24hr, max_assignees=1,
+                        source=PHASE4_SLOT_SOURCE, template_status=UNRESOLVED, template_reason=reason,
+                        generation_run=run, notes=f"{rule.label}: {reason}")
+                    db.add(unresolved)
+                    created_slots.append(unresolved)
                 for unit in units:
                     reason = "Duty rule is not enabled for this unit."
                     if rule_applies_to_unit(rule, unit):
                         reason = "A matching duty slot already exists."
+                    allocation = by_unit.get(unit.id)
+                    if allocation is not None:
+                        reason = allocation.reason
                     events.append(
                         create_event(
                             run=run,
                             unit=unit,
                             day=day,
                             rule=rule,
-                            action=ACTION_SKIPPED,
-                            severity="warning",
+                            action=ACTION_BLOCKED if allocation is not None else ACTION_SKIPPED,
+                            severity="error" if allocation is not None else "warning",
                             reason=reason,
-                            details={"unit_code": unit.code, "duty_label": rule.label},
+                            details={"unit_code": unit.code, "duty_label": rule.label,
+                                     **(allocation.pressure if allocation is not None else {})},
                         )
                     )
                 continue
@@ -1481,6 +1559,8 @@ def generate_empty_template(
                 ),
             )
             db.add(slot)
+            if ot_capacity is not None:
+                slot.unit_id = unit.id
             created_slots.append(slot)
             existing_keys.add((day, rule.key, label))
             unit_month_counts[unit.id] = unit_month_counts.get(unit.id, 0) + 1
@@ -1645,6 +1725,7 @@ def generate_empty_template(
         rules=rules,
         postings=postings,
         leaves=leaves,
+        capacity_validator=layout_capacity,
     )
     for event in shuffle_events:
         db.add(event)
@@ -1668,6 +1749,13 @@ def generate_empty_template(
                             "layout_refinement":round((perf_counter()-allocation_finished)*1000,2)},
         "layout_engine":"server: stateful safety checks; bounded conservative swaps",
     }
+    if layout_capacity is not None:
+        protection = layout_capacity([*existing_slots, *created_slots])
+        unallocated = sum(slot.unit_id is None for slot in [*existing_slots, *created_slots])
+        run.summary = {**run.summary, "ot_capacity": {**protection,
+            "status": "incomplete" if unallocated else protection["status"],
+            "unallocated_duties": unallocated,
+            "scope": "unit_assigned_template_ot_and_strict_duty_capacity"}}
     if commit:
         db.commit()
     else:

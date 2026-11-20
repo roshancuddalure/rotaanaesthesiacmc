@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="74.914" timestamp="2026-11-19T14:59:43.715454+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_rota_review_export" name="test_selected_proposal_workbook_is_readonly_and_contains_zero_load_members" time="3.235"><failure message="AssertionError: assert {'Spare One',...', 'Unfilled'} == {'Spare One', 'Spare Two'}&#10;  &#10;  Extra items in the left set:&#10;  'Unfilled'&#10;  Use -v to get more diff">compute_db = (&lt;sqlalchemy.orm.session.Session object at 0x000002CFA33D6390&gt;, &lt;app.models.auth.UserAccount object at 0x000002CFA4A8BC10&gt;)
+
+    def test_selected_proposal_workbook_is_readonly_and_contains_zero_load_members(compute_db):
+        db, user = compute_db
+        job = complete(db, user)
+        statements = []
+        def observe(_conn, _cursor, statement, *_):
+            if statement.lstrip().split()[0].upper() in {"INSERT", "UPDATE", "DELETE"}:
+                statements.append(statement)
+        event.listen(db.get_bind(), "before_cursor_execute", observe)
+        try:
+            filename, payload = proposal_export(db, job, job.revision)
+        finally:
+            event.remove(db.get_bind(), "before_cursor_execute", observe)
+        assert statements == []
+        assert filename.endswith(f"-r{job.revision}.xlsx")
+        book = workbook(payload)
+        assert {"Rota Preview", "Assigned Eagle Eye", "Member Workload", "Unfilled", "Optimization Evidence"} &lt;= set(book.sheetnames)
+        assert book["Review Summary"].cell(2, 2).value == "DRAFT FOR REVIEW - NOT PUBLISHED"
+        rows = list(book["Rota Preview"].values)[1:]
+&gt;       assert {r[6] for r in rows} == {d["person_name"] for d in job.state["decisions"] if d.get("person_id")}
+E       AssertionError: assert {'Spare One',...', 'Unfilled'} == {'Spare One', 'Spare Two'}
+E         
+E         Extra items in the left set:
+E         'Unfilled'
+E         Use -v to get more diff
+
+tests\test_rota_review_export.py:43: AssertionError</failure></testcase></testsuite></testsuites>

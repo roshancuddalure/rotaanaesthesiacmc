@@ -88,6 +88,9 @@ class UnitSummaryRead(BaseModel):
     people_with_leave: int
     leave_days: int
     leave_by_call_level: dict[str, int]
+    unresolved_leave_person_dates: int = 0
+    leave_days_basis: str = "Distinct active person-calendar dates during dated unit-board postings; " \
+                            "partial dates are touched dates, not entitlement days. Conflicting units are unresolved."
 
 
 class UnitValidationIssueRead(BaseModel):
@@ -329,6 +332,7 @@ def get_unit_management_month(
                 people_with_leave=int(summaries[unit.id]["people_with_leave"]),
                 leave_days=int(summaries[unit.id]["leave_days"]),
                 leave_by_call_level=dict(summaries[unit.id]["leave_by_call_level"]),
+                unresolved_leave_person_dates=int(summaries[unit.id]["unresolved_leave_person_dates"]),
             )
             for unit in units
         ],

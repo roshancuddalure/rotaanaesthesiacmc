@@ -1,0 +1,98 @@
+{
+  "recorded_at_utc": "2026-11-11T19:33:54.205932+00:00",
+  "reviewer": "/root/recycle191_review_nov12",
+  "scope": "Independent current applied five-file source identity and bounded security/API/permission preservation review. No heavy tests, product edits or formal item acceptance.",
+  "evidence_sha256": {
+    "tmp/review-wave-nov12-integration-before-v1/application.json": "17c7a503142873225dcddbf4a8b8a60cb64c79ce4b1d9921e3a624b53d26444a",
+    "tmp/guidance195-v1/manifest.json": "fd74ecf09368c275460e3e6154734d01c5ef2269ff2639ec91277784f884deee",
+    "tmp/format196-v1/manifest.json": "dce26583830c9f6a0ddf0066f45c0a7a7ad7513188a9014206d9600e0a59e0c6",
+    "tmp/past217-v1/manifest.json": "883bdc4b90e99153e1c979355e6f401ccd701922668984d705ae9e84092f4c79",
+    "docs/premium-ui/reviews/role197-current-navigation-execution-20261112.json": "325af283148edf910687a621f94d3236cf0fd8980eade2655e6fe08dd9dd309c",
+    "docs/premium-ui/reviews/guidance195-format196-independent-preservation-20261112.json": "8c695466e59b171e9fae27847159dced74ce272a537fd6f263c5adc2239b562b",
+    "docs/premium-ui/reviews/past217-multipart-independent-diagnostic-20261112.json": "232fa6a0bf07b7ddae1456ef6108acb1a9fcba87c461113c629c15fa3901ad6d",
+    "tmp/guidance195-v1/main.ts": "6de3342f30333498e9febc161adf87f7390e692e5c195e3af14094fc52c2f4f7",
+    "tmp/format196-v1/limits.ts": "d032b489814c6b5dc6ec7038af2f491e2dbce5815eba5a3744849f44fef61df8",
+    "tmp/format196-v1/superadmin.ts": "55e7a34e8bcae001b7d8b805241ada151edb5e890ecf2efeed2cd326019bb636",
+    "tmp/format196-v1/extra-duty.ts": "d2ef57f8c7e6e4e0d9c7b05e8f0463e6e9842cbdbd2b16b6664a5c9eb4990b97",
+    "tmp/past217-v1/past-duties.ts": "479c959954b1ffd85d574a662ae4d185cab170ed742618934306646340624e6e",
+    "frontend/src/main.ts": "6de3342f30333498e9febc161adf87f7390e692e5c195e3af14094fc52c2f4f7",
+    "frontend/src/limits.ts": "d032b489814c6b5dc6ec7038af2f491e2dbce5815eba5a3744849f44fef61df8",
+    "frontend/src/superadmin.ts": "55e7a34e8bcae001b7d8b805241ada151edb5e890ecf2efeed2cd326019bb636",
+    "frontend/src/extra-duty.ts": "d2ef57f8c7e6e4e0d9c7b05e8f0463e6e9842cbdbd2b16b6664a5c9eb4990b97",
+    "frontend/src/past-duties.ts": "479c959954b1ffd85d574a662ae4d185cab170ed742618934306646340624e6e",
+    "frontend/src/session-role.ts": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+    "frontend/src/navigation-history.ts": "1927c9196352c92e46619fa4cbd8075bcabd34febb2b0e84403d536e5623988e",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "current_candidate_identity": {
+    "frontend/src/main.ts": {
+      "current_sha256": "6de3342f30333498e9febc161adf87f7390e692e5c195e3af14094fc52c2f4f7",
+      "candidate_sha256": "6de3342f30333498e9febc161adf87f7390e692e5c195e3af14094fc52c2f4f7",
+      "exact_candidate_identity": true
+    },
+    "frontend/src/limits.ts": {
+      "current_sha256": "d032b489814c6b5dc6ec7038af2f491e2dbce5815eba5a3744849f44fef61df8",
+      "candidate_sha256": "d032b489814c6b5dc6ec7038af2f491e2dbce5815eba5a3744849f44fef61df8",
+      "exact_candidate_identity": true
+    },
+    "frontend/src/superadmin.ts": {
+      "current_sha256": "55e7a34e8bcae001b7d8b805241ada151edb5e890ecf2efeed2cd326019bb636",
+      "candidate_sha256": "55e7a34e8bcae001b7d8b805241ada151edb5e890ecf2efeed2cd326019bb636",
+      "exact_candidate_identity": true
+    },
+    "frontend/src/extra-duty.ts": {
+      "current_sha256": "d2ef57f8c7e6e4e0d9c7b05e8f0463e6e9842cbdbd2b16b6664a5c9eb4990b97",
+      "candidate_sha256": "d2ef57f8c7e6e4e0d9c7b05e8f0463e6e9842cbdbd2b16b6664a5c9eb4990b97",
+      "exact_candidate_identity": true
+    },
+    "frontend/src/past-duties.ts": {
+      "current_sha256": "479c959954b1ffd85d574a662ae4d185cab170ed742618934306646340624e6e",
+      "candidate_sha256": "479c959954b1ffd85d574a662ae4d185cab170ed742618934306646340624e6e",
+      "exact_candidate_identity": true
+    }
+  },
+  "integration_delta_exactly_five_declared_files": [
+    "frontend/src/extra-duty.ts",
+    "frontend/src/limits.ts",
+    "frontend/src/main.ts",
+    "frontend/src/past-duties.ts",
+    "frontend/src/superadmin.ts"
+  ],
+  "past217": {
+    "four_declared_replacements_reconstruct_exact_current_bytes": true,
+    "assessment": "Only four existing table containers gain role=region, tabindex=0 and meaningful aria-label. Dynamic batch identifier uses existing escape(id). No table row, upload File, FormData, approval, selected draft, request/payload, event handler or export content changes. Tabindex introduces deliberate native focus stops and requires applied focus/scroll/exit checks; no keyboard trap can be excluded by static review alone."
+  },
+  "guidance195": {
+    "six_static_guide_replacements_reconstruct_exact_current_bytes": true,
+    "assessment": "No role matrix, navigation handler, route, event binding, API expression or authorization logic changed. New strings reside in existing User Guide presentation only."
+  },
+  "format196": {
+    "current_identity_matches_independently_reviewed_staged_candidates": true,
+    "assessment": "Three audit display formatter substitutions/imports remain exactly the reviewed staged bytes. Existing escaped output and version/batch identifiers, permission checks and transport expressions retained; current source does not imply all calendar/numeric contexts are covered."
+  },
+  "role197_applicability": {
+    "prior_execution_contexts": 24,
+    "prior_direct_route_checks": 216,
+    "main_baseline_matches_prior_execution": true,
+    "role_dependency_hashes_hold": {
+      "frontend/src/session-role.ts": true,
+      "frontend/src/navigation-history.ts": true,
+      "frontend/src/services/api.ts": true
+    },
+    "static_scope_bridge": "The only main delta since prior24context/216hash-route run is the independently reconstructed six static User Guide strings. Session-role, navigation-history and service API are unchanged. Thus reviewed navigation/permission source logic remains identical; original whole-source execution hash is historical and this static bridge is not a new runtime run.",
+    "still_unproven": [
+      "Applied full-app browser regression after combined integration",
+      "Refused protected mutation safe context",
+      "In-place session role-change menu rebuild",
+      "Every protected row/profile action"
+    ]
+  },
+  "required_next_verification": [
+    "Fresh source-held unit suite and production build after this five-file integration",
+    "Normal-resolution applied195 guidance/control outcomes",
+    "Normal-resolution applied196 audit/date/missing/malformed/timezone display checks",
+    "Normal-resolution applied217 actual keyboard focus/scroll/exit plus upload FormData identity with honest WebKit inspector limitation",
+    "Current navigation smoke or explicit scoped source bridge retained alongside historical197 execution, not silent rehashing"
+  ],
+  "recommendation": "No source-level backend/API/permission/scheduling/persistence/export regression found in bounded five-file delta. Formal195/196/197/217 acceptance remains open until full requirement-specific evidence is met."
+}

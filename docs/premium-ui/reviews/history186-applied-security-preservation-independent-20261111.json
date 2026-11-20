@@ -1,0 +1,147 @@
+{
+  "recorded_utc": "2026-11-11T01:20:35.692783+00:00",
+  "reviewer": "/root/history186_applied_harness_nov11",
+  "perspective": "error handling, security boundaries and preserved behavior",
+  "independence": {
+    "candidate_author": false,
+    "applied_harness_author": true,
+    "disclosure": "I authored the applied browser harness provenance adaptations/serial runner. I did not author the four integrated product candidates. This is an independent product-source/diff review; it is not independent authorship of the applied runtime tests."
+  },
+  "scope": "Read-only inspection of four integrated frontend modules, genuine application baselines, unchanged API transport and recorded execution evidence. No browser/build/API execution and no acceptance mutation by this reviewer.",
+  "source_hashes": {
+    "frontend/src/history-filter.ts": "9f4540aabab34b3eb4732b28f415f40281f393d92e49c988c77b9e57d4e5310e",
+    "frontend/src/member-import-history.ts": "7a97dcafc17024d438d2c4c0353c0d6f5073a87bb02e0933b853de1a7f13a762",
+    "frontend/src/workflow-import-history.ts": "b04102c7dd2578e3ccc417920c83d6ff67a8f483059f17ae157e52ce5ff34b18",
+    "frontend/src/past-duties.ts": "5256b39117157b89e9fd1b0f802a604307629211266a0223b22bcac42e9dd9f8"
+  },
+  "unchanged_transport": {
+    "path": "frontend/src/services/api.ts",
+    "sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "expected_existing_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "baseline_and_candidate_bindings_verified": true,
+  "findings": [
+    {
+      "status": "pass_static",
+      "topic": "API, persisted values and export preservation",
+      "detail": "AST extraction finds unchanged five workflow API call expressions/order. Member GET uses the initiating immutable batch ID captured as batchId and validated against the returned snapshot. Past-duty history GET moves to scoped helper with captured id. Other nine past-duty API expressions\u2014including inspect, preview, apply file/options/hash, policy save, template and rejected CSV\u2014remain exact. No new mutation endpoint, storage write, auth/header code, server query term, filename or CSV transformation introduced. See complete extracted calls; member/past textual argument changes are expressly not claimed byte-identical."
+    },
+    {
+      "status": "pass_static",
+      "topic": "Literal search and escaping",
+      "detail": "Helper trims/lowercases/splits whitespace and performs AND matching via includes over supplied displayed strings. No regex construction, eval, selector/query interpolation or HTML sink. Search values assigned with value; new counts, filtered-detail notices and errors use textContent. Existing dynamic filenames/accounts/IDs/string outcomes and JSON displays continue escaped. IDs/raw hidden fields do not participate in matching."
+    },
+    {
+      "status": "pass_static",
+      "topic": "Member ID mismatch, failure and recovery",
+      "detail": "batchId is captured before awaiting and requestedBatch must exist in history. Returned batch.batch.id mismatch throws before painting details; catch names the requested filename/ID and exposes explicit GET retry. Previous successful detail remains independently named. Detail sequence and host generation/connectivity gates protect painting, control restoration and focus after remount/detach. The entire returned-list snapshot and row IDs remain unmodified; filtering toggles hidden on existing rows."
+    },
+    {
+      "status": "pass_static_with_limits",
+      "topic": "Workflow ownership, IDs and download errors",
+      "detail": "Delegated handlers and render/list updates check connected host/current generation. Search shell persists during action rendering; selected immutable ID and original paging arithmetic survive zero-match search. New outside-results notice uses textContent. Initial failure retries only existing history GET. Download still invokes unchanged authenticated helper, whose non-OK/empty-body/session-generation failures occur before blob URL creation; action catch surfaces message and finally releases busy state. Readonly requests are not aborted; an already requested download can finish after unmount if its session remains current. Workflow row response schema has no batch ID, so it cannot independently validate a returned ID; association relies on captured request ID/URL."
+    },
+    {
+      "status": "pass_static",
+      "topic": "Past-duty native busy gate and draft preservation",
+      "detail": "History GET sets original busy/activeAction history, disables existing fieldsets and original refresh/history actions without rebuilding upload/preview nodes. It snapshots each fieldset/button disabled state and restores only connected current-owner nodes; replacement filtered row buttons recover original ID state or baseline non-busy default. isCurrent/request guards protect detail writes and restoration; retainActionFocus cleanup is always called with currentness. Search/clear update only history list/count; search change returns before existing upload invalidation. Upload File/options/approval/save branches remain unchanged in the genuine diff."
+    },
+    {
+      "status": "pass_static_with_limits",
+      "topic": "Past-duty retry and retained detail association",
+      "detail": "Failure names selected immutable ID, keeps prior detail under its own Loaded batch label, and explicit retry calls loadHistoryRows(selectedHistoryId) only. No Apply replay or automatic retry introduced. Past-duty detail schema has no batch ID; no invented returned-ID assurance is claimed."
+    },
+    {
+      "status": "existing_gap_nonblocking_for186",
+      "topic": "Malformed numeric fields and transport validation",
+      "detail": "All three genuine baselines already interpolate typed numeric count/row values directly into HTML. This wave retains that trust assumption; TypeScript does not validate runtime JSON. Deliberately malformed numeric-schema data and globally validated response schemas remain outside this pass. Past-duty workbook template path still omits spreadsheet-signature flag in existing transport; no XLSX parser/signature hardening claim made. These are existing bounded follow-ups, not demonstrated exploit/new regression."
+    }
+  ],
+  "recorded_execution_review": {
+    "earlier_failed_unit_run": "Retained terminal exit1: Node reported121tests,120pass and1fail. The member-management test file failed to load its relative history-filter dependency; its four individual cases did not execute. These were not four failing executed tests. Subsequent corrected fixture run passed124/124 with source/test hashes held.",
+    "current_unit_run": {
+      "terminal": true,
+      "exit_code": 0,
+      "passed": 124,
+      "source_and_tests_held": true
+    },
+    "current_build": {
+      "exit_code": 0,
+      "inputs_held": true,
+      "inputs": 73
+    },
+    "staged_browser": "Recorded member12/past12/workflow12 successful contexts; workflow36 CSV download artifacts across retained WebKit-v1 and Chromium/Firefox-v2. Earlier workflow UTC label assertion failure remains historical; platform-compatible expected strings were justified against unchanged baseline. Staged runtime is not normal-resolution applied runtime.",
+    "applied_member": {
+      "passed_contexts": 12,
+      "source_held": true,
+      "zero_overlay_provenance": "Reported actual source paths/hashes and observed transforms; fixtures intercept API calls."
+    },
+    "applied_full_matrix_at_review": {
+      "terminal": true,
+      "passed": true,
+      "jobs": [
+        {
+          "name": "member",
+          "terminal": true,
+          "exit_code": 0
+        },
+        {
+          "name": "past",
+          "terminal": true,
+          "exit_code": 0
+        },
+        {
+          "name": "workflow",
+          "terminal": true,
+          "exit_code": 0
+        }
+      ],
+      "review_interpretation": "Runner status observed only; not a substitute for final per-context/artifact inspection."
+    },
+    "current_runtime_signed": false,
+    "reason": "The runner became terminal during source review; its terminal status is captured, but this reviewer has not inspected final applied past/workflow context reports and parsed CSV artifacts. Full runtime signature is therefore deliberately withheld pending those distinct terminal evidence inspections."
+  },
+  "pass_conditions": [
+    {
+      "condition": "History filters change displayed imports correctly and timestamps retain clear recorded-time context.",
+      "review_status": "Static preservation passes and staged tests/terminal applied member12 support it; complete applied runtime signoff pending."
+    },
+    {
+      "condition": "Rejection downloads produce expected named artifact and recover visibly from unavailable/empty responses.",
+      "review_status": "Unchanged transport and staged downloaded/parsed artifacts support it; applied workflow parser/503/empty recovery final result pending."
+    }
+  ],
+  "blocking_new_source_findings": [],
+  "acceptance_blockers": [
+    "Do not accept186 solely from this source review, unit count or staged runtime. Inspect terminal applied past/workflow reports and CSV parsing, held-source guards, independent perspectives and root exact-condition decision.",
+    "185 applicability bridge after changed past-duties source remains a distinct requirement; this review does not refresh earlier accepted hash bindings."
+  ],
+  "limitations": [
+    "Fixture admin components do not prove server authorization or roles.",
+    "No live database writes, backend validation, physical-device/native-AT testing or solver/GPU evidence.",
+    "No general guarantee of zero bugs; scope is reviewed186 delta.",
+    "Concurrent backend changes elsewhere are not reviewed or reverted; this reviewer made no backend/product source edits."
+  ],
+  "evidence_hashes": {
+    "docs/premium-ui/reviews/history186-application-20261111.json": "8e0460f43d2c3291fd4f4e3642182b13f4690678af9cae67db3ab0e8cfc210ba",
+    "tmp/history186-independent-security-diff-20261111.txt": "0b55127b8b0a866164fd5314df6d597315b660e2cda03ee322f7861990761210",
+    "tmp/history186-api-calls-independent-20261111.json": "f820b77002e27d74d713038d8ee4b9e5eb1602a731fa965b6b4230c87b3f93d2",
+    "tmp/history186-applied-unit-20261111/exit.json": "0d05a4e2ad3eccb9d9f198c7ff0e92d170a5dd30fe676889713afb8c7a984d2e",
+    "tmp/history186-applied-unit-20261111/unit.log": "a4b824e545039444c2774da5a629c63472de5f8bd716e312b602fd22133e30bf",
+    "tmp/history186-applied-unit-r2-20261111/exit.json": "0a076311dc29c30c6f6e5a508a5d75feba8b8ce691ac66ae5b443746a3c3d5d6",
+    "tmp/history186-applied-unit-r2-20261111/unit.log": "59d32f9279e376495c8f3e3a18ab0b57620c07ea900aa6fdacc86c242a1012f2",
+    "docs/premium-ui/reviews/frontend-build-snapshot-history186-20261111.json": "d5be842bfd1d279f34815e535155f25059f02108f27bcf894fe63149c29ef63b",
+    "docs/premium-ui/reviews/history186-staged-runtime-integration-gate-20261111.json": "3e470bdae9ee07e6ac0643e29ee4b3c45aa80017d966a686a89feb64d3771b8a",
+    "tmp/import186-member-browser-v1/report.json": "3733ebc2ecdf2338dd8cda85bba625ddd2553db26647151d8c0e00fcca6ce2c2",
+    "tmp/import186-past-browser-v1/report-2026-11-11T00-53-42-545Z.json": "edfb560b84c1d00b04fb3f93910ec7947adb55a5c7a374fa56c3e29dcb8625ef",
+    "tmp/import186-workflow-browser-v1/webkit.json": "b5cc798488005b16c20546f03b086b8477e6671e083d0206759e2c6acbe979d7",
+    "tmp/import186-workflow-browser-v2/chromium.json": "68d7f615300cae6f2c4ee2a52e0be262641d34155ebfe52e9a0fe0e2d6d59614",
+    "tmp/import186-workflow-browser-v2/firefox.json": "4c824a37942404c175919120e09218bf7b84e27a6dd616ea03fede8450c18ea3",
+    "tmp/import186-workflow-browser-v2/csv-parsing.json": "5bd2dbdbde29f0e9392a2272e9ca4c10f7766d17a908a86dc8efeddabe4c4713",
+    "tmp/import186-member-applied-v1/report.json": "7d6b8923c770b5f7b21ef6e07f7567c94adaf4406787b14708808ba67be36958",
+    "tmp/history186-applied-harness-authoring-20261111.json": "84e70171a5a6c30b0e11291bc343044a1f8dc51e228841684f668c26c4258dc3",
+    "tmp/history186-applied-harness-assertions-20261111.json": "4d2fac4f835e2a61ac4300b8a7b09766415fb260130dba5d94b107d4ca644548",
+    "tmp/history186-security-review-applied-progress-snapshot-20261111.json": "e774a1fdaaf7838729e19a0b8635bf857ae89af8d7fd1065008ab5adc14de0b4"
+  },
+  "decision": "Scoped static security/preservation review passes with stated existing gaps and limits. Full applied runtime and acceptance remain pending."
+}

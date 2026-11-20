@@ -2,6 +2,7 @@
 
 # ruff: noqa: E402
 from collections import Counter
+import argparse
 import json
 from pathlib import Path
 import sys
@@ -33,6 +34,9 @@ def metrics(choices, slots):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, help="Write a fresh result without replacing historical evidence")
+    args = parser.parse_args()
     report = {
         "fixture": {
             "members": 96,
@@ -81,7 +85,7 @@ if __name__ == "__main__":
         report["whole_month"]["maximum_weekends"]
         <= report["greedy"]["maximum_weekends"]
     )
-    target = (
+    target = args.output or (
         Path(__file__).resolve().parents[1]
         / "docs/benchmarks/rota_intelligence_96_members.json"
     )

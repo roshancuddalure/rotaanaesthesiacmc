@@ -15,6 +15,12 @@ export const GUIDE_SECTION_IDS = [
   'guide-phase-1', 'guide-phase-2', 'guide-duty-eligibility', 'guide-monthly-workflow',
   'guide-sections', 'guide-admin', 'guide-terms', 'guide-suggestions',
   'guide-problems', 'guide-checklist',
+  'guide-overview', 'guide-analysis', 'guide-members',
+  'guide-leave', 'guide-units', 'guide-rota-setup',
+  'guide-rota-template', 'guide-rota-review', 'guide-rota-publish',
+  'guide-rota-rules', 'guide-limits', 'guide-call-clusters',
+  'guide-mappings', 'guide-imports', 'guide-accounts',
+  'guide-diagnostics', 'guide-compute-settings', 'guide-recycle-bin',
 ] as const;
 
 export function guideSectionFromHash(hash: string): string | null {

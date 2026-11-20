@@ -92,12 +92,12 @@ export interface LedgerRow { id: string; person_id: string; person_name: string;
   transfers?: (string | LedgerTransfer)[]; rebalanced?: boolean }
 export interface LedgerTransfer { text?: string; display?: string; from_person_id?: string; from_person_name?: string;
   to_person_id?: string; to_person_name?: string; balance_batch_id?: string; at?: string }
-/** "Passed on from Dr Asha by Balance duties on 22 Oct 2026" for one ledger transfer. */
+/** Transfer history uses the same explicit audit-time context as its batch. */
 export function transferText(t: string | LedgerTransfer | null | undefined): string {
   if (!t) return "";
   if (typeof t === "string") return t.trim();
   if (t.text || t.display) return String(t.text || t.display).trim();
-  const when = t.at ? ` on ${formatDate(String(t.at).slice(0, 10), { weekday: false })}` : "";
+  const when = t.at ? ` on ${formatAuditTimestamp(String(t.at))}` : "";
   return `Passed on from ${t.from_person_name || "another member"} by Balance duties${when}`;
 }
 export interface FallbackRow { unit_id: string; unit_name: string; fallbacks: { unit_id: string; unit_name: string }[] }

@@ -6,6 +6,7 @@ import {
 } from "./services/api";
 import { applyBlocker, memberMatch, retainActionFocus, steps, type MemberMatchCandidate, type MemberMatchView } from "./ui";
 import { formatAuditTimestamp } from "./audit-time";
+import { matchesImportHistory } from "./history-filter";
 
 /** Past-duty preview row as the shared member resolver now describes it. */
 type PastRow = PastDutyPreview["rows"][number] & {
@@ -51,6 +52,7 @@ export async function mountPastDuties(host: HTMLElement) {
   const isCurrent = () => host.isConnected && pastLoads.get(host) === generation;
   host.onclick = null;
   host.onchange = null;
+  host.oninput = null;
   host.innerHTML = '<section class="panel"><p role="status">Loading past duties…</p></section>';
   let status: PastDutyStatus;
   let members: DepartmentMember[];
@@ -78,6 +80,11 @@ export async function mountPastDuties(host: HTMLElement) {
   let activeAction = "";
   let refreshError = "";
   let historyHtml = "";
+  let historyQuery = "";
+  let selectedHistoryId = "";
+  let historyReadId = "";
+  let historyReadSequence = 0;
+  let historyError = "";
   let filter = "all";
   let policy: HistoryFairnessPolicy = { ...status.policy };
   let effectiveFrom = `${status.today.slice(0, 7)}-01`;
@@ -115,6 +122,117 @@ export async function mountPastDuties(host: HTMLElement) {
     return "";
   }
 
+  function shownHistory() {
+    return status.history.filter(h => matchesImportHistory(historyQuery, [
+      h.filename, h.month, h.sheet, h.actor, formatAuditTimestamp(h.at, "Asia/Kolkata"),
+      ...Object.entries(h.counts).map(([action, count]) => `${count} ${action}`),
+    ]));
+  }
+
+  function historyRowsHtml() {
+    return shownHistory().map(h => `<tr data-past-history-id="${escape(h.id)}"><td>${escape(h.filename)}<small>${escape(h.month)} / ${escape(h.sheet)}</small></td><td>${escape(h.actor)}<small>${escape(formatAuditTimestamp(h.at, "Asia/Kolkata"))}</small></td><td>${Object.entries(h.counts).map(([a,c]) => `${c} ${escape(a)}`).join(" · ")}</td><td><button type="button" data-past-batch="${escape(h.id)}" ${busy ? "disabled" : ""} ${historyReadId === h.id ? 'aria-disabled="true"' : ''}>View Rows</button></td></tr>`).join("") || `<tr><td colspan="4">${status.history.length ? "No imports in this loaded list match your search." : "No uploads yet."}</td></tr>`;
+  }
+
+  function historyCountText() {
+    return `${shownHistory().length} of ${status.history.length} loaded imports shown`;
+  }
+
+  // Local keystrokes replace only history rows/count. The actual search input,
+  // upload File, preview editors, approvals and existing detail nodes stay intact.
+  function updateHistoryList() {
+    if (!isCurrent()) return;
+    const rows = host.querySelector<HTMLElement>('[data-past-history-rows]');
+    if (rows) rows.innerHTML = historyRowsHtml();
+    const count = host.querySelector<HTMLElement>('[data-past-history-count]');
+    if (count) count.textContent = historyCountText();
+    const clear = host.querySelector<HTMLButtonElement>('[data-past-history-clear]');
+    if (clear) clear.disabled = historyQuery.length === 0;
+  }
+
+  function updateHistoryReadState() {
+    if (!isCurrent()) return;
+    const state = host.querySelector<HTMLElement>('[data-past-history-read-state]');
+    if (state) state.textContent = historyReadId ? `Loading rows for batch ${historyReadId}…` : '';
+    const error = host.querySelector<HTMLElement>('[data-past-history-error]');
+    if (error) { error.textContent = historyError; error.hidden = !historyError; }
+    const retry = host.querySelector<HTMLButtonElement>('[data-past-history-retry]');
+    if (retry) { retry.hidden = !historyError; retry.disabled = Boolean(historyReadId) || busy; }
+    const detail = host.querySelector<HTMLElement>('[data-past-history-detail]');
+    if (detail) detail.setAttribute('aria-busy', String(Boolean(historyReadId)));
+    host.querySelectorAll<HTMLButtonElement>('[data-past-batch]').forEach(button => {
+      if (button.dataset.pastBatch === historyReadId) button.setAttribute('aria-disabled', 'true');
+      else button.removeAttribute('aria-disabled');
+    });
+  }
+
+  // Preserve the original global action busy gate without rebuilding any nodes.
+  // Fieldset disabling retains each child's independent disabled property.
+  function disableHistoryReadActions() {
+    const fieldsets = [...host.querySelectorAll<HTMLFieldSetElement>('fieldset')].map(node => ({node, disabled:node.disabled}));
+    const buttons = [...host.querySelectorAll<HTMLButtonElement>('[data-past="refresh-status"], [data-past-batch]')].map(node => ({node, disabled:node.disabled}));
+    const batchStates = new Map(buttons.filter(({node}) => node.dataset.pastBatch !== undefined).map(({node, disabled}) => [node.dataset.pastBatch!, disabled]));
+    fieldsets.forEach(({node}) => { node.disabled = true; });
+    buttons.forEach(({node}) => { node.disabled = true; });
+    return () => {
+      if (!isCurrent()) return;
+      fieldsets.forEach(({node, disabled}) => { if (node.isConnected && host.contains(node)) node.disabled = disabled; });
+      buttons.forEach(({node, disabled}) => { if (node.isConnected && host.contains(node)) node.disabled = disabled; });
+      // Local search can create replacement row buttons while the GET is held.
+      // Restore an observed batch's prior state; otherwise use the baseline's
+      // non-busy native state for newly revealed history rows.
+      host.querySelectorAll<HTMLButtonElement>('[data-past-batch]').forEach(node => {
+        node.disabled = batchStates.get(node.dataset.pastBatch!) ?? false;
+      });
+    };
+  }
+
+  function updateHistoryActionStatus() {
+    if (!isCurrent()) return;
+    const status = host.querySelector<HTMLElement>('[data-past-action-status]');
+    if (status) status.textContent = busy ? 'Working…' : message;
+  }
+
+  async function loadHistoryRows(id: string, trigger: HTMLElement) {
+    if (!isCurrent() || busy || historyReadId === id) return;
+    selectedHistoryId = id;
+    historyReadId = id;
+    historyError = '';
+    const request = ++historyReadSequence;
+    const restoreFocus = retainActionFocus(host, trigger, () => {
+      const retry = host.querySelector<HTMLButtonElement>('[data-past-history-retry]');
+      if (historyError && retry && !retry.hidden && !retry.disabled) return retry;
+      return [...host.querySelectorAll<HTMLButtonElement>('[data-past-batch]')].find(button => button.dataset.pastBatch === id && !button.disabled)
+        ?? host.querySelector<HTMLElement>('[data-past-history-search]');
+    });
+    busy = true;
+    activeAction = 'history';
+    message = '';
+    const restoreActions = disableHistoryReadActions();
+    updateHistoryActionStatus();
+    updateHistoryReadState();
+    try {
+      const batch = await getPastDutyHistory(id);
+      if (!isCurrent() || request !== historyReadSequence) return;
+      historyHtml = `<h4>${escape(batch.filename)}</h4><p>Loaded batch: ${escape(id)}. These details remain associated with this batch even if the list is filtered.</p><div class="member-import-table" role="region" tabindex="0" aria-label="Past-duty rows for batch ${escape(id)}"><table><thead><tr><th>Source</th><th>Original</th><th>Normalized</th><th>Outcome / prior member</th></tr></thead><tbody>${batch.rows.map(r => `<tr><td>${r.row}:${r.column}</td><td>${values(r.raw)}</td><td>${values(r.normalized)}</td><td>${escape(r.action)}${r.before ? `<p>Previous: ${escape(r.before.name)} (${escape(r.before.status)})</p>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
+      const detail = host.querySelector<HTMLElement>('[data-past-history-detail]');
+      if (detail) detail.innerHTML = historyHtml;
+    } catch (error) {
+      if (!isCurrent() || request !== historyReadSequence) return;
+      message = error instanceof Error && error.message ? error.message : 'Past-duty operation failed.';
+      historyError = `Rows for batch ${id} could not load. ${message}`;
+    } finally {
+      if (isCurrent() && request === historyReadSequence) {
+        historyReadId = '';
+        busy = false;
+        activeAction = '';
+        restoreActions();
+        updateHistoryActionStatus();
+        updateHistoryReadState();
+      }
+      restoreFocus(isCurrent() && request === historyReadSequence);
+    }
+  }
+
   function render() {
     if (!isCurrent()) return;
     const sheet = inspection?.sheets.find(s => s.name === options.sheet);
@@ -139,7 +257,7 @@ export async function mountPastDuties(host: HTMLElement) {
         ${!reviewed ? "<p>Selections changed. Preview again before applying.</p>" : ""}
         <label>Review rows <select data-past="filter">${["all","needs_review","correct","create","unchanged","skip"].map(a => `<option value="${a}" ${filter === a ? "selected" : ""}>${escape(a.replace(/_/g," "))}</option>`).join("")}</select></label>
         <button type="button" data-past="rejected">Download Rejected Rows CSV</button>
-        <div class="member-import-table"><table><thead><tr><th>Source row</th><th>Member</th><th>Outcome</th><th>Decision</th></tr></thead><tbody>${(preview.rows as PastRow[]).filter(r => filter === "all" || r.action === filter).map(row => {
+        <div class="member-import-table" role="region" tabindex="0" aria-label="Past-duty preview and row decisions"><table><thead><tr><th>Source row</th><th>Member</th><th>Outcome</th><th>Decision</th></tr></thead><tbody>${(preview.rows as PastRow[]).filter(r => filter === "all" || r.action === filter).map(row => {
           const resolution = options.resolutions[row.key] ?? {};
           const skipped = row.action === "skip";
           return `<tr data-past-row-key="${escape(row.key)}"><td>${row.row}:${row.column}</td>
@@ -159,20 +277,28 @@ export async function mountPastDuties(host: HTMLElement) {
         ${preview.counts.correct ? `<label class="member-import-confirm"><input type="checkbox" data-past="confirm-corrections" ${options.confirm_corrections ? "checked" : ""} />I approve ${preview.counts.correct} recorded member corrections. Prior assignments remain in the audit history and no longer count in statistics.</label>` : ""}
         <button type="button" class="primary" data-past="apply" ${blocker ? 'aria-describedby="past-apply-blocker"' : ""}>Apply Reviewed Past Duties</button>
         ${blocker ? `<p class="import-apply-blocker" id="past-apply-blocker">${escape(blocker)}</p>` : ""}` : ""}
-      </fieldset><p role="status">${busy ? "Working…" : escape(message)}</p>
+      </fieldset><p data-past-action-status role="status">${busy ? "Working…" : escape(message)}</p>
       ${savedOutcome ? `<section class="past-saved-outcome" aria-label="Last applied import"><p role="status">${escape(savedOutcome)}</p>${savedContext ? `<p data-past-saved-context>Saved reviewed batch: <strong>${escape(savedContext.filename)}</strong> · Selected month: ${escape(savedContext.selectedMonth)} · Returned preview month: ${escape(savedContext.returnedMonth)} · Worksheet: ${escape(savedContext.sheet)}</p>` : ""}${refreshError ? `<p role="alert">Your import was saved, but the latest coverage and history could not load. ${escape(refreshError)}</p><button type="button" data-past="refresh-status" ${busy ? 'disabled' : ''}>Refresh saved details</button><p>This retry only reads data; it will not apply the import again.</p>` : ''}</section>` : ''}</section>
       <section class="panel"><h3>Recorded History Coverage</h3><p>These are observed records, not proof of a complete roster. Missing dates and members are not assigned zero workload. Fairness uses each member's observed months within the configured window.</p>
-        <div class="member-import-table"><table><thead><tr><th>Month</th><th>Duties</th><th>Members</th><th>Days recorded</th><th>Latest duty</th></tr></thead><tbody>${status.coverage.map(c => `<tr><td>${escape(c.month)}</td><td>${c.assignments}</td><td>${c.members}</td><td>${c.days_with_records}</td><td>${escape(c.latest_duty_date)}</td></tr>`).join("") || '<tr><td colspan="5">No approved past duties recorded yet.</td></tr>'}</tbody></table></div></section>
+        <div class="member-import-table" role="region" tabindex="0" aria-label="Recorded past-duty coverage"><table><thead><tr><th>Month</th><th>Duties</th><th>Members</th><th>Days recorded</th><th>Latest duty</th></tr></thead><tbody>${status.coverage.map(c => `<tr><td>${escape(c.month)}</td><td>${c.assignments}</td><td>${c.members}</td><td>${c.days_with_records}</td><td>${escape(c.latest_duty_date)}</td></tr>`).join("") || '<tr><td colspan="5">No approved past duties recorded yet.</td></tr>'}</tbody></table></div></section>
       <section class="panel member-import"><h3>Historical Fairness Settings</h3><p>History adds a ranking penalty for above-average observed burden among active peers at the same current call level. Unknown history is neutral. Safety and leave rules remain authoritative.</p>
       <fieldset ${busy ? "disabled" : ""}><label class="member-import-confirm"><input type="checkbox" data-policy="enabled" ${policy.enabled ? "checked" : ""} />Use historical fairness</label>
       <label>Effective from <input type="date" data-past="effective-from" value="${effectiveFrom}" /></label>
       ${(["lookback_months", "total_weight", "hours24_weight", "weekend_weight", "group_weight"] as const).map(field => `<label>${escape(field.replace(/_/g," "))}<input type="number" data-policy="${field}" value="${policy[field]}" min="${field === "lookback_months" ? 1 : 0}" max="${field === "lookback_months" ? 36 : 100}" step="${field === "lookback_months" ? 1 : .5}" /></label>`).join("")}
       <button type="button" data-past="save-policy">Save Fairness Settings</button></fieldset></section>
-      <section class="panel"><h3>Past-Duty Import History</h3><div class="member-import-table"><table><thead><tr><th>File / month</th><th>Account / imported</th><th>Outcome</th><th>Review</th></tr></thead><tbody>${status.history.map(h => `<tr><td>${escape(h.filename)}<small>${escape(h.month)} / ${escape(h.sheet)}</small></td><td>${escape(h.actor)}<small>${escape(formatAuditTimestamp(h.at, "Asia/Kolkata"))}</small></td><td>${Object.entries(h.counts).map(([a,c]) => `${c} ${escape(a)}`).join(" · ")}</td><td><button data-past-batch="${escape(h.id)}" ${busy ? "disabled" : ""}>View Rows</button></td></tr>`).join("") || '<tr><td colspan="4">No uploads yet.</td></tr>'}</tbody></table></div>${historyHtml}</section>`;
+      <section class="panel" aria-label="Past-duty import history"><h3>Past-Duty Import History</h3><label>Search this loaded list <input type="search" data-past-history-search value="${escape(historyQuery)}" placeholder="Filename, account, outcome or recorded time" /></label><button type="button" data-past-history-clear ${historyQuery.length ? '' : 'disabled'}>Clear search</button><p data-past-history-count role="status">${escape(historyCountText())}</p><div class="member-import-table" role="region" tabindex="0" aria-label="Past-duty import history records"><table><thead><tr><th>File / month</th><th>Account / imported</th><th>Outcome</th><th>Review</th></tr></thead><tbody data-past-history-rows>${historyRowsHtml()}</tbody></table></div><p data-past-history-read-state role="status">${historyReadId ? escape(`Loading rows for batch ${historyReadId}…`) : ''}</p><p data-past-history-error role="alert" ${historyError ? '' : 'hidden'}>${escape(historyError)}</p><button type="button" data-past-history-retry ${historyError ? '' : 'hidden'} ${busy || historyReadId ? 'disabled' : ''}>Try loading these rows again</button><div data-past-history-detail aria-busy="${Boolean(historyReadId)}">${historyHtml}</div></section>`;
   }
+  host.oninput = event => {
+    if (!isCurrent()) return;
+    const target = event.target as HTMLInputElement;
+    if (!target.hasAttribute('data-past-history-search')) return;
+    historyQuery = target.value;
+    updateHistoryList();
+  };
   host.onchange = event => {
     if (!isCurrent() || busy) return;
     const target = event.target as HTMLInputElement;
+    if (target.hasAttribute('data-past-history-search')) return;
     if (target.dataset.policy) {
       if (target.dataset.policy === "enabled") policy.enabled = target.checked;
       else policy = { ...policy, [target.dataset.policy]: Number(target.value) };
@@ -203,13 +329,32 @@ export async function mountPastDuties(host: HTMLElement) {
     render();
   };
   host.onclick = async event => {
-    if (!isCurrent() || busy) return;
+    if (!isCurrent()) return;
     const clicked = event.target as HTMLElement;
+    const clearHistory = clicked.closest<HTMLElement>('[data-past-history-clear]');
+    if (clearHistory) {
+      historyQuery = '';
+      const search = host.querySelector<HTMLInputElement>('[data-past-history-search]');
+      if (search) search.value = '';
+      updateHistoryList();
+      search?.focus({preventScroll:true});
+      return;
+    }
+    const retryHistory = clicked.closest<HTMLElement>('[data-past-history-retry]');
+    if (retryHistory) {
+      if (selectedHistoryId) await loadHistoryRows(selectedHistoryId, retryHistory);
+      return;
+    }
+    if (busy) return;
     // One-click member choice or row decision: record it the same way the row selects do, then preview again.
     const found = clicked.closest<HTMLElement>("[data-pick-member], [data-past-resolve-row]");
     const pick = found?.dataset.pickMember !== undefined || found?.dataset.pastResolveRow !== undefined ? found : null;
     let target = clicked.closest<HTMLElement>("[data-past], [data-past-batch]");
     let action = target?.dataset.past;
+    if (target?.dataset.pastBatch) {
+      await loadHistoryRows(target.dataset.pastBatch, target);
+      return;
+    }
     if (pick) {
       const key = pick.dataset.pickRow ?? pick.dataset.pastResolveRow!;
       const field = pick.dataset.pickMember !== undefined ? "person_id" : pick.dataset.pastResolve!;
@@ -237,9 +382,6 @@ export async function mountPastDuties(host: HTMLElement) {
     try {
       if (action === "refresh-status") {
         await refreshSavedStatus();
-      } else if (target.dataset.pastBatch) {
-        const batch = await getPastDutyHistory(target.dataset.pastBatch);
-        historyHtml = `<h4>${escape(batch.filename)}</h4><div class="member-import-table"><table><thead><tr><th>Source</th><th>Original</th><th>Normalized</th><th>Outcome / prior member</th></tr></thead><tbody>${batch.rows.map(r => `<tr><td>${r.row}:${r.column}</td><td>${values(r.raw)}</td><td>${values(r.normalized)}</td><td>${escape(r.action)}${r.before ? `<p>Previous: ${escape(r.before.name)} (${escape(r.before.status)})</p>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
       } else if (action === "rejected" && preview) {
         downloadPreviewIssues(preview.rows,"past_duty_rejected_rows.csv");
       } else if (action === "template") {

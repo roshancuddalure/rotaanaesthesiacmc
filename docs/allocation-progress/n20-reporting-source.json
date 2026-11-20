@@ -1,0 +1,46 @@
+{
+  "at": "2026-11-14T14:13:00.776256+00:00",
+  "scope": "N20 duplicate-safe interval reporting and pressure counts; still In progress for dated attribution and consumer basis/UI. No scheduler/policy/frontend/schema changes. Original NIGHT example10hours corrected to14; runtime bands unchanged.",
+  "sha256": {
+    "backend/app/services/leave_accounting.py": "3c48cc7d03e908ff5930f2811588d2b2238e860030285454436abbb950e2feaf",
+    "backend/app/services/leave.py": "200c6f0dde9819366dad6f220ef04faf4105e085dfce1f577548abe468df9f2c",
+    "backend/tests/test_leave_reporting.py": "8f8e4cbd23c1f8b7316d3b202fb9455161072ae54416622292971f78dd88597a",
+    "docs/allocation-progress/n18-leave-accounting-contract.md": "84a4663ec01e474aa24ac19aed3ca29914806ae314bd13b3d3cfe5394526453c"
+  },
+  "prior_core_unchanged": {
+    "backend/app/services/leave_semantics.py": true,
+    "backend/app/services/ot_availability.py": true,
+    "backend/app/services/rota_safety.py": true,
+    "backend/app/services/rota_template.py": true,
+    "backend/app/services/leave_approval.py": true,
+    "backend/app/services/unit_management.py": true,
+    "backend/app/services/balance_duties.py": true,
+    "backend/app/services/extra_duty.py": true,
+    "backend/app/services/extra_duty_verify.py": true,
+    "backend/app/services/superadmin_allocation.py": true,
+    "backend/tests/test_leave_semantics.py": true
+  },
+  "results": {
+    "n20-reporting-first.xml": {
+      "tests": 57,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 24.39
+    },
+    "n20-reporting-current.xml": {
+      "tests": 92,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 39.24
+    },
+    "n20-reporting-final.xml": {
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 13.28
+    }
+  }
+}

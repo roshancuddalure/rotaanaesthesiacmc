@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="15.412" timestamp="2026-11-14T13:48:14.498912+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ot_template" name="test_capacity_checks_all_proposed_slots_without_queries_or_assignments" time="1.052" /><testcase classname="tests.test_ot_template" name="test_template_cannot_force_ot_shortage_or_unknown_into_a_unit[False]" time="1.091" /><testcase classname="tests.test_ot_template" name="test_template_cannot_force_ot_shortage_or_unknown_into_a_unit[True]" time="0.205" /><testcase classname="tests.test_ot_template" name="test_template_does_not_double_book_people_for_second_simultaneous_duty" time="0.166"><failure message="app.services.rota_rules.RotaRulesInvalid: Unknown duty rule: OT_TEST_3RD">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001C2F732FB50&gt;, &lt;app.models.unit.Unit object at 0x000001C2FF554B10&gt;, [...50&gt;, &lt;app.models.person.Person object at 0x000001C2F73415D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001C29568C750&gt;)
+
+    def test_template_does_not_double_book_people_for_second_simultaneous_duty(environment):
+        db, unit, _people, _target = environment
+        lock_scope(db, unit)
+        _, rules = get_phase_one_rules(db)
+        original = rules.duty_rules_by_key[KEY]
+        extra = original.model_copy(update={"key": "OT_TEST_3RD", "label": "Second senior duty"})
+        rules.duty_rules.append(extra)
+&gt;       save_phase_one_rules(db, rules)
+
+tests\test_ot_template.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\rota_rules.py:351: in save_phase_one_rules
+    validate_phase_one_rules(db, rules)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+db = &lt;sqlalchemy.orm.session.Session object at 0x000001C2F732FB50&gt;
+rules = RotaPhaseOneRules(duty_rules=[DutyRule(key='MAIN_1ST_24HR', label='Main 1st Call', group='main', campus=None, duration...okback_months=12), notes='Default Phase 1 rota generator rules. Confirm limits with the rota board before generation.')
+
+    def validate_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -&gt; None:
+        """Raise ``RotaRulesInvalid`` listing every error-severity problem; normalise call levels.
+    
+        Warnings (inactive/empty groups, nobody eligible, duplicate labels, guardrails) never
+        block. See ``rota_rules_admin.rule_problems`` for the codes."""
+        from app.services.rota_rules_admin import rule_problems
+    
+        problems = rule_problems(db, rules)
+        if any(problem["severity"] == "error" for problem in problems):
+&gt;           raise RotaRulesInvalid(problems)
+E           app.services.rota_rules.RotaRulesInvalid: Unknown duty rule: OT_TEST_3RD
+
+app\services\rota_rules.py:397: RotaRulesInvalid</failure></testcase><testcase classname="tests.test_ot_template" name="test_template_retains_protected_existing_assignments" time="0.162" /><testcase classname="tests.test_ot_template" name="test_reviewed_template_cpu_gpu_protocol_does_not_save_hypothetical_people" time="0.740" /></testsuite></testsuites>

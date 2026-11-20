@@ -1,0 +1,58 @@
+{
+  "recorded_at_utc": "2026-11-11T19:18:11.266656+00:00",
+  "reviewer": "/root/recycle191_review_nov12",
+  "scope": "Independent staged195/196 security, permission, API and export preservation review only; no product edits or execution",
+  "evidence_sha256": {
+    "tmp/guidance195-v1/manifest.json": "fd74ecf09368c275460e3e6154734d01c5ef2269ff2639ec91277784f884deee",
+    "tmp/guidance195-v1/main.ts.before": "6a8f3727295e3ff0449d5b13646b0d0d485386f22dab4a368d29b2978d5dd18c",
+    "tmp/guidance195-v1/main.ts": "6de3342f30333498e9febc161adf87f7390e692e5c195e3af14094fc52c2f4f7",
+    "tmp/format196-v1/manifest.json": "dce26583830c9f6a0ddf0066f45c0a7a7ad7513188a9014206d9600e0a59e0c6",
+    "tmp/stage_format196_v1.py": "7001ccf66c4ce1841fbb14273b299bd39d77562f28fa36fa1c2c05ab0e32c7ef",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/connection-status.ts": "bb8080819c5d9aac5c5caf402565256bf2df0129a08367cdb6a41fadc2311007",
+    "tmp/format196-v1/limits.ts": "d032b489814c6b5dc6ec7038af2f491e2dbce5815eba5a3744849f44fef61df8",
+    "tmp/format196-v1/superadmin.ts": "55e7a34e8bcae001b7d8b805241ada151edb5e890ecf2efeed2cd326019bb636",
+    "tmp/format196-v1/extra-duty.ts": "d2ef57f8c7e6e4e0d9c7b05e8f0463e6e9842cbdbd2b16b6664a5c9eb4990b97",
+    "tmp/format196-v1/limits.ts.baseline": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "tmp/format196-v1/superadmin.ts.baseline": "ce337c066f127db0d4400daf86e90316d5442dced44c3eea0e996584ef1ed841",
+    "tmp/format196-v1/extra-duty.ts.baseline": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "guidance195": {
+    "six_edits_reconstruct_exact_candidate": true,
+    "baseline_current": true,
+    "assessment": "Six static User Guide strings only; no route/control/permission/API/busy/ownership expression changes. New Server/Check server advice names actual connection-status control and correctly limits a successful check to connection evidence; advice retains unsaved working tab rather than forcing reload. No dynamic HTML or new interpolation introduced.",
+    "limits": "Not whole-app error-language certification. Needs applied rendering and actual named control reachability/recovery checks."
+  },
+  "format196": {
+    "literal_reconstruction": [
+      {
+        "target": "frontend/src/limits.ts",
+        "baseline_current": true,
+        "candidate_hash_holds": true,
+        "exact_literal_reconstruction": true
+      },
+      {
+        "target": "frontend/src/superadmin.ts",
+        "baseline_current": true,
+        "candidate_hash_holds": true,
+        "exact_literal_reconstruction": true
+      },
+      {
+        "target": "frontend/src/extra-duty.ts",
+        "baseline_current": true,
+        "candidate_hash_holds": true,
+        "exact_literal_reconstruction": true
+      }
+    ],
+    "assessment": [
+      "Limits only switches formatWhen audit string formatting and its import; saved/version restore controls retain version_id, original handlers and request semantics. Caller text/HTML escaping remains.",
+      "Superadmin published-override notice retains esc around formatter result and actor/reason. Display changes from truncated calendar date to actual audit instant; no role check/override permission/export request change.",
+      "Extra-duty transferText only changes object-transfer at timestamp display; existing string/text/display short circuits unchanged. Existing esc at ledger cell rendering remains. Source search found transferText used only in ledger HTML, with no CSV/export call site. No backend or export content function changed.",
+      "Shared formatter validates calendar boundaries, explicitly labels no-zone audit values, uses explicit offset/zone and safe UTC fallback on Intl failure. Calendar date/month inputs and numeric validation are untouched."
+    ],
+    "limits": "Scope is three audit display sites, not full196 date/month/numeric consistency. Browser boundary/timezone/invalid/missing/keyboard/read-only behavior must be verified. Native export artifacts not executed by reviewer."
+  },
+  "recommendation": "No static security/permission/API/export regression found in these bounded staged changes. Proceed to source-held runtime/build verification; do not infer full195/196 acceptance."
+}
