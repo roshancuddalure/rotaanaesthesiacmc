@@ -91,8 +91,8 @@ SECTIONS: list[dict[str, str]] = [
     {
         "key": "fairness_rules",
         "title": "Equal duties within a call level",
-        "intro": "Members of the same call level should end the month with almost the same number of duties, "
-                 "whatever campus they work at.",
+        "intro": "Choose equal duty counts or targets proportional to available posted days within each call level. "
+                 "Safety, dated postings, leave, rest and coverage come first in both approaches.",
     },
     {
         "key": "extra_duty_rules",
@@ -110,6 +110,20 @@ _SOFT_MONTHLY = (
 )
 
 FIELDS: list[dict[str, Any]] = [
+    {
+        'path': 'fairness_rules.allocation_mode', 'label': 'Duty fairness approach',
+        'help': 'Availability mode shares duties safely covered by fractional available posted days; '
+                'AM/PM leave removes half a day. Or choose equal duty counts within each call level. '
+                'Safety, dated included-unit postings, leave, rest and coverage keep priority. '
+                'Saving affects new proposals; existing assignments are not changed. Old proposals must be regenerated.',
+        'example': 'Six covered duties, available 30 versus 15 days: availability targets 4 versus 2; '
+                   'equal counts aims for similar totals, only where safely feasible.',
+        'kind': 'choice', 'min': None, 'max': None, 'unit': None, 'blank_means': None,
+        'hard_or_soft': 'guide', 'options': [
+            {'value': 'availability', 'label': 'Availability-based fairness'},
+            {'value': 'equal_counts', 'label': 'Equal duty counts'},
+        ],
+    },
     {
         "path": "duty_count_limits.max_24hr_per_month",
         "label": "Max 24-hour duties per member per month",
@@ -222,8 +236,8 @@ FIELDS: list[dict[str, Any]] = [
     {
         "path": "fairness_rules.max_gap_within_call_level",
         "label": "Allowed difference in duties within a call level",
-        "help": "Within each call level, every member's total duties for the month (all campuses together) "
-                "should be almost the same. This is the largest difference allowed between the member with the "
+        "help": "The gap applies to raw duty counts in equal-count mode, or to duties minus personal targets "
+                "in availability mode. For equal counts this compares the member with the "
                 "most duties and the member with the fewest. The rota aims for it; when leave or rest make it "
                 "impossible, the Publish screen shows a warning for that call level, but publishing is not "
                 "stopped. Duties added by the extra-duty step or by a superadmin are shown separately when they "
@@ -234,13 +248,13 @@ FIELDS: list[dict[str, Any]] = [
     },
     {
         "path": "fairness_rules.target_mode",
-        "label": "How the target is worked out",
-        "help": "Each call level's target is its duties in the month divided by its members available that "
-                "month. \"Automatic\" is the only choice for now; the targets table shows the numbers for the "
-                "chosen month.",
-        "example": "Automatic: 4th call with 62 duties and 20 members has a target of 3.1 duties each.",
+        "label": "How the average target is worked out",
+        "help": "Availability mode uses covered duties and fractional available posted days. "
+                "Unfilled template duties do not inflate personal targets. Equal counts uses the "
+                "planned call-level average while aiming for similar totals wherever safely feasible.",
+        "example": "With six covered duties and availability of 30 and 15 days, targets are 4 and 2.",
         "kind": "choice", "min": None, "max": None, "unit": None, "blank_means": None, "hard_or_soft": "guide",
-        "options": [{"value": "auto", "label": "Automatic (duties divided by members)"}],
+        "options": [{"value": "auto", "label": "Automatic (selected fairness approach)"}],
     },
     {
         "path": "extra_duty_rules.justice_lookback_months",
@@ -387,6 +401,11 @@ def validate_limits(
                 merged[section][name] = clean
     if any(p["severity"] == "error" for p in problems):
         return merged, problems
+
+    fairness = merged['fairness_rules']
+    if fairness['allocation_mode'] == 'equal_counts' and fairness['max_gap_within_call_level'] > 2:
+        problems.append(_problem('fairness_rules.max_gap_within_call_level', 'error',
+            'Equal duty counts requires a gap target of at most two duties. Choose 0, 1 or 2.'))
 
     staffing = merged["unit_staffing_rules"]
     warning, hard = staffing["warning_unavailable_percent"], staffing["hard_block_unavailable_percent"]
@@ -706,6 +725,8 @@ def save_limits(db: Session, raw: Any, base_version_id: Any, note: Any, user: An
     """``PUT /v1/admin/limits``: stale check, validation, then one new rules version labelled
     "Limits changed" plus an audit entry. Raises ``LimitsError``."""
     note = _clean_note(note)
+    from app.services.scheduling_inputs import lock_inputs
+    lock_inputs(db)
     _version, rules = get_phase_one_rules(db)
     before = current_limits(rules)
     _check_base(db, base_version_id, before)
@@ -725,6 +746,8 @@ def restore_limits(db: Session, version_id: Any, note: Any, user: Any, base_vers
     """``POST /v1/admin/limits/restore``: copy only the limit sections of ``version_id`` onto
     the current rules, as a new version. Raises ``LimitsError``."""
     note = _clean_note(note)
+    from app.services.scheduling_inputs import lock_inputs
+    lock_inputs(db)
     vid = _uuid(version_id)
     version = db.get(RotaRuleVersion, vid) if vid is not None else None
     if version is None:

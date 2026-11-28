@@ -1,0 +1,38 @@
+PROPOSED APPROVED-LEAVE INTERVAL CORRECTION - NOT IMPLEMENTED / OWNER DECISION PENDING
+
+Evidence: fairness-modes-short-duty-leave-overlap-probe.json.
+Three synthetic eight-hour duties pass candidate selection and final validation
+although canonical approved-leave intersections are six, three and two hours.
+This is existing start-hour policy, not a new fairness-selector regression.
+
+Correction scope if the owner approves any-overlap blocking:
+1. Preserve existing stricter 24-hour and unknown-slot denials, dated scope/call
+   eligibility, rest and active-status treatment. Add approved physical interval
+   blocking without weakening existing denials. Do not infer intended duty times.
+2. Pass actual duty start/end boundaries into the common leave predicate. A helper
+   change alone is insufficient: several callers only fetch duty-date leave.
+3. Inspect every civil date touched by a duty and load leaves for those dates,
+   including next-day and cross-month boundaries. Use half-open overlap: leave
+   ending exactly at duty start, or starting exactly at duty end, does not overlap.
+4. Update shared candidate/final safety checks(rota_safety), Balance structural
+   checks(balance_duties), extra-duty strict checks(extra_duty), independent extra
+   verification(extra_duty_verify), superadmin eligibility(superadmin_allocation),
+   and template feasibility(rota_template). Trace ordinary/manual/autofill/optimizer
+   and exchange callers into the shared safety path; do not assume helper coverage.
+5. Leave-impact review already detects physical intervals OR legacy date policy
+   (leave_impact.py). Reconcile its accepted impacts with prospective prevention.
+   Keep pending leave warnings in ordinary allocation and existing stricter extra
+   status treatment; no entitlement or cancellation-accounting changes.
+6. Snapshot/proposal revision must change so old previews cannot apply under new
+   eligibility. Re-run stale-preview, atomic Apply/Undo and changed-input tests.
+7. Add real-validator cases for all three witnesses; exact-boundary non-overlaps;
+   midnight/month-end/year-end; AM/PM/NIGHT/unknown/duplicate combinations; active
+   versus cancelled statuses; 24-hour legacy protection; disabled/enabled OT;
+   protected rows and unavoidable shortages. Coverage may be infeasible after
+   unsafe candidates are removed; report the shortage rather than force a duty.
+8. Run both fairness modes, fresh full backend, guarded PostgreSQL, actual bundled
+   UI/API Apply/Verify/Undo and immutable-production READ ONLY diagnostics before
+   proposing deployment. Safe production durations remain a separate owner input.
+
+This document is an audit correction plan, not permission to amend clinical policy,
+not a source patch, and not deployment or operational assignment authority.

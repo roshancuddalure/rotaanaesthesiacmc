@@ -122,7 +122,7 @@ def test_get_shape_and_every_limit_has_plain_help(api) -> None:
     assert body["can_edit"] is True
     assert body["month"] == MONTH
     assert set(body["limits"]) == set(LIMIT_SECTIONS) == set(body["defaults"])
-    assert body["limits"]["fairness_rules"] == {"max_gap_within_call_level": 1, "target_mode": "auto"}
+    assert body["limits"]["fairness_rules"] == {"max_gap_within_call_level": 1, "target_mode": "auto", "allocation_mode": "availability"}
     assert body["limits"]["extra_duty_rules"] == {"justice_lookback_months": 12}
     assert isinstance(body["targets"], list)
     assert [s["key"] for s in body["sections"]] == list(LIMIT_SECTIONS)

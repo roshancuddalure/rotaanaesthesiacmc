@@ -11,6 +11,9 @@ from typing import Callable
 from uuid import UUID
 
 from app.services.rota_safety import rule_for_slot
+from app.services.allocation_equality import equality_terms
+from app.services.allocation_fairness_policy import person_target
+from app.services.allocation_covered_targets import enabled as covered_enabled
 
 
 @dataclass
@@ -22,7 +25,8 @@ class ObjectiveTerms:
 
 def build_objectives(model, variables, candidates, slots, context, *, targets,
                      mandatory, coverage, mode, originals, preferences, weights,
-                     holiday_dates, incompatible):
+                     holiday_dates, incompatible, enhance_equality=False):
+    covered = enhance_equality and covered_enabled(context)
     by_person = defaultdict(list)
     for (sid, person), variable in variables.items():
         by_person[person].append((sid, variable))
@@ -62,8 +66,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
                 costs.append(
                     threshold * max(1, round((2 * (base + n) - 1) * 100 / max(1, len(rows))))
                 )
-                if category == "total":
+                if category == "total" and not covered:
                     target = targets.get(level_of.get(person))
+                    if enhance_equality:
+                        target = person_target(context, person, target)
                     if target is None:
                         target = context.average_assignments
                     equality_costs.append(
@@ -82,9 +88,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
         for (s, p), v in variables.items()
     )
     tiers = [("required_coverage", -mandatory), ("coverage", -coverage)]
-    if originals:
+    enhanced, enhanced_score = equality_terms(model, variables, slots, context, include_squared=covered) if enhance_equality else ([], None)
+    if originals and not enhance_equality:
         tiers.append(("changes", changes))
-    if mode == "preferences":
+    if mode == "preferences" and not enhance_equality:
         tiers.append(("preferences", preference_cost))
     spacing = []
     for person, rows in by_person.items():
@@ -97,16 +104,20 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
                     model.add(together <= other)
                     model.add(together >= var + other - 1)
                     spacing.append(together * (8 - days))
-    tiers += [
+    equality_tiers = enhanced if covered else enhanced[:2] + [
         ("call_level_equality", sum(equality_costs)),
+    ] + enhanced[2:]
+    tiers += equality_tiers + [
         ("weekend_burden", weekends),
         ("night_burden", nights),
         ("holiday_burden", sum(holiday_costs)),
         ("workload", burden),
         ("spacing_history", ranking + sum(spacing) * weights["spacing"]),
     ]
-    if mode != "preferences":
+    if mode != "preferences" or enhance_equality:
         tiers.append(("preferences", preference_cost))
+    if originals and enhance_equality:
+        tiers.append(("changes", changes))
     def quality(choices):
         categories = [
             lambda s: s.duty_date.weekday() >= 5,
@@ -134,14 +145,16 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
             for s in choices
         )
         result = [-required, -len(choices)]
-        if originals:
+        if originals and not enhance_equality:
             result.append(sum(choices.get(s) != p for s, p in originals.items()))
         pref = sum(preferences.get(f"{s}:{p}", 0) for s, p in choices.items())
-        if mode == "preferences":
+        if mode == "preferences" and not enhance_equality:
             result.append(pref)
         equality = 0
-        for person, rows in by_person.items():
+        for person, rows in ([] if covered else by_person.items()):
             target = targets.get(level_of.get(person))
+            if enhance_equality:
+                target = person_target(context, person, target)
             if target is None:
                 target = context.average_assignments
             baseline = len(context.assignments_by_person.get(UUID(person), []))
@@ -149,7 +162,13 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
             equality += sum(
                 round((2 * (baseline + n) - 1 - 2 * target) * 100) for n in range(1, count + 1)
             )
-        result.append(equality)
+        extra_scores = enhanced_score(choices) if enhanced_score else []
+        if covered:
+            result.extend(extra_scores)
+        else:
+            result.extend(extra_scores[:2])
+            result.append(equality)
+            result.extend(extra_scores[2:])
         result.extend(costs)
         ranked = sum(
             candidates[s][p]["score_parts"].get("burden", 0) * weights["burden"]
@@ -165,8 +184,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
                     if 0 < days <= 7 and not incompatible(slots[s], slots[t], context.rules):
                         ranked += (8 - days) * weights["spacing"]
         result.append(ranked)
-        if mode != "preferences":
+        if mode != "preferences" or enhance_equality:
             result.append(pref)
+        if originals and enhance_equality:
+            result.append(sum(choices.get(s) != p for s, p in originals.items()))
         return result
 
     return ObjectiveTerms(tiers, quality, level_of)

@@ -25,16 +25,21 @@ from tests.test_ot_availability import requirement
 
 @pytest.mark.parametrize("code,hour,full,expected", [
     ("AM", 7, False, True), ("AM", 11, False, True), ("AM", 12, False, False),
-    ("PM", 11, False, False), ("PM", 12, False, True), ("PM", 23, False, True),
-    ("NIGHT", 7, False, True), ("NIGHT", 8, False, False), ("NIGHT", 17, False, False),
+    ("PM", 11, False, True), ("PM", 12, False, True), ("PM", 23, False, True),
+    ("NIGHT", 7, False, True), ("NIGHT", 8, False, False), ("NIGHT", 17, False, True),
     ("NIGHT", 18, False, True), ("NIGHT", 23, False, True),
     ("AM", 18, True, True), ("PM", 8, True, True), ("NIGHT", 12, True, True),
     ("FULL_DAY", 12, False, True), ("CUSTOM", 12, False, True), ("unexpected", 8, False, True),
 ])
-def test_duty_and_template_preserve_approved_boundary_table(code, hour, full, expected):
-    leave = SimpleNamespace(leave_slot=code)
-    slot = SimpleNamespace(is_24hr=full, starts_at=datetime(2026, 11, 19, hour))
-    rule = SimpleNamespace(is_24hr=full, start_time=f"{hour:02d}:00")
+def test_duty_and_template_follow_approved_interval_boundary_table(code, hour, full, expected):
+    day = date(2026, 11, 19)
+    hours = 24 if full else 8
+    begins = datetime(2026, 11, 19, hour)
+    leave = SimpleNamespace(leave_slot=code, starts_on=day, ends_on=day)
+    slot = SimpleNamespace(is_24hr=full, duty_date=day, starts_at=begins,
+                           ends_at=begins+timedelta(hours=hours))
+    rule = SimpleNamespace(is_24hr=full, start_time=f"{hour:02d}:00",
+                           end_time=f"{(hour+hours)%24:02d}:00",duration_hours=hours)
     assert slot_leave_blocks(leave, slot) is expected
     assert leave_blocks_rule(code, rule) is expected
 

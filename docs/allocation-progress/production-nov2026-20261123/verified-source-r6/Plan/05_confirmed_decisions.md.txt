@@ -1,0 +1,198 @@
+# Confirmed Decisions
+
+This file records answers and decisions confirmed by the user so future sessions do not need to ask the same questions again.
+
+## 2026-05-05 User Answers
+
+### MVP Scope
+
+Version 1 should support both:
+
+- importing and analyzing existing rotas,
+- creating new monthly rotas.
+
+This means the MVP cannot be only a report viewer. It needs rota creation, validation, import, and export workflows.
+
+### Users
+
+Initial users are rota admins only.
+
+Implication:
+
+- No individual staff login is required in the first version.
+- Role design should still allow future expansion to consultants, PGs, unit leads, and staff self-service.
+
+### Output
+
+The final rota/output should be exportable to Excel.
+
+Implication:
+
+- Excel export is an MVP feature.
+- The app should preserve enough layout and duty-slot structure to generate familiar departmental spreadsheets.
+
+### Leave
+
+Leave balance calculation is not needed now, but may be added later.
+
+Implication:
+
+- MVP leave management should focus on date availability and rota conflict prevention.
+- Schema should not block future leave balance tracking.
+
+### Hard Duty Spacing Rule
+
+There must be at least 24 hours between two 24-hour duties for the same person.
+
+Implication:
+
+- This is a hard validation rule.
+- A rota with this violation should not be publishable/exportable without an explicit admin override, if overrides are allowed.
+
+### Duty Limits
+
+Duty limits differ by situation and should be configurable in the admin panel.
+
+Implication:
+
+- Do not hardcode monthly duty limits by call level.
+- Store limits as editable policy/rule settings with effective dates.
+
+### Historical Data
+
+Historical data from January 2025 to May 2026 should be imported into the new system as seed data.
+
+Implication:
+
+- Build a historical import/seed phase.
+- Preserve source traceability from the existing analysis files where possible.
+
+### Offline HTML Report
+
+A self-contained offline HTML export like the current analysis report is desirable if possible.
+
+Implication:
+
+- Excel export is required first.
+- Offline HTML report export should be part of reporting/export planning.
+
+## Current Product Direction
+
+The system should be an admin-facing web app that can:
+
+1. Import historical and monthly rota/unitwise data.
+2. Normalize people, aliases, units, call levels, postings, leave, and duties.
+3. Validate rota drafts with configurable rules.
+4. Assist admins in creating new monthly rotas.
+5. Export final rota outputs to Excel.
+6. Generate analysis reports, including offline HTML if feasible.
+
+## 2026-05-06 User Direction
+
+### Admin-Controlled Mapping
+
+Duty-label mapping, unit mapping, and posting/group mapping must be comprehensively editable from the frontend admin panel.
+
+Implication:
+
+- Parser mappings should not be locked only in backend code.
+- Historical import should seed suggested mappings, but rota admins must be able to review and change them.
+- The rota board and import pipeline should use the admin-approved mapping configuration.
+- Uncertain labels should be surfaced as review items rather than silently guessed.
+
+### Dynamic Analysis Dashboard
+
+The app should have a native Analysis section similar in coverage to the existing standalone HTML report, but integrated into the software UX.
+
+Implication:
+
+- The dashboard should be computed dynamically from normalized database records.
+- Analysis should update after each monthly rota is approved/finalized.
+- Draft rota periods should not affect official analysis totals.
+- Historical imported periods can be included as analysis-ready data.
+- The old HTML report is evidence for useful metrics, not the UI implementation to embed directly.
+
+### Department Members And Deduplication
+
+The software needs a dedicated department members management section.
+
+Implication:
+
+- The department member list should be maintained separately from raw imported names.
+- Imported name variants should be deduplicated through an admin review pass.
+- Canonical members should keep aliases so future imports can resolve names correctly.
+- Member designation/promotion history should be stored with effective dates.
+- Analytics and rota workflows should eventually use canonical members and designation history.
+- Invalid imported names must be blocked or cleaned before they become department members.
+- Non-person spreadsheet values such as date labels, unit headers, campus labels, placeholders, and numeric artifacts should be discarded.
+
+### Login And Privileges
+
+The system should now use rota-team login accounts.
+
+Implication:
+
+- Supported roles are rota board member, computer admin, and superadmin.
+- Computer admin and superadmin can access software diagnostics.
+- Superadmin can create login accounts for the rota team.
+- The default seeded superadmin is username `rotachief` with password `rotateam`.
+- Forgot-password support can create a local reset token during this development phase; production delivery should later move to email/SMS or another secure channel.
+
+### Trusted Department Roster
+
+`Plan/Data/ANAESTHESIA department doctors(namelist).xlsx` is the trusted reference for corrected department member names.
+
+Implication:
+
+- Roster reconciliation should use this workbook to canonicalize imported person names.
+- Previous imported spellings must be preserved as aliases.
+- Conservative exact/near-exact matching is preferred over risky broad fuzzy merges.
+- Invalid spreadsheet artifacts should still be handled by the invalid-member cleanup pass.
+
+## 2026-10-12 - Unified Member Management and CSV Imports
+
+The user approved an organized member master list with CSV and Excel import/review and visible import history.
+
+- Uploaded names and call levels must be compared with all existing members and aliases, including previous uploads, to prevent duplicate creation.
+- Similar or ambiguous names require manual review rather than automatic merges.
+- Existing call-level changes require explicit review and approval when applying an import.
+- Blank optional values preserve the existing record. Members absent from an uploaded file remain unchanged.
+- Duties, leave, postings, canonical names on matches, and aliases remain linked to the existing member.
+- Applying an import refreshes member data, filters, call-level counts, audit indicators, and import history together.
+
+## 2026-10-12 - Past Duties and Member Profiles
+
+- User approved `.xls`/`.xlsx` completed-duty uploads, reviewed normalization/conflicts, duplicate prevention, statistics updates, and configurable historical fairness with an initial six-month lookback.
+- Missing historical coverage must not be treated as zero workload; rest checks must include recorded duties across month boundaries.
+- User requested per-person profiles with call-promotion dates/reasons and Admin/HOD comments, synchronized through the department member master record.
+- User explicitly chose a separate HOD login role. HOD users may maintain profile call changes and comments; import/software-admin privileges remain separate.
+
+
+## 2026-10-19 - Staged Performance and Optional Local GPU
+
+The user approved implementing the staged performance plan based on `to do/oct2026.txt`
+and requested testing of the complete plan before reporting completion. Local GPU use
+is optional and enabled per browser by an admin. The server remains authoritative for
+rota safety and saving; proposals require review and never publish automatically.
+The implementation and measured evidence are in `../docs/staged_compute_implementation.md`.
+
+## 2026-10-19 - Intelligent Rota Generation
+
+The user approved implementing and testing the seven-stage intelligence plan with
+recommended defaults, without preparing a manual questionnaire or training files.
+Use whole-month optimization plus independent validation; preserve saved duties
+unless explicitly selected for repair. Local language-model inference is optional
+and cannot approve exceptions, assign members or publish. Teaching examples require
+review; exceptions are excluded from reusable learning. Learned preference versions
+require held-out evaluation and administrator activation, with explicit rollback.
+Preserve the existing six-month historical policy rather than overwriting it with
+a proposed default. Do not invent holiday dates or clinical duty/rest limits.
+
+Implementation: `../docs/rota_intelligence_implementation.md`.
+
+
+## 2026-11-23T11:39:04.478339+00:00 - Owner clarification: ordinary duty eligibility
+
+Owner explicitly states that monthly roster members with no posting must also receive ordinary duties; there is no extra-duty-only person category. Owner separately confirms people posted only to units outside the month scope must NOT be added to ordinary allocation. Implement consistent candidate/balance/validator/fairness behavior; preserve dated call eligibility/groups, unit rules, leave/rest, quotas, staffing/OT and fixed duties. No fictitious posting creation, production application or deployment authorized. Existing unposted-extra ledger behavior stays for its separate purpose.
+
+Implementation interpretation: the no-extra-only decision includes zero-duty active people without monthly postings; initial ordinary eligibility must not depend on first receiving an extra duty. Partial postings remain dated and out-of-scope postings exclude ordinary membership.

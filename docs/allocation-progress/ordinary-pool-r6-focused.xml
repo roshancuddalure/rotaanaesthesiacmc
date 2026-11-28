@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="34" time="71.272" timestamp="2026-11-23T17:21:58.400733+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ordinary_duty_pool" name="test_no_posting_monthly_member_is_clear_candidate_and_balance_apply_undo_safe" time="2.882" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_never_waives_other_rules[leave]" time="0.806" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_never_waives_other_rules[pending_leave]" time="0.819" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_never_waives_other_rules[rest]" time="0.732" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_never_waives_other_rules[quota]" time="1.296" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_never_waives_other_rules[level]" time="0.658" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_never_waives_other_rules[inactive]" time="0.755" /><testcase classname="tests.test_ordinary_duty_pool" name="test_posted_only_outside_scope_is_excluded_even_when_holding_extra_duty" time="0.950" /><testcase classname="tests.test_ordinary_duty_pool" name="test_no_posting_fallback_cannot_move_ordinary_slot_outside_scope" time="0.629" /><testcase classname="tests.test_ordinary_duty_pool" name="test_partial_posting_does_not_expand_to_full_month_fallback" time="0.563" /><testcase classname="tests.test_ordinary_duty_pool" name="test_optimizer_can_use_ordinary_fallback_and_full_final_validator" time="1.516" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_reference_and_cached_candidates_match[False]" time="0.868" /><testcase classname="tests.test_ordinary_duty_pool" name="test_fallback_reference_and_cached_candidates_match[True]" time="0.637" /><testcase classname="tests.test_ordinary_duty_pool" name="test_zero_duty_active_member_needs_no_extra_duty_seed_or_ledger" time="0.597"><failure message="IndexError: list index out of range">db = &lt;sqlalchemy.orm.session.Session object at 0x000002333BAA2750&gt;
+
+    def test_zero_duty_active_member_needs_no_extra_duty_seed_or_ledger(db):
+        from app.models import DutyAssignment, ExtraDutyRecord
+        from app.services.rota_assignment import assign_person_to_slot
+        edit_rules(db, relaxed)
+        unit = make_unit(db, 'UNIT_I')
+        member(db, 'Posted member', unit)
+        zero = _unposted_member(db, 'Zero duty member')
+        setup_month(db, [unit])
+        target = make_slot(db, unit, days(4)[0])
+        db.commit()
+        assert db.query(DutyAssignment).count() == db.query(ExtraDutyRecord).count() == 0
+        context = candidate_context(db, MONTH)
+        assert zero.id in context.ordinary_fallback_ids
+        candidates = slot_candidates_with_context(db, slot=target, context=context)['candidates']
+        assert next(c for c in candidates if c['person_id'] == str(zero.id))['validation_status'] == 'clear'
+&gt;       shares = bd.shares(db, MONTH)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+backend\tests\test_ordinary_duty_pool.py:149: IndexError</failure></testcase><testcase classname="tests.test_locked_scope_boundaries" name="test_manual_override_cannot_import_member_outside_dated_locked_scope[outside]" time="0.544" /><testcase classname="tests.test_locked_scope_boundaries" name="test_manual_override_cannot_import_member_outside_dated_locked_scope[unposted]" time="0.544"><failure message="AssertionError: assert 'needs_override' == 'clear'&#10;  &#10;  - clear&#10;  + needs_override">db = &lt;sqlalchemy.orm.session.Session object at 0x000002333B6D9E10&gt;
+member_kind = 'unposted'
+
+    @pytest.mark.parametrize("member_kind", ["outside", "unposted", "expired", "future"])
+    def test_manual_override_cannot_import_member_outside_dated_locked_scope(db, member_kind):
+        edit_rules(db, relaxed)
+        unit, outside = make_unit(db, "UNIT_I"), make_unit(db, "OUT")
+        setup_month(db, [unit])
+        kwargs = {"ends_on": date(2026, 5, 14)} if member_kind == "expired" else {"starts_on": date(2026, 5, 16)} if member_kind == "future" else {}
+        target = member(db, "Adversarial recipient", outside if member_kind == "outside" else unit, **kwargs)
+        if member_kind == "unposted":
+            db.query(PersonPosting).filter_by(person_id=target.id).delete()
+        slot = make_slot(db, unit, date(2026, 5, 15))
+        db.commit()
+        check = validate_assignment(db, slot=slot, person=target, replace_existing=False)
+        if member_kind == 'unposted':
+            # Owner23Nov: active no-posting members are ordinary candidates from
+            # zero duties; excluded-unit and partial-posting restrictions remain.
+&gt;           assert check['status'] == 'clear'
+E           AssertionError: assert 'needs_override' == 'clear'
+E             
+E             - clear
+E             + needs_override
+
+backend\tests\test_locked_scope_boundaries.py:36: AssertionError</failure></testcase><testcase classname="tests.test_locked_scope_boundaries" name="test_manual_override_cannot_import_member_outside_dated_locked_scope[expired]" time="0.485" /><testcase classname="tests.test_locked_scope_boundaries" name="test_manual_override_cannot_import_member_outside_dated_locked_scope[future]" time="0.947" /><testcase classname="tests.test_locked_scope_boundaries" name="test_template_slot_outside_scope_never_gets_cpu_gpu_or_optimizer_assignment" time="0.920" /><testcase classname="tests.test_locked_scope_boundaries" name="test_balance_never_moves_to_excluded_unit_even_if_member_has_dual_posting" time="0.788" /><testcase classname="tests.test_locked_scope_boundaries" name="test_forged_reviewed_assignment_to_outside_member_is_rejected_at_apply" time="1.075" /><testcase classname="tests.test_locked_scope_boundaries" name="test_scope_edit_invalidates_existing_compute_and_balance_reviews" time="1.140" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[0]" time="1.869" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[1]" time="1.473" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[2]" time="1.046" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[3]" time="1.212" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[4]" time="1.876" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[5]" time="0.971" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[6]" time="1.034" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[7]" time="1.108" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[8]" time="1.017" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[9]" time="2.170" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[10]" time="1.162" /><testcase classname="tests.test_locked_scope_boundaries" name="test_randomized_balance_preserves_scope_capacity_commitments_and_dated_eligibility[11]" time="1.201" /></testsuite></testsuites>

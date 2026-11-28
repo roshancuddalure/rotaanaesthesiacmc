@@ -8,7 +8,7 @@ Also hosts ``month_bounds`` which every month-scoped endpoint uses to validate `
 
 from calendar import monthrange
 from collections import Counter, defaultdict
-from datetime import date
+from datetime import date, timedelta
 from uuid import UUID
 
 from sqlalchemy import select
@@ -48,6 +48,43 @@ def leave_requests_for_month(db: Session, month: str) -> list[LeaveRequest]:
         .order_by(LeaveRequest.starts_on, LeaveRequest.ends_on)
     )
     return list(db.scalars(statement))
+
+
+def allocation_leave_index(db, month, *, rules=None, prospective_slots=()):
+    """Active leave over actual and prospective duty windows, including month edges."""
+    from sqlalchemy import func
+    from app.models import DutySlot
+    from app.services.rota_rules import read_phase_one_rules, default_phase_one_rules, effective_phase_one_rules
+    from app.services.rota_template import slot_bounds
+
+    first, last = month_bounds(month)
+    start, end = db.execute(select(func.min(DutySlot.starts_at), func.max(DutySlot.ends_at))
+                           .where(DutySlot.duty_date.between(first, last))).one()
+    if start is not None:
+        first = min(first, start.date())
+        last = max(last, (end - timedelta(microseconds=1)).date())
+    if rules is None:
+        # Safety/report reads must never initialise persistent scheduling inputs.
+        rules = read_phase_one_rules(db)
+        if rules is None:
+            rules = effective_phase_one_rules(db, default_phase_one_rules())
+    # Include virtual template duties before they have database rows.
+    month_first, month_last = month_bounds(month)
+    for rule in rules.duty_rules:
+        start, _ = slot_bounds(month_first, rule)
+        _, end = slot_bounds(month_last, rule)
+        first = min(first, start.date())
+        last = max(last, (end - timedelta(microseconds=1)).date())
+    for slot in prospective_slots:
+        first = min(first, slot.starts_at.date(), slot.duty_date)
+        last = max(last, (slot.ends_at - timedelta(microseconds=1)).date(), slot.duty_date)
+    indexed = {}
+    for leave in db.scalars(select(LeaveRequest).where(
+            LeaveRequest.starts_on <= last, LeaveRequest.ends_on >= first)):
+        if is_active(leave.status):
+            for day in date_range(max(first, leave.starts_on), min(last, leave.ends_on)):
+                indexed.setdefault(day, {}).setdefault(leave.person_id, []).append(leave)
+    return indexed
 
 
 def posting_context_for_month(db: Session, person_id: UUID, day: date) -> tuple[str | None, str | None]:

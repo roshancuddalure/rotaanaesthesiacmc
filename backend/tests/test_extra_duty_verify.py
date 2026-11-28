@@ -382,19 +382,20 @@ def test_unposted_ledger_exempts_only_the_posting_check(world):
     db.commit()
 
     result = check_month(db, MONTH)
-    assert codes_for(result, slots["free"]) == set()
-    assert codes_for(result, slots["leave"]) == {"leave"}
-    assert codes_for(result, slots["level"]) == {"call_level_mismatch"}
-    assert codes_for(result, slots["elsewhere"]) == {"not_in_unit"}  # the ledger claim is false
-    assert codes_for(result, slots["plain"]) == {"not_in_unit"}
-    assert codes_for(result, slots["voided"]) == {"not_in_unit"}
-    assert result["unposted_exempt"] == 4
-
-    # Unit rules still apply to an exempt assignment.
+    missing = {'not_in_unit', 'scope_member_excluded'}
+    assert codes_for(result, slots['free']) == missing
+    assert codes_for(result, slots['leave']) == missing | {'leave'}
+    assert codes_for(result, slots['level']) == missing | {'call_level_mismatch'}
+    assert codes_for(result, slots['elsewhere']) == {'not_in_unit'}
+    assert codes_for(result, slots['plain']) == missing
+    assert codes_for(result, slots['voided']) == missing
+    assert result['ordinary_roster_fallback'] == 0
+    assert result['unposted_exempt'] == 0
+    assert result['legacy_unposted_records'] == 4
     _v, rules = get_phase_one_rules(db)
-    rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u1.id)]
+    rules.duty_rules_by_key['MAIN_1ST_24HR'].excluded_units = [str(u1.id)]
     strict = check_month(db, MONTH, rules=rules)
-    assert codes_for(strict, slots["free"]) == {"unit_rule"}
+    assert codes_for(strict, slots['free']) == missing | {'unit_rule'}
 
 
 def test_superadmin_allocation_exempts_only_the_allowed_checks(world):
@@ -432,7 +433,7 @@ def test_superadmin_allocation_exempts_only_the_allowed_checks(world):
     rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u2.id)]  # u1 allowed; harmless
     result = check_month(db, MONTH)
     assert codes_for(result, slots["second"]) == set()
-    assert codes_for(result, slots["unposted"]) == set()
+    assert codes_for(result, slots["unposted"]) == {"scope_member_excluded"}
     assert codes_for(result, slots["inactive"]) == set()
     assert codes_for(result, slots["leave"]) == {"leave"}
     assert "post_24hr_rest" in codes_for(result, slots["rest"])
@@ -511,6 +512,27 @@ def test_three_hundred_slots_in_under_two_seconds(world):
     elapsed = clock.perf_counter() - started
     assert result["checked"] == 300
     assert elapsed < 2.0, elapsed
+
+
+@pytest.mark.parametrize('select_latest', [False, True])
+def test_partial_verification_capacity_counts_all_holders_only_in_selected_slots(world, select_latest):
+    from app.services.extra_duty_verify import load_month_state, check_state
+    db, period, unit, _other = world
+    people = [make_person(db, f'Capacity selection {i}', unit) for i in range(4)]
+    selected_slot = make_slot(db, period, unit, date(2026, 5, 10), label='selected')
+    unrelated_slot = make_slot(db, period, unit, date(2026, 5, 15), label='unselected')
+    assignments = [assign(db, selected_slot, people[0]), assign(db, selected_slot, people[1])]
+    assignments[0].created_at = datetime(2026, 5, 1)
+    assignments[1].created_at = datetime(2026, 5, 2)
+    assign(db, unrelated_slot, people[2])
+    assign(db, unrelated_slot, people[3])
+    db.commit()
+    result = check_state(load_month_state(db, MONTH), [assignments[int(select_latest)].id])
+    assert result['checked'] == 1
+    assert [(v['code'], v['slot_id'], v['person_id']) for v in result['violations']] == [
+        ('slot_full', str(selected_slot.id), str(people[1].id))]
+    assert next(c for c in result['checks'] if c['name'] == 'Slot capacity') == {
+        'name': 'Slot capacity', 'passed': False, 'checked': 1, 'violations': 1}
 
 
 # ----------------------------------------------------------------------------------------- CLI

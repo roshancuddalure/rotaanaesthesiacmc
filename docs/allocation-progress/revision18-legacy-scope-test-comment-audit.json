@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-11-27T03:29:17.430824+00:00",
+  "status": "legacy_test_comment_mismatch_current_rule_unchanged",
+  "finding": "Randomized extra-duty test comments retain historical unposted/outside-scope tier descriptions. A permissive generator/comment is not present allocation authority.",
+  "current_rule": "Ordinary and extra duties require a dated posting to a monthly included unit; historical override codes do not authorize new scope violations.",
+  "source_review": [
+    "backend/tests/test_extra_duty_invariants.py:535 legacy prose and tier labels",
+    "backend/tests/test_locked_scope_boundaries.py:21 dated outside/unposted/expired/future manual refusal",
+    "backend/tests/test_locked_scope_boundaries.py:41 CPU/GPU/optimizer outside-scope refusal",
+    "backend/tests/test_locked_scope_boundaries.py:67 excluded-unit Balance refusal",
+    "backend/tests/test_scope_membership_review_repair.py:18 invalid existing-holder repair and unsafe Undo refusal"
+  ],
+  "evidence_limit": "Reviewed actual source assertions. Current fresh full has not yet reached every named scope test. Prior full43scope/call family passes are historical. No fresh pass inferred from comments.",
+  "action": "Preserve source freeze. Treat comments as a documentation cleanup finding; any later test edit needs matching current-source evidence. No clinical policy amendment or engine change is justified by this comment."
+}

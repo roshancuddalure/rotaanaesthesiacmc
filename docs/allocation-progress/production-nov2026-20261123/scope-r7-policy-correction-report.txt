@@ -1,0 +1,21 @@
+CURRENT REVISION7 SCOPE CORRECTION - LOCALLY VERIFIED 2026-11-23T14:07:06.079373+00:00
+
+Only people with a dated unit posting into the month's included units may receive ordinary OR extra duties. Missing postings and excluded-only postings grant neither. There is no extra-duty-only category. The earlier revision 5/6 fallback interpretation, 151-person proposal and release patch are superseded; do not deploy them.
+
+Production November scope: 135 active included-unit members (1st: 28; 2nd: 15; 3rd: 58; 4th: 21; 5th: 13). Another 16 active people have no monthly unit posting; four are posted only outside scope. Seven existing assignments across six people fail the clarified rule. The checker now reports these; old ledger records grant no eligibility.
+
+Implemented locally: remove unposted candidate and target admission; require dated included-unit membership in ordinary/manual validation and extra-duty strict eligibility; eliminate outside/unposted all-unit tiers and excluded explicit fallbacks; preserve posting dates and existing call/group, leave, rest, capacity, quota and staffing checks; block scope bypass in superadmin allocation; independently check membership without ledger exemptions. Unlocking an already configured scope does not remove its membership boundary. Engine revision 7 invalidates earlier compute contexts.
+
+Verification: 294 distinct backend cases passed (291 core cases, 48 affected-boundary rechecks with overlap, and two performance cases). Another 226 distinct UI checks passed (141 balance and 85 extra-duty checks), repeated successfully in the isolated release. Main and isolated builds passed; all 175 backend modules match. Source hashes match the latest read-only replay. Existing build warnings and one JUnit record_property warning remain. Ruff passed. Initial policy-expectation failures, a UTF-8 rewrite caught by assertions, and an obsolete timestamp assertion were corrected; initial failing logs are retained.
+
+One existing performance target remains UNMET. The standard extra-duty preview took 10.55 seconds against its unchanged 10-second limit; a standalone rerun took 29.96 seconds. The same test against the untouched production-base backend also failed, taking 50.90 seconds. These variable runs do not establish a reliable speed comparison or prove regression absence. The profiler records 63,258 strict checks and 310 final validations; the new dated-posting helper accounts for 0.067 seconds within an 87.58-second profiled preview. Profiling adds overhead. No threshold was weakened and no all-green performance claim is made.
+
+Read-only offline repair study: all seven ineligible assignments safely replaced, nine total changes, and 840/840 duties filled using 135 eligible people. All 840 assignments pass eight independent checks with zero violations; all nine changed-holder placement/quota checks are clear. No postings or ORM records were changed. Fully available cohort gaps by call level: [1, 0, 1, 0, 0]. Adjusted spreads after: 1st 1.0; 2nd 0.8125; 3rd 1.5092; 4th 0.9053; 5th 1.0. Third call remains above the saved tolerance of one but below the requested maximum of two. Raw ranges of 3-5, 3-7, 4-8, 5-11 and 1-3 differ with leave and partial postings. The bounded search does not prove global optimality.
+
+This is a local software correction and an offline repair proposal. The offline membership-repair stage is not integrated into the server Balance preview and the workbook is not an apply token. A supported reviewed application path and current locked preview are still required before operational reassignment. The production OT guard is disabled in this snapshot; these eight checks do not certify production OT or every unchanged monthly quota. No deployment, migration, posting change or live duty write occurred. The broader 50-item scope remains 21/50 Done; the full goal is not complete.
+
+Review workbook:Review\November2026_scoped_allocation_repair_r7_verified_20261123.xlsx
+Focused patch:Review\Allocation_engine_scope_r7_verified.patch
+Patch SHA256:3677a2bddc8077c1f7c66ecd2ed1d52fd647dcfc8768f00db00331ee396481f3
+Isolated checkout:Debug\Allocation-release-r7
+Authoritative replay:docs/allocation-progress/production-nov2026-20261123/scope-r7-final-production-safety.json

@@ -48,12 +48,13 @@ const moves = [
     cross_unit: true, reason: "Dr Jay was above the fair share." },
 ];
 const levels = [
-  { call_level: "3RD_CALL", goal_range: [5, 6], before: { min: 3, max: 8, gap: 5 }, after: { min: 5, max: 6, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1 },
-  { call_level: "1ST_CALL", goal_range: [6, 7], before: { min: 5, max: 9, gap: 4 }, after: { min: 6, max: 7, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1 },
+  { allocation_mode: "availability", adjusted_gap_before: 3.5, adjusted_gap_after: 0.9, ok_before: false, call_level: "3RD_CALL", goal_range: [5, 6], before: { min: 3, max: 8, gap: 5 }, after: { min: 5, max: 6, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1 },
+  { call_level: "1ST_CALL", goal_range: [6, 7], before: { min: 5, max: 9, gap: 4 }, after: { min: 6, max: 7, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1,
+    availability_breakdown: { posted: { members: 5, min: 6, max: 7, gap: 1 }, fully_available_posted: { members: 4, min: 6, max: 7, gap: 1 }, unposted_holders: { members: 1, min: 7, max: 7, gap: 0 } } },
   { call_level: "4TH_CALL", goal_range: [4, 4], before: { min: 2, max: 6, gap: 4 }, after: { min: 3, max: 5, gap: 2 }, ok_after: false, allowed_gap: 1,
     reason_if_not: "Dr Ira is on leave for 12 days and Dr Jay already has the maximum 24-hour duties; no other move keeps leave, rest and limits." },
 ];
-const summary = { moves: 11, swaps: 1, cross_unit: 3, levels_balanced_before: 0, levels_balanced_after: 2 };
+const summary = { moves: 11, swaps: 1, cross_unit: 3, levels_balanced_before: 0, levels_balanced_after: 2, membership_repair: {invalid_before:2,repaired:2,unresolved:0}, clinical_repair: {invalid_before:1,repaired:1,unresolved:0,inspections:3} };
 const previewBody = () => ({ month: MONTH, plan_hash: "plan-bal", context_hash: "ctx-bal", token: "tok-bal", summary, levels, moves, members });
 const unevenStatus = () => ({ month: MONTH, enabled: true, balanced: false, batches: [], levels: [
   { call_level: "1ST_CALL", min: 5, max: 9, gap: 4, allowed_gap: 1, ok: false, goal_range: [6, 7] },
@@ -135,7 +136,7 @@ await shot("balance-stage-390");
 state.status = { ...unevenStatus(), balanced: true, levels: unevenStatus().levels.map(l => ({ ...l, ok: true })) };
 await stage({ draft: true, locked: true, assigned: 40 });
 await page.waitForFunction(() => document.querySelector("#stages .balance-stage__status")?.dataset.tone === "ok");
-eq((await statusLine.innerText()).trim(), "Duties are balanced.", "balanced status line");
+eq((await statusLine.innerText()).trim(), "Duty totals are balanced.", "balanced status line");
 state.status = { ...unevenStatus(), levels: [{ call_level: "1ST_CALL", min: 5, max: 9, gap: 4, allowed_gap: 1, ok: false, goal_range: [6, 7] }] };
 await stage({ draft: true, locked: true, assigned: 40 });
 await page.waitForFunction(() => document.querySelector("#stages .balance-stage__status")?.dataset.tone === "uneven");
@@ -159,13 +160,21 @@ await dialog.getByRole("heading", { name: "Balance duties", level: 2 }).waitFor(
 await dialog.locator("[data-balance-move]").first().waitFor();
 eq(state.previewBodies, [{ month: MONTH }], "preview posts the month");
 const about = await dialog.locator(".balance-about").innerText();
+ok(/2 ineligible assignment\(s\).*will be reassigned/s.test(await dialog.locator('[data-membership-repair]').innerText()), "membership repairs are disclosed before apply");
+ok(/Undo cannot restore an ineligible holder/.test(await dialog.locator('[data-membership-repair]').innerText()), "unsafe undo limitation is disclosed before review");
+ok(/1 duty\/leave conflict\(s\).*will be repaired/s.test(await dialog.locator('[data-clinical-repair]').innerText()), "leave conflict repairs are disclosed before apply");
+ok(/Undo cannot restore a duty that still overlaps active leave/.test(await dialog.locator('[data-clinical-repair]').innerText()), "clinical undo restriction is disclosed before review");
 ok(/What this does/.test(about) && /same call level/.test(about), "what-this-does note");
 for (const rule of ["Leave", "Rest", "Call level", "Groups", "Unit rules", "Limits"]) ok(about.includes(rule), `never broken: ${rule}`);
 ok(/smaller share/.test(about) && /part of the month/.test(about), "pro-rata share explained");
+ok(/Equal-count mode/.test(about), "both available policies are explained without assuming one");
+ok(/Availability-adjusted deviation gap: 3.5 before; 0.9 after/.test(await dialog.locator('[data-balance-level="3RD_CALL"]').innerText()), "selected deviation measure shown separately from raw bars");
 const chips = (await dialog.locator(".extra-duty-chip").allInnerTexts()).map(c => c.replace(/\s+/g, " ").trim());
 eq(chips, ["11 duties move", "1 swap", "3 change unit", "0 → 2 of 3 levels balanced"], "summary chips");
 eq(await dialog.locator(".balance-levels-section [data-balance-level]").evaluateAll(es => es.map(e => e.dataset.balanceLevel)), ["1ST_CALL", "3RD_CALL", "4TH_CALL"], "levels in call order");
 const first = await dialog.locator('.balance-levels-section [data-balance-level="1ST_CALL"]').innerText();
+ok(first.includes("Fully available with a posting:") && first.includes("6–7") && first.includes("(4 people)"), "posted availability cohort is explicit");
+ok(first.includes("1 duty holder(s) lack a unit posting") && first.includes("ineligible for ordinary and extra allocation"), "dated posting prerequisite is explained");
 ok(/1st call/.test(first) && /Balanced after/.test(first) && /Fair share\s*6–7\s*duties each/.test(first) && /allowed gap 1/.test(first), "level head, badge and goal");
 ok(/Before\s*5–9\s*gap 4/i.test(first) && /After\s*6–7\s*gap 1/i.test(first), `before → after with gaps: ${first}`);
 const fourth = await dialog.locator('.balance-levels-section [data-balance-level="4TH_CALL"]').innerText();
@@ -252,18 +261,19 @@ await page.locator("dialog").waitFor({ state: "detached" });
 state.previewResponses.push([{ detail: { code: "nothing_to_balance", message: "No movable duties are left." } }, 409]);
 await openBalance();
 await dialog.getByText("Already balanced").waitFor();
-ok(/No movable duties are left\. Nothing needs to move\./.test(await dialog.locator("[data-balance-notice]").innerText()), "already balanced text");
+ok(/No movable duties are left\. No changes were proposed\./.test(await dialog.locator("[data-balance-notice]").innerText()), "already balanced text");
 eq(await dialog.locator("[data-balance-apply]").count(), 0, "no apply when balanced");
 ok(await page.evaluate(() => document.activeElement?.matches("[data-balance-notice]")), "focus on the outcome");
 await closeWindow();
 ok(await page.evaluate(() => document.activeElement?.id === "opener"), "focus returns to the opener");
 
-// 7. Status says balanced → no preview; level list shown.
+// 7. Balanced totals still ask the server; it may find weekend exchanges.
 state.status = { ...unevenStatus(), balanced: true, levels: unevenStatus().levels.map(l => ({ ...l, min: 6, max: 7, gap: 1, ok: true })) };
 const previews = state.previewBodies.length;
+state.previewResponses.push([{ detail: { code: "nothing_to_balance", message: "No safe improving exchange was found." } }, 409]);
 await openBalance();
 await dialog.getByText("Already balanced").waitFor();
-eq(state.previewBodies.length, previews, "no preview when the status is balanced");
+eq(state.previewBodies.length, previews + 1, "server preview decides whether balanced totals can improve");
 eq(await dialog.locator(".balance-levels--plain [data-balance-level]").count(), 3, "balanced levels listed");
 ok(/6–7 duties · gap 1 · fair share 6–7/.test(await dialog.locator('.balance-levels--plain [data-balance-level="1ST_CALL"]').innerText()), "balanced level line");
 await axe("already balanced");
@@ -460,8 +470,38 @@ state.status = { ...unevenStatus(), balanced: true, levels: unevenStatus().level
 await stage({ draft: true, locked: true, assigned: 40 });
 await page.waitForFunction(() => document.querySelector("#stages .balance-stage__status")?.dataset.tone === "ok");
 await page.waitForTimeout(200);
-eq((await statusLine.innerText()).trim(), "Duties are balanced.", "no hint when balanced");
+eq((await statusLine.innerText()).trim(), "Duty totals are balanced.", "no hint when balanced");
 state.extraStatus = null; state.status = unevenStatus();
+
+// Weekend exchanges remain reviewable separately from duty-count equality.
+const weekendPreview = previewBody();
+state.previewResponses.push([{ ...weekendPreview, summary: { ...weekendPreview.summary, weekend_refinement: {
+  swaps: 1, trials: 4, trial_limit: 128,
+  levels: [{call_level: "3RD_CALL", before_gap: 5, after_gap: 1}]
+} } }, 200]);
+state.status = { ...unevenStatus(), balanced: true };
+await openBalance();
+await dialog.locator("[data-weekend-refinement]").waitFor();
+const weekendSection = dialog.locator("[data-weekend-refinement]");
+ok((await weekendSection.innerText()).includes("preserve each person's duty total, recorded hours"), "weekend invariants explained");
+eq(await weekendSection.locator("tbody td").allTextContents(), ["5", "1"], "weekend before-after gaps rendered");
+await axe("weekend refinement");
+await closeWindow();
+
+// Working-hours exchanges retain count/credit/weekend targets and expose the actual gap.
+const hoursPreview = previewBody();
+state.previewResponses.push([{ ...hoursPreview, summary: { ...hoursPreview.summary, hours_refinement: {
+  swaps: 1, trials: 5, trial_limit: 128,
+  levels: [{call_level: "3RD_CALL", before_hour_gap: 120, after_hour_gap: 56}]
+} } }, 200]);
+await openBalance();
+const hoursSection = dialog.locator("[data-hours-refinement]");
+await hoursSection.waitFor();
+ok((await hoursSection.innerText()).includes("duty total, weekend total and extra-duty credits"), "hours invariants explained");
+eq(await hoursSection.locator("tbody td").allTextContents(), ["120", "56"], "working-hours before-after gaps rendered");
+await noHorizontalScroll("working-hours review390");
+await axe("working-hours refinement");
+await closeWindow();
 
 eq(errors, [], "no page errors");
 await browser.close();

@@ -1,0 +1,203 @@
+Recorded 2026-11-23T19:43:12.388187+00:00
+
+DUTY ROTA: DUAL FAIRNESS MODE IMPLEMENTATION AND HOLISTIC AUDIT
+CURRENT CHECKPOINT - NOT A COMPLETION OR DEPLOYMENT CERTIFICATE
+
+Outcome
+The admin switch is implemented locally. Equal-count November simulation fills
+840/840 duties with call-level count gaps 1,2,1,1,1. Production has not changed.
+The complete goal is not achieved: shortage-policy consistency, broader workload
+fairness and timing gates remain unresolved. Original 50-item programme:21 Done;
+that programme is preserved and is not closed by this report.
+
+Admin behavior
+Limits > Equal duties within a call level > Duty fairness approach.
+Availability mode is the compatible default; equal_counts is the alternative.
+Saving is authorized through the existing superadmin Limits interface, versioned
+and audited. Saving never reallocates the existing rota. Generate a new preview,
+review the changes and use the separate existing atomic Apply workflow.
+Settings changes invalidate older previews. Historical proposals retain their
+recorded fairness basis. Equal-count gap targets are restricted to0,1or2.
+These are optimization aims; infeasibility or timeout cannot fabricate a guarantee.
+
+Eligibility and priority
+Ordinary and extra duties require active people with actual dated postings to
+units included in the month. No posting is inferred and no extra-only membership
+is invented. Canonical monthly call-level membership controls fairness targets;
+actual dated call eligibility controls assignments. Configured pools and explicit
+exception workflows retain their existing authority, not new permissions.
+Leave, overlap, required rest, quotas, protected duties and staffing rules precede
+fairness. Whole-month proposals prioritize required coverage and total coverage,
+then selected-policy worst/sum gaps, squared count deviations, hours/extra burden,
+weekends/nights/holidays, spacing/history, preferences and stability.
+The extra-duty justice ledger retains its established priority and history.
+Balance redistributes existing covered demand and transfers ledger records safely.
+
+Actual November read-only simulation
+135 eligible monthly members:1st28,2nd15,3rd58,4th21,5th13.
+16 unposted and4 outside-only people do not gain ordinary/extra eligibility.
+                       Equal counts             Availability
+1st-call counts/gap    4-5 /1                   3-5 /2
+2nd-call counts/gap    5-7 /2                   3-7 /4
+3rd-call counts/gap    6-7 /1                   4-8 /4
+4th-call counts/gap    9-10 /1                  5-11 /6
+5th-call counts/gap    2-3 /1                   1-3 /2
+Filled duties         840/840                  840/840
+Proposed changes      42                       9
+Invalid holder repairs7                        7
+Both proposals:8 independent checks,840 assignments,0 violations under recorded
+rule/flag semantics. Changed-holder placement/quota checks clear. Database
+transactions enforced READ ONLY and rolled back;ORM new/dirty0. The production
+OT guard is disabled, so these results are not an OT or comprehensive unchanged
+staffing/quota certificate. Second-call equal-count gap2 exceeds the saved target1.
+Third-call availability-adjusted gap1.5092 also exceeds saved1; all adjusted gaps
+are within2. Neither proposal proves global optimality across every unit layout.
+Local named workbooks are review evidence, not live Apply tokens.
+
+Bugs found and corrected locally
+1. Concurrent settings saves/restores could both accept the same starting version,
+   causing a lost update. Reproduced against disposable PostgreSQL; fixed input
+   locking before stale checks. Two race cases now pass.
+2. Rules save could commit before history save. It now respects the outer input
+   transaction; injected history failure verifies rollback.
+3. Rounded availability gap1.000 could represent exact1.0004. Feasibility receipts
+   now validate exact personal deviations and clinical constraints, reject invalid
+   witnesses and conservatively include rounding-boundary alternatives. Optimizer
+   revision10 invalidates old proofs/snapshots.53 proof/objective checks pass.
+4. The settings UI could retain the previous mode explanation; handler corrected.
+5. Equal-count configuration could accept a gap above2; server/model/client reject it.
+
+Open findings and policy decision
+A. Under shortage, whole-month targets use all planned template duties, while
+   Balance uses actually covered duties. With availability30and15days and only6
+   safe duties, covered-demand fairness aims4/2; full-template targets can favor5/1.
+   Owner choice requested. Existing policy is preserved pending that decision.
+   Two independent OT fairness-oracle failures expose this; they are not hidden.
+B. Equal totals do not prove all workload dimensions fair. Equal-count November
+   weekend gaps are2/2/5/4/2; flagged24h-duty gaps are1/2/7/5/1. Balance stops after
+   count improvements; it does not independently optimize weekend/type exchanges.
+   Whole-month burden tiers exist, but these results do not certify universal bounds.
+   Holiday fairness is not assessed by the read-only diagnostic without a calendar.
+C. Production timing-data issue B9 remains present, predating this implementation.
+   All840 November slots have recorded24h windows;390are is_24hr=false. Among
+   adjacent saved assignments after unflagged24h windows,123have nonoverlap gaps
+   below24h; flagged24h predecessors have0. These are aggregate diagnostics, not
+   proof that those390 duties are clinically intended24h. The existing checker
+   follows flags, so its green rest check does not resolve this inconsistency.
+   Confirm actual duty durations/start/end times; do not guess them or silently
+   classify these as true24h duties. Hours totals presently reflect recorded data.
+D. No unrestricted joint unit-layout optimality proof or automatic template repair
+   is established. Existing fixed duties, skills, scope and work budgets restrict
+   search. Timeout/partial coverage returns unknown, not proven impossibility.
+E. Performance gates remain unresolved: standard extra preview10s and report3s
+   failed under the broad run. Serialized current-source rechecks are in progress;
+   limits are unchanged. A pure ranking cache preserved proposals across4parity
+   scenarios and reduced mean measured time20.2% in4ABBA runs, but that is not a
+   universal latency certificate. Clinical validation is not cached or relaxed.
+
+Verification evidence and its limits
+Broad remaining-system run:2070passed,5failed,59skipped;4066.15s. Fourteen earlier
+modules have separate retained receipts. The broad process began before later
+source fixes, so it is not a frozen-final-source whole-system certificate.
+Failures:extra preview timing; prototype expired-proof assumption; two shortage
+fairness oracles; report timing. Prototype correction rerun3passed.
+Isolated revision10 candidate:80focused checks passed in109.85s. First attempted
+command used a nonexistent test filename and ran no tests; corrected command and
+receipt are retained. Other scoped receipts overlap and must not be simply added:
+81revision/snapshot/integration;53proof/objective;103atomicsettings;20rollback/API;
+2PostgreSQLsave/restore races;4cache/reference parity;59PostgreSQL migration and
+concurrency cases. Backend skip counts are not treated as passes.
+Frontend evidence includes155unit checks, both-mode review/settings browser flows,
+light/dark and narrow-screen accessibility checks, production builds, and8actual
+bundled UI/auth/API synthetic checks without route mocks. That end-to-end test
+verified saved mode does not itself reallocate, reviewed Apply3/3, independent
+validation and safe Undo. It uses disposable synthetic data, not production writes.
+
+Review artifacts
+Review/Allocation_engine_fairness_modes_r9_candidate.patch
+Debug/Allocation-release-r9 (historical dirname;actual optimizer revision10)
+docs/allocation-progress/fairness-modes-release-manifest.json
+Review/November2026_fairness-modes-engine10-equal-counts_review.xlsx
+Review/November2026_fairness-modes-engine10-availability_review.xlsx
+docs/allocation-progress/fairness-modes-completion-audit.json
+Production aggregate evidence:production-nov2026-20261123/ under this directory.
+Full earlier working report preserved in fairness-modes-report-working-history-20261123.txt.
+
+Next:resolve shortage policy; collect serialized timing results; address workload
+and timing-data findings within confirmed domain rules; reconcile final source,
+repeat affected/full regression as necessary and deliver final assessment.
+No commit, push, production setting save, assignment apply or deployment performed.
+
+SERIALIZED TIMING UPDATE 2026-11-23T19:44:22.798261+00:00
+Extra-duty standard preview:17.6902s,FAILED unchanged10s gate.
+All-units preview:PASSED unchanged15s gate. Combined1failed/1passed64.63s.
+Report-generation rerun:PASSED unchanged3s gate;one test14.76s including fixture setup.
+This resolves the report timing failure on rerun,not the standard preview gate.
+Unrelated machine activity remains uncontrolled. No threshold was weakened.
+
+BURDEN AND SCOPE PERFORMANCE UPDATE 2026-11-23T19:58:36.920582+00:00
+Independent objective oracle enumerated90equal-count partitions for bothpolicies
+andbalanced/preferences/repair:6passed27.15s. This verifies existingburdentiers,
+not actualNovemberoptimality or clinicalcandidateconstruction. Scope snapshot
+cache fix:25passed91.52s (freshscope exclusions/lockedboundaries/referenceparity).
+Cold profile:311scope lookups;dataclass copies dropped dynamiccache. Declaring
+the snapshot cache retains it when narrowing postings; freshcontexts independently
+reload changes. Serializedtimingstillfailed22.5509s>10;allunits15spassed.
+No performancecompletionclaim. OptionalOTimports identified as anothercoldpath
+cost despite disabledflag;redtestpending. Domainpolicy decisions remainpending.
+
+OPTIONAL OT INITIALIZATION FOLLOWUP 2026-11-23T20:02:18.255712+00:00
+Fresh disabled-OT process reproduced unnecessarycapacity import:1failedbefore.
+Assignment caller nowchecks existingOTflagbeforeimport;enabledpathunchanged.
+Affectedgate60passed123.71s:enabledOTintegration,disabledfresh-process check,
+scope snapshot andlockedboundaries. Finaltimingworker32160/22140running;
+no newlatencyclaim. Earlierclocktimefailuresretained. Candidate refreshinprogress.
+
+SLOT-FIELD EXPERIMENT 2026-11-23T20:10:50.997241+00:00
+OptionalOTfollowup timing:standard15.1931sFAIL10/allunitsPASS15.
+Profile2.2millionORMdescriptorreads. Proposalstrictchecks nowexperimentallyread
+fixedslotfieldsfromlocalplainobjects;dynamic personduties,leaves,capacity andOT
+validationretained. Eightreferenceparityscenarios plusfull extra/verify/OT suites
+running14864/32008. Oneobservedfailureawaitsfinaltraceback;no allgreenclaim.
+Durablefollowup32396 waitsonthat exactworker,thenrefusesfunctional failures
+beforeisolatedcandidatechecking andcoldtiming. Currentreleasepreexperiment.
+
+SLOT SNAPSHOT VERIFICATION 2026-11-23T20:14:00.792408+00:00
+Extra-duty,independentverify,OTintegrationandreferences:125passed,1failed
+unchangedstandard10s timinggate(12.6754s),284.44s total. All8referencecomparisons
+passed;no functionalfailure. Candidate refreshed177backendASTmatch/revision10.
+Followup32396/22024 runningisolatedworker3748,thenfresh coldtimingsequentially.
+No claim10sgatepassed,globalweekendoptimality orfinalfrozenfullsystemcertificate.
+
+Isolatedslotfollowup16passed51.50s;finalcoldtimingworker26012active.
+
+COLD TIMING AND FAIRNESS STUDY UPDATE 2026-11-23T20:20:08.924294+00:00
+Latestcoldtiming2passed57.91s total;unchangedstandard<10s/allunits<15s assertions
+passed,includingstandardapply+verify. Priortimingfailuresretained,unrelatedmachine
+activityuncontrolled. Finalfrozenwhole-systemcertificate remainsoutstanding.
+Offlineweekendexchangestudy4passed35.99s;preservesdutytotals/recordedhours/extra
+credits,leavesblockedandzerobudgetrespected,noORMchanges. RealNovemberREADONLY
+studyactive;notpartofserverpreview/apply. No universalweekendboundclaim.
+OToracle now independentlyenumeratesbothselectedpolicieswithcurrentdocumented
+full-templateavailabilitytargets;rawcountoptimumretainedasdiagnostic. Testworker
+running;thisdoesnotresolveownerdecisiononcoveredversustemplatedemand.
+
+REVISION11 WEEKEND REFINEMENT (SUPERSEDES EARLIER WEEKEND FINDING) 2026-11-23T20:42:06.396755+00:00
+Equal-countBalance nowproposesordinarysame-profileweekend/weekdayexchanges
+withoutchangingindividualdutytotals,recordedhours,flagged24h/nightcounts or
+extracredits. Existingtransferclinicalchecks andprotectedrowsremain. Existing
+reviewedApply/exactUndo workflowretained;counts-balancedmonths maystillimprove.
+Bounded128clinicalattempts,20000pairinspections andsharedplannerworkbudget.
+Revision11stalesolderpreviews. Availabilitymodeunchangedpendingpolicydecision.
+125integrationchecks passed,47bounds/snapshotchecks passed(overlap),6bothpolicy
+independentOToraclespassed141.76s. Theseoraclesverifycurrentlydocumentedfull
+templatedemand;they donotresolvecovered-demandownerquestion.
+ActualserverplanREADONLYNovember:840filled,104changedrows,totalgaps1/2/1/1/1,
+weekendgaps1/1/2/2/1. Eightindependentchecks840rows/0violations;changedholder
+failures0;ORMnew/dirty0. ProductionOTdisabledandB9timinglimitationsremain.
+150browserchecks andfrontendbuildpassed. RealbundledUItestexposedoldcount-
+balancedearlyexit;removedsoofficialpreviewis authoritative. SubsequentUndo
+assertionfailed;in-memoryStaticPoolfixtureconcurrenttransactionsserialized;
+finalend-to-endrerunpending,notclaimedpassed. Earlierfailuresretained.
+Wholebackend2302casefrozen-sourceauditcurrentlylive;notterminal. Candidate
+178backendASTmatch/revision11;latestUIshortcutfixneedsrefresh. No deployment.

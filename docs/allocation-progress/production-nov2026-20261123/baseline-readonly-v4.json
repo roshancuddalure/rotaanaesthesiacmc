@@ -1,0 +1,414 @@
+{
+  "recorded_at": "2026-11-23T10:09:50.899680+00:00",
+  "app_url": "https://rotaanaesthesiacmc-production-a630.up.railway.app",
+  "month": "2026-11",
+  "operational_writes": 0,
+  "personal_identifiers_exported": false,
+  "connection_basis": "Authenticated Railway project680ef8b0 production/Postgres current public connection; app service domain independently matched.",
+  "levels": [
+    {
+      "call_level": "1ST_CALL",
+      "slots": 120,
+      "member_count": 30,
+      "target": 4.0,
+      "min": 1,
+      "max": 5,
+      "gap": 4,
+      "allowed_gap": 1,
+      "ok": false,
+      "explained": false,
+      "duty_histogram": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 21,
+        "5": 6
+      },
+      "partial_availability_members": 12,
+      "reason_codes": [
+        "limited_availability",
+        "uneven"
+      ],
+      "full_availability_cohort": {
+        "members": 18,
+        "minimum": 1,
+        "maximum": 5,
+        "gap": 4
+      }
+    },
+    {
+      "call_level": "2ND_CALL",
+      "slots": 90,
+      "member_count": 19,
+      "target": 4.74,
+      "min": 1,
+      "max": 7,
+      "gap": 6,
+      "allowed_gap": 1,
+      "ok": false,
+      "explained": false,
+      "duty_histogram": {
+        "1": 4,
+        "3": 1,
+        "4": 2,
+        "6": 9,
+        "7": 3
+      },
+      "partial_availability_members": 9,
+      "reason_codes": [
+        "limited_availability",
+        "uneven"
+      ],
+      "full_availability_cohort": {
+        "members": 10,
+        "minimum": 1,
+        "maximum": 7,
+        "gap": 6
+      }
+    },
+    {
+      "call_level": "3RD_CALL",
+      "slots": 404.05,
+      "member_count": 58,
+      "target": 6.97,
+      "min": 4,
+      "max": 8,
+      "gap": 4,
+      "allowed_gap": 1,
+      "ok": false,
+      "explained": true,
+      "duty_histogram": {
+        "4": 2,
+        "5": 2,
+        "6": 12,
+        "7": 22,
+        "8": 20
+      },
+      "partial_availability_members": 27,
+      "reason_codes": [
+        "limited_availability"
+      ],
+      "full_availability_cohort": {
+        "members": 31,
+        "minimum": 7,
+        "maximum": 8,
+        "gap": 1
+      }
+    },
+    {
+      "call_level": "4TH_CALL",
+      "slots": 195.95,
+      "member_count": 21,
+      "target": 9.33,
+      "min": 5,
+      "max": 11,
+      "gap": 6,
+      "allowed_gap": 1,
+      "ok": false,
+      "explained": true,
+      "duty_histogram": {
+        "5": 1,
+        "7": 1,
+        "8": 3,
+        "9": 5,
+        "10": 6,
+        "11": 5
+      },
+      "partial_availability_members": 17,
+      "reason_codes": [
+        "limited_availability"
+      ],
+      "full_availability_cohort": {
+        "members": 4,
+        "minimum": 11,
+        "maximum": 11,
+        "gap": 0
+      }
+    },
+    {
+      "call_level": "5TH_CALL",
+      "slots": 30,
+      "member_count": 13,
+      "target": 2.31,
+      "min": 1,
+      "max": 3,
+      "gap": 2,
+      "allowed_gap": 1,
+      "ok": false,
+      "explained": true,
+      "duty_histogram": {
+        "1": 1,
+        "2": 7,
+        "3": 5
+      },
+      "partial_availability_members": 9,
+      "reason_codes": [
+        "limited_availability"
+      ],
+      "full_availability_cohort": {
+        "members": 4,
+        "minimum": 3,
+        "maximum": 3,
+        "gap": 0
+      }
+    }
+  ],
+  "database_enforced_readonly": true,
+  "snapshot_isolation": "repeatable read",
+  "periods": [
+    {
+      "starts_on": "2026-11-01",
+      "ends_on": "2026-11-30",
+      "status": "draft"
+    }
+  ],
+  "slots_by_status": {
+    "needs_review": 261,
+    "ready": 579
+  },
+  "slots_by_source": {
+    "phase4_template": 840
+  },
+  "active_assignment_count_by_current_person_level": {
+    "1ST_CALL": 120,
+    "3RD_CALL": 404,
+    "4TH_CALL": 196,
+    "2ND_CALL": 90,
+    "5TH_CALL": 30
+  },
+  "active_assignment_rows": 840,
+  "filled_distinct_slots": 840,
+  "assignment_sources": {
+    "balance_duties": 230,
+    "extra_duty_layer": 36,
+    "reviewed_compute_draft": 574
+  },
+  "assignment_statuses": {
+    "assigned": 840
+  },
+  "assignment_signature_sha256": "8d170b034aef4a0929bab903f9908a771ac7a222ac446d0ba0c2a80279bd1f3c",
+  "saved_rules_present": true,
+  "canonical_fairness_status": "complete",
+  "availability_adjusted_balance": [
+    {
+      "call_level": "1ST_CALL",
+      "members": 30,
+      "goal_range": [
+        3,
+        4
+      ],
+      "allowed_gap": 1,
+      "min": 1,
+      "max": 5,
+      "gap": 4,
+      "ok": false,
+      "movable": 120,
+      "minimum_deviation_from_share": -3.18,
+      "maximum_deviation_from_share": 0.82,
+      "deviation_spread": 4.0
+    },
+    {
+      "call_level": "2ND_CALL",
+      "members": 19,
+      "goal_range": [
+        2,
+        5
+      ],
+      "allowed_gap": 1,
+      "min": 1,
+      "max": 7,
+      "gap": 6,
+      "ok": false,
+      "movable": 90,
+      "minimum_deviation_from_share": -4.41,
+      "maximum_deviation_from_share": 1.59,
+      "deviation_spread": 6.0
+    },
+    {
+      "call_level": "3RD_CALL",
+      "members": 58,
+      "goal_range": [
+        4,
+        8
+      ],
+      "allowed_gap": 1,
+      "min": 4,
+      "max": 8,
+      "gap": 4,
+      "ok": false,
+      "movable": 404,
+      "minimum_deviation_from_share": -0.64,
+      "maximum_deviation_from_share": 0.87,
+      "deviation_spread": 1.51
+    },
+    {
+      "call_level": "4TH_CALL",
+      "members": 21,
+      "goal_range": [
+        5,
+        11
+      ],
+      "allowed_gap": 1,
+      "min": 5,
+      "max": 11,
+      "gap": 6,
+      "ok": true,
+      "movable": 196,
+      "minimum_deviation_from_share": -0.39,
+      "maximum_deviation_from_share": 0.51,
+      "deviation_spread": 0.9
+    },
+    {
+      "call_level": "5TH_CALL",
+      "members": 13,
+      "goal_range": [
+        1,
+        3
+      ],
+      "allowed_gap": 1,
+      "min": 1,
+      "max": 3,
+      "gap": 2,
+      "ok": true,
+      "movable": 29,
+      "minimum_deviation_from_share": -0.56,
+      "maximum_deviation_from_share": 0.44,
+      "deviation_spread": 1.0
+    }
+  ],
+  "independent_safety_check": {
+    "ok": true,
+    "checked": 840,
+    "checks": [
+      {
+        "name": "Leave respected",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Rest after 24-hour duty",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "No double booking",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Call level and groups",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Posted to the duty's unit",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Duty allowed for unit",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Slot capacity",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Active members",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      }
+    ],
+    "unposted_exempt": 6,
+    "superadmin_exempt": 0,
+    "superadmin_cross_level_count": 0,
+    "violation_codes": {}
+  },
+  "recent_compute_jobs": [
+    {
+      "status": "cancelled",
+      "engine": "local_gpu",
+      "created_at": "2026-11-14 10:55:14.685187",
+      "whole_month_optimizer": true,
+      "mode": "balanced"
+    },
+    {
+      "status": "cancelled",
+      "engine": "server",
+      "created_at": "2026-11-14 10:55:07.928924",
+      "whole_month_optimizer": true,
+      "mode": "balanced"
+    },
+    {
+      "status": "cancelled",
+      "engine": "server",
+      "created_at": "2026-11-14 10:55:01.834270",
+      "whole_month_optimizer": true,
+      "mode": "balanced"
+    },
+    {
+      "status": "cancelled",
+      "engine": "local_gpu",
+      "created_at": "2026-11-14 10:54:55.963273",
+      "whole_month_optimizer": true,
+      "mode": "balanced"
+    },
+    {
+      "status": "cancelled",
+      "engine": "local_gpu",
+      "created_at": "2026-11-14 10:54:49.674088",
+      "whole_month_optimizer": true,
+      "mode": "balanced"
+    }
+  ],
+  "recent_extra_balance_batches": [
+    {
+      "status": "applied",
+      "created_at": "2026-10-24 10:35:58.779627",
+      "mode": "balance",
+      "moves": 21
+    },
+    {
+      "status": "applied",
+      "created_at": "2026-10-24 10:35:37.102355",
+      "mode": "all_units",
+      "moves": null
+    },
+    {
+      "status": "applied",
+      "created_at": "2026-10-24 10:35:13.966093",
+      "mode": "balance",
+      "moves": 215
+    },
+    {
+      "status": "applied",
+      "created_at": "2026-10-24 10:17:49.532047",
+      "mode": "balance",
+      "moves": 19
+    },
+    {
+      "status": "applied",
+      "created_at": "2026-10-24 10:16:43.467006",
+      "mode": "all_units",
+      "moves": null
+    },
+    {
+      "status": "applied",
+      "created_at": "2026-10-24 10:16:04.804475",
+      "mode": "balance",
+      "moves": 224
+    }
+  ],
+  "status": "read_only_snapshot_complete",
+  "audit_script_sha256": "ac38359973b8b84317c05c3c654b756c81c0c9bfe11d963cbfa9afc5e084d067"
+}

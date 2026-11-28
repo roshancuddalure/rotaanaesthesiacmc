@@ -98,3 +98,39 @@ def duty_leave_blocks(leave_slot: str | None, *, is_24hr: bool, start_hour: int)
     if code == "NIGHT":
         return start_hour >= 18 or start_hour < 8
     return True
+
+
+def duty_leave_dates(slot):
+    """Every touched civil date plus the legacy duty date; ends are exclusive."""
+    first = min(slot.duty_date, slot.starts_at.date())
+    last = max(slot.duty_date, (slot.ends_at - timedelta(microseconds=1)).date())
+    return date_range(first, last)
+
+
+def leave_blocks_slot(leave, slot):
+    """Preserve legacy denials and also reject any physical leave intersection.
+
+    Status remains the caller's policy: ordinary pending leave warns, whereas
+    extra-duty checks strictly block every active status.
+    """
+    if (leave.starts_on <= slot.duty_date <= leave.ends_on
+            and duty_leave_blocks(leave.leave_slot, is_24hr=slot.is_24hr,
+                                  start_hour=slot.starts_at.hour)):
+        return True
+    return any(span.starts_at < slot.ends_at and slot.starts_at < span.ends_at
+               for span in leave_intervals(leave, slot.starts_at.date(), slot.ends_at.date()))
+
+
+def leaves_for_slot(index, slot, person_id=None):
+    """Merge duty-window dates, optionally for one person, without duplicate requests."""
+    result, seen = {}, set()
+    for day in duty_leave_dates(slot):
+        day_rows = index.get(day, {})
+        people = day_rows.items() if person_id is None else ((person_id, day_rows.get(person_id, ())),)
+        for person, rows in people:
+            for leave in rows:
+                key = (person, getattr(leave, 'id', None) or id(leave))
+                if key not in seen:
+                    seen.add(key)
+                    result.setdefault(person, []).append(leave)
+    return result

@@ -1,0 +1,56 @@
+"""No-posting ordinary pool keeps dated eligibility and OT protection."""
+from datetime import date
+
+from app.models import MemberCallLevelChange, Person
+from app.services.rota_assignment import validate_assignment
+from app.services.rota_candidates import candidate_context, slot_candidates_with_context
+from tests.test_balance_duties import db as db
+from tests.test_ordinary_duty_pool import fixture
+from tests.test_balance_duties import edit_rules, make_slot, days, member
+from tests.test_ot_assignment_integration import environment as environment, demand  # noqa: F401
+
+
+def test_no_posting_member_still_requires_duty_subgroup(db):
+    unit, alpha, uma, target = fixture(db)
+    edit_rules(db, lambda rules: setattr(rules.duty_rules_by_key[target.duty_type],
+                                        'allowed_cluster_keys', ['3rd_call_a']))
+    context = candidate_context(db, '2026-05')
+    check = validate_assignment(db, slot=target, person=uma, replace_existing=False, context=context)
+    assert check['status'] == 'blocked'
+    assert any(i['code'] == 'call_subgroup_mismatch' for i in check['issues'])
+
+
+def test_no_posting_member_uses_dated_promotion_without_switching_monthly_target(db):
+    unit, alpha, uma, target = fixture(db)
+    db.add(MemberCallLevelChange(person=uma, call_level='2ND_CALL', effective_from=date(2026, 5, 16)))
+    member(db, 'Posted second call', unit, level='2ND_CALL')
+    after = make_slot(db, unit, days(25)[0], level='2ND_CALL', duty_type='MAIN_2ND_24HR')
+    wrong = make_slot(db, unit, days(26)[0])
+    db.commit()
+    context = candidate_context(db, '2026-05')
+    rows = slot_candidates_with_context(db, slot=after, context=context)['candidates']
+    row = next(c for c in rows if c['person_id'] == str(uma.id))
+    assert row['call_level'] == '2ND_CALL'
+    assert row['fairness_call_level'] == '1ST_CALL'
+    assert row['validation_status'] == 'clear'
+    assert validate_assignment(db, slot=wrong, person=uma, replace_existing=False, context=context)['status'] == 'blocked'
+
+
+def test_no_posting_fallback_does_not_invent_ot_staff(environment):
+    db, unit, people, target = environment
+    free = Person(canonical_name='No posting ordinary member', call_level='3RD_CALL', active_status='active')
+    db.add(free)
+    db.commit()
+    # Five OT staff are mandatory, but only four posted/qualified people exist.
+    # The fallback must not invent a posting or count this person as OT supply.
+    demand(db, unit, minimum=5)
+    context = candidate_context(db, '2026-11')
+    assert free.id in context.ordinary_fallback_ids
+    # The existing affected-component edit contract permits unrelated edits.
+    # Its whole-capacity assessment must still expose the pre-existing shortage;
+    # admission to ordinary duties must not invent an OT posting/qualification.
+    from types import SimpleNamespace
+    proposal = SimpleNamespace(person_id=free.id, duty_slot_id=target.id,
+                               duty_slot=target, status='assigned')
+    result = context.ot_guard.check([proposal], context.rules)
+    assert result['status'] == 'infeasible'

@@ -364,7 +364,10 @@ def test_manual_assign_blocks_cross_level_even_with_override_and_when_unposted(s
                                       replace_existing=True)
             assert caught.value.status_code == 409
             codes = {i["code"] for i in caught.value.validation["issues"] if i["severity"] == "blocked"}
-            assert codes == {"call_level_mismatch"}, person.canonical_name
+            expected = {"call_level_mismatch"}
+            if person is nowhere4:
+                expected.add('scope_member_excluded')
+            assert codes == expected, person.canonical_name
         with pytest.raises(RotaAssignmentError) as caught:
             assign_person_to_slot(db, slot_id=cart.id, person_id=people["3RD_CALL"].id, override_reason=REASON)
         assert "call_level_unresolved" in {i["code"] for i in caught.value.validation["issues"]}

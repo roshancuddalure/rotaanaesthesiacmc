@@ -1,0 +1,35 @@
+{
+  "recorded_at": "2026-11-27T10:21:41.377412+00:00",
+  "run_name": "holistic-report-scalar-audit",
+  "run_terminal": false,
+  "observed": {
+    "at": "2026-11-27T10:21:31.897429+00:00",
+    "driver_pid": 36120,
+    "alive": true,
+    "completed": 1198,
+    "previously_verified": 0,
+    "collected": 2503,
+    "failures": 1
+  },
+  "observed_failures": [
+    {
+      "at": "2026-11-27T10:19:52.621990+00:00",
+      "nodeid": "tests/test_generation_reliability.py::test_optimizer_gpu_hints_are_validated_and_keep_server_safety[server]",
+      "stage": "call",
+      "outcome": "failed",
+      "duration": 3.9405612000264227,
+      "failure": "backend\\tests\\test_generation_reliability.py:85: in test_optimizer_gpu_hints_are_validated_and_keep_server_safety\n    assert job.state[\"intelligence\"][\"alternatives\"][0][\"status\"] == \"optimal\"\nE   AssertionError: assert 'feasible' == 'optimal'\nE     \nE     - optimal\nE     + feasible"
+    }
+  ],
+  "source_unchanged_now": true,
+  "classification": "Optimality expectation mismatch under the fixture default 3-second search budget; root cause not proven from event receipt. Preserve full run.",
+  "source_review": {
+    "fixture": "backend/tests/test_generation_reliability.py:65",
+    "assertion": "alternatives[0].status == optimal",
+    "actual": "feasible",
+    "options": "backend/tests/test_rota_intelligence.py:17 default seconds=3",
+    "optimizer": "backend/app/services/rota_optimizer.py:398-482 uses bounded per-tier deadlines and clears later proofs after changed local refinement; current trace does not establish which branch caused this result."
+  },
+  "next_action": "Finish unchanged full run and exact PostgreSQL reconciliation, then reproduce same fixture with internal objective/proof receipts before choosing a correction. Do not weaken safety checks or claim optimality.",
+  "overall_goal_complete": false
+}

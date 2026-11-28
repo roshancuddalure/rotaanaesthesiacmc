@@ -1,0 +1,28 @@
+{
+  "recorded_at": "2026-11-27T00:38:10.655018+00:00",
+  "status": "intermittent_proof_completion_reproduced_prospective_test_budget_correction_passed",
+  "test": "tests/test_rota_intelligence.py::test_whole_month_validated_reviewed_and_alternatives",
+  "failure": "expected optimal; returned feasible under unchanged3secondbudget",
+  "source_comparison": {
+    "backend/app/services/rota_optimizer.py": {
+      "revision17_same_as18": true
+    },
+    "backend/app/services/rota_intelligence.py": {
+      "revision17_same_as18": true
+    },
+    "backend/app/services/allocation_objective_model.py": {
+      "revision17_same_as18": true
+    },
+    "backend/tests/test_rota_intelligence.py": {
+      "revision17_same_as18": true
+    }
+  },
+  "historical_evidence": "Revision17 and16 original full runs passed this identical test. This does not prove current failure is harmless.",
+  "next_action": "After full report latency gate completes, run isolated exact original assertions with sanitized per-tier proof observation. Do not replace optimal with feasible merely to get green tests.",
+  "diagnostics": {
+    "original3second_assertions": "failed_once90.70s process and passed_once82.77s process; solver elapsed0.907s vs0.737s; no overall3second timeout established",
+    "proof_trace": "CP-SAT proved all nontrivial tiers in passing replay; local refinement made no improvement there. Failing replay retained two independent coverage proofs and correctly marked downstream receipts unproven after a safe local improvement.",
+    "production_status": "No false optimal claim found; exact why the earlier per-tier search failed is unproven without its unrecorded internal trace.",
+    "prospective_correction": "Completion-workflow allowance30seconds; original optimal,2choices,distinct alternatives,reviewedApply assertions all retained and PASS. Separate bounded/forced-UNKNOWN and original four timing gates unchanged."
+  }
+}

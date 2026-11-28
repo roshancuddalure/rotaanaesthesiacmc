@@ -1,22 +1,26 @@
 {
   "status": "active_incomplete",
-  "recorded_at_utc": "2026-11-11T19:09:09.655959+00:00",
+  "recorded_at_utc": "2026-11-20T13:07:00.940669+00:00",
   "scope": "260 approved frontend actions; UI task makes no backend edits or production changes; concurrent work separately preserved",
   "current_unit_tests": {
-    "passed": 124,
+    "passed": 153,
     "exit_code": 0,
     "source_unchanged": true,
-    "source_current_status": "Context193 integrated source held; whole acceptance separate",
-    "log": "tmp/context193-applied-unit-20261112/unit.log",
-    "exit_report": "tmp/context193-applied-unit-20261112/exit.json"
+    "tests_unchanged": true,
+    "source_current_status": "153 passed before the two OT presentation/recovery source changes; fresh final-source gate queued.",
+    "log": "tmp/frontend-current-nov20/unit-v2/unit.log",
+    "exit_report": "tmp/frontend-current-nov20/unit-v2/exit.json",
+    "summary": "tmp/frontend-current-nov20/unit-v2/summary-parsed.json",
+    "current_source_matches": false
   },
   "build": {
     "passed": true,
-    "current_source_status": "Current context193 held frontend build passed",
+    "current_source_status": "Historical build; November20 current build awaiting execution",
     "snapshot": "docs/premium-ui/reviews/frontend-build-snapshot-context193-20261112.json",
     "log": "tmp/context193-applied-build-20261112.log",
     "input_count": 73,
-    "artifact_count": 14
+    "artifact_count": 14,
+    "current_source_matches": false
   },
   "responsive": {
     "combinations": 152,
@@ -445,7 +449,7 @@
   },
   "independent_qa_final_review": "pending; bounded independent keyboard and lifecycle findings are separately recorded",
   "container_build": "not run; Docker unavailable; source copy contract and built public assets verified",
-  "snapshot_note": "Current context-help integration:124units,held73input/14artifact build and108normal-resolution help cases passed;324staged navigation/48screen comparisons separate.63 recorded checkpoint sign-offs remain historical where source changed. Programme incomplete; physical/native AT checks pending.",
+  "snapshot_note": "November20 actual source passed153units and six comparison/keyboard contexts. Guidance passed four Chromium contexts then failed Firefox account-form visibility; diagnosis pending. Date-format verification is running; current build pending. Prior sign-offs remain historical where sources changed.",
   "review_artifact": "docs/premium-ui/review-build-current.json",
   "acceptance_audit": "docs/premium-ui/acceptance-audit-current.json",
   "current_rules_regression": {
@@ -1641,5 +1645,42 @@
     "staged_cases": 324,
     "guide_screen_comparisons": 48,
     "whole_requirement_acceptance": false
+  },
+  "november20_current_source_revalidation": {
+    "status": "partial",
+    "report": "docs/premium-ui/reviews/frontend-revalidation-progress-20261120.json",
+    "checks": {
+      "unit_tests_passed": 153,
+      "keyboard_contexts_passed": 6,
+      "named_keyboard_regions_per_context": 4,
+      "guidance_contexts_passed": 4,
+      "guidance_matrix_passed": false,
+      "dashboard_contexts_passed": 2,
+      "isolated_estimate_cases_passed": 5
+    }
+  },
+  "ot_import_recovery": {
+    "report": "docs/premium-ui/reviews/ot-import-read-recovery-20261120.json",
+    "checks": {
+      "baseline_reproductions": 1,
+      "paragraph_fix_contexts": 6,
+      "final_recovery_contexts": 6,
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "width": 320,
+      "per_context_preview_posts": 2,
+      "per_context_apply_posts": 2,
+      "per_context_calendar_gets": 5,
+      "api_expressions_unchanged": 12,
+      "candidate_syntax_diagnostics": 0,
+      "source_and_test_held": true
+    }
   }
 }

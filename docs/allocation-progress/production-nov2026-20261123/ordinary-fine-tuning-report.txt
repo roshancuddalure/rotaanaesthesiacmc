@@ -1,0 +1,75 @@
+﻿DUTY ALLOCATION FINE-TUNING - REVISION 6 VERIFIED LOCAL RELEASE
+Checkpoint UTC: 2026-11-23T13:04:31.127498+00:00
+Production snapshot UTC: 2026-11-23T11:58:47.666672+00:00
+
+RESULT: ordinary-duty eligibility corrected; production not deployed or modified.
+Read-only production-data simulation proposes57 transfers, keeps840/840slotsfilled,
+and meets the saved availability-adjusted fairness tolerance1 in all five call levels.
+
+OWNER POLICY - 23 NOVEMBER 2026
+- Active people with NO monthly unit posting are ordinary-duty candidates, including zero-duty people.
+- No extra-duty seed, extra-only category, ledger or invented posting is required.
+- People posted only to excluded units stay OUT of ordinary allocation and its fairness denominator.
+- Partial postings remain date-limited. Call levels/pools/groups, active status, leave, rest, quotas, unit rules, protected duties and staffing/OT guards remain.
+Authority is recorded in Plan/05_confirmed_decisions.md and the allocation tracker.
+
+ACTUAL PRODUCTION-DATA PROPOSAL
+Level | Ordinary members | No-posting members | Before adjusted spread | After adjusted spread | Fully available ordinary gap
+1ST_CALL | 30 | 2 | 4.00 | 1.00 | 1
+2ND_CALL | 27 | 12 | 7.00 | 1.00 | 1
+3RD_CALL | 60 | 2 | 8.50 | 1.00 | 1
+4TH_CALL | 21 | 0 | 0.91 | 0.91 | 0
+5TH_CALL | 13 | 0 | 1.00 | 1.00 | 0
+
+151ordinary members receive at least one duty in the simulation. Eleven formerly omitted zero-duty active people are now included.
+One existing out-of-scope Cardiac holder remains untouched and is not admitted to ordinary allocation.
+Raw after-ranges:1st3-5,2nd1-4,3rd4-8,4th5-11,5th1-3. Larger raw ranges reflect leave/partial availability;
+they are not a claim of raw max-min<=1. Fully available ordinary cohorts each have raw gap<=1.
+All840 assignments pass the existing independent eight-category check; no call/group/leave/rest/double-booking/unit-rule/capacity/active-member violations.
+All changed holders pass final placement and individual-limit checks. Transfer safety rejects new/worsened unit hard blocks.
+The search uses637/33600 deterministic work units and does not exhaust its budget; this is not a global optimum proof.
+
+OT AND CLINICAL LIMITS
+Production OT guard is disabled in this snapshot. The production result is NOT certification of elective OT or qualification coverage.
+Existing scoped OT validation checks affected reservation components; an unrelated pre-existing OT shortage can remain.
+The added regression proves that admitting an unposted person to ordinary duties does not invent OT staffing or qualifications.
+Do not interpret an affected-component placement check as complete monthly OT certification. Full50-item OT/pilot scope remains separate.
+
+IMPLEMENTATION
+- One no-posting pool feeds candidates, manual validation, optimizer and balancing, including zero-duty members.
+- Canonical fairness membership includes the same eligible pool and excludes outside-scope postings.
+- Independent checker derives the policy separately; approved ordinary no-posting allocations no longer require ledger exemptions.
+- Balancer swap opportunities are distributed across call levels to prevent one blocked level starving another.
+- Candidate/rule checks retain dated call promotion and group membership; no level substitution is introduced.
+- Objective revision6 invalidates earlier scheduling fingerprints. No schema migration or production posting repair is needed.
+- Diagnostics distinguish true postings, ordinary fallback and outside-scope holders without hiding raw duty ranges.
+
+VERIFICATION
+153current backend regression cases passed235.86s;3distinct guard-edge cases passed42.38s:156total.
+141UIchecks passed in current workspace AND isolated release (same141workflows, not282distinct checks).
+Both frontend builds pass. Existing bundle-size/mixed-import warnings remain; backend retains one JUnit record_property format warning.
+Ruff and scoped whitespace checks pass. Final Excel verified840rota rows/57changes/1outside-scope retained/no formulas.
+All175backend modules in the isolated release match the validated working-copy AST. Full156is not added to older overlapping gates.
+Earlier failed test fixtures and intermediate gates are preserved. Group-field fixture, unit staffing fixture and scoped-OT expectation were corrected; the final guard gate passes.
+Some execution durations include long process/environment pauses; these are not calibrated runtime benchmarks or a completion-time estimate.
+
+REVIEW ARTIFACTS
+Excel: Review\November2026_ordinary_allocation_proposal_r6_verified_20261123.xlsx
+Focused source patch: Review\Allocation_engine_tuning_r6_verified.patch
+Isolated release: Debug\Allocation-release-r6 (base95e97e28e6693a24f9050bf240451d648dc8dc8a)
+Evidence: ordinary-policy-production-verified.json; focused-release-manifest.json; verified-source-r6/.
+The workbook contains names and current/proposed duties locally for review. Aggregate JSON has no names/IDs; credentials were not exported.
+Initial posting-review and revision5workbooks are superseded: do not create artificial postings from them.
+
+DEPLOYMENT / APPLICATION / ROLLBACK
+Production deployment and live assignment changes need the separately recorded authority. Neither has occurred.
+After approved deployment, regenerate the server Balance duties preview under current inputs/locks; compare against this workbook and review before Apply.
+This offline Excel is review evidence, not an apply token. Fresh preview/apply must reject stale inputs and revalidate the full plan.
+If rolling back AFTER applying ordinary no-posting allocations, undo that balance batch under the new code first; old validators would reject those new ordinary rows.
+Retain before-images and respect undo conflicts. Do not force restore over intervening changes.
+
+GOAL STATUS
+Focused local fine-tuning is implemented and verified; production completion awaits separate deployment/application review.
+The full50-item allocation scope is preserved at21/50Done. Unit-layout integration and other outstanding full-plan tasks are not relabeled complete.
+The original one-hour timer remains closed; user explicitly authorized further continuation. No implementation/test worker is left running after handoff.
+Native dashboard reads local evidence. Its latest screen capture was black under the desktop session; no visual-success claim is based on that image.

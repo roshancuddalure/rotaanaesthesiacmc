@@ -1,3 +1,15 @@
+## Current source and progress-window revalidation - 20 November 2026
+
+The 260-item frontend programme remains active and incomplete. HEAD 95e97e2 contains 76 frontend source files, with 25 changed/new paths since the saved November 12 integration checkpoint. Concurrent allocation changes are separately owned and preserved; this continuation has not edited backend code.
+
+Current source passed 153 unit tests with all test/source inputs held. The comparison-table matrix passed six Chromium/Firefox/WebKit phone contexts across both themes, including four native keyboard regions per context, retained row edits and exact FormData safeguards. Evidence: `tmp/frontend-current-nov20/unit-v2/summary-parsed.json`, `tmp/frontend-current-nov20/past-root/exit.json` and the timestamped child report under `tmp/frontend-current-nov20/past/`.
+
+The read-only graphical dashboard at `http://127.0.0.1:5199` now displays 30-60 active minutes remaining for the current verification batch, with measured 122-second unit and 494-second browser runs as its basis. This excludes completing all 197 unaccepted requirements. The total programme estimate is being recalibrated; the older 90-180 hour range is historical. Current desktop/mobile dashboard checks passed, including 503 refresh retention and recovery. Five isolated estimator checks also passed. Evidence: `tmp/frontend-current-nov20/eta-browser.json` and `eta-logic-verification.json` in the same folder. Physical-device and native assistive-technology checks remain pending.
+
+The first guidance run failed during initial navigation before scenario assertions; its source guard held and its failed report remains retained. A separate retry changes navigation allowance from 15 to 90 seconds only, preserving all 15-second action timeouts and original assertions. Guidance recovery is running; date-format boundary tests and the current build are next. This evidence does not certify all 260 requirements or rebind historical sign-offs to changed sources.
+
+Live handles at this note: dashboard exec 26381 / port 5199; actual-source preview exec 8213 / port 5333; guidance retry exec 24640. Revalidate handles on resume. Opening the graphical browser window through Start-Process was rejected by automatic policy review; the existing loopback dashboard remains reachable. No alternate opener was used.
+
 ## Group search accepted; combined frontend checkpoint verified — 10 November 2026
 
 59 of260 accepted:14 documentary+45 runtime. Original183 now meets search/date presentation and unchanged existing API normalization/date/group eligibility conditions. Twelve real RAM baseline/candidate contexts yield six exact pairs; rich UI12 and applied reflow/recovery6 checks preserve drafts and avoid duplicate writes. Independent component review and root exact composition/source bridge support final acceptance.

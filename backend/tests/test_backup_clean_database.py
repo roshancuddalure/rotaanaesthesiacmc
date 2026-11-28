@@ -76,19 +76,21 @@ def test_backup_restore_migrate_and_clean_exactly(source_database):
     import subprocess
 
     engine, args = source_database
+    expected_head = backup.ScriptDirectory.from_config(backup.alembic_config()).get_current_head()
+    assert expected_head is not None
     directory = backup.execute(args)
     manifest = json.loads((directory / "manifest.json").read_text())
     assert manifest["status"] == "production_cleaned"
     assert manifest["restore_verified"]["application_rows"] == 3
     assert manifest["restore_verified"]["all_table_hashes_match"]
     assert manifest["restore_verified"]["all_sequence_values_match"]
-    assert manifest["final_migration"] == ["20261022_0029"]
+    assert manifest["final_migration"] == [expected_head]
     with engine.connect() as db:
         assert db.scalar(text("SELECT count(*) FROM sentinel")) == 0
         assert db.scalar(text("SELECT count(*) FROM child")) == 0
         assert db.scalar(text("SELECT last_value FROM sentinel_id_seq")) == 1
         assert not db.scalar(text("SELECT is_called FROM sentinel_id_seq"))
-        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "20261022_0029"
+        assert db.scalar(text("SELECT version_num FROM alembic_version")) == expected_head
         assert db.scalar(text("SELECT count(*) FROM member_merges")) == 0
     # The shipped restore helper must refuse the existing schema, then restore
     # the original exact contents into a separate empty database.

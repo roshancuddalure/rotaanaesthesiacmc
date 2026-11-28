@@ -189,3 +189,28 @@ Preserve the existing six-month historical policy rather than overwriting it wit
 a proposed default. Do not invent holiday dates or clinical duty/rest limits.
 
 Implementation: `../docs/rota_intelligence_implementation.md`.
+
+
+## 2026-11-23T11:39:04.478339+00:00 - Owner clarification: ordinary duty eligibility
+
+Owner explicitly states that monthly roster members with no posting must also receive ordinary duties; there is no extra-duty-only person category. Owner separately confirms people posted only to units outside the month scope must NOT be added to ordinary allocation. Implement consistent candidate/balance/validator/fairness behavior; preserve dated call eligibility/groups, unit rules, leave/rest, quotas, staffing/OT and fixed duties. No fictitious posting creation, production application or deployment authorized. Existing unposted-extra ledger behavior stays for its separate purpose.
+
+Implementation interpretation: the no-extra-only decision includes zero-duty active people without monthly postings; initial ordinary eligibility must not depend on first receiving an extra duty. Partial postings remain dated and out-of-scope postings exclude ordinary membership.
+
+
+## Owner clarification 2026-11-23T13:16:06.655319+00:00
+
+Owner binding clarification: only people with a dated unit posting into the month's included scope may receive ordinary OR extra duties. Missing monthly postings and excluded-only postings grant neither. This supersedes the earlier revision5/6 unposted fallback interpretation and invalidates its 151-person/57-transfer proposal as a release candidate. No fictitious postings, category of extra-only people or automatic excluded/unposted tiers. Dated posting windows, call eligibility, leave and rest remain mandatory. Revision7 implementation and disposable regression are in progress; not yet verified or deployed. Production roster135confirmed,16missing,4outside-only; live assignments untouched.
+
+
+## 23 November2026: approved five-point fairness-first refinement (revision8)
+
+The owner explicitly requested implementation and intensive simulation of the five agreed points within a new one-hour session. Whole-month priorities: configured safety and mandatory/total coverage, worst raw call-level gap, sum of call-level gaps, existing squared count target, hours/extra/weekend/night/holiday/workload burdens, spacing/history, preferences and then repair change count. Preferences mode no longer authorizes inequality ahead of fairness; archived proposals retain their recorded old basis. Ordinary Balance retains its approved availability-adjusted shares; raw and adjusted spreads must not be conflated. Gap1/2 feasibility is conditional on current fixed units/candidates/achieved coverage; timeout remains unknown. Dated scope, call pools, leave/rest, quotas/staffing, protected assignments, stale checks and atomic review remain mandatory. Ineligible historical holders can be replaced through reviewed Balance with existing safe transfer and ledger tracking; protected/unsafe repairs block. Undo cannot restore an ineligible holder. No production deployment, assignment write or inferred posting is authorized by this session.
+
+
+## 2026-11-23T18:01:11.719915+00:00 - Owner approved selectable duty fairness
+Existing superadmin Limits settings will select availability-based fairness (default) or equal duty counts within each call level. New proposals follow the selected mode; existing assignments are unchanged by saving settings. Dated included-unit postings, eligibility, leave, post-duty rest, coverage, staffing and protected commitments retain their existing mandatory validation. Raw equality is an aim under those constraints, not authority to relax safety or omit duties. Persist selected policy and invalidate stale proposals. This approval does not authorize operational deployment or live application.
+
+2026-11-24T00:20:12.206147+00:00 OWNER APPROVAL:half-dayavailability0.5;availabilitytargetsuseactualsafelycoveredduties;blockanyapprovedleaveintervalintersectionincludingnext-dateoverlap. Preserveexistingstricter24hdutydateleaveblocks/pending-statuspolicies/datedscope/call/rest/OT. Userapprovedproceedafterpoint3explanation. B9actualdutyhoursnotprovidedbygenericyes;do notinvent. No productiondeployment/operationalwriteauthority. Full50scope21Donepreserved. Resumedimplementation;newpolicycandidaterevision13pendingtests.
+
+2026-11-24T16:09:00.452980+00:00 OWNER TIMING CONFIRMATION: regular non24h duties8am-4pm. Explicit followup:CHAD,RUHSA,RC3rdA/B are24h duties despite savedfalseflags. Implementing revision14 defaults and stale-proposal invalidation;regular missing-duration equal-time fallback8h;explicit custom overnight and12HR definitions retained;fourlongduties preserveoptional generation. Savedproductionrules/slots NOTmodified. Explicit READONLY in-memory corrected-November timing study66350running;its safety results concern projectedtimes,notcurrentproduction. Prior actualUI/ASGI16PASS(weekend7/leave9),Balance152PASS,Undo69PASS(sourcechanged during small superadmin compatibilityguard),candidate13buildPASS/180ASTmatch before newtimingchanges;candidate nowstale. Fresh timing/rules/templateAPIgate76079running. Full50scope21Donepreserved.

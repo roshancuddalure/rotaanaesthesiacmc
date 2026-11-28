@@ -116,7 +116,9 @@ def test_optimizer_benchmark_fingerprint_changes_only_with_active_learning(envir
     learning.status = "active"
     db.commit()
     activated = client.get(path).json()
-    assert activated["context_hash"] == original["context_hash"]
+    # Active weights affect the reviewed schedule as well as its benchmark.
+    # Candidate versions remain excluded; activation must stale saved proposals.
+    assert activated["context_hash"] != original["context_hash"]
     assert activated["optimizer_context_hash"] != original["optimizer_context_hash"]
 
 

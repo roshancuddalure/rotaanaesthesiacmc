@@ -20,6 +20,7 @@ Services raise ``ExtraDutyError``; the HTTP layer maps it to ``{detail: {code, m
 """
 
 from __future__ import annotations
+from app.services.leave_semantics import leaves_for_slot
 
 import hashlib
 import hmac
@@ -83,6 +84,8 @@ EXTRA_DUTY_SOURCE = "extra_duty_layer"
 
 # Contract 1.1 — never broken.
 STRICT_CODES = {
+    "scope_member_excluded",
+    "scope_unit_excluded",
     "inactive_member",
     "not_in_unit",
     "call_level_mismatch",
@@ -201,6 +204,8 @@ CAUSE_LABELS = {
 CAUSE_ORDER = list(CAUSE_LABELS)
 
 STRICT_ORDER = [
+    "scope_member_excluded",
+    "scope_unit_excluded",
     "inactive_member",
     "not_in_unit",
     "call_level_mismatch",
@@ -219,6 +224,8 @@ STRICT_ORDER = [
 ]
 
 STRICT_LABELS = {
+    "scope_member_excluded": "No dated posting to an included unit",
+    "scope_unit_excluded": "Duty unit is outside the month's included scope",
     "inactive_member": "Member is not active",
     "not_in_unit": "Not posted to this unit on the duty date",
     "call_level_mismatch": "Wrong call level for this duty",
@@ -238,6 +245,8 @@ STRICT_LABELS = {
 
 # Short words for the "cannot be filled" reason ("UNIT I: 3 on leave, 2 resting after 24h").
 REASON_WORDS = {
+    "scope_member_excluded": "outside the dated monthly roster",
+    "scope_unit_excluded": "unit outside scope",
     "inactive_member": "inactive",
     "not_in_unit": "not posted",
     "call_level_mismatch": "wrong call level",
@@ -383,6 +392,7 @@ class ExtraDutyContext:
         self._eligibility: dict[tuple, tuple[str, str | None] | None] = {}
         self._unit_rule: dict[tuple, bool] = {}
         self.ot_guard = None
+        self.included_unit_ids = None
         # Every active member (``load_people``); the fill-all "unposted" tier and the
         # unfilled-cause diagnosis draw from it.
         self.active_people: dict[UUID, Person] = {}
@@ -440,19 +450,17 @@ class ExtraDutyContext:
         key = (person_id, unit_id, allow_unposted, slot.duty_type, slot.call_level, day)
         if key in self._eligibility:
             return self._eligibility[key]
+        if self.included_unit_ids is not None and unit_id not in self.included_unit_ids:
+            result = ("scope_unit_excluded", STRICT_LABELS["scope_unit_excluded"])
+            self._eligibility[key] = result
+            return result
+        posted_units = self.person_units(day).get(person_id, set())
+        if not any(uid is not None and (self.included_unit_ids is None or uid in self.included_unit_ids)
+                   for uid in posted_units):
+            result = ("scope_member_excluded", STRICT_LABELS["scope_member_excluded"])
+            self._eligibility[key] = result
+            return result
         contexts = self.unit_contexts(day, unit_id).get(person_id, [])
-        if not contexts and allow_unposted:
-            person = self.persons.get(person_id)
-            if (
-                person is not None
-                and person.active_status == "active"
-                and person_id not in self.person_units(day)
-            ):
-                contexts = [
-                    MemberContext(
-                        person=person, unit_id=unit_id, posting_type=person.call_level or "", day=day
-                    )
-                ]
         if not contexts:
             result: tuple[str, str | None] | None = ("not_in_unit", None)
         else:
@@ -487,10 +495,61 @@ class ExtraDutyContext:
         )
         self.slot_active[slot.id] += 1
         self.slot_rows[slot.id].add(person_id)
+        temporal_cache = getattr(self, '_planner_temporal_cache', None)
+        if temporal_cache is not None:
+            temporal_cache.pop(person_id, None)
 
 
 def _hours(delta: timedelta) -> float:
     return delta.total_seconds() / 3600
+
+
+def _duty_time_codes(ctx, person_id, slot, exclude_assignment_id=None):
+    """Pure duty/rest comparison; callers still check leave, scope, capacity and OT."""
+    own_key = None
+    if exclude_assignment_id is not None:
+        own_key = (person_id, slot.duty_date, slot.duty_type, slot.starts_at, slot.ends_at)
+    slot_blocks_same_day, slot_blocks_next_day = _block_flags(ctx.rules, slot, ctx.flag_cache)
+    codes = set()
+    previous_day = slot.duty_date - timedelta(days=1)
+    next_day = slot.duty_date + timedelta(days=1)
+    for other in ctx.entries_by_person.get(person_id, []):
+        if other.slot_id == slot.id:
+            continue
+        if exclude_assignment_id is not None and (
+            other.assignment_id == exclude_assignment_id or other.key == own_key
+        ):
+            continue
+        if other.duty_date == slot.duty_date and (slot_blocks_same_day or other.blocks_same_day):
+            codes.add('same_day_duty')
+        if other.starts_at < slot.ends_at and other.ends_at > slot.starts_at:
+            codes.add('same_day_duty')
+        if other.duty_date == previous_day and other.blocks_next_day:
+            codes.add('post_24hr_rest')
+        if slot_blocks_next_day and other.duty_date == next_day:
+            codes.add('pre_24hr_rest')
+        if other.is_24hr and other.ends_at <= slot.starts_at:
+            if _hours(slot.starts_at - other.ends_at) < ctx.min_gap_hours:
+                codes.add('rest_gap')
+        if slot.is_24hr and slot.ends_at <= other.starts_at:
+            if _hours(other.starts_at - slot.ends_at) < ctx.min_gap_hours:
+                codes.add('rest_gap')
+    return frozenset(codes)
+
+
+def _planner_duty_time_codes(ctx, person_id, slot, exclude_assignment_id=None):
+    # Enabled only on immutable planner snapshots, never on manual/Verify rows.
+    # Equal windows in different units have identical temporal constraints unless
+    # this person already has a row on the slot (the own-row exclusion differs).
+    cache = getattr(slot, '_temporal_conflict_cache', None)
+    if cache is None or exclude_assignment_id is not None or person_id in ctx.slot_rows.get(slot.id, ()):
+        return _duty_time_codes(ctx, person_id, slot, exclude_assignment_id)
+    flags = _block_flags(ctx.rules, slot, ctx.flag_cache)
+    key = (slot.duty_date, slot.starts_at, slot.ends_at, bool(slot.is_24hr), flags, ctx.min_gap_hours)
+    person_cache = cache.setdefault(person_id, {})
+    if key not in person_cache:
+        person_cache[key] = _duty_time_codes(ctx, person_id, slot)
+    return person_cache[key]
 
 
 def strict_blockers(
@@ -533,7 +592,12 @@ def strict_blockers(
     if ctx.unit_rule_blocks(slot, unit_id):
         if add("unit_rule"):
             return found
-    for leave in ctx.leaves.get(slot.duty_date, {}).get(person_id, []):
+    # Proposal-local immutable slot snapshots carry raw leave rows, not cached
+    # decisions. Status and actual overlap are still evaluated for every check.
+    indexed_leaves = getattr(slot, '_window_leaves', None)
+    person_leaves = (indexed_leaves.get(person_id, ()) if indexed_leaves is not None
+                     else leaves_for_slot(ctx.leaves, slot, person_id).get(person_id, ()))
+    for leave in person_leaves:
         if is_active(leave.status) and slot_leave_blocks(leave, slot):
             label = (
                 "On approved leave"
@@ -544,34 +608,7 @@ def strict_blockers(
                 return found
             break
 
-    own_key = None
-    if exclude_assignment_id is not None:
-        own_key = (person_id, slot.duty_date, slot.duty_type, slot.starts_at, slot.ends_at)
-    slot_blocks_same_day, slot_blocks_next_day = _block_flags(ctx.rules, slot, ctx.flag_cache)
-    codes: set[str] = set()
-    previous_day = slot.duty_date - timedelta(days=1)
-    next_day = slot.duty_date + timedelta(days=1)
-    for other in ctx.entries_by_person.get(person_id, []):
-        if other.slot_id == slot.id:
-            continue
-        if exclude_assignment_id is not None and (
-            other.assignment_id == exclude_assignment_id or other.key == own_key
-        ):
-            continue
-        if other.duty_date == slot.duty_date and (slot_blocks_same_day or other.blocks_same_day):
-            codes.add("same_day_duty")
-        if other.starts_at < slot.ends_at and other.ends_at > slot.starts_at:
-            codes.add("same_day_duty")
-        if other.duty_date == previous_day and other.blocks_next_day:
-            codes.add("post_24hr_rest")
-        if slot_blocks_next_day and other.duty_date == next_day:
-            codes.add("pre_24hr_rest")
-        if other.is_24hr and other.ends_at <= slot.starts_at:
-            if _hours(slot.starts_at - other.ends_at) < ctx.min_gap_hours:
-                codes.add("rest_gap")
-        if slot.is_24hr and slot.ends_at <= other.starts_at:
-            if _hours(other.starts_at - slot.ends_at) < ctx.min_gap_hours:
-                codes.add("rest_gap")
+    codes = _planner_duty_time_codes(ctx, person_id, slot, exclude_assignment_id)
     for code in ("same_day_duty", "post_24hr_rest", "pre_24hr_rest", "rest_gap"):
         if code in codes and add(code):
             return found
@@ -646,7 +683,7 @@ def build_context(
     if postings is None:
         postings = postings_for_month(db, starts_on, ends_on)
     if leaves is None:
-        leaves = leaves_by_day_and_person(db, month)
+        leaves = leaves_by_day_and_person(db, month, rules=rules)
     window = _rest_window_days(rules)
     from app.core.config import settings
     ot_guard = None
@@ -687,6 +724,8 @@ def build_context(
         units=units,
     )
     context.ot_guard = ot_guard
+    from app.services.allocation_scope import locked_unit_ids
+    context.included_unit_ids = locked_unit_ids(db, period.id)
     return context
 
 
@@ -1052,7 +1091,9 @@ _CAUSE_OF_CODE = {
 }
 
 
-def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
+def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD, *, cache_justice: bool = True,
+                snapshot_slot_fields: bool = True, cache_temporal: bool = True,
+                coalesce_empty_windows: bool = True) -> _Plan:
     from app.services.rota_assignment import duty_count_issues
     from app.services.rota_candidates import add_provisional_assignment, candidate_context
     from app.services.rota_compute import context_hash
@@ -1096,14 +1137,6 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         key=lambda unit: (unit.name, str(unit.id)),
     )
     included_ids = {unit.id for unit in included}
-    outside = sorted(
-        (
-            unit
-            for unit in units.values()
-            if unit.id not in included_ids and (unit.active_status or "active") == "active"
-        ),
-        key=lambda unit: (unit.name, str(unit.id)),
-    )
     explicit: dict[UUID, list[UUID]] = defaultdict(list)
     for row in db.scalars(
         select(UnitFallback).order_by(UnitFallback.unit_id, UnitFallback.position, UnitFallback.id)
@@ -1144,7 +1177,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         seen: set[UUID] = set()
         for uid in dict.fromkeys(explicit.get(slot.unit_id, [])):
             unit = units.get(uid)
-            if usable(unit) and unit.id not in seen:
+            if usable(unit) and unit.id in included_ids and unit.id not in seen:
                 seen.add(unit.id)
                 ordered.append((1, unit))
         home_campus = home.campus if home else None
@@ -1180,11 +1213,11 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         seen: set[UUID] = set()
 
         def take(tier: int, unit: Unit | None) -> None:
-            if usable(unit) and unit.id not in seen:
+            if usable(unit) and unit.id in included_ids and unit.id not in seen:
                 seen.add(unit.id)
                 out.append((tier, unit.id, False))
 
-        if slot.unit_id is not None:
+        if slot.unit_id in included_ids:
             seen.add(slot.unit_id)
             out.append((0, slot.unit_id, False))
         for uid in dict.fromkeys(explicit.get(slot.unit_id, [])):
@@ -1194,10 +1227,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
                 take(2, unit)
         for unit in included:
             take(3, unit)
-        for unit in outside:
-            take(4, unit)
-        if slot.unit_id is not None:
-            out.append((5, slot.unit_id, True))
+        # Owner clarification: outside-scope and unposted tiers are forbidden.
         tier_cache[key] = out
         return out
 
@@ -1221,7 +1251,31 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         return pool
 
     feasible_cache: dict[tuple, set[UUID]] = {}
+    # Only genuinely empty, equivalent windows without an OT guard may share a
+    # pool. Its synthetic check view has no real slot id, so a filled representative
+    # can never make other empty slots look full or hide an own-duty overlap.
+    shared_pools: dict[tuple, tuple[set[UUID], Any]] = {}
+    feasibility_views: dict[tuple, Any] = {}
     holders: dict[UUID, set[tuple]] = defaultdict(set)
+    strict_slots: dict[UUID, Any] = {}
+    if cache_temporal and snapshot_slot_fields:
+        ctx._planner_temporal_cache = {}
+
+    def strict_slot(slot):
+        # Slot identity/times/rules do not change during a proposal. Reading the
+        # plain snapshot avoids repeated ORM descriptor access in strict checks.
+        # Person duties, leaves, capacity and OT state are still checked live.
+        if not snapshot_slot_fields:
+            return slot
+        if slot.id not in strict_slots:
+            strict_slots[slot.id] = SimpleNamespace(**{
+                name: getattr(slot, name) for name in (
+                    'id', 'duty_date', 'duty_type', 'call_level', 'starts_at',
+                    'ends_at', 'is_24hr', 'unit_id', 'max_assignees')})
+            strict_slots[slot.id]._window_leaves = leaves_for_slot(ctx.leaves, slot)
+            if cache_temporal:
+                strict_slots[slot.id]._temporal_conflict_cache = ctx._planner_temporal_cache
+        return strict_slots[slot.id]
 
     def feasible(slot, unit_id: UUID | None, unposted: bool = False) -> set[UUID]:
         if unit_id is None:
@@ -1229,15 +1283,26 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         key = (slot.id, unit_id, unposted)
         cached = feasible_cache.get(key)
         if cached is None:
-            pool = unposted_pool(slot) if unposted else ctx.unit_contexts(slot.duty_date, unit_id)
-            cached = {
-                pid
-                for pid in pool
-                if not strict_blockers(
-                    ctx, pid, slot, unit_id, first_only=True, allow_unposted=unposted
-                )
-            }
+            view = strict_slot(slot)
+            shared_key = None
+            if (coalesce_empty_windows and snapshot_slot_fields and ctx.ot_guard is None
+                    and not ctx.slot_rows.get(slot.id) and not ctx.slot_active.get(slot.id, 0)):
+                shared_key = (unit_id, unposted, slot.duty_date, slot.duty_type, slot.call_level,
+                              slot.starts_at, slot.ends_at, bool(slot.is_24hr), slot.max_assignees)
+            shared = shared_pools.get(shared_key) if shared_key is not None else None
+            if shared is None:
+                if shared_key is not None:
+                    view = SimpleNamespace(**vars(view))
+                    view.id = None
+                pool = unposted_pool(slot) if unposted else ctx.unit_contexts(slot.duty_date, unit_id)
+                cached = {pid for pid in pool if not strict_blockers(
+                    ctx, pid, view, unit_id, first_only=True, allow_unposted=unposted)}
+                if shared_key is not None:
+                    shared_pools[shared_key] = (cached, view)
+            else:
+                cached, view = shared
             feasible_cache[key] = cached
+            feasibility_views[key] = view
             for pid in cached:
                 holders[pid].add(key)
         return cached
@@ -1257,6 +1322,8 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
     slot_levels: dict[UUID, set[str]] = {}
 
     def slot_target(slot, pid: UUID | None = None) -> float | None:
+        if pid is not None and pid in (candidates.fairness_person_targets or {}):
+            return candidates.fairness_person_targets[pid]
         if slot.id not in slot_levels:
             slot_levels[slot.id] = required_call_levels(slot, rule_for_slot(slot, rules), ctx.groups)
         levels = slot_levels[slot.id]
@@ -1266,7 +1333,16 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         level = normalize_call_level(person.call_level) if person is not None else None
         return level_targets.get(level) if level in levels else None
 
+    justice_cache: dict[UUID, dict[tuple, dict[str, Any]]] = defaultdict(dict)
+    person_sort_keys = {pid: (person.canonical_name, str(pid)) for pid, person in ctx.persons.items()}
+
     def justice(pid: UUID, slot) -> dict[str, Any]:
+        # Ranking reads the same person's burden repeatedly for equivalent
+        # duties. Only assigning that person changes these values. Eligibility,
+        # staffing and final placement validation are never cached here.
+        key = (slot.starts_at, slot.duty_type, slot.call_level)
+        if cache_justice and key in justice_cache[pid]:
+            return justice_cache[pid][key]
         base = base_ledger.get(pid) or {"count": 0, "last_date": None}
         last = base["last_date"]
         if pid in plan_last and (last is None or plan_last[pid] > last):
@@ -1275,7 +1351,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         month_entries = [e for e in entries if starts_on <= e.duty_date <= ends_on]
         previous = [slot.starts_at - e.ends_at for e in entries if e.ends_at <= slot.starts_at]
         target = slot_target(slot, pid)
-        return {
+        result = {
             "ledger_count": int(base["count"]) + plan_ledger[pid],
             "last_extra_date": last.isoformat() if last else None,
             "month_duties": len(month_entries),
@@ -1284,6 +1360,9 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
             "call_level_target": None if target is None else round(target, 2),
             "target_distance": None if target is None else round(len(month_entries) - target, 2),
         }
+        if cache_justice:
+            justice_cache[pid][key] = result
+        return result
 
     def justice_key(pid: UUID, keys: dict[str, Any], tier: int = 0, campus: int = 0) -> tuple:
         """Ranking (docs/limits_callevel_fairness_contract.md 2), after *not tight*: the justice
@@ -1295,7 +1374,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         last = keys["last_extra_date"]
         rest = keys["rest_hours"]
         distance = keys.get("target_distance")
-        person = ctx.persons.get(pid)
+        person_name, person_id_text = person_sort_keys.get(pid, ('', str(pid)))
         return (
             keys["ledger_count"],
             keys["month_duties"] if distance is None else distance,
@@ -1305,8 +1384,8 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
             (0, "") if last is None else (1, last),
             keys["month_24hr"],
             -(math.inf if rest is None else rest),
-            person.canonical_name if person else "",
-            str(pid),
+            person_name,
+            person_id_text,
         )
 
     def campus_rank(slot, unit_id: UUID | None) -> int:
@@ -1503,9 +1582,10 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
         The checks run lazily, only until four non-tight members are found. Rows: ``(pid,
         keys, tier, unit_id, unposted, over_limit, tight)``."""
         entries = []
+        ranking_slot = strict_slot(slot) if snapshot_slot_fields else slot
         for tier, unit_id, unposted, people in pools:
             for pid in people:
-                keys = justice(pid, slot)
+                keys = justice(pid, ranking_slot)
                 entries.append(((justice_key(pid, keys, tier), tier), pid, keys, tier, unit_id, unposted))
         entries.sort(key=lambda item: item[0])
         hard_cache: dict[UUID, bool] = {}
@@ -1613,6 +1693,16 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
                     pools.append((tier_index, pool_unit_id, False, people))
         ranked = rank_candidates(slot, pools)
         chosen, chosen_keys, tier, unit_id, unposted, _exceeds, chosen_tight = ranked[0]
+        if feasibility_views[(slot.id, unit_id, unposted)].id is None:
+            # A shared pool is only a ranking hint. Check the actual slot again
+            # before any provisional placement; a changed clinical precondition
+            # must never turn into an extra-duty override.
+            changed = strict_blockers(ctx, chosen, strict_slot(slot), unit_id,
+                                      first_only=True, allow_unposted=unposted)
+            if changed:
+                raise ExtraDutyError('stale_inputs',
+                    'Duty availability changed while planning. Refresh the preview.',
+                    extra={'strict_codes': [item['code'] for item in changed]})
         tier_name = TIERS[tier]
         moved = unit_id != slot.unit_id
         person = ctx.persons[chosen]
@@ -1635,19 +1725,22 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
 
         add_provisional_assignment(candidates, view, chosen)
         ctx.add_plan_assignment(view, chosen, unit_id)
+        justice_cache.pop(chosen, None)
         if ctx.ot_guard is not None:
             # Reserving one person changes everybody's OT alternatives. The old
             # duty/rest-only cache invalidation (chosen person) is insufficient.
             feasible_cache.clear()
+            feasibility_views.clear()
+            shared_pools.clear()
             holders.clear()
             slot_pools.clear()
         for key in list(holders[chosen]):
             other = ctx.slot_by_id.get(key[0])
             if other is not None and abs((other.duty_date - slot.duty_date).days) > window:
                 continue
-            if other is None or strict_blockers(
-                ctx, chosen, other, key[1], first_only=True, allow_unposted=key[2]
-            ):
+            if (chosen not in feasible_cache[key] or other is None or strict_blockers(
+                ctx, chosen, feasibility_views[key], key[1], first_only=True, allow_unposted=key[2]
+            )):
                 feasible_cache[key].discard(chosen)
                 holders[chosen].discard(key)
                 dirty.add(key[0])
@@ -1766,6 +1859,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
 
     summary = {
         "mode": mode,
+        "allocation_mode": rules.fairness_rules.allocation_mode,
         "filled": len(assigned),
         "fallback": sum(1 for d in assigned if d["action"] == "assign_fallback"),
         "ledger_records": sum(1 for d in assigned if d["ledger"]),

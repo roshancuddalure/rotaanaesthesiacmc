@@ -143,3 +143,22 @@ Same as before:
 - codex-sol may edit concurrently: run `git diff` and re-read before each edit, make small edits, never revert
   others' lines, and stop and report on conflicts.
 - No commits. Don't touch the `duty_rota` or `duty_rota_test` databases. No alembic.
+
+
+### Owner amendment - 23 November 2026
+
+Active members with no unit posting in the target month are eligible for ordinary duties, including from zero duties. There is no extra-duty-only person category and no extra-duty seed/ledger requirement for ordinary eligibility. Dated partial postings retain their boundaries; people posted only to units outside the monthly scope must not enter ordinary allocation or its fairness denominator. Duty units remain within scope and permitted by duty rules. Call levels/pools/groups, active status, leave, rest, quotas, protected assignments, unit staffing and OT guards remain enforced. No fictitious posting is created. Existing exceptional extra-duty ledger behavior is separate. Authority: owner clarification in this thread, recorded in Plan/05_confirmed_decisions.md.
+
+
+## Owner clarification 2026-11-23T13:16:06.655319+00:00
+
+Owner binding clarification: only people with a dated unit posting into the month's included scope may receive ordinary OR extra duties. Missing monthly postings and excluded-only postings grant neither. This supersedes the earlier revision5/6 unposted fallback interpretation and invalidates its 151-person/57-transfer proposal as a release candidate. No fictitious postings, category of extra-only people or automatic excluded/unposted tiers. Dated posting windows, call eligibility, leave and rest remain mandatory. Revision7 implementation and disposable regression are in progress; not yet verified or deployed. Production roster135confirmed,16missing,4outside-only; live assignments untouched.
+
+
+## Owner-approved amendment - 24 November 2026
+
+The owner approved fractional availability (AM/PM leave removes0.5day), availability-mode targets based on duties safely covered rather than unfilled template demand, and any approved physical leave/duty intersection including next-date overlap. Existing stricter24-hour duty-date partial-leave denials and pending-status handling remain. Dated included-unit postings and call/group eligibility, protected rows, rest, quotas and OT reservations are unchanged. Interval unions prevent duplicate subtraction; these weights are not leave entitlement. Pooled duty demand retains its proportional call-level split. New objective revision13 stales earlier previews; historical objective descriptions retain their original basis.
+
+Prospective validators and independent verification inspect all civil dates touched by the actual recorded duty window. Reviewed Balance also repairs existing active-leave conflicts through normal atomic transfer/swap checks before optimizing fairness; unresolved or protected conflicts refuse the proposal without live changes. Undo cannot restore a still-ineligible or leave-conflicting holder. Weekend search prioritizes the worst cohort within the existing clinical trial/inspection budgets, preserving each person's duty total, recorded hours and extra ledger credits.
+
+This amendment authorizes local implementation/testing, not deployment or operational assignment changes. Actual ambiguous duty start/end durations (B9) still require concrete clinical values; generic assent does not supply those values. Final revision13 regression is pending; earlier revision11 results remain historical baseline evidence.

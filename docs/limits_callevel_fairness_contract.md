@@ -219,3 +219,74 @@ disagrees with them, this one wins.
 - **Don't commit.** Don't touch the PostgreSQL databases `duty_rota` or `duty_rota_test` (the integrator uses
   `duty_rota_test`). No alembic: none of this needs a migration, since everything lives in the rules JSON.
 - Tests use the existing SQLite test patterns.
+
+
+## Owner-approved fairness selection - 23 November 2026
+
+The superadmin Limits section now includes fairness_rules.allocation_mode, one
+of availability (default for saved rules without this field) or equal_counts.
+The existing target_mode=auto remains a compatibility field for the reference
+call-level average; it does not override allocation_mode.
+
+Both modes use active members with dated included-unit postings and at least one
+available posted day, plus eligible posted holders of fixed duties. Existing
+ineligible holders do not manufacture membership. Canonical monthly call level
+is the first posted-day level; actual duty eligibility remains dated. Deliberate
+configured call pools retain their existing restrictions.
+
+For each call level and demand D, availability targets are D*a_i/sum(a), using
+distinct available posted dates after the canonical blocking-leave projection.
+Equal-count targets are D/n. Leave/rest eligibility is never relaxed by either
+formula. Balance redistributes covered demand; whole-month proposals consider
+template demand, so open duties can cause different target totals.
+
+Coverage and safety precede equality. Whole-month modes minimize worst and sum
+of selected-policy gaps before squared target deviation and other burdens. In
+availability mode a gap is the range of duty_count-personal_target; raw totals
+are still reported separately. CP-SAT represents those deviations in thousandths
+of a duty; receipts disclose that precision. A timeout gives unknown, and a
+partial draft cannot certify full-coverage gap1/2 feasibility.
+
+Saving the mode changes new proposals, never the existing rota. Settings are
+versioned with rules and included in context fingerprints: stale previews must
+be regenerated. Existing historical proposals retain their recorded basis.
+Balance and extra-duty records preserve ledger history and protected assignments.
+The extra-duty justice ledger retains its existing priority before target-distance
+tie-breaks; this switch does not erase historical extra-duty credits or approve
+new clinical exceptions. Manual and superadmin exception authority is unchanged.
+
+The gap is an optimization target and must not silently drop duties or bypass
+clinical rules. Unmet targets are reported with factual restrictions, never an
+unproven claim of unavoidable unfairness. Unit-layout search, disabled OT guards
+and time-limited results must remain visible limitations in review evidence.
+
+Equal-count mode accepts gap targets0,1or2 only. API/model/client validation
+reject a larger saved target, preventing Balance from treating a gross raw gap
+as acceptable. Existing availability-mode tolerance settings retain their prior
+range. This caps the optimization aim; clinical safety can still require a larger
+reported unmet gap, and feasibility is never fabricated.
+
+Equal-count Balance proposals also attempt a secondary weekend refinement after
+count balancing. They exchange movable ordinary weekend/weekday rows of the same
+duty type, duration and time profile within the same monthly call cohort. Each
+exchange preserves individual duty totals, recorded hours, flagged24h/night counts
+and extra-duty credits; protected and ledgered rows do not participate. All dated
+eligibility, leave, rest, individual-limit and staffing/OT transfer checks remain.
+Availability-mode Balance retains its existing behavior pending any separately
+approved policy change. These exchanges are proposed even when duty totals were
+already balanced; saving the setting still never reallocates the saved rota.
+
+Weekend refinement shares the planner work budget, permits at most128clinical
+exchange attempts and20000candidate-pair inspections, and reports before/after
+weekend gaps with explicit limits. A remaining gap is not an infeasibility proof.
+Preview, reviewed Apply, independent validation and exact Undo remain mandatory.
+Holiday fairness and intended clinical durations are not inferred from this stage.
+
+
+## Owner-approved amendment - 24 November 2026
+
+The owner approved fractional availability (AM/PM leave removes0.5day), availability-mode targets based on duties safely covered rather than unfilled template demand, and any approved physical leave/duty intersection including next-date overlap. Existing stricter24-hour duty-date partial-leave denials and pending-status handling remain. Dated included-unit postings and call/group eligibility, protected rows, rest, quotas and OT reservations are unchanged. Interval unions prevent duplicate subtraction; these weights are not leave entitlement. Pooled duty demand retains its proportional call-level split. New objective revision13 stales earlier previews; historical objective descriptions retain their original basis.
+
+Prospective validators and independent verification inspect all civil dates touched by the actual recorded duty window. Reviewed Balance also repairs existing active-leave conflicts through normal atomic transfer/swap checks before optimizing fairness; unresolved or protected conflicts refuse the proposal without live changes. Undo cannot restore a still-ineligible or leave-conflicting holder. Weekend search prioritizes the worst cohort within the existing clinical trial/inspection budgets, preserving each person's duty total, recorded hours and extra ledger credits.
+
+This amendment authorizes local implementation/testing, not deployment or operational assignment changes. Actual ambiguous duty start/end durations (B9) still require concrete clinical values; generic assent does not supply those values. Final revision13 regression is pending; earlier revision11 results remain historical baseline evidence.

@@ -45,7 +45,7 @@ from app.services.rota_rules import (
     VALID_DUTY_GROUPS,
     VALID_DUTY_KEYS,
     RotaPhaseOneRules,
-    RotaRulesInvalid,
+    RotaRulesInvalid as RotaRulesInvalid,
     get_phase_one_rules,
     save_phase_one_rules,
 )
@@ -455,6 +455,8 @@ def save_rules_with_history(
 
     Raises ``StaleRules`` or ``RotaRulesInvalid``. Returns ``(rule_version, rules)`` as
     re-read after the save (the GET shape)."""
+    from app.services.scheduling_inputs import lock_inputs
+    lock_inputs(db)
     _version, before = get_phase_one_rules(db)
     before_payload = rules_payload(before)
     before_revision = rules_revision(before_payload)

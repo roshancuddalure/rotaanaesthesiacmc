@@ -65,12 +65,16 @@ const CARDS: Card[] = [
   { section: "unit_staffing_rules", id: "unit", title: "Unit staffing",
     intro: "How many people each unit keeps free every day, so duties and leave never empty a unit." },
   { section: "fairness_rules", id: "equal", title: "Equal duties within a call level",
-    intro: "Everyone on the same call level should end the month with almost the same number of duties, all campuses together." },
+    intro: "Choose equal duty counts or share covered duties by fractional available posted days. Half-day leave counts as 0.5 day. Safety and coverage come first in both approaches." },
   { section: "extra_duty_rules", id: "extra", title: "Extra duties (justice)",
     intro: "When a duty has to go to someone as an extra, whoever did the fewest extras recently goes first." },
 ];
 
 const FALLBACK_FIELDS: LimitField[] = [
+  { path: "fairness_rules.allocation_mode", section: "fairness_rules", label: "Duty fairness approach",
+    help: "Availability-based fairness shares duties safely covered according to available posted days; half-day leave counts as 0.5 day. Equal duty counts aims for similar totals within each call level. Safety, postings, leave, rest and coverage take priority. Saving changes new proposals only; regenerate older proposals.",
+    example: "Available 30 versus 15 days: availability mode may target 10 versus 5 duties; equal counts aims for similar totals where safely feasible.",
+    kind: "choice", hard_or_soft: "guide", choices: [{ value: "availability", label: "Availability-based fairness" }, { value: "equal_counts", label: "Equal duty counts" }] },
   { path: "duty_count_limits.max_24hr_per_month", section: "duty_count_limits", label: "Max 24-hour duties per member per month",
     help: "The most 24-hour duties one member can be given in a month.", example: "6 means nobody is given a 7th 24-hour duty that month.",
     kind: "int", min: 0, max: 31, unit: "duties", blank_means: "No limit", hard_or_soft: "hard" },
@@ -104,9 +108,9 @@ const FALLBACK_FIELDS: LimitField[] = [
   { path: "fairness_rules.max_gap_within_call_level", section: "fairness_rules", label: "Largest allowed gap within a call level",
     help: "The most that monthly duty totals may differ between two members of the same call level, all campuses together.", example: "1 means if the busiest 3rd call member has 7 duties, every other 3rd call member has 6 or 7.",
     kind: "int", min: 0, max: 10, unit: "duties", blank_means: null, hard_or_soft: "soft" },
-  { path: "fairness_rules.target_mode", section: "fairness_rules", label: "How the target is worked out",
-    help: "Automatic: the call level's duty slots in the month divided by its members available that month.", example: "60 slots ÷ 10 members = a target of 6 duties each.",
-    kind: "choice", unit: null, blank_means: null, hard_or_soft: "guide", choices: [{ value: "auto", label: "Automatic (slots ÷ members)" }] },
+  { path: "fairness_rules.target_mode", section: "fairness_rules", label: "How the average target is worked out",
+    help: "Availability mode uses covered duties divided by eligible members and weights personal targets by fractional available days. Equal counts uses the planned call-level average.", example: "60 slots ÷ 10 members = an average of 6; availability mode adjusts personal targets.",
+    kind: "choice", unit: null, blank_means: null, hard_or_soft: "guide", choices: [{ value: "auto", label: "Automatic (selected fairness approach)" }] },
   { path: "extra_duty_rules.justice_lookback_months", section: "extra_duty_rules", label: "Months counted for extra duties",
     help: "How far back the justice ledger looks when deciding who has done the fewest extra duties.", example: "12 means extras done in the last 12 months count; older ones are forgotten.",
     kind: "int", min: 1, max: 36, unit: "months", blank_means: null, hard_or_soft: "guide" },
@@ -196,6 +200,7 @@ function normalizeLimits(limits: Partial<LimitSections> | undefined, defaults: P
   for (const key of LIMIT_SECTION_KEYS) out[key] = { ...(out[key] ?? {}), ...((limits as Record<string, Record<string, unknown>> | undefined)?.[key] ?? {}) };
   if (out.fairness_rules.max_gap_within_call_level === undefined) out.fairness_rules.max_gap_within_call_level = 1;
   if (out.fairness_rules.target_mode === undefined) out.fairness_rules.target_mode = "auto";
+  if (out.fairness_rules.allocation_mode === undefined) out.fairness_rules.allocation_mode = "availability";
   if (out.extra_duty_rules.justice_lookback_months === undefined) out.extra_duty_rules.justice_lookback_months = 12;
   return out as unknown as LimitSections;
 }
@@ -244,6 +249,10 @@ function problemsFor(st: State, field: LimitField): { error: string; warning: st
     const warn = parsed(fieldBy(st, "unit_staffing_rules.warning_unavailable_percent") ?? field, st.raw["unit_staffing_rules.warning_unavailable_percent"]);
     const hard = parsed(field, raw);
     if (typeof warn === "number" && typeof hard === "number" && warn >= hard) error = `The refuse share must be higher than the warning share (now warn at ${warn}%, refuse at ${hard}%).`;
+  }
+  if (!error && field.path === "fairness_rules.max_gap_within_call_level"
+      && st.raw["fairness_rules.allocation_mode"] === "equal_counts" && Number(raw) > 2) {
+    error = "Equal duty counts requires a gap target of at most two duties. Choose 0, 1 or 2.";
   }
   const server = st.serverProblems.filter((p) => p.path === field.path);
   const serverError = server.find((p) => p.severity === "error");
@@ -408,8 +417,6 @@ function settingHtml(st: State, field: LimitField): string {
 }
 
 function targetsHtml(st: State): string {
-  const gapField = fieldBy(st, "fairness_rules.max_gap_within_call_level");
-  const gap = gapField ? parsed(gapField, st.raw[gapField.path]) : 1;
   const rows = st.targets;
   const body = st.targetsError
     ? `<p class="limits-targets__empty is-error" role="alert">${esc(st.targetsError)} <button type="button" class="quiet-button btn-sm" data-targets-retry>Try again</button></p>`
@@ -417,20 +424,20 @@ function targetsHtml(st: State): string {
       ? `<p class="limits-targets__empty">No targets for ${esc(formatMonth(st.month))} yet. They appear once the month's duty slots exist (generate the template in Rota Template).</p>`
       : `<div class="limits-table-wrap"><table class="limits-table">
           <caption class="visually-hidden">Equal-duty targets per call level, ${esc(formatMonth(st.month))}</caption>
-          <thead><tr><th scope="col">Call level</th><th scope="col" class="is-num">Duty slots</th><th scope="col" class="is-num">Members</th><th scope="col" class="is-num">Target each</th><th scope="col">Expected</th></tr></thead>
+          <thead><tr><th scope="col">Call level</th><th scope="col" class="is-num">Duty slots</th><th scope="col" class="is-num">Members</th><th scope="col" class="is-num">Average target</th><th scope="col">Reference range</th></tr></thead>
           <tbody>${rows.map((t) => {
             const label = t.label || callLevelText(t.call_level);
             const range = t.min_expected === t.max_expected ? `${t.min_expected} duties each` : `${t.min_expected} or ${t.max_expected} duties each`;
             return `<tr><th scope="row" data-label="Call level">${esc(label)}</th>
               <td class="is-num" data-label="Duty slots">${esc(t.slots)}</td>
               <td class="is-num" data-label="Members">${esc(t.members)}</td>
-              <td class="is-num" data-label="Target each"><strong>${esc(Number(t.target).toFixed(2).replace(/\.00$/, ""))}</strong></td>
-              <td data-label="Expected">${t.members ? esc(range) : "No members this month"}</td></tr>`;
+              <td class="is-num" data-label="Target each"><strong>${esc(Number(t.target).toFixed(2).replace(/\.00$/, ""))}</strong>${t.demand_basis === "covered_duties" ? `<small class="limits-muted">Based on ${esc(t.covered_slots ?? 0)} covered of ${esc(t.slots)} planned duties</small>` : ""}</td>
+              <td data-label="Expected">${t.members ? (t.demand_basis === "covered_duties" ? `Average reference: ${esc(t.min_expected === t.max_expected ? t.min_expected : `${t.min_expected}–${t.max_expected}`)}` : esc(range)) : "No members this month"}</td></tr>`;
           }).join("")}</tbody></table></div>`;
   return `<section class="limits-targets" aria-labelledby="lim-targets-title" ${st.targetsBusy ? 'aria-busy="true"' : ""}>
       <div class="limits-targets__head">
         <div><h4 id="lim-targets-title">Targets for ${esc(formatMonth(st.month))}</h4>
-          <p>Target = the call level's duty slots in the month ÷ its members available that month.${typeof gap === "number" ? ` With a gap of ${esc(gap)}, the busiest and the least busy member of a level may differ by at most ${esc(plural(gap, "duty", "duties"))}.` : ""}</p></div>
+          <p>The table shows the saved approach's call-level average. ${st.raw["fairness_rules.allocation_mode"] === "equal_counts" ? "Equal counts: aim for similar duty totals within each call level." : "Availability mode: individual targets are based on duties covered and fractional available posted days; raw totals can differ by more than two. Targets grow as duties are filled."} The allowed gap applies to the selected fairness measure. Safety and coverage come first. Saved changes affect new proposals only.</p></div>
         <label class="limits-month" for="lim-month"><span>Month</span><input type="month" id="lim-month" value="${esc(st.month)}" data-targets-month /></label>
       </div>
       <div data-targets-body>${st.targetsBusy ? `<p class="limits-targets__empty" role="status">Working out the targets for ${esc(formatMonth(st.month))}…</p>` : body}</div>
@@ -1046,7 +1053,7 @@ async function openHistory(st: State): Promise<void> {
 function edited(st: State, path = ""): void {
   if (st.resetConfirm) st.resetConfirm = false;
   paintMeta(st);
-  if (path === "fairness_rules.max_gap_within_call_level") paintTargets(st);
+  if (path.startsWith("fairness_rules.")) paintTargets(st);
 }
 
 function bindPage(st: State): void {
@@ -1062,8 +1069,9 @@ function bindPage(st: State): void {
   page.addEventListener("change", (event) => {
     const target = event.target as HTMLElement;
     if (target instanceof HTMLSelectElement && target.matches("[data-limit-choice]")) {
+      if (target.disabled) return;
       st.raw[target.dataset.limitChoice ?? ""] = target.value;
-      edited(st);
+      edited(st, target.dataset.limitChoice);
       return;
     }
     if (target instanceof HTMLInputElement && target.matches("[data-targets-month]")) {
@@ -1179,8 +1187,7 @@ export const UNEVEN_DUTIES_WARNING = "Duty totals uneven within a call level";
 
 /** Off target = outside the whole numbers either side of the target (e.g. 5.4 → 5 or 6). */
 function offTarget(level: CallLevelSpread) {
-  const lo = Math.floor(Number(level.target)), hi = Math.ceil(Number(level.target));
-  return (level.members ?? []).filter((m) => m.duties < lo || m.duties > hi).sort((a, b) => a.diff_from_target - b.diff_from_target || a.name.localeCompare(b.name));
+  return (level.members ?? []).filter((m) => m.duties < Math.floor(m.personal_target ?? Number(level.target)) || m.duties > Math.ceil(m.personal_target ?? Number(level.target))).sort((a, b) => a.diff_from_target - b.diff_from_target || a.name.localeCompare(b.name));
 }
 
 /**
@@ -1200,7 +1207,7 @@ export function limitsSpreadDebrief(spread: CallLevelSpread[] | undefined, month
       <td class="is-num" data-label="Target">${esc(fmt(l.target))}</td>
       <td class="is-num" data-label="Min">${esc(l.min)}</td>
       <td class="is-num" data-label="Max">${esc(l.max)}</td>
-      <td class="is-num" data-label="Gap"><span><strong>${esc(l.gap)}</strong> <span class="limits-muted">/ ${esc(l.allowed_gap)} allowed</span></span></td>
+      <td class="is-num" data-label="Gap"><span><strong>${esc(l.gap)}</strong> raw${l.allocation_mode === 'availability' ? `; ${esc(fmt(l.adjusted_gap ?? l.gap))} adjusted` : ''} <span class="limits-muted">/ ${esc(l.allowed_gap)} allowed for ${l.allocation_mode === 'availability' ? 'adjusted gap' : 'raw gap'}</span></span></td>
       <td data-label="Off target">${l.ok ? `<span class="limits-spread__ok">Even</span>` : `<span class="limits-spread__bad">${esc(plural(off.length, "member"))}</span>`}</td></tr>`;
   }).join("");
   const members = uneven.map((l) => {

@@ -1,0 +1,366 @@
+{
+  "recorded_at": "2026-11-27T00:27:01.797498+00:00",
+  "status": "scope_reconciled_not_completed",
+  "total": 50,
+  "done": 21,
+  "changed_statuses": {
+    "N26": {
+      "before": "Queued",
+      "after": "In progress",
+      "basis": "Existing current-objective architecture comparison harness, three comparison runs and six focused tests recorded26Nov; architecture selection and acceptance still incomplete."
+    }
+  },
+  "rows": [
+    {
+      "id": "N01",
+      "deliverable": "Inventory all allocation entry points: template, manual, autofill, intelligent generator, balancing, extra duty, superadmin, exchange, restore, import, review, publish, and export. Separate historical records from prospective allocation.",
+      "dependencies": "Approval",
+      "acceptance": "Path-to-validator/context/permission map, dated source references, existing behavior and extension points recorded; no duplicate engine proposed.",
+      "status": "Done"
+    },
+    {
+      "id": "N02",
+      "deliverable": "Establish a reproducible current baseline using anonymized real-shaped months, existing suites, and saved proposals; record exact revision, configuration, hardware, and working-tree scope.",
+      "dependencies": "N01",
+      "acceptance": "Coverage, conflicts, fairness, correction count, runtime stages and current failures captured; historical test counts clearly distinguished from fresh results.",
+      "status": "In progress"
+    },
+    {
+      "id": "N03",
+      "deliverable": "Build the requirement/constraint register and explicit precedence matrix from current contracts and approved policies. Cover mixed-level pools, effective dates, override boundaries, and imported history.",
+      "dependencies": "N01",
+      "acceptance": "Each constraint has authority, inputs, severity, permitted exception, checker, and test; contradictory older documents are identified rather than silently applied.",
+      "status": "Done"
+    },
+    {
+      "id": "N04",
+      "deliverable": "Define one immutable, versioned scheduling snapshot and invalidation contract covering OT demand, leave, postings, groups, dates, rules, locks, and model preference versions.",
+      "dependencies": "N01, N03",
+      "acceptance": "Editing each relevant input makes affected proposals stale; semantically unchanged input remains reproducible; snapshots exclude unnecessary sensitive notes.",
+      "status": "Done"
+    },
+    {
+      "id": "N05",
+      "deliverable": "Specify measurable objective order and fairness denominators, preserving existing contracts unless amended. Separate required coverage, OT protection, repair stability, call-level equality, burden, and preferences.",
+      "dependencies": "N02, N03; P6",
+      "acceptance": "Worked examples show every trade-off, pooled-level treatment, pro-rata share, rounding and zero-capacity behavior; no silent preference promotion.",
+      "status": "In progress"
+    },
+    {
+      "id": "N06",
+      "deliverable": "Ratify acceptance metrics and benchmark corpus before tuning. Include real administrator corrections and critical-duties coverage, not just aggregate score.",
+      "dependencies": "N02, N05; P9",
+      "acceptance": "Fixed scenarios, expected outcomes, regression tolerances, time budgets and sign-off owner recorded; safety failures cannot be averaged away.",
+      "status": "Queued"
+    },
+    {
+      "id": "N07",
+      "deliverable": "Define OT demand records: unit, area, weekday, effective dates, time band, required call/skill pool, minimum/target, and provenance. Reuse existing registries.",
+      "dependencies": "N01, N03; P1, P2",
+      "acceptance": "Sunday\u00e2\u20ac\u201cSaturday examples cover different units and areas; invalid ranges, negative counts, and incompatible references are rejected.",
+      "status": "Done"
+    },
+    {
+      "id": "N08",
+      "deliverable": "Specify recurring schedule/date-exception precedence, including holidays, OT closure, emergency additional lists, and monthly overrides.",
+      "dependencies": "N07; P3",
+      "acceptance": "A weekly rule plus closure, special opening, and holiday produces one explainable effective requirement per interval; missing configuration is visibly unknown, not assumed zero.",
+      "status": "Done"
+    },
+    {
+      "id": "N09",
+      "deliverable": "Add additive, indexed, versioned OT-demand persistence and conflict-safe administration APIs with actor/time/change history.",
+      "dependencies": "N04, N07, N08",
+      "acceptance": "Isolated migration forward/backward/forward preserves sentinel records; overlapping definitions and concurrent edits receive explicit resolutions; role checks enforced.",
+      "status": "Done"
+    },
+    {
+      "id": "N10",
+      "deliverable": "Build a dedicated admin OT calendar with unit \u00c3\u2014 weekday \u00c3\u2014 call views, area/time detail, copying, date exceptions, preview, and confirmed save.",
+      "dependencies": "N09",
+      "acceptance": "Thursday Unit 4 workload can be entered and traced; keyboard/mobile/error recovery work; copy previews prevent silent overwrites; existing navigation is preserved.",
+      "status": "Done"
+    },
+    {
+      "id": "N11",
+      "deliverable": "Compute available people by actual dated posting, call/group membership, approved leave, overlaps, post-duty rest, and partial-day intervals.",
+      "dependencies": "N03, N04, N07",
+      "acceptance": "Promotion, midmonth transfer, cross-month rest and simultaneous leave/rest each give correct identity-level availability without double subtraction.",
+      "status": "Done"
+    },
+    {
+      "id": "N12",
+      "deliverable": "Match available people to simultaneous OT requirements, respecting pooled levels, area skills and permitted sharing; reconcile existing reserve minima explicitly.",
+      "dependencies": "N07, N11; P1, P2",
+      "acceptance": "A pooled senior counted in two overlapping requirements produces shortage rather than phantom coverage; non-overlapping work can share only where policy permits.",
+      "status": "Done"
+    },
+    {
+      "id": "N13",
+      "deliverable": "Show monthly unit capacity/pressure heatmaps with posted, unavailable, OT-required, reserved and duty-eligible counts and drill-down reasons.",
+      "dependencies": "N10, N11, N12",
+      "acceptance": "Every displayed count reconciles to distinct people and intervals; unknown demand and pending-leave assumptions are visible; restricted details stay restricted.",
+      "status": "Done"
+    },
+    {
+      "id": "N14",
+      "deliverable": "Integrate effective OT demand into template unit eligibility/scoring and every normal prospective assignment validator; enumerate exception behavior separately.",
+      "dependencies": "N03, N04, N12",
+      "acceptance": "An allocation that would consume a mandatory OT reservation is rejected or left unresolved; manual, CPU/GPU, exchange and balancing paths cannot bypass it.",
+      "status": "Done"
+    },
+    {
+      "id": "N15",
+      "deliverable": "Add reviewed monthly OT-calendar import/export using existing unit/call mappings, dry-run validation, source traceability and idempotency.",
+      "dependencies": "N09, N10",
+      "acceptance": "Round-trip, duplicate upload, ambiguous unit, bad weekday and changed mapping scenarios behave predictably; imports never silently activate invalid demand.",
+      "status": "Done"
+    },
+    {
+      "id": "N16",
+      "deliverable": "Add the requested Thursday Unit 4 scenario and variants: heavier elective workload reduces that day's duty contribution when feasible, with fair feasible compensation later.",
+      "dependencies": "N05, N14",
+      "acceptance": "Fixed fixture contrasts demand off/on; Thursday OT capacity remains protected, unchanged days are explained, and infeasible compensation is reported honestly.",
+      "status": "In progress"
+    },
+    {
+      "id": "N17",
+      "deliverable": "Exercise OT scarcity and temporal edge cases: all units busy, no eligible senior, overlapping areas, staffing above roster, closure, leap day, partial shift and month boundary.",
+      "dependencies": "N08, N12, N14",
+      "acceptance": "Expected shortages and safe alternatives are asserted; no forced template is mislabeled safe, and no minimum is silently reduced.",
+      "status": "Done"
+    },
+    {
+      "id": "N18",
+      "deliverable": "Inventory canonical leave flows and define profile accounting: dates, intervals, statuses, types, source, actual leave taken versus requests and approved future leave.",
+      "dependencies": "N01, N03; P4, P5",
+      "acceptance": "Existing tables/profile listing are reused; clear counting examples distinguish elapsed approved absence, future approval, pending, cancellation and rejection.",
+      "status": "Done"
+    },
+    {
+      "id": "N19",
+      "deliverable": "Add or expose attributable leave lifecycle history, preserving original import reference, amendments, approval/cancellation actor and reason without a parallel source of truth.",
+      "dependencies": "N18",
+      "acceptance": "Create/edit/approve/cancel can be reconstructed; imported and manually corrected records retain provenance; no destructive overwrite of history.",
+      "status": "Done"
+    },
+    {
+      "id": "N20",
+      "deliverable": "Centralize leave status and interval calculations across calendars, profiles, OT capacity, candidates, safety and reports. Keep pending-leave risk separate from approved blocking.",
+      "dependencies": "N03, N11, N18; P3, P4",
+      "acceptance": "Shared fixtures reconcile every consumer; overlapping duplicate records do not multiply absence; AM/PM/NIGHT combinations follow approved accounting.",
+      "status": "Done"
+    },
+    {
+      "id": "N21",
+      "deliverable": "Extend the existing member profile with searchable leave timeline, filters, linked source/history and authorized create/amend/approve/cancel actions.",
+      "dependencies": "N19, N20",
+      "acceptance": "User edits the canonical record and sees consistent global/profile results; permissions, stale edits and partial-load recovery are tested; private notes are not exposed.",
+      "status": "Done"
+    },
+    {
+      "id": "N22",
+      "deliverable": "Add person/month/year leave statistics with status/type breakdown, calendar-day versus working-day definitions and cross-month clipping.",
+      "dependencies": "N18, N20",
+      "acceptance": "Numbers reconcile to source intervals; overlapping periods, midnight boundaries, transfers and leap years are covered; unavailable historical coverage is disclosed.",
+      "status": "Done"
+    },
+    {
+      "id": "N23",
+      "deliverable": "Report leave taken separately from entitlement balances; add balance fields only if a specific policy amendment is approved.",
+      "dependencies": "N18, N22; P5",
+      "acceptance": "No balance, carry-forward or deduction is invented; the UI states counting basis and data coverage; leave volume is never used as a disciplinary score.",
+      "status": "Done"
+    },
+    {
+      "id": "N24",
+      "deliverable": "Connect leave changes to affected-duty/OT impact previews and scoped repair proposals, including concurrent approval versus allocation.",
+      "dependencies": "N04, N14, N20, N21",
+      "acceptance": "Leave approval never silently reassigns duties; pending previews invalidate appropriately; impacted locks/published months surface for authorized resolution.",
+      "status": "Done"
+    },
+    {
+      "id": "N25",
+      "deliverable": "Validate leave reconciliation and import/profile lifecycle end to end, including alias merges, duplicate imports, amended dates, cancellation and access control.",
+      "dependencies": "N19\u00e2\u20ac\u201cN24",
+      "acceptance": "Before/after counts agree across profile, calendar, OT capacity and allocation; archived history remains attributable; repeat import/application is idempotent.",
+      "status": "Done"
+    },
+    {
+      "id": "N26",
+      "deliverable": "Benchmark joint unit/person CP-SAT against an iterative template-person feasibility/repair loop using the same constraints and scenarios. Select and document the architecture.",
+      "dependencies": "N05, N06, N12, N14",
+      "acceptance": "Compare safe coverage, unit/person fairness, runtime, memory and maintainability; include a case where the sequential template prevents an otherwise feasible rota.",
+      "status": "In progress"
+    },
+    {
+      "id": "N27",
+      "deliverable": "Implement the selected month-wide unit-allocation approach behind a feature flag, preserving original duty requirements, explicit scope and approved objective precedence.",
+      "dependencies": "N26; P2, P6",
+      "acceptance": "Cross-day unit choices respond to later scarcity; no lost/duplicated required slots; legacy reviewed generation remains available for rollback.",
+      "status": "Queued"
+    },
+    {
+      "id": "N28",
+      "deliverable": "Couple person allocation with OT reservations and call/skill feasibility, including simultaneous pools and next-day rest induced by new duties.",
+      "dependencies": "N12, N27; P1",
+      "acceptance": "A duty that removes the only eligible next-day OT member is prevented; combined final schedule passes independent interval and staffing checks.",
+      "status": "Queued"
+    },
+    {
+      "id": "N29",
+      "deliverable": "Preserve exact locked duties, explicit repair scope, existing commitments and published-month protection across the new planning path.",
+      "dependencies": "N04, N27, N28",
+      "acceptance": "Repair cannot widen scope silently; locked unfilled duties remain visible; both preserved and proposed assignments are validated together.",
+      "status": "Queued"
+    },
+    {
+      "id": "N30",
+      "deliverable": "Balance monthly call-level load, weekends, nights, holidays, unit contributions and history against compatible opportunities; expose unavoidable differences.",
+      "dependencies": "N05, N27, N28; P6",
+      "acceptance": "Zero availability, small pools and unequal unit size produce explainable targets; OT protection does not silently overturn approved per-person fairness.",
+      "status": "Queued"
+    },
+    {
+      "id": "N31",
+      "deliverable": "Produce bounded, distinct feasible alternatives with before/after comparisons and no regression of approved higher-priority objectives.",
+      "dependencies": "N27\u00e2\u20ac\u201cN30",
+      "acceptance": "Alternatives are distinct by actual allocation, preserve coverage/locks, and show marginal OT/fairness/preferences trade-offs; absence of alternatives is explicit.",
+      "status": "Queued"
+    },
+    {
+      "id": "N32",
+      "deliverable": "Add actionable infeasibility/shortage explanations and solver evidence: rejected eligibility, conflicting requirements, bound/status and unproven objectives.",
+      "dependencies": "N03, N27, N28",
+      "acceptance": "Distinguish input-data gap, no feasible full coverage, timeout and proven optimum; explanations reference actual constraints and avoid claiming a minimal conflict without proof.",
+      "status": "Queued"
+    },
+    {
+      "id": "N33",
+      "deliverable": "Add reviewed emergency repair for unexpected leave, OT surge or closure with bounded change count, safe alternatives and attributable undo/conflict checks.",
+      "dependencies": "N24, N29, N31, N32; P7",
+      "acceptance": "Emergency scenario minimizes changes under approved priorities; no published modification or automatic apply; undo refuses intervening conflicting edits.",
+      "status": "Queued"
+    },
+    {
+      "id": "N34",
+      "deliverable": "Add robustness scenarios for plausible pending approvals, sudden senior absence and extra OT demand; report fragility separately from the official plan.",
+      "dependencies": "N08, N20, N28, N32; P3",
+      "acceptance": "Stress runs do not alter live input or silently reserve hypothetical absences; they quantify shortages, affected duties and feasible contingency choices.",
+      "status": "Queued"
+    },
+    {
+      "id": "N35",
+      "deliverable": "Validate solver/checker correctness with small-instance exhaustive oracles, randomized/property tests, metamorphic cases and hard departmental fixtures.",
+      "dependencies": "N06, N27\u00e2\u20ac\u201cN34",
+      "acceptance": "Independent oracle catches invalid/less-covered results on bounded cases; renaming/order changes cannot change feasibility; added optional capacity cannot reduce theoretical feasibility.",
+      "status": "In progress"
+    },
+    {
+      "id": "N36",
+      "deliverable": "Profile member, template and optimizer stages separately: database/context, candidate generation, HTTP, startup, encoding, kernel, readback, CP-SAT and validation.",
+      "dependencies": "N02, N06, N26",
+      "acceptance": "Representative cold/warm runs with hardware/browser/config metadata identify real bottlenecks; timings distinguish work moved to GPU from CPU search.",
+      "status": "In progress"
+    },
+    {
+      "id": "N37",
+      "deliverable": "Design GPU batching only for independent numeric evaluations or search hints; keep dependent staffing/fairness state synchronized and authoritative.",
+      "dependencies": "N27, N28, N36",
+      "acceptance": "Architecture explains when scores become stale; parallel evaluation never independently commits competing allocations; benchmark identifies a worthwhile workload.",
+      "status": "Queued"
+    },
+    {
+      "id": "N38",
+      "deliverable": "Optimize measured GPU overhead through bounded worker/buffer reuse, batched transfers, fewer request exchanges and workload-size crossover rules where beneficial.",
+      "dependencies": "N36, N37",
+      "acceptance": "Before/after end-to-end evidence includes memory and cold start; retain or ship each optimization only if evidence supports it, recording rejected experiments.",
+      "status": "Queued"
+    },
+    {
+      "id": "N39",
+      "deliverable": "Extend exact integer and deterministic tie parity across new kernels, batches, boundary sizes and hardware; keep canonical server validation.",
+      "dependencies": "N37, N38",
+      "acceptance": "CPU/GPU rows and rankings agree; malformed, overflow, stale or forged outputs fail safely; distinguish harmless seed differences from final feasibility/equivalence checks.",
+      "status": "In progress"
+    },
+    {
+      "id": "N40",
+      "deliverable": "Preserve Automatic's existing 20% whole-workflow advantage gate with current workload/config/adapter fingerprints and expiry; expose honest compute attribution.",
+      "dependencies": "N04, N36, N39",
+      "acceptance": "Slow/unsupported/stale hardware selects server; a valid faster workload selects GPU; UI identifies GPU ranking/hints separately from CPU optimization.",
+      "status": "In progress"
+    },
+    {
+      "id": "N41",
+      "deliverable": "Extend GPU failure/recovery and browser matrix testing: loss, crash, timeout, blocked API, memory limits, changed adapter and interrupted network.",
+      "dependencies": "N38\u00e2\u20ac\u201cN40",
+      "acceptance": "Bounded recovery reaches a reviewed server draft or explicit resumable failure; no duplicate operation/apply, silent background work or unsafe browser flags.",
+      "status": "In progress"
+    },
+    {
+      "id": "N42",
+      "deliverable": "Establish a versioned local-model evaluation set: departmental language, ambiguous adjustments, pooled calls, numerical limits, OT pressure and leave explanations.",
+      "dependencies": "N03, N06, N18; P8",
+      "acceptance": "Score typed intent accuracy, unsupported claims, abstention, latency and RAM/VRAM; compare current Qwen baseline before selecting another model.",
+      "status": "In progress"
+    },
+    {
+      "id": "N43",
+      "deliverable": "Prototype optional proposer/critic or specialist-model routing against a single-model baseline, with strict schema, deadlines, resource admission and abstention.",
+      "dependencies": "N42; P8",
+      "acceptance": "Demonstrates improvement on unseen cases worth its latency/memory; disagreement goes to review; no majority vote overrides a validator; unnecessary ensemble is not shipped.",
+      "status": "Queued"
+    },
+    {
+      "id": "N44",
+      "deliverable": "Ground assistant output in authorized current rules, OT demand and approved teaching evidence; cite source/version and reject unsupported numerical or policy changes.",
+      "dependencies": "N04, N12, N20, N42",
+      "acceptance": "Prompt-injection, stale-context and invented-fact cases fail safely; minimized inputs omit leave reasons/profile comments; unapproved cloud endpoints are never used.",
+      "status": "In progress"
+    },
+    {
+      "id": "N45",
+      "deliverable": "Design deterministic incident/recovery orchestration with optional AI explanation: stage-specific errors, durable revisions, idempotent retries, circuit breakers and manual resume.",
+      "dependencies": "N04, N33, N41, N43; P7",
+      "acceptance": "Model unavailable/wrong/malformed during an interrupted operation cannot cause repair, policy changes or replayed writes; recovery outcome is observable and attributable.",
+      "status": "Queued"
+    },
+    {
+      "id": "N46",
+      "deliverable": "Expand approved-example learning with month-separated holdouts, exception exclusion, duplicate suppression, versioned evaluation, activation and rollback; gate any fine-tuning proposal separately.",
+      "dependencies": "N05, N06, N42\u00e2\u20ac\u201cN44",
+      "acceptance": "Demonstrate correction reduction without safety/coverage/fairness regression on unseen departmental cases; rejected examples cannot remain active training evidence.",
+      "status": "Queued"
+    },
+    {
+      "id": "N47",
+      "deliverable": "Run end-to-end regression on imports, profiles, leave, OT setup, all allocation paths, review, publish, Excel/report export, and existing exception ledgers.",
+      "dependencies": "N15\u00e2\u20ac\u201cN17, N25, N35, N40, N44",
+      "acceptance": "Isolated workflow evidence and responsive/accessibility checks; exports reconcile with saved assignments and shortages; unrelated current work remains intact.",
+      "status": "Queued"
+    },
+    {
+      "id": "N48",
+      "deliverable": "Stress concurrency, migration and security boundaries with real disposable PostgreSQL: simultaneous approvals/applies/edits, stale snapshots, role changes and bounded hostile inputs.",
+      "dependencies": "N09, N24, N29, N39, N45",
+      "acceptance": "Atomicity, lock ordering, idempotency and rollback hold; unknown commit outcomes resolve by durable read; no permission escalation or leaking private leave data.",
+      "status": "Queued"
+    },
+    {
+      "id": "N49",
+      "deliverable": "Rehearse outages and disaster recovery: backend restart, connection drop during apply, failed migration, restored backup, assistant outage and GPU failure.",
+      "dependencies": "N41, N45, N48; P7",
+      "acceptance": "Restore into an isolated environment and reconcile records/audit history; agreed recovery objectives and runbook recorded; no operational fault injection.",
+      "status": "Queued"
+    },
+    {
+      "id": "N50",
+      "deliverable": "Conduct shadow/reviewed departmental pilots over several contrasting months, document outcomes, release notes, training, monitoring, feature-flag rollback and final approval.",
+      "dependencies": "N06, N16, N17, N25, N35, N46\u00e2\u20ac\u201cN49; P9",
+      "acceptance": "Ratified targets met with zero new unauthorized hard-rule violations; correction count and OT protection demonstrably improve; user signs off before production rollout and tracker closure.",
+      "status": "Queued"
+    }
+  ],
+  "next_dependency": "Finish current-source system proof and N02/N05/N06 evidence before selecting architecture/N27. No queued downstream item is silently marked complete."
+}

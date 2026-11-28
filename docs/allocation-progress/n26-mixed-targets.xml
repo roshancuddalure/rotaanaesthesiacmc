@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="124.568" timestamp="2026-11-20T16:57:18.845890+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_month_full_objectives" name="test_full_objectives_keep_logical_targets_and_same_candidate_denominators" time="10.553" /><testcase classname="tests.test_month_full_objectives" name="test_configured_month_limits_include_fixed_duty_and_preserve_boundaries" time="18.726" /><testcase classname="tests.test_month_full_objectives" name="test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership" time="1.690"><failure message="app.services.rota_rules.RotaRulesInvalid: Unknown duty rule: SYNTHETIC_POOL_24HR">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001812F263C50&gt;
+
+    def test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership(monkeypatch):
+        monkeypatch.setattr(settings, "ot_calendar_enabled", True)
+        engine = create_engine("sqlite+pysqlite:///:memory:")
+        Base.metadata.create_all(engine)
+        try:
+            with Session(engine, expire_on_commit=False) as db:
+&gt;               _, people, alternatives = experiment.fixture(db, mixed_calls=True)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_month_full_objectives.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\tools\compare_month_allocation_architectures.py:171: in fixture
+    save_phase_one_rules(db, rules)
+app\services\rota_rules.py:353: in save_phase_one_rules
+    validate_phase_one_rules(db, rules)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+db = &lt;sqlalchemy.orm.session.Session object at 0x000001812F261790&gt;
+rules = RotaPhaseOneRules(duty_rules=[DutyRule(key='MAIN_1ST_24HR', label='Main 1st Call', group='main', campus=None, duration...okback_months=12), notes='Default Phase 1 rota generator rules. Confirm limits with the rota board before generation.')
+
+    def validate_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -&gt; None:
+        """Raise ``RotaRulesInvalid`` listing every error-severity problem; normalise call levels.
+    
+        Warnings (inactive/empty groups, nobody eligible, duplicate labels, guardrails) never
+        block. See ``rota_rules_admin.rule_problems`` for the codes."""
+        from app.services.rota_rules_admin import rule_problems
+    
+        problems = rule_problems(db, rules)
+        if any(problem["severity"] == "error" for problem in problems):
+&gt;           raise RotaRulesInvalid(problems)
+E           app.services.rota_rules.RotaRulesInvalid: Unknown duty rule: SYNTHETIC_POOL_24HR
+
+app\services\rota_rules.py:399: RotaRulesInvalid</failure></testcase></testsuite></testsuites>

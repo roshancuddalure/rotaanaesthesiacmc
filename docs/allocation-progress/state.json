@@ -1,9 +1,9 @@
 {
   "goal_started_at": "2026-11-14T03:52:45Z",
-  "updated_at": "2026-11-20T09:53:41.512166+00:00",
-  "work_state": "running",
-  "phase": "N26 shared monthly hard-count constraints",
-  "current": "21/50 complete (42%); 10 in progress, 19 queued. Preparing shared monthly 24-hour, weekend, group and campus limits with fixed-duty baselines. Baseline optimizer regression running; synthetic configured-limit comparisons will retain all required duties and saved commitments.",
+  "updated_at": "2026-11-27T10:23:52.686178+00:00",
+  "work_state": "in_progress",
+  "phase": "Full regression running; one optimality expectation failure under investigation",
+  "current": "Same actual pytest26568 live: 1313/2503 terminal outcomes; 1 recorded failure. Original source hashes checked unchanged. PG15700 waiting; reconciler37060 live.",
   "estimate": null,
   "tests": [
     {
@@ -825,6 +825,136 @@
       "title": "Shared production objective model and full-tier month comparison",
       "result": "94 regression tests passed in 75.81s; one additional universe test passed in 5.56s. Independent 108-selection arithmetic included. Full month: 30 duties covered by both methods, 3 saved assignments unchanged; lower tiers unproved. Nine XML-property warnings retained.",
       "evidence": "docs/allocation-progress/n05-shared-objective-model.md"
+    },
+    {
+      "title": "Shared monthly quota constraints and configured month",
+      "result": "72 passed; recorded wall time 2070.52s, cause of long interval unestablished. Independent112 quota selections and actual month prove24 maximum duties,23new+1fixed,all32quota constraints,3savedunchanged. Joint9tiersproved;repairlower tiers remain open.",
+      "evidence": "docs/allocation-progress/n26-shared-monthly-count-limits.md"
+    },
+    {
+      "title": "Mixed logical call targets, promotion and incumbent retention",
+      "result": "21 tests passed169.06s; focused overlapping seed test passed57.74s. Correct targets4.375/1.875 and first-day membership verified. Seeded actual month: joint29 duties,repair27 with unresolved imbalance; maximumcoverage/equality not proved. Earlier fixture/time-limit failures retained.",
+      "evidence": "docs/allocation-progress/n26-logical-call-targets.md"
+    },
+    {
+      "title": "Focused allocation final regression",
+      "result": "147passed284.94s;0fail/errors/skips;1record_property/JUnit warning. Separate balance suite54passed344.17s. Earlier gates overlap.",
+      "evidence": "docs/allocation-progress/focused-final-regression.xml"
+    },
+    {
+      "title": "Additional local refinement boundary gate",
+      "result": "11passed22.77s;8overlap with147-casegate,3newdistinct. Quota,globalOT,forbiddenalternative and coverage-proof preservation verified.0fail/errors/skips;1JUnit-formatwarning.",
+      "evidence": "docs/allocation-progress/focused-refinement-boundaries.xml"
+    },
+    {
+      "title": "Revision4 promotion-aware final allocation/compute gate",
+      "result": "168passed219.76s/0fail/errors/skips. JUnit-format and fixtureautoflush warnings retained; fixture corrected, focusedpromotionrerun1passed13.87s withSAWarningsaserrors. Rerun overlaps fullgate.",
+      "evidence": "docs/allocation-progress/focused-final-r4.xml"
+    },
+    {
+      "title": "Revision8 focused hour",
+      "result": "814distinctbackend/337UIpassed;oneperformancegatefailed;fullgoalnotachieved",
+      "evidence": "docs/allocation-progress/equality-hour-checkpoint.json"
+    },
+    {
+      "title": "Revision11 weekend integration",
+      "result": "125 passed in294.48s;beforefinalinspectioncap;overlapslaterchecks",
+      "evidence": "docs/allocation-progress/fairness-modes-weekend-integration.xml"
+    },
+    {
+      "title": "Revision11 weekend bounds and snapshots",
+      "result": "47 passed in104.00s;finalinspectioncap/freshscope/stalesnapshots;overlapsintegration",
+      "evidence": "docs/allocation-progress/fairness-modes-weekend-bounds.xml"
+    },
+    {
+      "title": "Both-policy independent OT oracle",
+      "result": "6passed141.76s;full-template target semantics independentlychecked;owner shortage decision remainsopen",
+      "evidence": "docs/allocation-progress/fairness-modes-ot-both-policy-oracle.xml"
+    },
+    {
+      "title": "Final Balance browser checks",
+      "result": "150passed;weekendtable;countbalancedpreviewshortcutremoved;light/darkaccessibility;earlierfailuresretained",
+      "evidence": "docs/allocation-progress/fairness-modes-weekend-shortcut-browser-final.log"
+    },
+    {
+      "title": "Actual bundled weekend UI/API",
+      "result": "8passed;syntheticdata/no route mocks;reviewedApply+independentVerify+UIUndo;sharedfixtureconnectionserialized",
+      "evidence": "docs/allocation-progress/fairness-modes-weekend-live-browser.json"
+    },
+    {
+      "title": "PostgreSQL weekend apply/undo with concurrent reads",
+      "result": "1passed55.03s;freshsessionsconfirm2rowbeforeimage/exactrestore;guardeddisposableDBcleanup",
+      "evidence": "docs/allocation-progress/fairness-modes-weekend-postgres.xml"
+    },
+    {
+      "title": "Revision11 isolated backend",
+      "result": "16passed35.70s;newweekendstage/burdenoracle/enginerevision",
+      "evidence": "docs/allocation-progress/fairness-modes-revision11-isolated.xml"
+    },
+    {
+      "title": "Revision11 isolated frontend build",
+      "result": "Passed24.32s;existingchunk/importwarnings;candidateonly",
+      "evidence": "docs/allocation-progress/fairness-modes-revision11-isolated-build.log"
+    },
+    {
+      "title": "Actual isolated release UI/API",
+      "result": "8passed;actualcandidatebackend+bundle;no route mocks;reviewedApply+Verify+UIUndo",
+      "evidence": "docs/allocation-progress/fairness-modes-weekend-isolated-live-browser.json"
+    },
+    {
+      "title": "Partial-day leave adversarial counterexample",
+      "result": "Defectreproduced:bothpeopleeligibleforPMduties;oneomittedfromfairnessroster;6/0actualcountsbutreportedgap0. Synthetic-only,nooperationalconnection.",
+      "evidence": "docs/allocation-progress/fairness-modes-partial-leave-probe.json"
+    },
+    {
+      "title": "Frozen revision11 full backend",
+      "result": "2241 passed,61 skipped,zero errors/failures;source unchanged",
+      "evidence": "docs/allocation-progress/fairness-modes-revision11-system.xml"
+    },
+    {
+      "title": "Independent approved-leave interval audit",
+      "result": "Three synthetic8h duties accepted despite6h/3h/2h approved canonical leave intersection;both candidate and final validator clear. Confirmed legacy start-hour limitation;not fixed/not production finding.",
+      "evidence": "docs/allocation-progress/fairness-modes-short-duty-leave-overlap-probe.json"
+    },
+    {
+      "title": "Isolated partial-day repair compatibility",
+      "result": "125passed541.86s/zero failures/errors/skips;selectedmain/studyhashesmatch;experimentonly,notmain",
+      "evidence": "docs/allocation-progress/fairness-modes-partial-leave-compatibility-resumed.xml"
+    },
+    {
+      "title": "Exact61 PostgreSQL-only replay and combined current-source backend audit",
+      "result": "61passed1025.90s;exact original skip IDs;combined2302distinctpassed/source unchanged;new DB removed/older preserved",
+      "evidence": "docs/allocation-progress/fairness-modes-revision11-combined-regression-receipt.json"
+    },
+    {
+      "title": "Revision13frontendunitandbuild",
+      "result": "156unitpassed;buildpassed25.32s;existingbundlewarnings",
+      "evidence": "docs/allocation-progress/fairness-modes-revision13-frontend-unit.log;fairness-modes-revision13-frontend-build.log"
+    },
+    {
+      "title": "Revision 17 reviewed complete audit",
+      "result": "2456 distinct backend passes including 63 PostgreSQL; 156 frontend unit passes; current candidate hashes/AST match.",
+      "evidence": "docs/allocation-progress/fairness-modes-revision17-reviewed-verification.json"
+    },
+    {
+      "title": "Current enhanced-objective architecture harness",
+      "result": "6 passed in110.06s; Ruff passed. Initial import collection failure retained separately.",
+      "evidence": "docs/allocation-progress/n26-revision17-current-objective-harness-verified.xml"
+    },
+    {
+      "title": "Night matching/cost diagnostics and failed-exit contract",
+      "result": "10 matching/cost tests passed2.86s; real CLI failure-contract1passed53.82s. Successful read-only retry finalized; diagnostic is not a safe rota.",
+      "evidence": "docs/allocation-progress/fairness-modes-revision17-night-gap-root-cause-assessment.json"
+    },
+    {
+      "title": "Revision18 initial runtime lifecycle",
+      "result": "16 passed90.29s; realPreviewApplyVerifyUndo/idempotency. MainbuildPASS30.91s. Reviewedcachedwitness followup pending.",
+      "evidence": "docs/allocation-progress/joint-night-runtime18-first.xml"
+    },
+    {
+      "title": "Revision18 prospective architecture objective expectation",
+      "result": "1passed40.23s in isolated copy; pending patch not applied to frozen backend; not a full-system pass",
+      "evidence": "docs\\allocation-progress\\revision18-prospective-objective-contract.xml"
     }
   ],
   "events": [
@@ -1307,6 +1437,231 @@
       "at": "2026-11-20T09:45:57.742185+00:00",
       "title": "Production objective construction reused by full-tier month comparison",
       "detail": "Existing order and scoring preserved. Ninety-five tests passed across final and additional gates; both methods retain safe full coverage with unproved lower tiers visible. Completion stays at 21/50."
+    },
+    {
+      "at": "2026-11-20T11:22:16.671325+00:00",
+      "title": "Monthly quotas shared across production and architecture experiment",
+      "detail": "72 tests passed. Configured limits cap the month at24 duties; both methods attain that bound while retaining3savedcommitments. Completion stays21/50; six fixture duties honestly open."
+    },
+    {
+      "at": "2026-11-20T11:45:14.206442+00:00",
+      "title": "Mixed call-level fairness basis verified; search quality issue exposed",
+      "detail": "Logical demand uses canonical membership and pool split. Validated seed prevents empty joint timeout result; actual29/27-duty outcomes show repair quality remains open. Completion stays21/50."
+    },
+    {
+      "at": "2026-11-23T21:03:42.046109+00:00",
+      "title": "Revision11 local and isolated weekend refinement verified; full audit remains live",
+      "detail": "ActualNovember840filled/countgaps1/2/1/1/1/weekend1/1/2/2/1/eightchecks840zero. Main/releaseactualUI8each andPostgreSQLconcurrentApplyUndo1passed. Fresh2302casewholebackendrunlive;no completion/deploymentclaim. Domainquestionspending;original50scope21Doneunchanged."
     }
-  ]
+  ],
+  "focused_audit": {
+    "scope": "Audit and tune within existing policy. No operational assignments/deployment.",
+    "deadline": "2026-11-20T14:04:11Z",
+    "native_gui_parent_pid": 15596,
+    "active_sessions": [],
+    "native_gui_child_pid": 30320,
+    "verified": "168final allocation/compute;54separatebalance;1promotionfixture rerun(overlap),3refreshedcorpuscases,unitprobe",
+    "status": "local_tuning_verified_production_authority_pending",
+    "report": "docs\\allocation-progress\\production-nov2026-20261123\\ordinary-fine-tuning-report.txt",
+    "next_action": "Obtain separate production deployment authority; then fresh server preview/Excel review before any live application.",
+    "operational_readonly_evidence": [
+      "docs/allocation-progress/focused-operational-readonly.json",
+      "docs/allocation-progress/focused-operational-month-inventory.json"
+    ]
+  },
+  "timeline": [
+    {
+      "at": "2026-11-20T13:44:00.637136+00:00",
+      "title": "Focused optimizer tuning verified; unit-template limitation isolated",
+      "detail": "8/0/0/0 forced-timeout draft becomes2/2/2/2 safely.48-member control/OT cases62/62gap1. Dated/fixed fixed-layout shortage resolves in audit-only unit-change probe. Production unit/person repair remains outstanding;21/50Done unchanged."
+    },
+    {
+      "at": "2026-11-23T10:14:25.640595+00:00",
+      "title": "Actual production November baseline verified",
+      "detail": "840filled;full-availability1st/2ndgaps4/6;8safetychecks0violationswith6unpostedexemptions. No production writes.21Doneunchanged."
+    },
+    {
+      "at": "2026-11-23T13:04:31.127498+00:00",
+      "title": "Ordinary duty pool correction verified",
+      "detail": "No extra-only class;zero-dutyactivepool included;outside-scopeexcluded.156backend/141UIchecks;175moduleisolatedrelease;57proposedtransfers/all5balanced/840filled. Separate deployment/application authority pending."
+    }
+  ],
+  "production_readonly_audit": {
+    "app_url": "https://rotaanaesthesiacmc-production-a630.up.railway.app",
+    "mode": "read-only; no deployment/assignment changes",
+    "current": "Revision6simulated57safechanges;840/840filled;all5adjustedspreads<=1;outside-scopeholderunchanged. Productionnotmodified.",
+    "session": null,
+    "status": "verified_proposal_complete",
+    "report": "docs\\allocation-progress\\production-nov2026-20261123\\ordinary-fine-tuning-report.txt",
+    "evidence": "docs\\allocation-progress\\production-nov2026-20261123\\baseline-readonly-v4.json",
+    "simulation_session": null,
+    "revision11_final": "docs/allocation-progress/production-nov2026-20261123/fairness-modes-engine11-final-equal-counts.json"
+  },
+  "active_execution": {
+    "status": "running",
+    "full_session": null,
+    "full_launcher_pid": 36120,
+    "full_driver_pid": 27528,
+    "full_pytest_pid": 26568,
+    "monitor_pid": 36616,
+    "postgres_driver_pid": 15700,
+    "reconciler_pid": 37060,
+    "source_frozen": true,
+    "next_action": "Finish unchanged full run and exact PostgreSQL reconciliation, then reproduce same fixture with internal objective/proof receipts before choosing a correction. Do not weaken safety checks or claim optimality."
+  },
+  "current_focus": "Complete current frozen full-system audit; investigate generation-reliability feasible-versus-optimal assertion with evidence.",
+  "equality_hour": {
+    "recorded_at": "2026-11-23T16:05:27.969573+00:00",
+    "started_at": "2026-11-23T15:16:32+00:00",
+    "deadline": "2026-11-23T16:16:32+00:00",
+    "elapsed_seconds": 2935.97,
+    "status": "local_refinement_verified_with_unresolved_goal",
+    "full_goal_achieved": false,
+    "backend_distinct": {
+      "passed": 814,
+      "failed": 1
+    },
+    "backend_batches": [
+      {
+        "file": "equality-hour-membership.xml",
+        "passed": 61
+      },
+      {
+        "file": "equality-hour-core-final.xml",
+        "passed": 254,
+        "failed": 1
+      },
+      {
+        "file": "equality-hour-safety-final.xml",
+        "passed": 471,
+        "failed": 2
+      },
+      {
+        "file": "equality-hour-refinements-verified.xml",
+        "passed": 53
+      },
+      {
+        "file": "equality-hour-final-guards.xml",
+        "passed": 30
+      },
+      {
+        "file": "equality-hour-final-policy-performance.xml",
+        "passed": 4,
+        "failed": 1
+      },
+      {
+        "file": "equality-hour-ledger-boundary-final.xml",
+        "passed": 26
+      },
+      {
+        "file": "equality-hour-final-coverage-proof.xml",
+        "passed": 70
+      },
+      {
+        "file": "equality-hour-capacity-contract-final.xml",
+        "passed": 22
+      }
+    ],
+    "unresolved_tests": [
+      {
+        "case": "tests.test_extra_duty.test_full_month_plans_quickly",
+        "receipt": "equality-hour-final-policy-performance.xml"
+      }
+    ],
+    "ui_distinct_passed": 337,
+    "isolated_ui_repeats": 183,
+    "production_writes": 0,
+    "production_deployed": false,
+    "production_review_workbook": "Review\\November2026_equality-hour-final-reviewed_review.xlsx",
+    "fourth_call_target_span": 6.203239,
+    "fourth_call_raw_minimum_saved_policy": 6,
+    "fourth_call_raw_minimum_adjusted_tolerance_two": 5,
+    "whole_month_november_study": "183 ordinary fourth-call repairs; required coverage not established; no proposed changes accepted.",
+    "policy_question": "Retain availability-adjusted fairness/comparable cohorts, or explicitly amend pro-rata targets to prioritize raw equality?",
+    "release_manifest": "docs/allocation-progress/production-nov2026-20261123/scoped-release-r8-manifest.json",
+    "source_hashes": {
+      "backend/app/services/allocation_equality.py": "51e54980c6eb472918d278c2fbbfce5610485eb5b63c4690337e84f89f3c8903",
+      "backend/app/services/allocation_objective_model.py": "c99bfe9f3fb6e6e2161a0067c58af862711fe0984cfc5a55a219ba0f2a61c247",
+      "backend/app/services/rota_intelligence.py": "eda93212f496e2c9943f17e56cbc32606ff4a31658811c544cb040b8d7e89c55",
+      "backend/app/services/allocation_objectives.py": "066972e633b743733080027ae42f15c1b545b8892e738ce468e00bab0849ddc5",
+      "backend/app/services/allocation_refinement.py": "ab70cb3f9239a2eecc5fe2d8fc51c90a42cb7cc14a9459743fc008ef78296a62",
+      "backend/app/services/allocation_scope.py": "d0a09f95a44f7be4ee1d075020bcb67602831b300b32673ce39c0a7306be3229",
+      "backend/app/services/balance_duties.py": "329ce004e345feb487c7ecbec062a5690ea99b32c64cf25044bb259cdeba0803",
+      "backend/app/services/extra_duty.py": "649264665eabf9056aece109cbb1f26b469822b1f8bf8b537c3c35b031af6586",
+      "backend/app/services/superadmin_allocation.py": "bc401c72e2561dd6784cbb6fccb14db90d3671ce42002dffe74bf5367ac8383e",
+      "backend/app/services/extra_duty_verify.py": "735bb2091a7b0fcd298a36dd84f8b27234804c09f732cafc66ba78e4ea4f8f04",
+      "backend/app/services/fairness_targets.py": "26044e567995860cdf6114595c3606f7c4e9a95b03e0ad8c5a6fe86e702acec4",
+      "backend/app/services/ordinary_duty_pool.py": "8d47514119c745212f8e28f689e68ea05dd6ce5fd710f268228046b0366a7ed4",
+      "backend/app/services/rota_assignment.py": "a202d4510dc2aec35b9ee0f98373ddb0c1fd5e711c7447fe02e9203f18735597",
+      "backend/app/services/rota_candidates.py": "b34b0ff77ef6626281d57e2297b6e3162686de158e6da4c5e7215efb250fb747",
+      "backend/app/services/rota_optimizer.py": "b2f4bf68fffab3ff99a6409728d2dfd7587fc255c1f4ea4a4113d2cea6c88e53",
+      "backend/tests/test_intelligent_extra_ledger_boundary.py": "2ef56c53c0c902b399954da6a1fb255e751d03c3ca8443309f90dd758d3fdd9d",
+      "backend/tests/test_allocation_workload_and_pools.py": "e7a2f6fa42615324b9ba6f1a7896bc4161645e10d2f0c84c8dd56fe1a4cecdbd",
+      "backend/tests/test_allocation_equality_simulation.py": "c8beb53f027c78639680b30857641c3c4992c9bf38722a07aaeef096fe720d1c",
+      "backend/tests/test_scope_membership_review_repair.py": "d1d1e801833d354b44bce149c09280b4a40ba041d3d9109cdc697d57f8a007b3",
+      "backend/tests/test_allocation_objective_basis.py": "d2175e1bebab06a83bd71f9f4d4485b809899f3455ead7993965c0c5d54125d1",
+      "backend/tests/test_allocation_objective_precedence.py": "335bd181a0783692ae1fe3d59c5b85ebf6dd33b2b7ef7a10aa8a18ca6e8cbbb5",
+      "backend/tests/test_allocation_engine_revision.py": "3453fda365364583b4f7a79d30d98daed63d487d2a4864ca54a1481ce9883594",
+      "backend/tests/test_balance_duties.py": "7a4753771bdbde08ed4e55721c19725918433449015733cb02b18d2524b0d1a9",
+      "backend/tests/test_balance_focused_tuning.py": "25192b11f7c8eab1fbeb0a144b611307794af01086f99f4a26d1be689734c62a",
+      "backend/tests/test_extra_duty.py": "07f3713e1e625e894df3df834b8b6d8f58ee99d0928cefdc1cf8e161751217b9",
+      "backend/tests/test_extra_duty_verify.py": "40a94fae3ef8254dd6d9ed5f146e090a4a10a423a2fcef765659ef2da61c3b06",
+      "backend/tests/test_superadmin_allocation.py": "577961d4ae4641f97987fc2c8ae17054394759829e746fe2d8ebef57132da72b",
+      "backend/tests/test_focused_allocation_refinement.py": "9265586fb83e4794024b97359037291a686fed5bb27b02cc4d22b4dc61bee86c",
+      "backend/tests/test_locked_scope_boundaries.py": "2abf30f669fd24bd15ad6dc9e1be37aa99972cb5452441e81199b35a10d5a738",
+      "backend/tests/test_ordinary_duty_pool.py": "d29fde9c73d7feb55d9507007f6a92752f649bd7d2fb65f8fac063276496839f",
+      "backend/tests/test_ordinary_pool_guard_edges.py": "67c209ad335ea9c749acbacbfba9f05460407a19594a2fae9363fab5f42e3f89",
+      "frontend/tests/equality-review.browser.mjs": "398f75fda5c725cb92afae5ae74e4b96b40cee0f6376fee01e1095e5fab91da1",
+      "frontend/src/objective-basis.ts": "b520038a72d51cb5bc57739222984e8518a3ff34ecc1d8991da11ca9e85678e3",
+      "frontend/src/rota-intelligence.ts": "b7bd9abb2a46239a867003104fc0f566bc5245966289f9623eac157edf7e585b",
+      "frontend/tests/objective-basis.test.mjs": "2b2c64638cc0a33e0c7ea8a913bf153deac897775984b2cf52ba4008c2344cf3",
+      "frontend/src/extra-duty.ts": "ab3a0f544066111260b2889314c0585177a95998a89ac896cc422df52411ff44",
+      "frontend/tests/extra-duty.browser.mjs": "751a141c214cfb73ec42a4a6664ece53ce4050f8e8916ef27099f234a0277486",
+      "frontend/src/balance-duties.ts": "dae921046c459b718da562c677f34b4dbfcdcb1b021a4027da9259bc7c859fdc",
+      "frontend/src/services/api.ts": "9e0443cd21fc562df918d0d63b10e6b207f25a0499d280594dcb71869c56c868",
+      "frontend/tests/balance.browser.mjs": "b9fb79afba24ddcbc40b3b99bb86615b5a2585d71e086cde0c4a507dec141a94",
+      "Plan/05_confirmed_decisions.md": "33f7996edf755b5940d9c54bb5d24c20523fee0f90556d7efc4101df2f7daefb",
+      "docs/call_level_pool_and_balance_contract.md": "3dc37e3d84632744578677b0a1f3f4325f0294a240570da240c1210267c7318a"
+    },
+    "full50_done": 21,
+    "full50_total": 50,
+    "report_sha256": "441a5d0dccb95fe76fc98ee39cd23204da57ff2d3b3e2807a4185bd0e772b333"
+  },
+  "completion_audit": "Original 50-item scope remains 21 Done. Current 2503-case full regression is running with one recorded optimality expectation failure; no current full PASS certificate. Main/candidate focused 43 report cases passed, including unchanged 3-second gate. Production is unchanged.",
+  "estimated_finish_at": null,
+  "current_checkpoint": "2026-11-27T10:21:41.377412+00:00: current revision18 full run 1198/2503 terminal, 1 failures. See revision18-current-full-optimality-failure-triage.json. Prior checkpoints are historical; current process handles below are authoritative.",
+  "active_handles_revision18": {
+    "full_run_name": "holistic-report-scalar-audit",
+    "full_launcher_pid": 36120,
+    "full_driver_pid": 27528,
+    "full_pytest_pid": 26568,
+    "pg_driver_pid": 15700,
+    "pg_launcher_pid": 30500,
+    "reconciler_pid": 37060,
+    "reconciler_launcher_pid": 34216,
+    "monitor_pid": 36616,
+    "monitor_launcher_pid": 4316,
+    "candidate_report_session": 53431,
+    "candidate_report_pytest_pid": null,
+    "final_main_report_status": "finished43PASSsource_unchanged",
+    "candidate_report_status": "finished_exit0_43PASS"
+  },
+  "current_full_observation": {
+    "at": "2026-11-27T10:23:48.975732+00:00",
+    "driver_pid": 36120,
+    "alive": true,
+    "completed": 1313,
+    "previously_verified": 0,
+    "collected": 2503,
+    "failures": 1
+  },
+  "next_concrete_action": "Continue same full36120/27528/26568 to terminal; queued exact PostgreSQL15700 and reconciler37060 must finish with source/IDs/cleanup verified. Then run original failing server fixture once with tools/allocation_optimality_trace.py and fresh DUTY_OPTIMALITY_TRACE path to record objectives/proofs without changing assertions or budget. No backend edits during full/PG freeze.",
+  "current_pg_observation": {
+    "at": "2026-11-27T10:21:41.377412+00:00",
+    "status": "waiting_for_full_terminal",
+    "driver_pid": 15700,
+    "certificate_verified": false,
+    "expected_cases": "discover exact skipped IDs from terminal XML"
+  },
+  "report_profile_review": "revision18-report-profile-reviewed.json"
 }

@@ -204,15 +204,21 @@ def strict_blocks(state: MonthState, person_id: UUID, slot, *, include_ot=True) 
         found.append({"code": code, "label": STRICT_LABELS[code], "detail": detail})
 
     day = slot.duty_date
+    # Monthly roster membership is a hard prerequisite for every new allocation.
+    from app.services.ordinary_duty_pool import has_dated_scope_posting
+    postings = state.postings_by_person.get(person_id, [])
+    if ((state.included_unit_ids is not None and slot.unit_id not in state.included_unit_ids)
+            or not has_dated_scope_posting(person_id, postings, day, state.included_unit_ids)):
+        found.append({"code": "scope_member_excluded", "label": "Outside the dated monthly roster",
+                      "detail": "A dated posting to an included unit is required for ordinary and extra duties"})
     for leave in state.leaves_by_person.get(person_id, []):
-        if leave.starts_on <= day <= leave.ends_on:
-            if not slot_leave_blocks(leave, slot):
-                continue
-            kind = "approved leave" if is_approved(leave.status) else "leave pending review"
-            span = _day(day) if leave.starts_on == leave.ends_on else f"{_day(leave.starts_on)}–{_day(leave.ends_on)}"
-            part = "" if (leave.leave_slot or "FULL_DAY").upper() == "FULL_DAY" else f" ({leave.leave_slot})"
-            leave_type = f" – {leave.leave_type}" if leave.leave_type else ""
-            add("on_leave", f"On {kind} {span}{part}{leave_type}")
+        if not slot_leave_blocks(leave, slot):
+            continue
+        kind = "approved leave" if is_approved(leave.status) else "leave pending review"
+        span = _day(day) if leave.starts_on == leave.ends_on else f"{_day(leave.starts_on)}–{_day(leave.ends_on)}"
+        part = "" if (leave.leave_slot or "FULL_DAY").upper() == "FULL_DAY" else f" ({leave.leave_slot})"
+        leave_type = f" – {leave.leave_type}" if leave.leave_type else ""
+        add("on_leave", f"On {kind} {span}{part}{leave_type}")
 
     _rule, slot_same_day, slot_next_day = state._slot_flags(slot)
     gap_needed = state.min_gap_hours
@@ -243,7 +249,7 @@ def strict_blocks(state: MonthState, person_id: UUID, slot, *, include_ot=True) 
                 add("rest_after_24hr", f"Only {gap:g} h of rest before {_duty_label(state, o)} on {_day(o.duty_date)} after this 24-hour duty; needs {gap_needed:g} h")
     for code, message in (state.ot_blockers(person_id, slot, replace_existing=True) if include_ot else []):
         add(code, message)
-    order = {"on_leave": 0, "rest_after_24hr": 1, "overlapping_duty": 2,
+    order = {"scope_member_excluded": -1, "on_leave": 0, "rest_after_24hr": 1, "overlapping_duty": 2,
              "ot_reservation_conflict": 3, "ot_capacity_unresolved": 3}
     found.sort(key=lambda item: order[item["code"]])
     return found

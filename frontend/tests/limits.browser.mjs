@@ -23,6 +23,7 @@ const ok = (value, message) => { assert.ok(value, message); checks++; };
 const eq = (a, b, message) => { assert.deepEqual(a, b, message); checks++; };
 
 const FIELDS = [
+  {path:'fairness_rules.allocation_mode',section:'fairness_rules',label:'Duty fairness approach',help:'Availability-based fairness gives fewer duties to people available fewer days. Saving changes new proposals only.',example:'30 versus 15 available days: 10 versus 5 duties, or similar totals in equal mode.',kind:'choice',hard_or_soft:'guide',options:[{value:'availability',label:'Availability-based fairness'},{value:'equal_counts',label:'Equal duty counts'}]},
   { path: "duty_count_limits.max_24hr_per_month", section: "duty_count_limits", label: "Max 24-hour duties per member per month", help: "The most 24-hour duties one member can be given in a month.", example: "6 means nobody is given a 7th 24-hour duty that month.", kind: "int", min: 0, max: 31, unit: "duties", blank_means: "No limit", hard_or_soft: "hard" },
   { path: "duty_count_limits.max_weekend_24hr_per_month", section: "duty_count_limits", label: "Max weekend 24-hour duties per member per month", help: "Saturday or Sunday 24-hour duties.", example: "2 means at most two weekend 24-hour duties each.", kind: "int", min: 0, max: 10, unit: "duties", blank_means: "No limit", hard_or_soft: "hard" },
   { path: "duty_count_limits.max_same_group_per_month", section: "duty_count_limits", label: "Max duties of the same category per month", help: "Per category.", example: "4 means a fifth PAC duty goes to someone else.", kind: "int", min: 0, max: 31, unit: "duties", blank_means: "No limit", hard_or_soft: "hard" },
@@ -41,7 +42,7 @@ const LIMITS = () => ({
   duty_count_limits: { max_24hr_per_month: 8, max_weekend_24hr_per_month: null, max_same_group_per_month: null, max_same_campus_per_month: null },
   rest_rules: { minimum_gap_after_24hr_hours: 24, post_24hr_blocks_next_day_elective: true },
   unit_staffing_rules: { minimum_available_count: 1, warning_unavailable_percent: 30, hard_block_unavailable_percent: 40, small_unit_uses_absolute_minimum: true },
-  fairness_rules: { max_gap_within_call_level: 1, target_mode: "auto" },
+  fairness_rules: { max_gap_within_call_level: 1, target_mode: "auto", allocation_mode: "availability" },
   extra_duty_rules: { justice_lookback_months: 12 },
 });
 const TARGETS = {
@@ -50,7 +51,7 @@ const TARGETS = {
     { call_level: "3RD_CALL", label: "3rd call", slots: 64, members: 12, target: 5.33, min_expected: 5, max_expected: 6 },
     { call_level: "4TH_CALL", label: "4th call", slots: 30, members: 9, target: 3.33, min_expected: 3, max_expected: 4 },
   ],
-  "2026-07": [{ call_level: "3RD_CALL", label: "3rd call", slots: 62, members: 10, target: 6.2, min_expected: 6, max_expected: 7 }],
+  "2026-07": [{ call_level: "3RD_CALL", label: "3rd call", slots: 90, covered_slots: 62, planned_target: 9, demand_basis: "covered_duties", members: 10, target: 6.2, min_expected: 6, max_expected: 7 }],
 };
 const get = (o, p) => p.split(".").reduce((v, k) => v?.[k], o);
 const fieldOf = p => FIELDS.find(f => f.path === p);
@@ -150,6 +151,7 @@ const shot = async (p, name, full = false) => { if (shots) await p.screenshot({ 
 const setting = (p, path) => p.locator(`[data-setting="${path}"]`);
 const input = (p, path) => p.locator(`[data-setting="${path}"] [data-limit-num]`);
 
+if (!process.env.FAIRNESS_MODES_ONLY) {
 // 1. Gating: no "Limits" for other roles; a direct link falls back to Overview.
 for (const role of ["computer_admin", "rota_board_member", "hod"]) {
   const { ctx, p, pageErrors } = await appPage({ role });
@@ -200,11 +202,13 @@ for (const role of ["computer_admin", "rota_board_member", "hod"]) {
   eq(targetRows.length, 3, "three call levels");
   ok(/3rd call\s+64\s+12\s+5\.33\s+5 or 6 duties each/.test(targetRows[1].replace(/\s+/g, " ")), "3rd call target row");
   ok(/2nd call.*6 duties each/.test(targetRows[0].replace(/\s+/g, " ")), "exact target in words");
-  ok(/With a gap of 1/.test(await p.locator(".limits-targets__head").innerText()), "gap explained");
+  ok(/allowed gap applies to the selected fairness measure/.test(await p.locator(".limits-targets__head").innerText()), "selected policy gap explained");
   await p.locator("[data-targets-month]").fill("2026-07");
   await p.locator("#lim-targets-title", { hasText: "Targets for July 2026" }).waitFor();
   await p.waitForFunction(() => document.querySelectorAll(".limits-targets tbody tr").length === 1);
   eq(server.gets.at(-1), "2026-07", "targets for the chosen month");
+  ok(/Based on 62 covered of 90 planned duties/.test(await p.locator(".limits-targets tbody").innerText()), "covered targets distinguish unfilled template demand");
+  ok(/Average reference: 6\u20137/.test(await p.locator(".limits-targets tbody").innerText()), "availability range is an average rather than equal personal counts");
   await p.locator("[data-targets-month]").fill("2026-08");
   await p.locator(".limits-targets__empty").waitFor();
   ok(/No targets for August 2026 yet/.test(await p.locator(".limits-targets__empty").innerText()), "empty targets explained");
@@ -252,7 +256,7 @@ for (const role of ["computer_admin", "rota_board_member", "hod"]) {
   await p.locator('[data-limit-switch="rest_rules.post_24hr_blocks_next_day_elective"]').click();
   await input(p, "fairness_rules.max_gap_within_call_level").fill("2");
   eq((await p.locator("[data-limits-unsaved]").innerText()).trim(), "3 unsaved changes", "unsaved count");
-  ok(/With a gap of 2/.test(await p.locator(".limits-targets__head").innerText()), "targets text follows the new gap");
+  ok(/allowed gap applies to the selected fairness measure/.test(await p.locator(".limits-targets__head").innerText()), "selected policy explanation remains after gap edit");
   eq(await p.locator(".limits-setting.is-changed").count(), 3, "three changed markers");
   ok(/1 change/.test(await p.locator('[data-card-flags="rest_rules"]').innerText()), "card change flag");
   eq(await p.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; }), true, "unload guard with edits");
@@ -489,9 +493,9 @@ for (const role of ["computer_admin", "rota_board_member", "hod"]) {
     await spread.waitFor();
     eq(await spread.getAttribute("open"), "", "spread open when uneven");
     ok(/1 level uneven/.test(await spread.locator("summary").first().innerText()), "summary counts uneven levels");
-    const rows = await spread.locator("tbody tr").allInnerTexts();
+    const rows = (await spread.locator("tbody tr").allInnerTexts()).map(text => text.replace(/\s+/g," "));
     ok(/^3rd call/.test(rows[0].trim()), "uneven level first");
-    ok(/5\.33/.test(rows[0]) && /3\s*\/ 1 allowed/.test(rows[0]) && /2 members/.test(rows[0]), "target, gap and off-target count");
+    ok(/5\.33/.test(rows[0]) && /3 raw\s*\/ 1 allowed for raw gap/.test(rows[0]) && /2 members/.test(rows[0]), `target, gap and off-target count: ${JSON.stringify(rows)}`);
     ok(/Even/.test(rows[1]), "even level");
     const members = await spread.locator(".limits-spread__members li").allInnerTexts();
     eq(members.length, 2, "only members outside 5–6 listed");
@@ -507,6 +511,42 @@ for (const role of ["computer_admin", "rota_board_member", "hod"]) {
     eq(pageErrors, [], `no page errors (publish ${width})`);
     await ctx.close();
   }
+}
+
+}
+
+// Both fairness modes: persisted settings, review, responsive layout and accessibility.
+for (const width of [1280, 390, 320]) {
+  const {ctx,p,server,pageErrors}=await appPage({width});
+  await p.goto(base+'/#view=limits');
+  const choice=p.locator('[data-limit-choice="fairness_rules.allocation_mode"]');
+  await choice.waitFor();
+  eq(await choice.inputValue(),'availability','default preserves availability fairness');
+  eq(await choice.locator('option').count(),2,'exactly two policy choices');
+  ok(/Saving changes new proposals only/.test(await setting(p,'fairness_rules.allocation_mode').innerText()),'future proposal scope explained');
+  await choice.selectOption('equal_counts');
+  const fairnessGap=p.locator('[data-limit-num="fairness_rules.max_gap_within_call_level"]');
+  await fairnessGap.fill('5');
+  ok(/at most two/.test(await setting(p,'fairness_rules.max_gap_within_call_level').innerText()),'equal-count gap above two is refused before save');
+  ok(await p.locator('[data-limits-save]').isDisabled(),'oversized equal-count target cannot be saved');
+  await fairnessGap.fill('1');
+  ok(/Equal counts: aim for similar duty totals/.test(await p.locator('.limits-targets__head').innerText()),'equal-count target explanation');
+  await p.locator('[data-limits-save]').click();
+  const dialog=p.locator('dialog[open]');
+  await dialog.locator('.limits-impact').waitFor();
+  await dialog.getByLabel('I understand this changes how every rota is generated').check();
+  await dialog.locator('[data-confirm-save]').click();
+  await p.locator('dialog').waitFor({state:'detached'});
+  eq(server.puts.at(-1).limits.fairness_rules.allocation_mode,'equal_counts','selected policy is saved');
+  await p.reload();
+  await choice.waitFor();
+  eq(await choice.inputValue(),'equal_counts','policy survives reload');
+  await choice.selectOption('availability');
+  ok(/raw totals can differ by more than two/.test(await p.locator('.limits-targets__head').innerText()),'availability explanation restored');
+  await axeClean(p,`fairness modes ${width}`);
+  ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no horizontal overflow');
+  eq(pageErrors,[],`fairness mode page errors ${width}`);
+  await ctx.close();
 }
 
 await browser.close();

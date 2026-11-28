@@ -1,0 +1,75 @@
+"""Necessary-condition night-gap proof; never a clinical schedule or Apply plan.
+
+An infeasible result rules out only count-preserving reallocations within the
+selected current call-level rows and protected holders. A feasible result is
+not safe: rest, overlap, staffing, hours and other quotas are intentionally
+absent from this diagnostic relaxation, never from operational allocation.
+"""
+from collections import Counter
+from time import perf_counter
+
+from ortools.sat.python import cp_model
+
+
+def analyze(rows, counts, *, gap=2, seconds=20):
+    assert gap >= 0 and seconds > 0 and counts
+    people = set(counts)
+    assert sum(counts.values()) == len(rows)
+    assert Counter(row['original'] for row in rows) == Counter(counts)
+    for row in rows:
+        assert row['original'] in row['allowed'] and set(row['allowed']) <= people
+    model = cp_model.CpModel()
+    choices = {}
+    for index, row in enumerate(rows):
+        allowed = [row['original']] if row.get('fixed') else sorted(row['allowed'], key=str)
+        for person in allowed:
+            choices[index, person] = model.new_bool_var(f'choice:{index}:{person}')
+        model.add(sum(choices[index, p] for p in allowed) == 1)
+    low = model.new_int_var(0, max(counts.values()), 'minimum_nights')
+    for person, total in counts.items():
+        assigned = [v for (i, p), v in choices.items() if p == person]
+        nights = [v for (i, p), v in choices.items() if p == person and rows[i]['night']]
+        model.add(sum(assigned) == total)
+        model.add(sum(nights) >= low)
+        model.add(sum(nights) <= low + gap)
+    solver = cp_model.CpSolver()
+    solver.parameters.max_time_in_seconds = seconds
+    solver.parameters.num_search_workers = 1
+    solver.parameters.random_seed = 0
+    started = perf_counter()
+    status = solver.solve(model)
+    outcome = ('infeasible_in_relaxed_model' if status == cp_model.INFEASIBLE
+               else 'necessary_condition_feasible' if status in (cp_model.FEASIBLE, cp_model.OPTIMAL)
+               else 'unknown')
+    result = dict(status=outcome, solver_status=solver.status_name(status), gap=gap,
+                  members=len(counts), duties=len(rows), candidate_edges=len(choices),
+                  fixed_rows=sum(bool(row.get('fixed')) for row in rows),
+                  solve_seconds=perf_counter()-started, solve_limit_seconds=seconds,
+                  operational_writes=0, clinical_feasibility_proved=False,
+                  scope='Same current call-level duty rows; exact current person counts; protected and extra holders fixed.',
+                  omitted_constraints=['rest', 'overlap', 'staffing/OT', 'weekends', 'hours', 'other individual quotas'],
+                  inference='INFEASIBLE rules out this restricted count-preserving family even before omitted safety constraints. FEASIBLE is not a clinical proposal or safety certificate.')
+    if status in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+        loads = {person: sum(solver.value(v) for (i, p), v in choices.items()
+                             if p == person and rows[i]['night']) for person in counts}
+        result['anonymous_night_counts'] = sorted(loads.values())
+        result['night_gap'] = max(loads.values())-min(loads.values())
+    return result
+
+
+def study(state, *, level='3RD_CALL', gap=2, seconds=20):
+    people = set(state.members_by_level.get(level, []))
+    rows = []
+    for row in state.rows.values():
+        if row['person'] not in people:
+            continue
+        slot = row['slot']
+        fixed = not row['movable'] or bool(row.get('extra'))
+        allowed = [row['person']] if fixed else [p for p in people if state.structural_block(p, slot) is None]
+        rows.append(dict(original=row['person'], allowed=allowed, fixed=fixed,
+                         night=bool(slot.is_24hr or slot.starts_at.hour >= 18
+                                    or slot.ends_at.date() > slot.starts_at.date())))
+    result = analyze(rows, {p: state.duties.get(p, 0) for p in people}, gap=gap, seconds=seconds)
+    result['call_level'] = level
+    result['eligibility_basis'] = 'Existing dated posting, call/group, unit and active-leave structural checks; no new membership or exception.'
+    return result

@@ -473,6 +473,106 @@ def test_fingerprint_changes_with_assignments(seeded, monkeypatch):
     assert changed["data_fingerprint"] != first["data_fingerprint"]
 
 
+def test_report_slot_reuse_matches_fresh_fairness_and_rejects_other_period(seeded):
+    from uuid import uuid4
+    from app.services.fairness_targets import call_level_spread
+    from app.services.rota_rules import default_phase_one_rules
+
+    session, _info = seeded
+    ctx = report.load_context(session, MONTH)
+    rules = default_phase_one_rules()
+    reference = call_level_spread(session, MONTH, rules)
+    assert call_level_spread(session, MONTH, rules, logical_slots=ctx.core.slots,
+                             logical_period_id=ctx.core.period.id) == reference
+    assert call_level_spread(session, MONTH, rules, logical_slots=(),
+                             logical_period_id=uuid4()) == reference
+    example = ctx.core.slots[0]
+    manual = _slot(session, ctx.core.period, example.unit, example.duty_date,
+                   (example.duty_type, example.call_level, 8, 24, True), " manual")
+    manual.source = "manual"
+    session.commit()
+    # A report includes the manual duty, but it must not manufacture template
+    # demand simply because the report now reuses loaded slot objects.
+    fresh = call_level_spread(session, MONTH, rules)
+    targets, error = report._call_level_targets(report.load_context(session, MONTH))
+    assert error is None
+    assert {row["call_level"]: row["slots"] for row in targets} == {
+        row["call_level"]: row["slots"] for row in fresh}
+
+
+@pytest.mark.parametrize("saved", [False, True])
+def test_real_report_does_not_bootstrap_rules_or_call_groups(saved):
+    from sqlalchemy import func, select
+    from app.services.rota_rules import (
+        PHASE_ONE_RULE_VERSION_NAME, PHASE_ONE_SETTING_KEY, default_phase_one_rules,
+    )
+
+    with make_session() as session:
+        if saved:
+            version = RuleVersion(name=PHASE_ONE_RULE_VERSION_NAME, effective_from=date(2026, 1, 1))
+            session.add(version)
+            session.flush()
+            session.add(RuleSetting(rule_version_id=version.id, key=PHASE_ONE_SETTING_KEY,
+                                    value=default_phase_one_rules().model_dump(mode="json"),
+                                    value_type="json"))
+            session.commit()
+        # Real checker and all report sections, including a saved-rule database
+        # without bootstrapped groups. Count every table, not only RuleSetting.
+        def counts():
+            return {table.name: session.scalar(select(func.count()).select_from(table))
+                    for table in Base.metadata.sorted_tables}
+        before = counts()
+        first = report.build_report_data(session, MONTH)
+        again = report.build_report_data(session, MONTH)
+        assert counts() == before
+        assert not session.new and not session.dirty and not session.deleted
+        assert first["meta"]["report_fingerprint"] == again["meta"]["report_fingerprint"]
+        assert "meta" not in first["section_errors"]
+        assert "compliance" not in first["section_errors"]
+
+
+def test_fairness_summary_projection_preserves_period_source_status_and_boundaries(seeded):
+    from sqlalchemy import event
+    from app.services.rota_safety import assignments_for_month, month_assignment_summaries
+    session, info = seeded
+    example = info['assignments'][0].duty_slot
+    person = info['assignments'][0].person
+    starts, ends = month_bounds(MONTH)
+    included, excluded = set(), set()
+    for index, (status, source) in enumerate([
+        ('draft', 'manual'), ('draft', 'phase4_template'),
+        ('published', 'manual'), ('published', 'phase4_template'),
+    ]):
+        period = RotaPeriod(name=f'Projection {index}', starts_on=starts, ends_on=ends, status=status)
+        session.add(period)
+        session.flush()
+        slot = _slot(session, period, example.unit, starts,
+                     (example.duty_type, example.call_level, 8, 24, True), f' projection{index}')
+        slot.source = source
+        row = DutyAssignment(duty_slot=slot, person=person,
+                             status='cancelled' if index == 1 else 'assigned', source='projection_test')
+        session.add(row)
+        session.flush()
+        (excluded if index == 0 else included).add(row.id)
+    session.commit()
+    expected = {(a.id, a.person_id, a.status, a.source)
+                for a in assignments_for_month(session, starts, ends)}
+    session.expunge_all()
+    statements = []
+    def record(_conn, _cursor, statement, *_args):
+        statements.append(statement)
+    event.listen(session.get_bind(), 'before_cursor_execute', record)
+    try:
+        actual = {(a.id, a.person_id, a.status, a.source)
+                  for a in month_assignment_summaries(session, starts, ends)}
+    finally:
+        event.remove(session.get_bind(), 'before_cursor_execute', record)
+    assert actual == expected
+    assert included <= {a[0] for a in actual}
+    assert not excluded.intersection(a[0] for a in actual)
+    assert len(statements) == 1 and statements[0].lstrip().upper().startswith('SELECT')
+
+
 def test_performance_300_slots_150_members(monkeypatch):
     session = make_session()
     _no_verify(monkeypatch)

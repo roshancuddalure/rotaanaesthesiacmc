@@ -1,0 +1,2798 @@
+diff --git a/Plan/05_confirmed_decisions.md b/Plan/05_confirmed_decisions.md
+index b218365..639727a 100644
+--- a/Plan/05_confirmed_decisions.md
++++ b/Plan/05_confirmed_decisions.md
+@@ -189,3 +189,20 @@ Preserve the existing six-month historical policy rather than overwriting it wit
+ a proposed default. Do not invent holiday dates or clinical duty/rest limits.
+ 
+ Implementation: `../docs/rota_intelligence_implementation.md`.
++
++
++## 2026-11-23T11:39:04.478339+00:00 - Owner clarification: ordinary duty eligibility
++
++Owner explicitly states that monthly roster members with no posting must also receive ordinary duties; there is no extra-duty-only person category. Owner separately confirms people posted only to units outside the month scope must NOT be added to ordinary allocation. Implement consistent candidate/balance/validator/fairness behavior; preserve dated call eligibility/groups, unit rules, leave/rest, quotas, staffing/OT and fixed duties. No fictitious posting creation, production application or deployment authorized. Existing unposted-extra ledger behavior stays for its separate purpose.
++
++Implementation interpretation: the no-extra-only decision includes zero-duty active people without monthly postings; initial ordinary eligibility must not depend on first receiving an extra duty. Partial postings remain dated and out-of-scope postings exclude ordinary membership.
++
++
++## Owner clarification 2026-11-23T13:16:06.655319+00:00
++
++Owner binding clarification: only people with a dated unit posting into the month's included scope may receive ordinary OR extra duties. Missing monthly postings and excluded-only postings grant neither. This supersedes the earlier revision5/6 unposted fallback interpretation and invalidates its 151-person/57-transfer proposal as a release candidate. No fictitious postings, category of extra-only people or automatic excluded/unposted tiers. Dated posting windows, call eligibility, leave and rest remain mandatory. Revision7 implementation and disposable regression are in progress; not yet verified or deployed. Production roster135confirmed,16missing,4outside-only; live assignments untouched.
++
++
++## 23 November2026: approved five-point fairness-first refinement (revision8)
++
++The owner explicitly requested implementation and intensive simulation of the five agreed points within a new one-hour session. Whole-month priorities: configured safety and mandatory/total coverage, worst raw call-level gap, sum of call-level gaps, existing squared count target, hours/extra/weekend/night/holiday/workload burdens, spacing/history, preferences and then repair change count. Preferences mode no longer authorizes inequality ahead of fairness; archived proposals retain their recorded old basis. Ordinary Balance retains its approved availability-adjusted shares; raw and adjusted spreads must not be conflated. Gap1/2 feasibility is conditional on current fixed units/candidates/achieved coverage; timeout remains unknown. Dated scope, call pools, leave/rest, quotas/staffing, protected assignments, stale checks and atomic review remain mandatory. Ineligible historical holders can be replaced through reviewed Balance with existing safe transfer and ledger tracking; protected/unsafe repairs block. Undo cannot restore an ineligible holder. No production deployment, assignment write or inferred posting is authorized by this session.
+diff --git a/backend/app/services/allocation_objective_model.py b/backend/app/services/allocation_objective_model.py
+index 9224479..404bc01 100644
+--- a/backend/app/services/allocation_objective_model.py
++++ b/backend/app/services/allocation_objective_model.py
+@@ -11,6 +11,7 @@ from typing import Callable
+ from uuid import UUID
+ 
+ from app.services.rota_safety import rule_for_slot
++from app.services.allocation_equality import equality_terms
+ 
+ 
+ @dataclass
+@@ -22,7 +23,7 @@ class ObjectiveTerms:
+ 
+ def build_objectives(model, variables, candidates, slots, context, *, targets,
+                      mandatory, coverage, mode, originals, preferences, weights,
+-                     holiday_dates, incompatible):
++                     holiday_dates, incompatible, enhance_equality=False):
+     by_person = defaultdict(list)
+     for (sid, person), variable in variables.items():
+         by_person[person].append((sid, variable))
+@@ -82,9 +83,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
+         for (s, p), v in variables.items()
+     )
+     tiers = [("required_coverage", -mandatory), ("coverage", -coverage)]
+-    if originals:
++    enhanced, enhanced_score = equality_terms(model, variables, slots, context) if enhance_equality else ([], None)
++    if originals and not enhance_equality:
+         tiers.append(("changes", changes))
+-    if mode == "preferences":
++    if mode == "preferences" and not enhance_equality:
+         tiers.append(("preferences", preference_cost))
+     spacing = []
+     for person, rows in by_person.items():
+@@ -97,16 +99,19 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
+                     model.add(together <= other)
+                     model.add(together >= var + other - 1)
+                     spacing.append(together * (8 - days))
+-    tiers += [
++    tiers += enhanced[:2] + [
+         ("call_level_equality", sum(equality_costs)),
++    ] + enhanced[2:] + [
+         ("weekend_burden", weekends),
+         ("night_burden", nights),
+         ("holiday_burden", sum(holiday_costs)),
+         ("workload", burden),
+         ("spacing_history", ranking + sum(spacing) * weights["spacing"]),
+     ]
+-    if mode != "preferences":
++    if mode != "preferences" or enhance_equality:
+         tiers.append(("preferences", preference_cost))
++    if originals and enhance_equality:
++        tiers.append(("changes", changes))
+     def quality(choices):
+         categories = [
+             lambda s: s.duty_date.weekday() >= 5,
+@@ -134,10 +139,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
+             for s in choices
+         )
+         result = [-required, -len(choices)]
+-        if originals:
++        if originals and not enhance_equality:
+             result.append(sum(choices.get(s) != p for s, p in originals.items()))
+         pref = sum(preferences.get(f"{s}:{p}", 0) for s, p in choices.items())
+-        if mode == "preferences":
++        if mode == "preferences" and not enhance_equality:
+             result.append(pref)
+         equality = 0
+         for person, rows in by_person.items():
+@@ -149,7 +154,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
+             equality += sum(
+                 round((2 * (baseline + n) - 1 - 2 * target) * 100) for n in range(1, count + 1)
+             )
++        extra_scores = enhanced_score(choices) if enhanced_score else []
++        result.extend(extra_scores[:2])
+         result.append(equality)
++        result.extend(extra_scores[2:])
+         result.extend(costs)
+         ranked = sum(
+             candidates[s][p]["score_parts"].get("burden", 0) * weights["burden"]
+@@ -165,8 +173,10 @@ def build_objectives(model, variables, candidates, slots, context, *, targets,
+                     if 0 < days <= 7 and not incompatible(slots[s], slots[t], context.rules):
+                         ranked += (8 - days) * weights["spacing"]
+         result.append(ranked)
+-        if mode != "preferences":
++        if mode != "preferences" or enhance_equality:
+             result.append(pref)
++        if originals and enhance_equality:
++            result.append(sum(choices.get(s) != p for s, p in originals.items()))
+         return result
+ 
+     return ObjectiveTerms(tiers, quality, level_of)
+diff --git a/backend/app/services/allocation_objectives.py b/backend/app/services/allocation_objectives.py
+index 295f937..2f3f8ec 100644
+--- a/backend/app/services/allocation_objectives.py
++++ b/backend/app/services/allocation_objectives.py
+@@ -1,8 +1,18 @@
+-"""Recorded explanation of existing optimizer objectives; no scoring changes."""
++"""Versioned objective policy and descriptions of saved proposal evidence."""
+ 
+-# Revision 2 fixes monthly target selection for dated call-level changes.
++# Revision 4 aligns candidate ranking with canonical monthly target membership.
++# Revision 3 added bounded validated coverage/fairness refinement and search budgets.
++# Revision 2 fixed monthly target selection for dated call-level changes.
+ # Include in scheduling fingerprints so pre-correction drafts/timing proofs stale.
+-OPTIMIZER_OBJECTIVE_REVISION = 2
++# Revision 5 implements ordinary allocation for no-posting monthly participants,
++# preserving exclusion of people posted only outside the month scope.
++# Revision 6 also includes zero-duty active members without a monthly posting;
++# an extra-duty seed must never be necessary to enter the ordinary pool.
++# Revision 7 supersedes 5/6: both ordinary and extra duties require a dated
++# posting into the month's included units. Old unposted previews must stale.
++# Revision 8 prioritizes worst call-level gaps and includes hours/extra burden in
++# all proposal modes. Preferences and repair stability follow fair allocation.
++OPTIMIZER_OBJECTIVE_REVISION = 8
+ 
+ 
+ def describe_objectives(mode, targets):
+@@ -12,11 +22,16 @@ def describe_objectives(mode, targets):
+         "target_by_call_level": dict(sorted(targets.items())),
+         "fixed_duties": "included_in_month_total",
+         "personal_prorata_optimized": False,
+-        "preferences_before_equality": mode == "preferences",
++        "preferences_before_equality": False,
++        "worst_gap_optimized": True,
++        "hours_and_extra_optimized": True,
+         "basis": (
+             "This proposal uses a shared target within each call level, with fixed duties included. "
+             "Dated eligibility limits assignments, but this objective does not minimize personal "
+             "pro-rata deviation. Safety and required coverage remain higher priorities."
++            + (" Worst call-level gap precedes squared count deviation; hours and extra-duty burden "
++               "also count. Preferences and repair stability follow fairness."
++               )
+         ),
+     }
+ 
+@@ -31,9 +46,14 @@ def objective_basis_text(value):
+         or type(value.get("preferences_before_equality")) is not bool
+     ):
+         return "The fairness objective basis was not recorded in this saved proposal. Review its original evidence before comparing targets."
+-    return describe_objectives(
+-        "preferences" if value.get("preferences_before_equality") else "balanced", {}
+-    )["basis"] + (
++    base = ("This proposal uses a shared target within each call level, with fixed duties included. "
++            "Dated eligibility limits assignments, but this objective does not minimize personal "
++            "pro-rata deviation. Safety and required coverage remain higher priorities.")
++    if value.get('worst_gap_optimized') is True:
++        base += " Worst call-level gap precedes squared count deviation; fairness precedes repair change count."
++    if value.get('hours_and_extra_optimized') is True:
++        base += " Hours and extra-duty burden are included."
++    return base + (
+         " Explicit preferences precede equality in this proposal."
+         if value.get("preferences_before_equality")
+         else ""
+diff --git a/backend/app/services/allocation_scope.py b/backend/app/services/allocation_scope.py
+index f9c80d8..78460ba 100644
+--- a/backend/app/services/allocation_scope.py
++++ b/backend/app/services/allocation_scope.py
+@@ -1,4 +1,4 @@
+-"""Locked monthly unit boundaries for ordinary prospective allocations."""
++"""Configured monthly unit boundaries for prospective ordinary and extra duties."""
+ 
+ from sqlalchemy import select
+ from sqlalchemy.orm import selectinload
+@@ -12,7 +12,10 @@ def locked_unit_ids(db, period_id, context=None):
+         return cache[period_id]
+     scope = db.scalar(select(MonthlyGenerationScope).where(
+         MonthlyGenerationScope.rota_period_id == period_id).options(selectinload(MonthlyGenerationScope.units)))
+-    result = frozenset(row.unit_id for row in scope.units if row.status == "included") if scope and scope.is_locked else None
++    # Unlocking an already configured month must not grant eligibility to its
++    # excluded units. Legacy periods without a configured scope retain None.
++    result = (frozenset(row.unit_id for row in scope.units if row.status == "included")
++              if scope and (scope.is_locked or scope.units) else None)
+     if context is not None:
+         if cache is None:
+             cache = {}
+diff --git a/backend/app/services/balance_duties.py b/backend/app/services/balance_duties.py
+index a4dfee4..54316c2 100644
+--- a/backend/app/services/balance_duties.py
++++ b/backend/app/services/balance_duties.py
+@@ -9,8 +9,7 @@ For every call level L of the draft month:
+ 
+ * ``avail_i`` = days of the month member *i* is posted (any unit) and active, minus days with an
+   active-status leave (``ACTIVE_LEAVE_STATUSES``; any leave on a day takes the whole day). A member
+-  with no posting in the month who holds a duty (the extra-duty "unposted" tier) is available on
+-  every day without leave.
++  with no included-unit posting is ineligible, even if they hold an old extra duty.
+ * A member's level is the level they hold on their first posted day (as ``fairness_targets``).
+ * ``slots(L)`` = the month's *filled* duties of L: every active assignment on a non-excluded
+   template slot. A duty needing one level counts 1 for it; a *pool* duty (several levels, see
+@@ -36,10 +35,11 @@ furthest below theirs (recipient), when that strictly improves the balance
+   that was not already: this covers the recipient's unit and "the donor's unit no worse".
+ 
+ A recipient posted to another unit takes the slot into their unit (as the extra-duty fallback
+-does); only in-scope units allowed by the duty's unit rules qualify. For extra-duty rows only, a
+-recipient with no posting at all on the date may take the duty in the slot's current unit (the
+-owner-approved fill-all ``unposted_member`` tier; the record then carries that code and the
+-independent checker waives the posting check). Ordinary rows always need a posted recipient.
++does); only in-scope units allowed by the duty's unit rules qualify. Owner clarification
++23 Nov 2026 requires dated included-unit postings for ordinary AND extra duties.
++Unposted and excluded-only people do not enter the fairness denominator or recipient pool.
++Historical extra-duty ledger exceptions do not grant eligibility. Partial postings
++retain their dated restrictions.
+ Structural refusals (posting, level / pool, groups, unit rule, leave) are memoised and pruned
+ before any costly check, at no work cost; the budget is ``max(MAX_WORK, WORK_PER_SLOT * slots)``. When no direct move works
+ for a donor, a *swap* (donor duty X <-> recipient duty Y on different days) is tried together
+@@ -107,6 +107,7 @@ from app.services import extra_duty as ed
+ from app.services.fairness_targets import split_pool_demand
+ from app.services.leave import month_bounds
+ from app.services.leave_semantics import is_active
++from app.services.ordinary_duty_pool import has_month_unit_posting
+ from app.services.reference_registry import lock_namespace
+ from app.services.rota_eligibility import CALL_LEVEL_ORDER, call_level_label, eligibility, member_call_level
+ from app.services.rota_rules import RotaPhaseOneRules, get_phase_one_rules
+@@ -365,6 +366,8 @@ class _State:
+         posted: dict[UUID, set[date]] = defaultdict(set)
+         first: dict[UUID, Any] = {}
+         persons: dict[UUID, Person] = {}
++        self.ordinary_fallback_people: set[UUID] = set()
++        self.outside_scope_holders: set[UUID] = set()
+         for posting in ctx.postings:
+             person = posting.person
+             if posting.unit_id is None or person is None or person.active_status != "active":
+@@ -398,21 +401,12 @@ class _State:
+             )
+             self.unit_of[pid] = posting.unit_id
+             self.avail[pid] = len(days - leave_days.get(pid, set()))
+-        # Unposted members holding a duty this month: available on every day without leave.
+-        for row in self.rows.values():
+-            pid = row["person"]
+-            if pid in self.level:
+-                continue
+-            person = ctx.persons.get(pid)
+-            if person is None or person.active_status != "active":
+-                continue
+-            self.level[pid] = member_call_level(
+-                MemberContext(person=person, unit_id=None, posting_type=person.call_level or "",
+-                              day=row["slot"].duty_date)
+-            )
+-            self.unit_of[pid] = None
+-            self.avail[pid] = self.month_days - len(leave_days.get(pid, set()))
+-            persons[pid] = person
++        # Unposted and excluded-only holders stay visible as historical data,
++        # but never acquire ordinary/extra eligibility or fairness membership.
++        self.outside_scope_holders = {
++            pid for pid in self.duties if pid not in self.level
++            and has_month_unit_posting(pid, ctx.postings)
++        }
+         self.members_by_level: dict[str, list[UUID]] = defaultdict(list)
+         for pid, level in self.level.items():
+             if self.avail.get(pid, 0) > 0 or self.duties.get(pid, 0) > 0:
+@@ -438,6 +432,8 @@ class _State:
+         counts = {lvl: len(pids) for lvl, pids in self.members_by_level.items()}
+         self.level_slots: dict[str, float] = defaultdict(float)
+         for row in self.rows.values():
++            if row["person"] in self.outside_scope_holders:
++                continue
+             # Pool duties are split as fairness_targets does (single source: split_pool_demand).
+             for lvl, part in split_pool_demand(self.levels_of.get(row["slot"].id, set()), counts).items():
+                 self.level_slots[lvl] += part
+@@ -477,6 +473,36 @@ class _State:
+         low, high = (min(totals), max(totals)) if totals else (0, 0)
+         return {"min": low, "max": high, "gap": high - low}
+ 
++    def availability_breakdown(self, level: str) -> dict[str, Any]:
++        """Explain comparable cohorts without changing the binding share calculation.
++
++        Only dated included-unit members count. Historical ineligible holders
++        must not gain fairness membership from an old assignment.
++        """
++        members = self.members_by_level.get(level, [])
++        posted = [pid for pid in members if self.unit_of.get(pid) is not None]
++        unposted = [pid for pid in self.duties if pid not in self.level
++                    and not has_month_unit_posting(pid, self.ctx.postings)
++                    and (person := self.ctx.persons.get(pid)) is not None
++                    and member_call_level(MemberContext(person, None,
++                        person.call_level or '', self.starts_on)) == level]
++
++        def cohort(pids):
++            totals = [self.duties.get(pid, 0) for pid in pids]
++            low, high = (min(totals), max(totals)) if totals else (None, None)
++            return {"members": len(pids), "min": low, "max": high,
++                    "gap": high - low if totals else None}
++
++        return {
++            "posted": cohort(posted),
++            "fully_available_posted": cohort([pid for pid in posted if self.avail.get(pid) == self.month_days]),
++            "fully_available_ordinary": cohort([pid for pid in members if self.avail.get(pid) == self.month_days]),
++            "unposted_holders": cohort(unposted),
++            "outside_scope_holders": sum(1 for pid in self.outside_scope_holders
++                if member_call_level(MemberContext(self.ctx.persons[pid], None,
++                    self.ctx.persons[pid].call_level or '', self.starts_on)) == level),
++        }
++
+     # ---- plan state changes ------------------------------------------------------------------
+ 
+     def movable_rows(self, pid: UUID, touched: set[UUID]) -> list[UUID]:
+@@ -958,9 +984,58 @@ class _Planner:
+         return result
+ 
+     def unposted_ok(self, aid: UUID) -> bool:
+-        """Only extra-duty rows may go to a member with no posting on the date (the owner
+-        approved that fill-all tier; the record then carries ``unposted_member``)."""
+-        return bool(self.s.rows[aid].get("extra"))
++        """No unposted recipient is authorized, including for historical extra rows."""
++        return False
++
++    def repair_scope_membership(self) -> dict[str, int]:
++        """Replace ineligible historical holders through the reviewed balance path.
++
++        Every transfer keeps the existing safety/quota/ledger checks. Protected
++        rows stay protected. An unresolved row blocks apply rather than being
++        silently excluded from the fairness denominator.
++        """
++        from app.services.ordinary_duty_pool import has_dated_scope_posting
++        s = self.s
++        invalid = [aid for aid, row in s.rows.items()
++                   if s.slot_unit[row['slot'].id] not in s.included
++                   or not has_dated_scope_posting(row['person'], s.ctx.postings,
++                                                 row['slot'].duty_date, s.included)]
++        repaired = 0
++        reasons = Counter()
++        for aid in sorted(invalid, key=lambda a: (s.rows[a]['slot'].duty_date, str(a))):
++            row = s.rows[aid]
++            if not row['movable']:
++                reasons['protected_assignment'] += 1
++                continue
++            pool = {pid for level in s.levels_of[row['slot'].id]
++                    for pid in s.members_by_level.get(level, [])}
++            for pid in sorted(pool, key=lambda p: (s.dev(p), s.person_key(p))):
++                code = self.structural_ok(pid, aid)
++                if code:
++                    reasons[code] += 1
++                    continue
++                if self.exhausted:
++                    reasons['search_budget_exhausted'] += 1
++                    break
++                ok, code, placed = self.transfer([(aid, pid)])
++                if ok:
++                    self.record('move', placed)
++                    self.moves[-1]['reason'] = (
++                        'Replace an ineligible holder with a dated included-unit member; '
++                        'call level, leave, rest, staffing and quota checks retained.')
++                    repaired += 1
++                    break
++                reasons[code or 'no_safe_transfer'] += 1
++        if repaired != len(invalid):
++            raise BalanceError('scope_repair_incomplete',
++                               'Some duties have ineligible holders and cannot be safely reassigned automatically. '
++                               'Review protected duties, dated postings and candidate restrictions first.',
++                               409, {'invalid_assignments': len(invalid), 'safe_repairs_found': repaired,
++                                     'unresolved': len(invalid)-repaired, 'refusals': dict(reasons),
++                                     'live_changes': 0})
++        if repaired:
++            s._shares()
++        return {'invalid_before': len(invalid), 'repaired': repaired, 'unresolved': 0}
+ 
+     def structural_ok(self, pid: UUID, aid: UUID) -> str | None:
+         """``None`` or the structural refusal code (``_State.structural_block``); costs no work."""
+@@ -1260,7 +1335,22 @@ class _Planner:
+                     moved = True
+                     break
+             if not moved:
+-                for donor in donors[:SWAP_DONORS_PER_ROUND]:
++                # A global top-N can spend every swap opportunity on one blocked
++                # level, indefinitely starving another level with a viable repair.
++                # Round-robin the already ordered donors across levels, retaining
++                # the same deterministic global cap and all transfer checks.
++                by_level: dict[str, list] = defaultdict(list)
++                for donor in donors:
++                    if s.dev(donor) - low > 1 + EPS:
++                        by_level[s.level.get(donor)].append(donor)
++                swap_donors = []
++                for index in range(SWAP_DONORS_PER_ROUND):
++                    for level_donors in by_level.values():
++                        if index < len(level_donors):
++                            swap_donors.append(level_donors[index])
++                    if len(swap_donors) >= SWAP_DONORS_PER_ROUND:
++                        break
++                for donor in swap_donors[:SWAP_DONORS_PER_ROUND]:
+                     if s.dev(donor) - low <= 1 + EPS:
+                         break
+                     if self.try_swap(donor):
+@@ -1281,6 +1371,9 @@ def _level_rows(state: _State, before: dict, refusals: dict | None = None,
+         reason = None
+         if not ok_after:
+             parts = []
++            unposted = state.availability_breakdown(level)["unposted_holders"]["members"]
++            if unposted:
++                parts.append(f"{unposted} historical holder(s) lack dated included-unit postings and are ineligible for ordinary and extra duties")
+             if exhausted:
+                 parts.append("the search reached its work limit (run Balance duties again to continue)")
+             above = [pid for pid in pids if state.dev(pid) > state.gap - EPS]
+@@ -1292,10 +1385,10 @@ def _level_rows(state: _State, before: dict, refusals: dict | None = None,
+                     f"{REFUSAL_LABELS.get(code, code).lower()} ({n})"
+                     for code, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:4]
+                 )
+-                parts.append(f"the remaining moves would break a hard rule: {top}")
++                parts.append(f"attempted moves were refused by hard rules: {top}")
+             reason = (
+                 "Not balanced: " + "; ".join(parts) + "."
+-                if parts else "Not balanced: no further move improves the totals without breaking a hard rule."
++                if parts else "Not balanced: the bounded search found no further safe improving move; global infeasibility is not proved."
+             )
+         rows.append({
+             "call_level": level,
+@@ -1309,6 +1402,7 @@ def _level_rows(state: _State, before: dict, refusals: dict | None = None,
+             "ok_before": ok_before,
+             "ok_after": ok_after,
+             "reason_if_not": reason,
++            "availability_breakdown": state.availability_breakdown(level),
+         })
+     return rows
+ 
+@@ -1358,17 +1452,18 @@ def _plan(db: Session, month: str, *, max_work: int | None = None) -> tuple[dict
+ 
+     started = time.monotonic()
+     state = _load(db, month)
+-    if not any(row["movable"] for row in state.rows.values()):
+-        raise BalanceError("nothing_to_balance", "There are no automatically assigned duties to move.")
+     before = dict(state.duties)
+-    if all(state.level_ok(level) for level in state.levels()):
+-        raise BalanceError("nothing_to_balance", "Duties are already balanced within every call level.")
+     has_movable = defaultdict(bool)
+     for row in state.rows.values():
+         if row["movable"]:
+             has_movable[row["person"]] = True
+     budget = max(MAX_WORK, WORK_PER_SLOT * len(state.slots)) if max_work is None else max_work
+     planner = _Planner(state, budget)
++    membership_repair = planner.repair_scope_membership()
++    if not any(row["movable"] for row in state.rows.values()):
++        raise BalanceError("nothing_to_balance", "There are no automatically assigned duties to move.")
++    if not planner.moves and all(state.level_ok(level) for level in state.levels()):
++        raise BalanceError("nothing_to_balance", "Duties are already balanced within every call level.")
+     planner.run()
+     moves = planner.moves
+     for move in moves:
+@@ -1377,6 +1472,7 @@ def _plan(db: Session, month: str, *, max_work: int | None = None) -> tuple[dict
+     levels = _level_rows(state, before, planner.refusals, has_movable, planner.exhausted)
+     summary = {
+         "mode": BALANCE_MODE,
++        "membership_repair": membership_repair,
+         "moves": sum(1 for m in moves if m["kind"] == "move"),
+         "swaps": planner.swaps,
+         "cross_unit": sum(1 for m in moves if m["cross_unit"]),
+@@ -1442,6 +1538,7 @@ def shares(db: Session, month: str, rules: RotaPhaseOneRules | None = None) -> l
+             **state.spread(level),
+             "ok": state.level_ok(level),
+             "movable": sum(movable_by_person[pid] for pid in pids),
++            "availability_breakdown": state.availability_breakdown(level),
+             "members_detail": [
+                 {
+                     "person_id": str(pid),
+@@ -1451,6 +1548,7 @@ def shares(db: Session, month: str, rules: RotaPhaseOneRules | None = None) -> l
+                     "share": round(state.share.get(pid, 0.0), 2),
+                     "goal": state.goal.get(pid, 0),
+                     "duties": state.duties.get(pid, 0),
++                    "eligibility_scope": "posted" if state.unit_of.get(pid) is not None else "ordinary_roster_fallback",
+                 }
+                 for pid in pids
+             ],
+diff --git a/backend/app/services/extra_duty.py b/backend/app/services/extra_duty.py
+index 811af9e..445ec12 100644
+--- a/backend/app/services/extra_duty.py
++++ b/backend/app/services/extra_duty.py
+@@ -83,6 +83,8 @@ EXTRA_DUTY_SOURCE = "extra_duty_layer"
+ 
+ # Contract 1.1 — never broken.
+ STRICT_CODES = {
++    "scope_member_excluded",
++    "scope_unit_excluded",
+     "inactive_member",
+     "not_in_unit",
+     "call_level_mismatch",
+@@ -201,6 +203,8 @@ CAUSE_LABELS = {
+ CAUSE_ORDER = list(CAUSE_LABELS)
+ 
+ STRICT_ORDER = [
++    "scope_member_excluded",
++    "scope_unit_excluded",
+     "inactive_member",
+     "not_in_unit",
+     "call_level_mismatch",
+@@ -219,6 +223,8 @@ STRICT_ORDER = [
+ ]
+ 
+ STRICT_LABELS = {
++    "scope_member_excluded": "No dated posting to an included unit",
++    "scope_unit_excluded": "Duty unit is outside the month's included scope",
+     "inactive_member": "Member is not active",
+     "not_in_unit": "Not posted to this unit on the duty date",
+     "call_level_mismatch": "Wrong call level for this duty",
+@@ -238,6 +244,8 @@ STRICT_LABELS = {
+ 
+ # Short words for the "cannot be filled" reason ("UNIT I: 3 on leave, 2 resting after 24h").
+ REASON_WORDS = {
++    "scope_member_excluded": "outside the dated monthly roster",
++    "scope_unit_excluded": "unit outside scope",
+     "inactive_member": "inactive",
+     "not_in_unit": "not posted",
+     "call_level_mismatch": "wrong call level",
+@@ -383,6 +391,7 @@ class ExtraDutyContext:
+         self._eligibility: dict[tuple, tuple[str, str | None] | None] = {}
+         self._unit_rule: dict[tuple, bool] = {}
+         self.ot_guard = None
++        self.included_unit_ids = None
+         # Every active member (``load_people``); the fill-all "unposted" tier and the
+         # unfilled-cause diagnosis draw from it.
+         self.active_people: dict[UUID, Person] = {}
+@@ -440,19 +449,17 @@ class ExtraDutyContext:
+         key = (person_id, unit_id, allow_unposted, slot.duty_type, slot.call_level, day)
+         if key in self._eligibility:
+             return self._eligibility[key]
++        if self.included_unit_ids is not None and unit_id not in self.included_unit_ids:
++            result = ("scope_unit_excluded", STRICT_LABELS["scope_unit_excluded"])
++            self._eligibility[key] = result
++            return result
++        posted_units = self.person_units(day).get(person_id, set())
++        if not any(uid is not None and (self.included_unit_ids is None or uid in self.included_unit_ids)
++                   for uid in posted_units):
++            result = ("scope_member_excluded", STRICT_LABELS["scope_member_excluded"])
++            self._eligibility[key] = result
++            return result
+         contexts = self.unit_contexts(day, unit_id).get(person_id, [])
+-        if not contexts and allow_unposted:
+-            person = self.persons.get(person_id)
+-            if (
+-                person is not None
+-                and person.active_status == "active"
+-                and person_id not in self.person_units(day)
+-            ):
+-                contexts = [
+-                    MemberContext(
+-                        person=person, unit_id=unit_id, posting_type=person.call_level or "", day=day
+-                    )
+-                ]
+         if not contexts:
+             result: tuple[str, str | None] | None = ("not_in_unit", None)
+         else:
+@@ -687,6 +694,8 @@ def build_context(
+         units=units,
+     )
+     context.ot_guard = ot_guard
++    from app.services.allocation_scope import locked_unit_ids
++    context.included_unit_ids = locked_unit_ids(db, period.id)
+     return context
+ 
+ 
+@@ -1096,14 +1105,6 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
+         key=lambda unit: (unit.name, str(unit.id)),
+     )
+     included_ids = {unit.id for unit in included}
+-    outside = sorted(
+-        (
+-            unit
+-            for unit in units.values()
+-            if unit.id not in included_ids and (unit.active_status or "active") == "active"
+-        ),
+-        key=lambda unit: (unit.name, str(unit.id)),
+-    )
+     explicit: dict[UUID, list[UUID]] = defaultdict(list)
+     for row in db.scalars(
+         select(UnitFallback).order_by(UnitFallback.unit_id, UnitFallback.position, UnitFallback.id)
+@@ -1144,7 +1145,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
+         seen: set[UUID] = set()
+         for uid in dict.fromkeys(explicit.get(slot.unit_id, [])):
+             unit = units.get(uid)
+-            if usable(unit) and unit.id not in seen:
++            if usable(unit) and unit.id in included_ids and unit.id not in seen:
+                 seen.add(unit.id)
+                 ordered.append((1, unit))
+         home_campus = home.campus if home else None
+@@ -1180,11 +1181,11 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
+         seen: set[UUID] = set()
+ 
+         def take(tier: int, unit: Unit | None) -> None:
+-            if usable(unit) and unit.id not in seen:
++            if usable(unit) and unit.id in included_ids and unit.id not in seen:
+                 seen.add(unit.id)
+                 out.append((tier, unit.id, False))
+ 
+-        if slot.unit_id is not None:
++        if slot.unit_id in included_ids:
+             seen.add(slot.unit_id)
+             out.append((0, slot.unit_id, False))
+         for uid in dict.fromkeys(explicit.get(slot.unit_id, [])):
+@@ -1194,10 +1195,7 @@ def _build_plan(db: Session, month: str, mode: str = MODE_STANDARD) -> _Plan:
+                 take(2, unit)
+         for unit in included:
+             take(3, unit)
+-        for unit in outside:
+-            take(4, unit)
+-        if slot.unit_id is not None:
+-            out.append((5, slot.unit_id, True))
++        # Owner clarification: outside-scope and unposted tiers are forbidden.
+         tier_cache[key] = out
+         return out
+ 
+diff --git a/backend/app/services/extra_duty_verify.py b/backend/app/services/extra_duty_verify.py
+index 9ad2622..aae42c3 100644
+--- a/backend/app/services/extra_duty_verify.py
++++ b/backend/app/services/extra_duty_verify.py
+@@ -5,6 +5,10 @@ independent implementation so the 360° report and the invariant tests can catch
+ It reuses only the shared primitives (eligibility, leave overlap, same-day/next-day block
+ predicates); the way they are combined is this module's own.
+ 
++Owner clarification 23 Nov 2026: ordinary AND extra duties require a dated posting
++into included units. Historical unposted ledger exemptions confer no eligibility.
++The independent checker reports these assignments rather than silently waiving them.
++
+ ``check_month(db, month)`` checks every active assignment (``assigned``/``draft``/``confirmed``)
+ on the month's rota-period slots against the strict rules:
+ 
+@@ -13,9 +17,7 @@ Check                 Codes                                       Rule (contract
+ ====================  ==========================================  ==============================
+ Active members        ``inactive_member``                         person is active
+ Posted to the ...     ``not_in_unit``                             posting to slot unit on date
+-                                                                  (exempt: active ledger record
+-                                                                  with ``unposted_member`` AND no
+-                                                                  posting at all on the date)
++                                                                  and membership in included scope
+ Duty allowed for unit ``unit_rule``                               ``rota_template.rule_applies_to_unit``
+                                                                   for the slot's final unit
+ Call level and groups ``call_level_mismatch``,                    ``rota_eligibility.eligibility``
+@@ -108,7 +110,7 @@ CHECKS: list[tuple[str, tuple[str, ...]]] = [
+     ("Rest after 24-hour duty", ("post_24hr_rest", "pre_24hr_rest", "rest_gap")),
+     ("No double booking", ("same_day_duty",)),
+     ("Call level and groups", ("call_level_mismatch", "call_level_unresolved", "call_subgroup_mismatch")),
+-    ("Posted to the duty's unit", ("not_in_unit",)),
++    ("Posted to the duty's unit", ("not_in_unit", "scope_member_excluded", "scope_unit_excluded")),
+     ("Duty allowed for unit", ("unit_rule",)),
+     ("Slot capacity", ("slot_full",)),
+     ("Active members", ("inactive_member",)),
+@@ -203,6 +205,8 @@ class MonthState:
+     units: dict[UUID, Unit] = field(default_factory=dict)
+     # Assignment ids backed by an active ledger record whose overridden_rules has ``unposted_member``.
+     unposted_assignment_ids: set = field(default_factory=set)
++    ordinary_fallback_person_ids: set = field(default_factory=set)
++    included_unit_ids: frozenset | None = None
+     # Assignment ids whose source is a superadmin allocation (exempt per SUPERADMIN_EXEMPT_CODES).
+     superadmin_assignment_ids: set = field(default_factory=set)
+     _flags: dict = field(default_factory=dict)
+@@ -294,12 +298,16 @@ class MonthState:
+ 
+         # Posting and eligibility.
+         contexts = self.contexts(person_id, day)
++        # Independently derive membership; neither an old ledger exemption nor
++        # a superadmin source grants admission to the monthly unit roster.
++        if self.included_unit_ids is not None and unit_id not in self.included_unit_ids:
++            problems.append(("scope_unit_excluded", "Duty unit is outside the month's included units."))
++        if not any(c.unit_id is not None and (
++                self.included_unit_ids is None or c.unit_id in self.included_unit_ids) for c in contexts):
++            problems.append(("scope_member_excluded", "No dated posting to an included unit on the duty date."))
+         in_unit = [c for c in contexts if unit_id is not None and c.unit_id == unit_id]
+         if not in_unit:
+-            if not unposted_ok:
+-                problems.append(("not_in_unit", f"Not posted to the duty's unit on {day.isoformat()}."))
+-            elif contexts:
+-                problems.append(("not_in_unit", f"Recorded as having no posting, but posted to another unit on {day.isoformat()}."))
++            problems.append(("not_in_unit", f"Not posted to the duty's unit on {day.isoformat()}."))
+ 
+         # Unit rules of the duty (allowed / excluded units), on the slot's final unit.
+         rule = self._slot_flags(slot)[0]
+@@ -434,6 +442,7 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None =
+             )
+         )
+         person_ids |= posted_ids
++        person_ids |= set(db.scalars(select(Person.id).where(Person.active_status == 'active')))
+         persons = (
+             {
+                 p.id: p
+@@ -492,6 +501,10 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None =
+         unposted_assignment_ids=unposted_ids,
+         superadmin_assignment_ids={a.id for a in month_assignments if a.source == SUPERADMIN_SOURCE},
+     )
++    # Historical unposted ledger records are evidence, not eligibility grants.
++    state.ordinary_fallback_person_ids = set()
++    from app.services.allocation_scope import locked_unit_ids
++    state.included_unit_ids = locked_unit_ids(db, period.id) if period is not None else None
+     for a in month_assignments:
+         duty = _Duty(key=a.id, slot=a.duty_slot, person_id=a.person_id, in_month=True)
+         state.duties_by_person.setdefault(a.person_id, []).append(duty)
+@@ -586,7 +599,10 @@ def check_state(state: MonthState, assignment_ids: Iterable[UUID] | None = None)
+         "checked": len(targets),
+         "violations": violations,
+         "checks": checks,
+-        "unposted_exempt": sum(1 for a in targets if a.id in state.unposted_assignment_ids),
++        "unposted_exempt": 0,
++        "legacy_unposted_records": sum(1 for a in targets if a.id in state.unposted_assignment_ids),
++        "ordinary_roster_fallback": sum(1 for a in targets if a.person_id in state.ordinary_fallback_person_ids
++                                       and a.id not in state.unposted_assignment_ids),
+         "superadmin_exempt": sum(1 for a in targets if a.id in state.superadmin_assignment_ids),
+         "superadmin_cross_level": cross_level,
+         "superadmin_cross_level_count": len(cross_level),
+diff --git a/backend/app/services/fairness_targets.py b/backend/app/services/fairness_targets.py
+index 23aee68..50331c3 100644
+--- a/backend/app/services/fairness_targets.py
++++ b/backend/app/services/fairness_targets.py
+@@ -7,11 +7,9 @@ gap (``fairness_rules.max_gap_within_call_level``).
+ 
+ Who counts as a member of a level for the month (documented choice, contract 2):
+ 
+-* every *active* member with a posting overlapping the month (any unit, any campus), at the
+-  call level they hold on the first posted day of the month, who has at least one posted day
+-  not covered by leave; plus
+-* every active member who holds an active duty of that level in the month without any posting
+-  (the extra-duty "unposted" tier), so the people actually used are always counted.
++* every active member with a dated included-unit posting, at the call level they
++  hold on their first posted day, with at least one available posted day;
++* existing ineligible assignments never manufacture roster membership.
+ 
+ Members on leave or posted for the whole month are left out of the target (they cannot do a
+ duty), but members with partial availability are kept: their reduced availability is the
+@@ -26,8 +24,7 @@ several levels may be taken by any member of those levels. Its demand is split a
+ levels in proportion to each level's member count for the month (``split_pool_demand``): with 30
+ 3rd-call and 10 4th-call members, each pool slot adds 0.75 to 3rd call and 0.25 to 4th call. If
+ none of the pool's levels has members the slot is split evenly. Targets stay per level, so a
+-level's ``slots`` may be fractional (reported to 2 decimals). An unposted member holding a pool
+-duty is counted at their own level when it is in the pool.
++level's ``slots`` may be fractional (reported to 2 decimals). Unposted and excluded-only holders are outside the eligible roster.
+ """
+ 
+ from __future__ import annotations
+@@ -43,7 +40,6 @@ from sqlalchemy.orm import Session
+ 
+ from app.models import RotaPeriod
+ from app.services.leave import month_bounds
+-from app.services.rota_call_levels import normalize_call_level
+ from app.services.rota_eligibility import (
+     CALL_LEVEL_ORDER,
+     call_level_label,
+@@ -128,7 +124,7 @@ def _included_units(db: Session, period) -> set[UUID] | None:
+ class _Month:
+     """Everything the targets and the spread need, loaded once."""
+ 
+-    def __init__(self, db: Session, month: str, rules: Any = None, postings=None, leaves=None):
++    def __init__(self, db: Session, month: str, rules: Any = None, postings=None, leaves=None, logical_slots=None):
+         from app.services.rota_rules import get_phase_one_rules
+         from app.services.rota_template import template_slots_for_period
+ 
+@@ -140,6 +136,11 @@ class _Month:
+         self.month_days = (self.ends_on - self.starts_on).days + 1
+         period = _period(db, self.starts_on, self.ends_on)
+         slots = template_slots_for_period(db, period.id) if period is not None else []
++        if logical_slots is not None:
++            slots = tuple(logical_slots)
++            if len({slot.id for slot in slots}) != len(slots) or any(
++                    not self.starts_on <= slot.duty_date <= self.ends_on for slot in slots):
++                raise ValueError("Logical duty representatives must be distinct and within the target month")
+         groups = None
+         # Single-level slots by id; ``slot_levels`` holds every counted slot's level set
+         # (pools included). ``slots_by_level`` may become fractional once pools are split.
+@@ -234,21 +235,8 @@ class _Month:
+             self.duties[pid] += 1
+             if assignment.source in EXTRA_SOURCES:
+                 self.extra[pid] += 1
+-            person = assignment.person
+-            if pid not in self.level_of and person is not None and person.active_status == "active":
+-                # Unposted tier: counted at the level of the duty they hold (for a pool duty,
+-                # their own level when it is in the pool).
+-                level = self.slot_level.get(assignment.duty_slot_id)
+-                pool = self.slot_levels.get(assignment.duty_slot_id) or set()
+-                if level is None and len(pool) > 1:
+-                    own = normalize_call_level(person.call_level)
+-                    level = own if own in pool else None
+-                if level is not None:
+-                    self.level_of[pid] = level
+-                    self.persons[pid] = person
+-                    self.posted_days[pid] = 0
+-                    self.leave_days[pid] = len(leave_sets.get(pid, set()))
+-                    self.available_days[pid] = self.month_days - self.leave_days[pid]
++            # Existing ineligible holders do not enter the monthly fairness
++            # denominator merely because they already have an assignment.
+ 
+         self.members_by_level: dict[str, list[UUID]] = defaultdict(list)
+         for pid, level in self.level_of.items():
+@@ -304,15 +292,17 @@ def target_by_level(
+ 
+ 
+ def objective_target_basis(
+-    db: Session, month: str, rules: Any = None, *, postings=None, leaves=None
++    db: Session, month: str, rules: Any = None, *, postings=None, leaves=None, logical_slots=None
+ ) -> tuple[dict[str, float], dict[UUID, str]]:
+     """Uniform targets and their canonical monthly member-level membership.
+ 
+     Eligibility remains dated. The monthly load objective uses the same first
+     posted-day membership as reporting, including its existing unposted tier;
+     it must not switch targets when candidate slots are iterated in another order.
++    A planning experiment may supply one representative per logical requirement;
++    its caller must verify that alternative rows share the same call-level pool.
+     """
+-    data = _Month(db, month, rules, postings=postings, leaves=leaves)
++    data = _Month(db, month, rules, postings=postings, leaves=leaves, logical_slots=logical_slots)
+     targets = {
+         level: data.slots_by_level[level] / len(data.members_by_level[level])
+         for level in data.levels()
+diff --git a/backend/app/services/rota_assignment.py b/backend/app/services/rota_assignment.py
+index 397eb19..b878f9b 100644
+--- a/backend/app/services/rota_assignment.py
++++ b/backend/app/services/rota_assignment.py
+@@ -5,6 +5,8 @@
+ - needs_override: inactive member, not posted to the unit, safety blockers, unit staffing
+   warnings, monthly count limits.
+ Assignments that need an override must carry an ``override_reason``.
++Owner23Nov clarification: a dated posting to an included unit is required for
++ordinary and extra duties. Missing postings never grant eligibility.
+ """
+ 
+ from __future__ import annotations
+@@ -314,17 +316,16 @@ def validate_assignment(
+         )
+     )
+     validation_issues: list[dict[str, str]] = []
++    from app.services.ordinary_duty_pool import has_dated_scope_posting
+     from app.services.allocation_scope import locked_unit_ids
+     included = locked_unit_ids(db, slot.rota_period_id, context)
+     if included is not None:
+         if slot.unit_id not in included:
+             validation_issues.append(issue("blocked", "scope_unit_excluded",
+                 "This duty's unit is outside the month's locked included scope."))
+-        elif not any(p.person_id == person.id and p.unit_id in included
+-                     and p.starts_on <= slot.duty_date and (p.ends_on is None or p.ends_on >= slot.duty_date)
+-                     for p in postings):
+-            validation_issues.append(issue("blocked", "scope_member_excluded",
+-                "This member has no dated posting in the month's locked included units."))
++    if not has_dated_scope_posting(person.id, postings, slot.duty_date, included):
++        validation_issues.append(issue("blocked", "scope_member_excluded",
++            "A dated posting to an included unit is required for ordinary and extra duties."))
+     for other in nearby_duties(
+         db,
+         slot,
+diff --git a/backend/app/services/rota_candidates.py b/backend/app/services/rota_candidates.py
+index 1711f24..c636047 100644
+--- a/backend/app/services/rota_candidates.py
++++ b/backend/app/services/rota_candidates.py
+@@ -97,6 +97,7 @@ class CandidateContext:
+     fairness_member_levels: dict | None = None
+     # Immutable OT inputs; retained when optimizer copies/removes mutable duties.
+     ot_guard: object | None = None
++    ordinary_fallback_ids: frozenset = frozenset()
+ 
+ 
+ def candidate_context(db: Session, month: str, *, prospective_slots=(), rules=None) -> CandidateContext:
+@@ -462,7 +463,9 @@ def candidate_to_dict(
+         slot,
+     )
+     call_level = safety_row.get("call_level") or person.call_level
+-    target = context_targets(db, context).get(call_level)
++    targets = context_targets(db, context)
++    fairness_level = (context.fairness_member_levels or {}).get(person_id, call_level)
++    target = targets.get(fairness_level)
+     tight = is_tight(validation)
+     score, score_parts = candidate_score(
+         status=status,
+@@ -483,6 +486,7 @@ def candidate_to_dict(
+         "person_id": str(person.id),
+         "person_name": person.canonical_name,
+         "call_level": call_level,
++        "fairness_call_level": fairness_level,
+         "posting_type": safety_row.get("posting_type"),
+         "candidate_status": status,
+         "tight": tight,
+@@ -538,9 +542,10 @@ def slot_candidates_with_context(
+         previous_day_assignments=context.previous_day_assignments,
+     )
+     context.timings["safety_ms"] += (perf_counter() - safety_began) * 1000
++    pool = candidate_pool_from_safety(safety)
+     candidates = [
+         candidate
+-        for safety_row, status in candidate_pool_from_safety(safety)
++        for safety_row, status in pool
+         if (
+             candidate := candidate_to_dict(
+                 db,
+diff --git a/backend/app/services/rota_intelligence.py b/backend/app/services/rota_intelligence.py
+index 1925a2c..a7816ad 100644
+--- a/backend/app/services/rota_intelligence.py
++++ b/backend/app/services/rota_intelligence.py
+@@ -583,6 +583,11 @@ def evaluate(db, version, user, months):
+             return [
+                 objective.get("required_coverage", 10**9),
+                 result["uncovered"],
++                objective.get("worst_call_gap", 10**9),
++                objective.get("call_gap_total", 10**9),
++                objective.get("call_level_equality", 10**9),
++                objective.get("hours_burden", 10**9),
++                objective.get("extra_burden", 10**9),
+                 objective.get("weekend_burden", 10**9),
+                 objective.get("night_burden", 10**9),
+                 objective.get("holiday_burden", 10**9),
+diff --git a/backend/app/services/rota_optimizer.py b/backend/app/services/rota_optimizer.py
+index e310f1b..5b71755 100644
+--- a/backend/app/services/rota_optimizer.py
++++ b/backend/app/services/rota_optimizer.py
+@@ -22,6 +22,8 @@ from app.services.rota_safety import assignment_indexes, rule_for_slot
+ from app.services.allocation_objectives import describe_objectives
+ from app.services.allocation_objective_model import build_objectives
+ from app.services.allocation_count_constraints import add_monthly_count_limits
++from app.services.allocation_refinement import refine_incumbent, fairness_summary
++from app.services.allocation_equality import probe_gap_limits, explain_count_outliers
+ 
+ 
+ def without_slots(context, slot_ids):
+@@ -51,6 +53,10 @@ def without_slots(context, slot_ids):
+         timings=dict(context.timings),
+     )
+     result.optimizer_removed_slots = getattr(context, "optimizer_removed_slots", set()) | removed
++    result.optimizer_extra_slots = getattr(context, "optimizer_extra_slots", set()) | {
++        str(a.duty_slot_id) for a in context.assignments
++        if str(a.duty_slot_id) in removed and a.source == "extra_duty_layer"
++    }
+     return result
+ 
+ 
+@@ -203,7 +209,7 @@ def solve_month(
+         ]
+         candidates[sid] = {c["person_id"]: c for c in valid}
+         rejected[sid] = [
+-            {"person_name": c["person_name"], "issues": c["validation_issues"]}
++            {"person_id": c["person_id"], "person_name": c["person_name"], "issues": c["validation_issues"]}
+             for c in row["candidates"]
+             if c not in valid
+         ]
+@@ -250,11 +256,13 @@ def solve_month(
+     model.add(coverage >= minimum_coverage)
+     model.add(mandatory >= minimum_required)
+     targets = context_targets(db, context)
++    enhance_equality = mode in {"balanced", "repair", "preferences"}
+     terms = build_objectives(model, variables, candidates, slots, context,
+         targets=targets, mandatory=mandatory, coverage=coverage, mode=mode,
+         originals=originals, preferences=preferences, weights=weights,
+-        holiday_dates=holiday_dates, incompatible=incompatible)
++        holiday_dates=holiday_dates, incompatible=incompatible, enhance_equality=enhance_equality)
+     tiers, quality, level_of = terms.tiers, terms.quality, terms.level_of
++    equality_model = model.clone() if enhance_equality else None
+     # Seed with a validated, scarcity-aware greedy draft. A short search must never
+     # replace that draft with an equally covered but needlessly concentrated incumbent.
+     seed_context = without_slots(context, [])
+@@ -375,10 +383,14 @@ def solve_month(
+             equality_lower += min(increments)
+     bounds["call_level_equality"] = equality_lower
+     bounds["preferences"] = pref_lower
++    bounds.update({name: 0 for name in ("worst_call_gap", "call_gap_total", "hours_burden", "extra_burden")})
+     solver = cp_model.CpSolver()
+     solver.parameters.num_search_workers = 1
+     solver.parameters.random_seed = 17
+     choices, objectives = (dict(seed) if seed_valid else {}), []
++    # Leave a bounded portion for validated local coverage/fairness repair. Search
++    # time allocation changes, not objective precedence or clinical constraints.
++    search_deadline = deadline - max(0, deadline - perf_counter()) * 0.20
+     all_optimal = True
+     cuts = 0
+     last_status = None
+@@ -397,8 +409,10 @@ def solve_month(
+             continue
+         tier_proven = False
+         tier_found = False
+-        remaining = max(0, deadline - perf_counter())
+-        tier_deadline = min(deadline, perf_counter() + remaining / max(1, len(tiers) - tier_index))
++        remaining = max(0, search_deadline - perf_counter())
++        tier_weights = [4 if n in {"required_coverage", "coverage", "worst_call_gap", "call_gap_total", "call_level_equality"}
++                        else 1 for n, _ in tiers[tier_index:]]
++        tier_deadline = min(search_deadline, perf_counter() + remaining * tier_weights[0] / sum(tier_weights))
+         while perf_counter() < tier_deadline:
+             solver.parameters.max_time_in_seconds = max(0.01, tier_deadline - perf_counter())
+             model.minimize(expression)
+@@ -439,6 +453,24 @@ def solve_month(
+             {"name": name, "value": value, "proven": False}
+             for (name, _), value in zip(tiers, quality(choices))
+         ]
++    before_refinement = quality(choices)
++    def validate_refinement(trial):
++        if len(trial) < minimum_coverage or -quality(trial)[0] < minimum_required:
++            return [{"code": "minimum_coverage_not_met"}]
++        return validate_plan(db, context, slots, trial)
++    probe_budget = max(0, deadline-perf_counter()) * .30 if enhance_equality else 0
++    choices, refinement = refine_incumbent(
++        choices, candidates, slots, context, quality=quality,
++        validate=validate_refinement,
++        incompatible=incompatible, deadline=deadline-probe_budget, forbidden=forbidden,
++    )
++    if refinement["improved"]:
++        # Proofs for a changed tier and all subsequent tiers were conditional on
++        # the old prefix. Preserve only receipts whose entire prefix still agrees.
++        after_refinement = quality(choices)
++        first_changed = next(i for i, (a, b) in enumerate(zip(before_refinement, after_refinement)) if a != b)
++        objectives = objectives[:first_changed]
++        all_optimal = False
+     recorded = {o["name"] for o in objectives}
+     objectives.extend(
+         {"name": name, "value": value, "proven": False}
+@@ -448,6 +480,27 @@ def solve_month(
+     failures = validate_plan(db, context, slots, choices)
+     if failures:
+         raise RuntimeError("Optimizer returned an invalid proposal")
++    gap_feasibility, probed_choices = probe_gap_limits(
++        equality_model, variables, dict(tiers)['worst_call_gap'], choices=choices,
++        quality=quality, validate=lambda trial: validate_plan(db, context, slots, trial),
++        deadline=deadline, required=mandatory,
++    ) if enhance_equality else ([], choices)
++    if quality(probed_choices) < quality(choices):
++        first_changed = next(i for i, (a, b) in enumerate(zip(quality(choices), quality(probed_choices))) if a != b)
++        choices = probed_choices
++        objectives = [o if i < first_changed else {**o, 'value': quality(choices)[i], 'proven': False}
++                      for i, o in enumerate(objectives)]
++        all_optimal = False
++    fairness = fairness_summary(context, choices)
++    warnings = [] if holiday_dates else ["No holiday dates configured; holiday balancing was not evaluated."]
++    if len(choices) < len(slots):
++        warnings.append(f"{len(slots) - len(choices)} duties remain unassigned. Review candidate restrictions and search evidence; a timeout is not proof of infeasibility.")
++    for row in fairness:
++        if not row["within_two"]:
++            warnings.append(f"{row['call_level']}: monthly duty gap is {row['gap']} (target at most 1–2). Review fixed duties, partial availability and hard constraints; local search does not prove the gap unavoidable.")
++    for probe in gap_feasibility:
++        if probe['status'] != 'feasible':
++            warnings.append(f"Gap <= {probe['limit']}: {probe['status']}. This concerns achieved coverage and the current fixed-unit candidate model; it is not a proof across other unit layouts.")
+     return {
+         "choices": choices,
+         **({"ot_reservations": {"status": "modeled", **joint_reservations}} if joint_reservations is not None else {}),
+@@ -465,13 +518,15 @@ def solve_month(
+         "cuts": cuts,
+         "baseline_retained": baseline_retained,
+         "quality": quality(choices),
++        "refinement": refinement,
++        "fairness": fairness,
++        "gap_feasibility": gap_feasibility,
++        "fairness_exceptions": explain_count_outliers(context, choices, candidates, rejected),
+         "elapsed_ms": round((perf_counter() - started) * 1000, 2),
+         "uncovered": len(slots) - len(choices),
+         "mode": mode,
+         "holiday_dates": sorted(holiday_dates),
+-        "warnings": []
+-        if holiday_dates
+-        else ["No holiday dates configured; holiday balancing was not evaluated."],
++        "warnings": warnings,
+         "history_window": {
+             "start": str(context.history["start"]),
+             "end": str(context.history["end"]),
+diff --git a/backend/app/services/superadmin_allocation.py b/backend/app/services/superadmin_allocation.py
+index bee7062..51ae605 100644
+--- a/backend/app/services/superadmin_allocation.py
++++ b/backend/app/services/superadmin_allocation.py
+@@ -204,6 +204,13 @@ def strict_blocks(state: MonthState, person_id: UUID, slot, *, include_ot=True)
+         found.append({"code": code, "label": STRICT_LABELS[code], "detail": detail})
+ 
+     day = slot.duty_date
++    # Monthly roster membership is a hard prerequisite for every new allocation.
++    from app.services.ordinary_duty_pool import has_dated_scope_posting
++    postings = state.postings_by_person.get(person_id, [])
++    if ((state.included_unit_ids is not None and slot.unit_id not in state.included_unit_ids)
++            or not has_dated_scope_posting(person_id, postings, day, state.included_unit_ids)):
++        found.append({"code": "scope_member_excluded", "label": "Outside the dated monthly roster",
++                      "detail": "A dated posting to an included unit is required for ordinary and extra duties"})
+     for leave in state.leaves_by_person.get(person_id, []):
+         if leave.starts_on <= day <= leave.ends_on:
+             if not slot_leave_blocks(leave, slot):
+@@ -243,7 +250,7 @@ def strict_blocks(state: MonthState, person_id: UUID, slot, *, include_ot=True)
+                 add("rest_after_24hr", f"Only {gap:g} h of rest before {_duty_label(state, o)} on {_day(o.duty_date)} after this 24-hour duty; needs {gap_needed:g} h")
+     for code, message in (state.ot_blockers(person_id, slot, replace_existing=True) if include_ot else []):
+         add(code, message)
+-    order = {"on_leave": 0, "rest_after_24hr": 1, "overlapping_duty": 2,
++    order = {"scope_member_excluded": -1, "on_leave": 0, "rest_after_24hr": 1, "overlapping_duty": 2,
+              "ot_reservation_conflict": 3, "ot_capacity_unresolved": 3}
+     found.sort(key=lambda item: order[item["code"]])
+     return found
+diff --git a/backend/tests/test_allocation_engine_revision.py b/backend/tests/test_allocation_engine_revision.py
+index da35612..cc8c71e 100644
+--- a/backend/tests/test_allocation_engine_revision.py
++++ b/backend/tests/test_allocation_engine_revision.py
+@@ -19,17 +19,18 @@ def test_algorithm_revision_changes_scheduling_and_benchmark_not_import_data(com
+     rota_compute.prepare_planning_inputs(db, "2026-05")
+     before = capture(db)
+     raw = json.loads(before.canonical_json)
+-    assert raw["engine_revisions"] == {"optimizer_objective": 2}
++    revision = allocation_objectives.OPTIMIZER_OBJECTIVE_REVISION
++    assert raw["engine_revisions"] == {"optimizer_objective": revision}
+     assert raw["snapshot_version"] == 5
+     imported = fingerprint(db)
+     proof = rota_intelligence.benchmark_context_hash(before.digest, None)
+-    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", 3)
++    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", revision + 1)
+     changed = capture(db)
+     assert json.loads(changed.canonical_json)["tables"] == raw["tables"]
+     assert changed.digest != before.digest
+     assert rota_intelligence.benchmark_context_hash(changed.digest, None) != proof
+     assert fingerprint(db) == imported
+-    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", 2)
++    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", revision)
+     assert capture(db) == before
+ 
+ 
+diff --git a/backend/tests/test_allocation_objective_basis.py b/backend/tests/test_allocation_objective_basis.py
+index fd22426..82b4e2e 100644
+--- a/backend/tests/test_allocation_objective_basis.py
++++ b/backend/tests/test_allocation_objective_basis.py
+@@ -29,9 +29,12 @@ def test_actual_saved_proposal_and_review_workbook_identify_uniform_target(compu
+ def test_legacy_and_preference_descriptions_cannot_infer_unrecorded_objectives():
+     assert "not recorded" in objective_basis_text(None)
+     assert "not recorded" in objective_basis_text({"version": 2})
+-    assert "Explicit preferences precede equality" in objective_basis_text(
+-        describe_objectives("preferences", {})
+-    )
++    historical = describe_objectives("preferences", {})
++    historical.pop('worst_gap_optimized')
++    historical.pop('hours_and_extra_optimized')
++    historical['preferences_before_equality'] = True
++    assert "Explicit preferences precede equality" in objective_basis_text(historical)
++    assert 'Worst call-level gap' not in objective_basis_text(historical)
+     contradictory = describe_objectives("balanced", {})
+     contradictory["personal_prorata_optimized"] = True
+     assert "not recorded" in objective_basis_text(contradictory)
+@@ -51,9 +54,10 @@ def test_historical_saved_proposal_workbook_does_not_infer_current_basis(compute
+     assert job.status == "completed"
+ 
+ 
+-def test_actual_preferences_proposal_records_its_existing_priority(compute_db):
++def test_actual_preferences_proposal_records_approved_fairness_priority(compute_db):
+     db, user = compute_db
+     job = complete(db, user, mode="preferences")
+     metadata = job.state["intelligence"]["alternatives"][0]["objective_basis"]
+-    assert metadata["preferences_before_equality"] is True
+-    assert "Explicit preferences precede equality" in objective_basis_text(metadata)
++    assert metadata["preferences_before_equality"] is False
++    assert "Worst call-level gap" in objective_basis_text(metadata)
++    assert 'Hours and extra-duty burden' in objective_basis_text(metadata)
+diff --git a/backend/tests/test_allocation_objective_precedence.py b/backend/tests/test_allocation_objective_precedence.py
+index 72d2c91..4962a22 100644
+--- a/backend/tests/test_allocation_objective_precedence.py
++++ b/backend/tests/test_allocation_objective_precedence.py
+@@ -1,4 +1,4 @@
+-"""Adversarial, real-solver examples of the preserved objective priorities.
++"""Adversarial, real-solver examples of the approved fairness-first priorities.
+ 
+ Two compatible duties can be shared or concentrated. Large preference costs
+ make the competing outcome explicit, without relying on tie-breaking identities.
+@@ -35,9 +35,9 @@ def competing_fixture(db):
+ 
+ 
+ @pytest.mark.parametrize(
+-    ("mode", "expected_largest_load"), [("balanced", 1), ("preferences", 2)]
++    ("mode", "expected_largest_load"), [("balanced", 1), ("preferences", 1)]
+ )
+-def test_explicit_preferences_change_priority_only_in_preferences_mode(
++def test_preferences_cannot_override_fairness_in_any_mode(
+     compute_db, mode, expected_largest_load
+ ):
+     db, _ = compute_db
+@@ -49,13 +49,12 @@ def test_explicit_preferences_change_priority_only_in_preferences_mode(
+     )
+     assert len(result["choices"]) == 2
+     assert max(Counter(result["choices"].values()).values()) == expected_largest_load
+-    if mode == "preferences":
+-        assert set(result["choices"].values()) == {str(favored.id)}
++    assert result['objective_basis']['preferences_before_equality'] is False
+     assert not validate_plan(db, context, slots, result["choices"])
+     assert db.query(DutyAssignment).count() == 0
+ 
+ 
+-def test_repair_stability_precedes_equality_and_preferences_without_writing(compute_db):
++def test_approved_repair_equality_precedes_stability_without_writing(compute_db):
+     db, _ = compute_db
+     slots, favored = competing_fixture(db)
+     originals = {sid: str(favored.id) for sid in slots}
+@@ -68,7 +67,9 @@ def test_repair_stability_precedes_equality_and_preferences_without_writing(comp
+         db, context, slots, mode="repair", originals=originals,
+         preferences={f"{sid}:{favored.id}": 1_000_000 for sid in slots}, seconds=5,
+     )
+-    assert result["choices"] == originals
++    assert max(Counter(result["choices"].values()).values()) == 1
++    names = [row['name'] for row in result['objectives']]
++    assert names.index('worst_call_gap') < names.index('changes')
+     assert not validate_plan(db, context, slots, result["choices"])
+     db.expire_all()
+     saved = list(db.scalars(select(DutyAssignment)))
+@@ -138,15 +139,14 @@ def test_promotion_does_not_make_monthly_equality_depend_on_slot_iteration_order
+             db, context, ordered, mode="preferences", seconds=5,
+             preferences={f"{sid}:{favored.id}": -1_000_000 for sid in slots},
+         )
+-        assert set(result["choices"].values()) == {str(favored.id)}
++        assert max(Counter(result['choices'].values()).values()) == 1
+         assert len(result["choices"]) == 2
+         assert not validate_plan(db, context, ordered, result["choices"])
+         results.append(next(
+             item["value"] for item in result["objectives"]
+             if item["name"] == "call_level_equality"
+         ))
+-    # Canonical monthly membership counts the first posted day: four first-call
+-    # people share one first-call duty, so favored's uniform target is 1/4.
+-    # Two duties contribute 100*((2 - 1/4)**2 - (0 - 1/4)**2) = 300.
+-    assert results == [300, 300]
++    # One first-call duty contributes50; the stable second-call member's duty
++    # contributes-100. Reversing dated opportunities cannot change membership.
++    assert results == [-50, -50]
+     assert db.query(DutyAssignment).count() == 0
+diff --git a/backend/tests/test_balance_duties.py b/backend/tests/test_balance_duties.py
+index cac0346..0a21145 100644
+--- a/backend/tests/test_balance_duties.py
++++ b/backend/tests/test_balance_duties.py
+@@ -1004,7 +1004,13 @@ def test_unposted_member_code_dropped_for_posted_recipient(db, user):
+     setup_month(db, [unit])
+     rows = [_manual_extra(db, make_slot(db, unit, d), uma, ["unposted_member"])[0] for d in days(1, 4, 7, 10)]
+     db.commit()
+-    assert check_month(db, MONTH)["ok"]  # the unposted exemption follows the record
++    # An old ledger record is not eligibility. Correcting a real posting is
++    # required before this historical assignment can enter a balance preview.
++    assert not check_month(db, MONTH)['ok']
++    db.add(PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 1), source='unit_board'))
++    db.commit()
++    assert check_month(db, MONTH)['ok']
+ 
+     preview = bd.preview(db, MONTH, user)
+     assert preview["summary"]["extra_moves"] == 2
+@@ -1224,51 +1230,28 @@ def _unposted_member(db, name, level="1ST_CALL"):
+     return person
+ 
+ 
+-def test_extra_duty_moves_to_unposted_member_with_ledger_code(db, user):
+-    edit_rules(db, relaxed)
+-    unit = make_unit(db, "UNIT_I")
+-    alpha = member(db, "Alpha", unit)
+-    uma = _unposted_member(db, "Uma")
+-    setup_month(db, [unit])
+-    alpha_rows = [_manual_extra(db, make_slot(db, unit, d), alpha, ["fallback_unit"], ed.MODE_STANDARD)[0]
+-                  for d in days(1, 4, 7, 10)]
+-    _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), uma, ["unposted_member"])
+-    db.commit()
+-    assert check_month(db, MONTH)["ok"]
+-
+-    preview = bd.preview(db, MONTH, user)
+-    (move,) = moves_to(preview, uma)
+-    assert move["extra_duty"] and move["ledger_to"] == "Uma" and move["cross_unit"] is False
+-    assert move["to_unit_id"] == str(unit.id)
+-    assert move["new_overridden_rules"] == ["unposted_member"]
+-    result = bd.apply(db, MONTH, preview["token"], preview["plan_hash"], user)
+-    db.expire_all()
+-    moved = db.get(DutyAssignment, UUID(move["assignment_id"]))
+-    assert moved.person_id == uma.id and moved.duty_slot.unit_id == unit.id
+-    assert moved.id in {r.id for r in alpha_rows}
+-    record = db.scalar(select(ExtraDutyRecord).where(ExtraDutyRecord.assignment_id == moved.id))
+-    assert record.person_id == uma.id and record.overridden_rules == ["unposted_member"]
+-    check = check_month(db, MONTH)
+-    assert check["ok"], check["violations"]
+-    assert check.get("unposted_exempt", 0) >= 2
+-    bd.undo(db, UUID(result["batch_id"]), user)
+-    db.expire_all()
+-    assert db.get(DutyAssignment, moved.id).person_id == alpha.id
+-
+-
+-def test_ordinary_row_never_moves_to_unposted_member(db):
++@pytest.mark.parametrize('extra', [False, True])
++def test_neither_ordinary_nor_extra_row_moves_to_unposted_holder(db, extra):
+     edit_rules(db, relaxed)
+-    unit = make_unit(db, "UNIT_I")
+-    alpha = member(db, "Alpha", unit)
+-    uma = _unposted_member(db, "Uma")
++    unit = make_unit(db, 'UNIT_I')
++    alpha = member(db, 'Alpha', unit)
++    uma = _unposted_member(db, 'Uma')
+     setup_month(db, [unit])
+     for d in days(1, 4, 7, 10):
+-        assign(db, make_slot(db, unit, d), alpha)
+-    _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), uma, ["unposted_member"])
++        slot = make_slot(db, unit, d)
++        if extra:
++            _manual_extra(db, slot, alpha, ['fallback_unit'])
++        else:
++            assign(db, slot, alpha)
++    _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), uma, ['unposted_member'])
+     db.commit()
++    assert not check_month(db, MONTH)['ok']
++    state = bd._load(db, MONTH)
++    assert uma.id not in state.level
+     plan = bd.plan_balance(db, MONTH)
+-    assert moves_to(plan, uma) == []
+-    assert "not posted" in level_row(plan)["reason_if_not"].lower()
++    assert plan['summary']['membership_repair'] == {'invalid_before': 1, 'repaired': 1, 'unresolved': 0}
++    assert all(m['to_person_id'] == str(alpha.id) for m in plan['moves'])
++    assert all(m['to_person_id'] != str(uma.id) for m in plan['moves'])
+ 
+ 
+ def test_extra_duty_not_moved_to_member_posted_elsewhere_that_day(db):
+@@ -1283,8 +1266,14 @@ def test_extra_duty_not_moved_to_member_posted_elsewhere_that_day(db):
+         _manual_extra(db, make_slot(db, unit, d), alpha, ["fallback_unit"], ed.MODE_STANDARD)
+     _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), away, ["outside_scope_unit"])
+     db.commit()
++    # Owner23Nov excludes outside-scope members from the ordinary fairness
++    # denominator, so the one in-scope member is already balanced.
++    state = bd._load(db, MONTH)
++    assert away.id not in state.level
+     plan = bd.plan_balance(db, MONTH)
+-    assert moves_to(plan, away) == []
++    assert plan['summary']['membership_repair']['repaired'] == 1
++    assert all(m['from_person_id'] == str(away.id) and m['to_person_id'] == str(alpha.id)
++               for m in plan['moves'])
+ 
+ 
+ def test_large_month_reaches_natural_stop_within_budget(db, user):
+@@ -1313,7 +1302,7 @@ def test_large_month_reaches_natural_stop_within_budget(db, user):
+             busy.add(day)
+             added += 1
+     for n in range(20):
+-        spare = _unposted_member(db, f"Spare {n:02d}", level="3RD_CALL")
++        spare = member(db, f'Spare {n:02d}', unit, level='3RD_CALL')
+         slot = make_slot(db, unit, date(2026, 5, 1 + n), level="3RD_CALL", duty_type=DUTY_OF["3RD_CALL"])
+         _manual_extra(db, slot, spare, ["unposted_member"])
+     db.commit()
+@@ -1329,7 +1318,7 @@ def test_large_month_reaches_natural_stop_within_budget(db, user):
+     assert summary["work"] < bd.MAX_WORK  # within even the minimum budget
+     assert elapsed < 10
+     assert summary["extra_moves"] > 0
+-    assert any(m["new_overridden_rules"] == ["unposted_member"] for m in preview["moves"])
++    assert all("unposted_member" not in m["new_overridden_rules"] for m in preview["moves"])
+     result = bd.apply(db, MONTH, preview["token"], preview["plan_hash"], user)
+     assert result["plan_hash"] == preview["plan_hash"]
+     check = check_month(db, MONTH)
+diff --git a/backend/tests/test_extra_duty.py b/backend/tests/test_extra_duty.py
+index 927423c..87ecf3e 100644
+--- a/backend/tests/test_extra_duty.py
++++ b/backend/tests/test_extra_duty.py
+@@ -883,46 +883,27 @@ def test_all_units_tier_same_campus_then_any_unit(db):
+     assert decision["overridden_rules"] == ["any_unit"] and decision["ledger"] is True
+ 
+ 
+-def test_all_units_tier_outside_scope(db, user):
++def test_all_units_rejects_outside_scope(db, user):
+     home, _same, _other, out, slot = tier_world(db)
+-    outsider = member(db, "Out Person", out)
++    member(db, 'Out Person', out)
+     db.commit()
+-    standard = decision_for(ed.plan_extra_duties(db, MONTH), slot)
+-    assert standard["action"] == "unfilled"
+-    plan = ed.preview(db, MONTH, user, mode=ALL)
+-    decision = decision_for(plan, slot)
+-    assert decision["tier"] == "outside_scope" and decision["person_id"] == str(outsider.id)
+-    assert decision["assigned_unit_id"] == str(out.id) and decision["overridden_rules"] == ["outside_scope_unit"]
+-    assert plan["summary"]["cross_unit"] == 1
+-    ed.apply(db, MONTH, plan["token"], plan["plan_hash"], user, mode=ALL)
++    for mode in (ed.MODE_STANDARD, ALL):
++        plan = ed.plan_extra_duties(db, MONTH, mode)
++        assert decision_for(plan, slot)['action'] == 'unfilled'
+     db.refresh(slot)
+-    assert slot.unit_id == out.id
+-    assert ed.verify_month(db, MONTH)["ok"] is True
++    assert slot.unit_id == home.id
++    assert extra_assignments(db) == []
+ 
+ 
+-def test_all_units_unposted_member_keeps_slot_unit(db, user):
++def test_all_units_rejects_unposted_member(db, user):
+     home, _same, _other, _out, slot = tier_world(db)
+-    free = unposted(db, "Free Unposted")
+-    unposted(db, "Retired Unposted", active=False)
+-    db.commit()
+-    plan = ed.preview(db, MONTH, user, mode=ALL)
+-    decision = decision_for(plan, slot)
+-    assert decision["tier"] == "unposted" and decision["person_id"] == str(free.id)
+-    assert decision["action"] == "assign" and decision["assigned_unit_id"] == str(home.id)
+-    assert decision["overridden_rules"][-1] == "unposted_member" and decision["ledger"] is True
+-    assert plan["summary"]["unposted_used"] == 1 and plan["summary"]["cross_unit"] == 0
+-    assert plan["diagnostics"]["unposted_by_level"] == {"1ST_CALL": 1}
+-    result = ed.apply(db, MONTH, plan["token"], plan["plan_hash"], user, mode=ALL)
+-    assert result["mode"] == ALL and result["summary"]["mode"] == ALL
+-    db.refresh(slot)
+-    assert slot.unit_id == home.id
+-    record = db.scalars(select(ExtraDutyRecord)).one()
+-    assert "unposted_member" in record.overridden_rules and record.fallback_used is False
+-    # The unposted assignment is exempt from the posted-to-unit check, nothing else.
+-    assert ed.verify_month(db, MONTH) == {"ok": True, "checked": 1, "violations": []}
+-    leave(db, free, date(2026, 5, 10), status="requested")
++    unposted(db, 'Free Unposted')
++    unposted(db, 'Retired Unposted', active=False)
+     db.commit()
+-    assert [v["code"] for v in ed.verify_month(db, MONTH)["violations"]] == ["leave"]
++    plan = ed.plan_extra_duties(db, MONTH, ALL)
++    assert decision_for(plan, slot)['action'] == 'unfilled'
++    assert plan['summary']['unposted_used'] == 0
++    assert extra_assignments(db) == []
+ 
+ 
+ def test_unposted_exemption_needs_the_ledger_record(db):
+@@ -932,7 +913,7 @@ def test_unposted_exemption_needs_the_ledger_record(db):
+     slot = make_slot(db, home, date(2026, 5, 10))
+     assign(db, slot, free)
+     db.commit()
+-    assert [v["code"] for v in ed.verify_month(db, MONTH)["violations"]] == ["not_in_unit"]
++    assert [v["code"] for v in ed.verify_month(db, MONTH)["violations"]] == ["scope_member_excluded"]
+ 
+ 
+ def test_within_limit_other_unit_beats_over_limit_home(db, user):
+@@ -1056,7 +1037,12 @@ def test_groups_never_crossed_allowed_and_excluded(db):
+ 
+     edit_rules(db, lambda rules: setattr(rules.duty_rules_by_key["RC_3RD_CALL_A"], "excluded_cluster_keys", []))
+     decision = decision_for(ed.plan_extra_duties(db, MONTH, ALL), slot)
+-    assert decision["person_id"] == str(loose.id) and decision["tier"] == "unposted"
++    assert decision['action'] == 'unfilled'
++    db.add(PersonPosting(person=loose, unit=home, posting_type='3RD_CALL',
++                         starts_on=date(2026, 5, 1), source='unit_board'))
++    db.commit()
++    decision = decision_for(ed.plan_extra_duties(db, MONTH, ALL), slot)
++    assert decision['person_id'] == str(loose.id) and decision['tier'] == 'home'
+ 
+ 
+ def test_unit_rule_is_strict(db):
+@@ -1136,7 +1122,15 @@ def test_undo_all_units_batch_restores_exactly(db, user):
+     leave(db, free, date(2026, 5, 10))
+     db.commit()
+     plan = ed.preview(db, MONTH, user, mode=ALL)
+-    assert {decision_for(plan, s)["tier"] for s in (slot, second)} == {"outside_scope", "unposted"}
++    assert all(decision_for(plan, s)['action'] == 'unfilled' for s in (slot, second))
++    # Actual dated included-unit postings permit allocation and exact undo.
++    db.add(PersonPosting(person=out_person, unit=home, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 10), ends_on=date(2026, 5, 10), source='unit_board'))
++    db.add(PersonPosting(person=free, unit=home, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 12), ends_on=date(2026, 5, 12), source='unit_board'))
++    db.commit()
++    plan = ed.preview(db, MONTH, user, mode=ALL)
++    assert all(decision_for(plan, s)['tier'] == 'home' for s in (slot, second))
+     result = ed.apply(db, MONTH, plan["token"], plan["plan_hash"], user, mode=ALL)
+     batch_id = __import__("uuid").UUID(result["batch_id"])
+     assert db.get(ExtraDutyBatch, batch_id).summary["mode"] == ALL
+@@ -1289,7 +1283,7 @@ def test_verify_month_exempts_superadmin_allocations_from_rules_not_leave(db):
+     home = make_unit(db, "HOME", "Home Unit")
+     setup_month(db, [home])
+     slot = make_slot(db, home, date(2026, 5, 10))
+-    outsider = unposted(db, "Third Call Outsider", level="3RD_CALL")
++    outsider = member(db, "Third Call Outsider", home, level="3RD_CALL")
+     row = DutyAssignment(duty_slot=slot, person=outsider, status="assigned", source="superadmin_allocation",
+                          override_reason="Superadmin allocation: cover")
+     db.add(row)
+@@ -1299,7 +1293,7 @@ def test_verify_month_exempts_superadmin_allocations_from_rules_not_leave(db):
+     # The same assignment from any other source is a violation.
+     row.source = "manual_rota_board"
+     db.commit()
+-    assert {v["code"] for v in ed.verify_month(db, MONTH)["violations"]} >= {"not_in_unit"}
++    assert {v["code"] for v in ed.verify_month(db, MONTH)["violations"]} >= {"call_level_mismatch"}
+     row.source = "superadmin_allocation"
+     db.commit()
+     leave(db, outsider, date(2026, 5, 10))
+diff --git a/backend/tests/test_extra_duty_verify.py b/backend/tests/test_extra_duty_verify.py
+index 19234c4..c0409eb 100644
+--- a/backend/tests/test_extra_duty_verify.py
++++ b/backend/tests/test_extra_duty_verify.py
+@@ -382,19 +382,20 @@ def test_unposted_ledger_exempts_only_the_posting_check(world):
+     db.commit()
+ 
+     result = check_month(db, MONTH)
+-    assert codes_for(result, slots["free"]) == set()
+-    assert codes_for(result, slots["leave"]) == {"leave"}
+-    assert codes_for(result, slots["level"]) == {"call_level_mismatch"}
+-    assert codes_for(result, slots["elsewhere"]) == {"not_in_unit"}  # the ledger claim is false
+-    assert codes_for(result, slots["plain"]) == {"not_in_unit"}
+-    assert codes_for(result, slots["voided"]) == {"not_in_unit"}
+-    assert result["unposted_exempt"] == 4
+-
+-    # Unit rules still apply to an exempt assignment.
++    missing = {'not_in_unit', 'scope_member_excluded'}
++    assert codes_for(result, slots['free']) == missing
++    assert codes_for(result, slots['leave']) == missing | {'leave'}
++    assert codes_for(result, slots['level']) == missing | {'call_level_mismatch'}
++    assert codes_for(result, slots['elsewhere']) == {'not_in_unit'}
++    assert codes_for(result, slots['plain']) == missing
++    assert codes_for(result, slots['voided']) == missing
++    assert result['ordinary_roster_fallback'] == 0
++    assert result['unposted_exempt'] == 0
++    assert result['legacy_unposted_records'] == 4
+     _v, rules = get_phase_one_rules(db)
+-    rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u1.id)]
++    rules.duty_rules_by_key['MAIN_1ST_24HR'].excluded_units = [str(u1.id)]
+     strict = check_month(db, MONTH, rules=rules)
+-    assert codes_for(strict, slots["free"]) == {"unit_rule"}
++    assert codes_for(strict, slots['free']) == missing | {'unit_rule'}
+ 
+ 
+ def test_superadmin_allocation_exempts_only_the_allowed_checks(world):
+@@ -432,7 +433,7 @@ def test_superadmin_allocation_exempts_only_the_allowed_checks(world):
+     rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u2.id)]  # u1 allowed; harmless
+     result = check_month(db, MONTH)
+     assert codes_for(result, slots["second"]) == set()
+-    assert codes_for(result, slots["unposted"]) == set()
++    assert codes_for(result, slots["unposted"]) == {"scope_member_excluded"}
+     assert codes_for(result, slots["inactive"]) == set()
+     assert codes_for(result, slots["leave"]) == {"leave"}
+     assert "post_24hr_rest" in codes_for(result, slots["rest"])
+diff --git a/backend/tests/test_locked_scope_boundaries.py b/backend/tests/test_locked_scope_boundaries.py
+index 85f2e9b..9ea4774 100644
+--- a/backend/tests/test_locked_scope_boundaries.py
++++ b/backend/tests/test_locked_scope_boundaries.py
+@@ -27,6 +27,7 @@ def test_manual_override_cannot_import_member_outside_dated_locked_scope(db, mem
+     target = member(db, "Adversarial recipient", outside if member_kind == "outside" else unit, **kwargs)
+     if member_kind == "unposted":
+         db.query(PersonPosting).filter_by(person_id=target.id).delete()
++        member(db, 'In-scope staff', unit)  # retain unit staffing; do not waive its guard
+     slot = make_slot(db, unit, date(2026, 5, 15))
+     db.commit()
+     check = validate_assignment(db, slot=slot, person=target, replace_existing=False)
+diff --git a/backend/tests/test_superadmin_allocation.py b/backend/tests/test_superadmin_allocation.py
+index 805f076..d0a78ae 100644
+--- a/backend/tests/test_superadmin_allocation.py
++++ b/backend/tests/test_superadmin_allocation.py
+@@ -202,7 +202,8 @@ def test_options_list_statuses_and_reasons(api):
+     codes = {o["code"] for o in sam["overrides"]}
+     assert {"call_level_mismatch", "not_posted"} <= codes
+     uma = people["Uma Unposted"]
+-    assert uma["unit_id"] is None and "not_posted" in {o["code"] for o in uma["overrides"]}
++    assert uma["unit_id"] is None and uma["status"] == "blocked"
++    assert 'scope_member_excluded' in {b['code'] for b in uma['blocked']}
+     assert all(set(p) >= {"person_id", "person_name", "call_level", "unit_id", "unit_name", "status", "blocked",
+                           "overrides", "month_duties"} for p in body["people"])
+ 
+@@ -282,8 +283,11 @@ def test_allocate_unposted_member(api):
+     client, sessions, _state = api
+     ids = seed(sessions)
+     response = allocate(client, ids, "unposted")
+-    assert response.status_code == 200, response.text
+-    assert "not_posted" in {o["code"] for o in response.json()["overrides"]}
++    assert response.status_code == 409, response.text
++    assert response.json()['detail']['code'] == 'strict_blocked'
++    assert 'scope_member_excluded' in {b['code'] for b in response.json()['detail']['blocked']}
++    with sessions() as db:
++        assert db.get(DutyAssignment, ids['held']).person_id == ids['holder']
+ 
+ 
+ @pytest.mark.parametrize("person_key,code,text", [
+diff --git a/docs/call_level_pool_and_balance_contract.md b/docs/call_level_pool_and_balance_contract.md
+index 29cec2b..ae62e5e 100644
+--- a/docs/call_level_pool_and_balance_contract.md
++++ b/docs/call_level_pool_and_balance_contract.md
+@@ -143,3 +143,13 @@ Same as before:
+ - codex-sol may edit concurrently: run `git diff` and re-read before each edit, make small edits, never revert
+   others' lines, and stop and report on conflicts.
+ - No commits. Don't touch the `duty_rota` or `duty_rota_test` databases. No alembic.
++
++
++### Owner amendment - 23 November 2026
++
++Active members with no unit posting in the target month are eligible for ordinary duties, including from zero duties. There is no extra-duty-only person category and no extra-duty seed/ledger requirement for ordinary eligibility. Dated partial postings retain their boundaries; people posted only to units outside the monthly scope must not enter ordinary allocation or its fairness denominator. Duty units remain within scope and permitted by duty rules. Call levels/pools/groups, active status, leave, rest, quotas, protected assignments, unit staffing and OT guards remain enforced. No fictitious posting is created. Existing exceptional extra-duty ledger behavior is separate. Authority: owner clarification in this thread, recorded in Plan/05_confirmed_decisions.md.
++
++
++## Owner clarification 2026-11-23T13:16:06.655319+00:00
++
++Owner binding clarification: only people with a dated unit posting into the month's included scope may receive ordinary OR extra duties. Missing monthly postings and excluded-only postings grant neither. This supersedes the earlier revision5/6 unposted fallback interpretation and invalidates its 151-person/57-transfer proposal as a release candidate. No fictitious postings, category of extra-only people or automatic excluded/unposted tiers. Dated posting windows, call eligibility, leave and rest remain mandatory. Revision7 implementation and disposable regression are in progress; not yet verified or deployed. Production roster135confirmed,16missing,4outside-only; live assignments untouched.
+diff --git a/frontend/src/balance-duties.ts b/frontend/src/balance-duties.ts
+index 5329cda..f638073 100644
+--- a/frontend/src/balance-duties.ts
++++ b/frontend/src/balance-duties.ts
+@@ -201,12 +201,23 @@ function levelCard(level: BalanceLevel, done: boolean): string {
+       <span class="balance-bar__track" aria-hidden="true">${band}<span class="balance-bar__range is-${tone}" style="left:${pos(r.min)};width:${width(r.min, r.max)}"></span></span>
+       <span class="balance-bar__value"><strong>${esc(r.min === r.max ? String(r.min) : `${r.min}–${r.max}`)}</strong> <span>gap ${esc(r.gap)}</span></span></div>`;
+   const ok = level.ok_after;
++  const availability = level.availability_breakdown;
++  const comparable = availability?.fully_available_posted;
++  const ordinary = availability?.fully_available_ordinary;
++  const unposted = availability?.unposted_holders.members ?? 0;
++  const outside = availability?.outside_scope_holders ?? 0;
++  const availabilityNote = availability ? `<p class="balance-level__goal">${comparable?.members
++    ? `Fully available with a posting: <strong>${esc(comparable.min)}–${esc(comparable.max)}</strong> duties (${esc(comparable.members)} people). ` : ""}${unposted
++    ? `${esc(unposted)} duty holder(s) lack a unit posting and are ineligible for ordinary and extra allocation. ` : ""}${ordinary?.members
++    ? `All fully available ordinary members: ${esc(ordinary.min)}–${esc(ordinary.max)} duties (gap ${esc(ordinary.gap)}). ` : ""}${outside
++    ? `${esc(outside)} duty holder(s) posted only outside this month’s scope are excluded from fairness and from ordinary and extra allocation.` : ""}</p>` : "";
+   return `<li class="balance-level${ok ? " is-ok" : " is-uneven"}" data-balance-level="${esc(level.call_level)}">
+     <div class="balance-level__head"><h4>${esc(levelName(level))}</h4>
+       <span class="balance-badge balance-badge--${ok ? "ok" : "warn"}">${ok ? (done ? "Balanced" : "Balanced after") : "Still uneven"}</span></div>
+     <p class="balance-level__goal">Fair share <strong>${esc(goalText(level.goal_range) || "—")}</strong> duties each${level.allowed_gap !== undefined ? ` · allowed gap ${esc(level.allowed_gap)}` : ""}</p>
+     ${row("Before", level.before, beforeOk === false ? "warn" : "muted")}
+     ${row(done ? "Now" : "After", level.after, ok ? "ok" : "warn")}
++    ${availabilityNote}
+     <p class="visually-hidden">${esc(`${levelName(level)}: before ${rangeText(level.before)}, gap ${level.before.gap}; ${done ? "now" : "after"} ${rangeText(level.after)}, gap ${level.after.gap}. Fair share ${goalText(level.goal_range) || "not given"}.`)}</p>
+     ${!ok && level.reason_if_not ? `<p class="balance-level__reason"><span>Why:</span> ${esc(level.reason_if_not)}</p>` : ""}</li>`;
+ }
+@@ -311,6 +322,7 @@ function chipsHtml(preview: BalancePreview, done: boolean): string {
+ function reportHtml(source: BalancePreview, month: string, done: boolean): string {
+   const levels = [...source.levels].sort((a, b) => levelRank(a.call_level) - levelRank(b.call_level));
+   return `${chipsHtml(source, done)}
++    ${source.summary.membership_repair?.repaired ? `<p class="extra-duty-notice" data-membership-repair><strong>${esc(source.summary.membership_repair.repaired)} ineligible assignment(s) ${done ? "reassigned" : "will be reassigned"}.</strong> Recipients require dated postings to included units. Undo cannot restore an ineligible holder; correct the underlying posting only if it is factually valid.</p>` : ""}
+     <section class="balance-levels-section" aria-labelledby="balance-levels-title">
+       <h3 id="balance-levels-title">${done ? "Before and now" : "Before and after"}, per call level</h3>
+       <ul class="balance-levels">${levels.map(l => levelCard(l, done)).join("")}</ul>
+diff --git a/frontend/src/extra-duty.ts b/frontend/src/extra-duty.ts
+index 8ff848b..92512e0 100644
+--- a/frontend/src/extra-duty.ts
++++ b/frontend/src/extra-duty.ts
+@@ -279,7 +279,7 @@ function diagnosticsCallout(diagnostics: Diagnostics | null | undefined, month:
+     <p><strong>Postings check for ${esc(monthName)}</strong></p>
+     <ul>${levels.map(([level, n]) => `<li data-diagnostic="${esc(level)}">${esc(`${n} ${callLevelText(level).replace(/ call$/, "-call")} ${Number(n) === 1 ? "member has" : "members have"} no posting this month`)}</li>`).join("")}</ul>
+     ${groups.length ? `<p class="fill-all-diagnostics__groups">By group: ${esc(groups.map(([g, n]) => `${codeLabel(g.toUpperCase())} ${n}`).join(" · "))}</p>` : ""}
+-    <p>Fill-all can use them, but each one is flagged and ledgered. To fix this at the source, enter their ${esc(monthName)} postings in Unit Management.</p></div>`;
++    <p>They cannot receive ordinary or extra duties until a dated posting to an included unit is recorded for ${esc(monthName)} in Unit Management.</p></div>`;
+ }
+ 
+ /* ----------------------------------------------------------------------------------------- */
+@@ -288,7 +288,7 @@ function diagnosticsCallout(diagnostics: Diagnostics | null | undefined, month:
+ 
+ type Notice = { tone: "error" | "success" | "info"; text: string; next?: "preview" | "retry" | ""; list?: string[] };
+ 
+-/** Fill remaining duties from every unit and from members without a posting (mode "all_units"). */
++/** Fill remaining duties using dated members of this month's included units. */
+ export function openFillAll(month: string, onApplied: () => void): Promise<void> {
+   return openExtraDuty(month, onApplied, "all_units");
+ }
+@@ -411,7 +411,7 @@ export async function openExtraDuty(month: string, onApplied: () => void, mode:
+     if (all || busy) return "";
+     return `<section class="fill-all-cta" aria-labelledby="fill-all-cta-title"><div>
+       <h3 id="fill-all-cta-title">Duties still open?</h3>
+-      <p>Fill remaining duties from every unit and from members without a posting. Leave, rest, call level, groups and unit rules are still never broken; you see the full report before anything is saved.</p></div>
++      <p>Fill remaining duties using members with dated postings to this month?s included units only. Leave, rest, call level, groups and unit rules are still never broken; you see the full report before anything is saved.</p></div>
+       <button type="button" class="fill-all-button" data-open-fill-all>Fill remaining duties (all units)</button></section>`;
+   }
+ 
+diff --git a/frontend/src/objective-basis.ts b/frontend/src/objective-basis.ts
+index 9486156..b6a556b 100644
+--- a/frontend/src/objective-basis.ts
++++ b/frontend/src/objective-basis.ts
+@@ -7,6 +7,8 @@ export function objectiveBasisText(value:unknown):string {
+   return 'This proposal uses a shared target within each call level, with fixed duties included. '
+     +'Dated eligibility limits assignments, but this objective does not minimize personal pro-rata deviation. '
+     +'Safety and required coverage remain higher priorities.'
++    +(row.worst_gap_optimized===true?' Worst call-level gap precedes squared count deviation; fairness precedes repair change count.':'')
++    +(row.hours_and_extra_optimized===true?' Hours and extra-duty burden are included.':'')
+     +(row.preferences_before_equality?' Explicit preferences precede equality in this proposal.':'');
+ }
+ function missing(){return 'The fairness objective basis was not recorded in this saved proposal. Review its original evidence before comparing targets.';}
+diff --git a/frontend/src/rota-intelligence.ts b/frontend/src/rota-intelligence.ts
+index a042fbb..a34b4c5 100644
+--- a/frontend/src/rota-intelligence.ts
++++ b/frontend/src/rota-intelligence.ts
+@@ -19,7 +19,7 @@ type Decision = {slot_id:string; date:string; duty:string; action:string; person
+ type Job = {id:string;revision:number;status:string;decisions:Decision[];proposed:number;unresolved:number;
+   engine:'server'|'local_gpu';context_hash:string;benchmark_context_hash?:string;fallback_reason?:string;frame?:{rows:number[][];ties:number[];token:string;batches?:{rows:number[][];ties:number[]}[]};
+   burden:{members:number;before:Record<string,{min:number;max:number;mean:number}>;after:Record<string,{min:number;max:number;mean:number}>};
+-  intelligence?:{selected:number;alternatives:{status:string;uncovered:number;changed:number;elapsed_ms:number;warnings:string[];objective_basis?:unknown;objectives:{name:string;value:number;proven:boolean}[];history_window:{start:string;end:string;observed_months:string[]}}[]};result?:{assigned:number;replaced:number}};
++  intelligence?:{selected:number;alternatives:{status:string;uncovered:number;changed:number;elapsed_ms:number;warnings:string[];objective_basis?:unknown;gap_feasibility?:{limit:number;status:string}[];fairness?:{call_level:string;members:number;minimum:number;maximum:number;gap:number}[];fairness_exceptions?:{call_level:string;gap:number;outliers:{person_name:string;duties:number;fixed_duties:number;clear_candidate_duties:number;initial_candidate_restrictions:Record<string,number>}[]}[];objectives:{name:string;value:number;proven:boolean}[];history_window:{start:string;end:string;observed_months:string[]}}[]};result?:{assigned:number;replaced:number}};
+ type Setup = {slots:{id:string;date:string;label:string;assigned:{id:string;name:string}[]}[];people:{id:string;name:string}[];history_lookback:number;history_months:string[];rules:any;holiday_dates:string[]};
+ 
+ export async function openIntelligentRota(month:string, admin:boolean, onApplied:()=>void, fallbackFocus?:()=>HTMLElement|null, resumeJobId?:string) {
+@@ -119,7 +119,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
+       <nav class="intelligence-tabs" aria-label="Generator sections">${['plan','review','teaching','assistant',...(admin?['learning']:[])].map(t=>`<button data-tab="${t}" aria-pressed="${tab===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</nav>
+       <div class="mw-content"><p role="status" aria-live="polite">${esc(notice)}</p>
+       ${tab==='plan'?`<p>Plan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.</p>
+-        <label>Planning priority<select data-mode ${busy?'disabled':''}><option value="balanced" ${mode==='balanced'?'selected':''}>Balanced</option><option value="repair" ${mode==='repair'?'selected':''}>Fewest changes / repair</option><option value="preferences" ${mode==='preferences'?'selected':''}>Preferences first, after safe coverage</option></select></label>
++        <label>Planning priority<select data-mode ${busy?'disabled':''}><option value="balanced" ${mode==='balanced'?'selected':''}>Balanced</option><option value="repair" ${mode==='repair'?'selected':''}>Fair repair of selected duties</option><option value="preferences" ${mode==='preferences'?'selected':''}>Preferences within fair allocation</option></select></label>
+         <label>Search budget<select data-seconds ${busy?'disabled':''}>${[30,60,120].map(s=>`<option value="${s}" ${seconds===s?'selected':''}>${s} seconds</option>`).join('')}</select></label>
+         <p>Historical policy: ${setup.history_lookback} months. Observed months: ${esc(setup.history_months.join(', ') || 'none; unknown history receives no zero-workload credit')}.</p>
+         <p>Holiday calendar: ${setup.holiday_dates.length ? `${setup.holiday_dates.length} dates configured` : 'not configured; holiday balancing will be reported as unevaluated'}.</p>
+@@ -135,6 +135,8 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
+       ${tab==='review'?`${!job?'<p>Generate a draft first.</p>':`<p>${job.proposed} proposed · ${job.unresolved} uncovered. ${report?`${esc(report.status)} · ${(report.elapsed_ms/1000).toFixed(2)} seconds · ${report.changed} existing assignments changed`:''}</p>
+         ${report?.warnings?.map(w=>`<p>${esc(w)}</p>`).join('') || ''}
+         ${report?`<section data-objective-basis><h3>Fairness objective</h3><p>${esc(objectiveBasisText(report.objective_basis))}</p></section>`:''}
++        ${report?.gap_feasibility?.length?`<section data-gap-evidence><h3>Can everyone be within one or two duties?</h3><p>Checked at the achieved coverage with the current units, eligible candidates and protected duties. Other unit layouts may differ.</p><ul>${report.gap_feasibility.map(g=>`<li>Gap at most ${esc(g.limit)}: <strong>${g.status==='feasible'?'Feasible':g.status==='infeasible_in_candidate_model'?'Impossible in this candidate model':'Not proven within the search time'}</strong></li>`).join('')}</ul></section>`:''}
++        ${report?.fairness_exceptions?.length?`<details data-fairness-exceptions><summary>Why are some duty counts still uneven?</summary><p>These are actual fixed duties and initial candidate restrictions. They do not prove that a larger gap is unavoidable.</p>${report.fairness_exceptions.map(g=>`<h4>${esc(g.call_level.replaceAll('_',' '))}: gap ${esc(g.gap)}</h4><ul>${g.outliers.map(p=>`<li><strong>${esc(p.person_name)}</strong>: ${esc(p.duties)} duties, including ${esc(p.fixed_duties)} fixed; ${esc(p.clear_candidate_duties)} clear candidate duties. ${Object.entries(p.initial_candidate_restrictions).map(([code,n])=>`${esc(code.replaceAll('_',' '))}: ${esc(n)}`).join('; ')}</li>`).join('')}</ul>`).join('')}</details>`:''}
+         ${job.burden?workloadComparison('Monthly workload comparison',job.burden,workloadOpen):''}
+         ${job.status==='completed'?'<button data-review-excel>Download formatted Excel preview</button><p>The workbook contains this selected proposal and fixed duties. It is a draft for review before final approval.</p>':job.status==='applied'?'<button data-review-excel>Download formatted Excel for review</button><p>Download the current saved rota for review before final approval.</p>':''}
+         ${report?`<label>Alternative<select data-alternative>${job.intelligence!.alternatives.map((a,i)=>`<option value="${i}" ${job!.intelligence!.selected===i?'selected':''}>${i+1}: ${a.uncovered} uncovered, ${a.changed} changes, ${esc(a.status)}</option>`).join('')}</select></label>
+diff --git a/frontend/src/services/api.ts b/frontend/src/services/api.ts
+index 9ccb99c..e343ee6 100644
+--- a/frontend/src/services/api.ts
++++ b/frontend/src/services/api.ts
+@@ -2844,6 +2844,13 @@ export interface BalanceLevel {
+   ok_after: boolean;
+   reason_if_not?: string | null;
+   allowed_gap?: number;
++  availability_breakdown?: {
++    posted: BalanceRange & { members: number };
++    fully_available_posted: { members: number; min: number | null; max: number | null; gap: number | null };
++    fully_available_ordinary?: { members: number; min: number | null; max: number | null; gap: number | null };
++    unposted_holders: { members: number; min: number | null; max: number | null; gap: number | null };
++    outside_scope_holders?: number;
++  };
+ }
+ export interface BalanceMove {
+   kind: "move" | "swap";
+@@ -2880,7 +2887,7 @@ export interface BalanceMember {
+   extra_before?: number;
+   extra_after?: number;
+ }
+-export interface BalanceSummary { moves: number; swaps: number; cross_unit: number; levels_balanced_before: number; levels_balanced_after: number; extra_moves?: number }
++export interface BalanceSummary { moves: number; swaps: number; cross_unit: number; levels_balanced_before: number; levels_balanced_after: number; extra_moves?: number; membership_repair?: {invalid_before:number;repaired:number;unresolved:number} }
+ export interface BalancePreview {
+   month: string;
+   plan_hash: string;
+diff --git a/frontend/tests/balance.browser.mjs b/frontend/tests/balance.browser.mjs
+index 4713623..3f912fa 100644
+--- a/frontend/tests/balance.browser.mjs
++++ b/frontend/tests/balance.browser.mjs
+@@ -49,11 +49,12 @@ const moves = [
+ ];
+ const levels = [
+   { call_level: "3RD_CALL", goal_range: [5, 6], before: { min: 3, max: 8, gap: 5 }, after: { min: 5, max: 6, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1 },
+-  { call_level: "1ST_CALL", goal_range: [6, 7], before: { min: 5, max: 9, gap: 4 }, after: { min: 6, max: 7, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1 },
++  { call_level: "1ST_CALL", goal_range: [6, 7], before: { min: 5, max: 9, gap: 4 }, after: { min: 6, max: 7, gap: 1 }, ok_after: true, reason_if_not: null, allowed_gap: 1,
++    availability_breakdown: { posted: { members: 5, min: 6, max: 7, gap: 1 }, fully_available_posted: { members: 4, min: 6, max: 7, gap: 1 }, unposted_holders: { members: 1, min: 7, max: 7, gap: 0 } } },
+   { call_level: "4TH_CALL", goal_range: [4, 4], before: { min: 2, max: 6, gap: 4 }, after: { min: 3, max: 5, gap: 2 }, ok_after: false, allowed_gap: 1,
+     reason_if_not: "Dr Ira is on leave for 12 days and Dr Jay already has the maximum 24-hour duties; no other move keeps leave, rest and limits." },
+ ];
+-const summary = { moves: 11, swaps: 1, cross_unit: 3, levels_balanced_before: 0, levels_balanced_after: 2 };
++const summary = { moves: 11, swaps: 1, cross_unit: 3, levels_balanced_before: 0, levels_balanced_after: 2, membership_repair: {invalid_before:2,repaired:2,unresolved:0} };
+ const previewBody = () => ({ month: MONTH, plan_hash: "plan-bal", context_hash: "ctx-bal", token: "tok-bal", summary, levels, moves, members });
+ const unevenStatus = () => ({ month: MONTH, enabled: true, balanced: false, batches: [], levels: [
+   { call_level: "1ST_CALL", min: 5, max: 9, gap: 4, allowed_gap: 1, ok: false, goal_range: [6, 7] },
+@@ -159,6 +160,8 @@ await dialog.getByRole("heading", { name: "Balance duties", level: 2 }).waitFor(
+ await dialog.locator("[data-balance-move]").first().waitFor();
+ eq(state.previewBodies, [{ month: MONTH }], "preview posts the month");
+ const about = await dialog.locator(".balance-about").innerText();
++ok(/2 ineligible assignment\(s\).*will be reassigned/s.test(await dialog.locator('[data-membership-repair]').innerText()), "membership repairs are disclosed before apply");
++ok(/Undo cannot restore an ineligible holder/.test(await dialog.locator('[data-membership-repair]').innerText()), "unsafe undo limitation is disclosed before review");
+ ok(/What this does/.test(about) && /same call level/.test(about), "what-this-does note");
+ for (const rule of ["Leave", "Rest", "Call level", "Groups", "Unit rules", "Limits"]) ok(about.includes(rule), `never broken: ${rule}`);
+ ok(/smaller share/.test(about) && /part of the month/.test(about), "pro-rata share explained");
+@@ -166,6 +169,8 @@ const chips = (await dialog.locator(".extra-duty-chip").allInnerTexts()).map(c =
+ eq(chips, ["11 duties move", "1 swap", "3 change unit", "0 → 2 of 3 levels balanced"], "summary chips");
+ eq(await dialog.locator(".balance-levels-section [data-balance-level]").evaluateAll(es => es.map(e => e.dataset.balanceLevel)), ["1ST_CALL", "3RD_CALL", "4TH_CALL"], "levels in call order");
+ const first = await dialog.locator('.balance-levels-section [data-balance-level="1ST_CALL"]').innerText();
++ok(first.includes("Fully available with a posting:") && first.includes("6–7") && first.includes("(4 people)"), "posted availability cohort is explicit");
++ok(first.includes("1 duty holder(s) lack a unit posting") && first.includes("ineligible for ordinary and extra allocation"), "dated posting prerequisite is explained");
+ ok(/1st call/.test(first) && /Balanced after/.test(first) && /Fair share\s*6–7\s*duties each/.test(first) && /allowed gap 1/.test(first), "level head, badge and goal");
+ ok(/Before\s*5–9\s*gap 4/i.test(first) && /After\s*6–7\s*gap 1/i.test(first), `before → after with gaps: ${first}`);
+ const fourth = await dialog.locator('.balance-levels-section [data-balance-level="4TH_CALL"]').innerText();
+diff --git a/frontend/tests/extra-duty.browser.mjs b/frontend/tests/extra-duty.browser.mjs
+index bc3cc9d..bac53a1 100644
+--- a/frontend/tests/extra-duty.browser.mjs
++++ b/frontend/tests/extra-duty.browser.mjs
+@@ -133,6 +133,7 @@ await dialog.getByRole("heading", { name: "Extra-duty layer" }).waitFor();
+ await dialog.locator("[data-decision]").first().waitFor();
+ const text = await dialog.innerText();
+ ok(text.includes("Leave and rest after 24-hour duties are never broken. Unit staffing limits and equal-duty fairness may be exceeded; every such duty is recorded in the ledger, and whoever did one goes down the list next time."), "strict-rules explanation");
++ok(text.includes("dated postings") && text.includes("included units only"), "ordinary and extra duty scope prerequisite is explained");
+ const chips = await dialog.locator(".extra-duty-chip").allInnerTexts();
+ eq(chips.map(c => c.replace(/\s+/g, " ").trim()), ["3 to fill", "1 with a fallback unit", "2 ledger records", "1 cannot be filled"], "summary chips");
+ eq(await dialog.locator("[data-decision]").count(), 3, "three filled rows");
+@@ -307,7 +308,9 @@ await ledger.getByText("No extra duties recorded for this person.").waitFor();
+ await page.evaluate(async () => { const host = document.querySelector("#slot"); await (await import("/src/extra-duty.ts")).renderMemberExtraDuties(host, "p3"); });
+ await ledger.locator('[data-ledger-row="t3"]').waitFor();
+ eq(await ledger.locator('[data-ledger-row="t1"] [data-ledger-transfer]').allInnerTexts(), ["Passed on from Dr Asha by Balance duties on 22 Oct"], "transfer note uses the backend text");
+-eq((await ledger.locator('[data-ledger-row="t2"] [data-ledger-transfer]').allInnerTexts()).map(t => t.trim()), ["Passed on from Dr Bina by Balance duties on 22 Oct 2026"], "transfer note from a transfer object");
++const transferNotes = (await ledger.locator('[data-ledger-row="t2"] [data-ledger-transfer]').allInnerTexts()).map(t => t.trim());
++eq(transferNotes.length, 1, "one transfer note from the transfer object");
++ok(/^Passed on from Dr Bina by Balance duties on 22 Oct 2026, 15:30:00 GMT\+05:30 \(Asia\/(Calcutta|Kolkata)\)$/.test(transferNotes[0]), "transfer note retains the date, time and local timezone");
+ eq(await ledger.locator('[data-ledger-row="t3"] [data-ledger-transfer]').count(), 0, "no note without a transfer");
+ ok(/Rules overridden: Extra duty passed on by Balance duties/.test(await ledger.locator('[data-ledger-row="t1"]').innerText()), "rebalanced code in plain words");
+ for (const scheme of ["light", "dark"]) { await page.emulateMedia({ colorScheme: scheme }); await axe("#slot"); }
+diff --git a/frontend/tests/objective-basis.test.mjs b/frontend/tests/objective-basis.test.mjs
+index beff19b..72645d1 100644
+--- a/frontend/tests/objective-basis.test.mjs
++++ b/frontend/tests/objective-basis.test.mjs
+@@ -14,3 +14,8 @@ test('legacy, unsupported or contradictory evidence remains unrecorded',()=>{
+  for(const value of [undefined,null,{},[],{...basis(),version:2},{...basis(),personal_prorata_optimized:true},{...basis(),fixed_duties:'excluded'},'<script>'])assert.match(objectiveBasisText(value),/not recorded/);
+  assert.doesNotMatch(objectiveBasisText({...basis(),basis:'<script>invented policy</script>'}),/<script>|invented/);
+ });
++test('current fairness receipts describe worst gaps and burden without rewriting historical evidence',()=>{
++ const current=objectiveBasisText({...basis(),worst_gap_optimized:true,hours_and_extra_optimized:true});
++ assert.match(current,/Worst call-level gap/);assert.match(current,/Hours and extra-duty burden/);
++ assert.doesNotMatch(objectiveBasisText(basis()),/Worst call-level gap|Hours and extra-duty burden/);
++});
+diff --git a/backend/app/services/allocation_equality.py b/backend/app/services/allocation_equality.py
+new file mode 100644
+--- /dev/null
++++ b/backend/app/services/allocation_equality.py
+@@ -0,0 +1,157 @@
++"""Exact worst-gap and time-burden terms over the canonical monthly roster.
++
++Members with no candidates still count. Fixed duties count, and no eligibility or
++safety constraint is relaxed here. Model terms and incumbent scores use integers.
++"""
++from collections import Counter, defaultdict
++from uuid import UUID
++from time import perf_counter
++
++from ortools.sat.python import cp_model
++
++
++def duration_minutes(slot):
++    return max(0, round((slot.ends_at - slot.starts_at).total_seconds() / 60))
++
++
++def equality_terms(model, variables, slots, context):
++    members = {str(p): level for p, level in (context.fairness_member_levels or {}).items()}
++    rows = defaultdict(list)
++    for (sid, person), value in variables.items():
++        rows[person].append((sid, value))
++    baselines = {p: context.assignments_by_person.get(UUID(p), []) for p in members}
++    groups = defaultdict(list)
++    counts = {}
++    hours_costs, extra_costs = [], []
++    extra_slots = getattr(context, 'optimizer_extra_slots', set())
++    for p, level in members.items():
++        fixed = baselines[p]
++        count = model.new_int_var(len(fixed), len(fixed)+len(rows[p]), f'month_count:{p}')
++        model.add(count == len(fixed)+sum(v for _, v in rows[p]))
++        counts[p] = count
++        groups[level].append(count)
++        for name, measure, costs in [
++            ('minutes', duration_minutes, hours_costs),
++            ('extra', lambda s: int(str(s.id) in extra_slots), extra_costs),
++        ]:
++            base = (sum(a.source == 'extra_duty_layer' for a in fixed) if name == 'extra'
++                    else sum(measure(a.duty_slot) for a in fixed))
++            increments = [(measure(slots[s]), v) for s, v in rows[p]]
++            upper = base+sum(n for n, _ in increments)
++            total = model.new_int_var(base, upper, f'{name}:{p}')
++            square = model.new_int_var(base*base, upper*upper, f'{name}_square:{p}')
++            model.add(total == base+sum(n*v for n, v in increments))
++            model.add_multiplication_equality(square, [total, total])
++            costs.append(square-base*base)
++    gaps = []
++    for level, values in groups.items():
++        upper = sum(len(baselines[p])+len(rows[p]) for p in members if members[p] == level)
++        low = model.new_int_var(0, upper, f'minimum:{level}')
++        high = model.new_int_var(0, upper, f'maximum:{level}')
++        model.add_min_equality(low, values)
++        model.add_max_equality(high, values)
++        gaps.append(high-low)
++    maximum = sum(len(baselines[p])+len(rows[p]) for p in members)
++    worst = model.new_int_var(0, maximum, 'worst_call_gap')
++    if gaps:
++        model.add_max_equality(worst, gaps)
++    else:
++        model.add(worst == 0)
++
++    def score(choices):
++        loads = defaultdict(list)
++        minutes_cost = extras_cost = 0
++        for p, level in members.items():
++            chosen = [slots[s] for s, q in choices.items() if q == p]
++            loads[level].append(len(baselines[p])+len(chosen))
++            base = sum(duration_minutes(a.duty_slot) for a in baselines[p])
++            minutes_cost += (base+sum(duration_minutes(s) for s in chosen))**2-base**2
++            base_extra = sum(a.source == 'extra_duty_layer' for a in baselines[p])
++            extras_cost += (base_extra+sum(str(s.id) in extra_slots for s in chosen))**2-base_extra**2
++        ranges = [max(v)-min(v) for v in loads.values()]
++        return [max(ranges, default=0), sum(ranges), minutes_cost, extras_cost]
++
++    return [('worst_call_gap', worst), ('call_gap_total', sum(gaps)),
++            ('hours_burden', sum(hours_costs)), ('extra_burden', sum(extra_costs))], score
++
++
++def probe_gap_limits(model, variables, worst_gap, *, choices, quality, validate, deadline, required):
++    """Separate feasibility search at the achieved coverage, before soft-tier fixes.
++
++An infeasible result concerns this fixed layout/candidate model only. A timeout
++is unknown. Every positive solver witness passes the independent final checker.
++    A safer, better witness may improve the draft; no operational write occurs.
++"""
++    results = []
++    best = dict(choices)
++    achieved = quality(choices)[:2]
++    for limit in (1, 2):
++        if quality(best)[2] <= limit:
++            results.append(dict(limit=limit, status='feasible', proof='validated_incumbent',
++                                coverage=len(choices)))
++            continue
++        if perf_counter() >= deadline:
++            results.append(dict(limit=limit, status='unknown', reason='time_budget_exhausted'))
++            continue
++        trial_model = model.clone()
++        trial_model.add(worst_gap <= limit)
++        # The first two scores are negative required and total coverage. Keeping
++        # both prevents a smaller gap being obtained by silently dropping duties.
++        trial_model.add(sum(variables.values()) == -achieved[1])
++        trial_model.add(required == -achieved[0])
++        solver = cp_model.CpSolver()
++        solver.parameters.num_search_workers = 1
++        solver.parameters.random_seed = 17
++        status = 'unknown'
++        cuts = 0
++        tier_deadline = min(deadline, perf_counter()+max(0, deadline-perf_counter())/(3-limit))
++        while perf_counter() < tier_deadline:
++            solver.parameters.max_time_in_seconds = max(.001, tier_deadline-perf_counter())
++            solved = solver.solve(trial_model)
++            if solved == cp_model.INFEASIBLE:
++                status = 'infeasible_in_candidate_model'
++                break
++            if solved == cp_model.MODEL_INVALID:
++                raise RuntimeError('Equality feasibility model is invalid')
++            if solved not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
++                break
++            witness = {s: p for (s, p), v in variables.items() if solver.value(v)}
++            if not validate(witness):
++                status = 'feasible'
++                if quality(witness) < quality(best):
++                    best = witness
++                break
++            selected = [variables[s, p] for s, p in witness.items()]
++            if not selected:
++                break
++            trial_model.add(sum(selected) <= len(selected)-1)
++            cuts += 1
++        results.append(dict(limit=limit, status=status, coverage=len(choices), validation_cuts=cuts,
++                            scope='Fixed units, dated candidates, protected duties and achieved coverage; not all possible unit layouts.'))
++    return results, best
++
++
++def explain_count_outliers(context, choices, candidates, rejected):
++    """Concrete initial-context restrictions; never label them a necessity proof."""
++    groups = defaultdict(list)
++    blocked = defaultdict(Counter)
++    for rows in rejected.values():
++        for row in rows:
++            for issue in row['issues']:
++                blocked[row['person_id']][issue['code']] += 1
++    for pid, level in (context.fairness_member_levels or {}).items():
++        person = str(pid)
++        fixed = len(context.assignments_by_person.get(UUID(person), []))
++        count = fixed+sum(p == person for p in choices.values())
++        groups[level].append(dict(person_id=person, duties=count, fixed_duties=fixed,
++            person_name=(context.people[UUID(person)].canonical_name if UUID(person) in context.people else person),
++            clear_candidate_duties=sum(person in pool for pool in candidates.values()),
++            initial_candidate_restrictions=dict(blocked[person])))
++    result = []
++    for level, rows in sorted(groups.items()):
++        low, high = min(r['duties'] for r in rows), max(r['duties'] for r in rows)
++        if high-low > 2:
++            result.append(dict(call_level=level, minimum=low, maximum=high, gap=high-low,
++                outliers=[r for r in rows if r['duties'] in {low, high}],
++                basis='Actual fixed duties and rejected/clear candidates in the initial context. Restrictions may interact; these counts do not prove the gap unavoidable.'))
++    return result
+diff --git a/backend/app/services/allocation_refinement.py b/backend/app/services/allocation_refinement.py
+new file mode 100644
+--- /dev/null
++++ b/backend/app/services/allocation_refinement.py
+@@ -0,0 +1,116 @@
++"""Bounded incumbent repair; every accepted change passes the complete safety checker.
++
++This is a local improvement, never a proof of infeasibility or global fairness.
++Coverage and the caller's complete lexicographic quality order are preserved.
++"""
++from collections import Counter, defaultdict
++from time import perf_counter
++from uuid import UUID
++
++
++def refine_incumbent(choices, candidates, slots, context, *, quality, validate,
++                     incompatible, deadline, forbidden=(), max_checks=96):
++    current = dict(choices)
++    initial_quality = quality(current)
++    current_quality = initial_quality
++    checks = moves = fills = 0
++    forbidden = tuple(forbidden or ())
++    exhausted = False
++    while perf_counter() < deadline and checks < max_checks:
++        counts = Counter(current.values())
++        counts.update({str(p): len(rows) for p, rows in context.assignments_by_person.items()})
++        rows_by_person = defaultdict(list)
++        for sid, person in current.items():
++            rows_by_person[person].append(sid)
++        improved = False
++        # First recover holes, including a single displaced duty. No duty is dropped.
++        for sid in sorted(set(slots) - set(current), key=lambda s: (len(candidates[s]), s)):
++            for person in sorted(candidates[sid], key=lambda p: (counts[p], p)):
++                conflicts = [s for s in rows_by_person[person]
++                             if incompatible(slots[sid], slots[s], context.rules)]
++                if len(conflicts) > 1:
++                    continue
++                trials = []
++                if not conflicts:
++                    trials.append({**current, sid: person})
++                else:
++                    other = conflicts[0]
++                    for replacement in sorted(candidates[other], key=lambda p: (counts[p], p)):
++                        if replacement == person or any(
++                            incompatible(slots[other], slots[s], context.rules)
++                            for s in rows_by_person[replacement] if s != other
++                        ):
++                            continue
++                        trials.append({**current, sid: person, other: replacement})
++                for trial in trials:
++                    if perf_counter() >= deadline or checks >= max_checks:
++                        exhausted = True
++                        break
++                    score = quality(trial)
++                    if score >= current_quality or trial in forbidden:
++                        continue
++                    checks += 1
++                    if validate(trial):
++                        continue
++                    current, current_quality = trial, score
++                    fills += 1
++                    improved = True
++                    break
++                if improved or exhausted:
++                    break
++            if improved or exhausted:
++                break
++        if improved:
++            continue
++        # A transfer is considered only when it reduces the same monthly squared
++        # equality cost used by CP-SAT. Dated eligibility comes from candidates.
++        targets = context.fairness_targets or {}
++        levels = context.fairness_member_levels or {}
++        def deviation(person):
++            level = levels.get(UUID(person), levels.get(person))
++            return counts[person] - targets.get(level, context.average_assignments)
++        for sid, donor in sorted(current.items(), key=lambda row: (-deviation(row[1]), row[0])):
++            recipients = sorted(candidates[sid], key=lambda p: (deviation(p), p))
++            for recipient in recipients:
++                if donor == recipient or deviation(donor) - deviation(recipient) <= 1 + 1e-9:
++                    continue
++                if perf_counter() >= deadline or checks >= max_checks:
++                    exhausted = True
++                    break
++                if any(incompatible(slots[sid], slots[s], context.rules)
++                       for s in rows_by_person[recipient] if s != sid):
++                    continue
++                trial = {**current, sid: recipient}
++                score = quality(trial)
++                if score >= current_quality or trial in forbidden:
++                    continue
++                checks += 1
++                if validate(trial):
++                    continue
++                current, current_quality = trial, score
++                moves += 1
++                improved = True
++                break
++            if improved or exhausted:
++                break
++        if not improved:
++            break
++    return current, {
++        'checks': checks, 'transfers': moves, 'additional_covered': fills,
++        'improved': current_quality < initial_quality,
++        'limit_reached': exhausted or checks >= max_checks or perf_counter() >= deadline,
++        'global_optimum_proven': False,
++    }
++
++
++def fairness_summary(context, choices):
++    counts = Counter(choices.values())
++    counts.update({str(p): len(rows) for p, rows in context.assignments_by_person.items()})
++    by_level = defaultdict(list)
++    for person, level in (context.fairness_member_levels or {}).items():
++        by_level[level].append(counts[str(person)])
++    return [dict(call_level=level, members=len(loads), minimum=min(loads), maximum=max(loads),
++                 gap=max(loads)-min(loads), within_one=max(loads)-min(loads) <= 1,
++                 within_two=max(loads)-min(loads) <= 2,
++                 basis='Raw monthly duties including fixed duties; partial availability can explain a larger gap.')
++            for level, loads in sorted(by_level.items()) if loads]
+diff --git a/backend/app/services/ordinary_duty_pool.py b/backend/app/services/ordinary_duty_pool.py
+new file mode 100644
+--- /dev/null
++++ b/backend/app/services/ordinary_duty_pool.py
+@@ -0,0 +1,19 @@
++"""Dated unit membership is mandatory for ordinary AND extra duties.
++
++Owner clarification, 23 Nov 2026: unposted people and people posted only outside
++the month's included units are ineligible. Never synthesize a posting.
++"""
++
++
++def has_month_unit_posting(person_id, postings, first=None, last=None):
++    return any(p.person_id == person_id and p.unit_id is not None
++               and (last is None or p.starts_on <= last)
++               and (first is None or p.ends_on is None or p.ends_on >= first)
++               for p in postings)
++
++
++def has_dated_scope_posting(person_id, postings, day, included_unit_ids):
++    return any(p.person_id == person_id and p.unit_id is not None
++               and (included_unit_ids is None or p.unit_id in included_unit_ids)
++               and p.starts_on <= day and (p.ends_on is None or p.ends_on >= day)
++               for p in postings)
+diff --git a/backend/tests/test_allocation_equality_simulation.py b/backend/tests/test_allocation_equality_simulation.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_allocation_equality_simulation.py
+@@ -0,0 +1,132 @@
++"""Independent exhaustive oracle and real-engine fairness/safety simulations."""
++from collections import Counter
++from datetime import datetime, timedelta
++from itertools import product
++import random
++from time import perf_counter
++from types import SimpleNamespace
++from uuid import UUID
++
++import pytest
++from ortools.sat.python import cp_model
++
++from app.services.allocation_equality import equality_terms, probe_gap_limits
++
++
++def slot(index, hours=8):
++    start = datetime(2026, 11, 1)+timedelta(days=index*3)
++    return SimpleNamespace(id=str(index), starts_at=start, ends_at=start+timedelta(hours=hours))
++
++
++@pytest.mark.parametrize('seed', range(40))
++def test_random_months_match_independent_complete_enumeration(seed):
++    rng = random.Random(seed)
++    people = [str(UUID(int=i+1)) for i in range(3)]
++    slots = {str(i): slot(i, rng.choice([4, 7.5, 8, 12, 24])) for i in range(5)}
++    fixed = {UUID(p): [SimpleNamespace(duty_slot=slot(9+i, 8), source='extra_duty_layer')
++                       for i in range(rng.randrange(3))] for p in people}
++    context = SimpleNamespace(fairness_member_levels={UUID(p): '1ST_CALL' for p in people},
++                              assignments_by_person=fixed, optimizer_extra_slots={'0', '3'})
++    model = cp_model.CpModel()
++    allowed = {s: [p for p in people if rng.random() > .35] for s in slots}
++    variables = {(s, p): model.new_bool_var(f'{s}:{p}') for s in slots for p in allowed[s]}
++    for s in slots:
++        model.add(sum(v for (t, _), v in variables.items() if s == t) <= 1)
++    # A deliberately sparse rest-conflict graph and a two-new-duty quota.
++    for p in people:
++        model.add(sum(v for (_, q), v in variables.items() if q == p) <= 2)
++        for i in range(4):
++            if (str(i), p) in variables and (str(i+1), p) in variables:
++                model.add(variables[str(i), p]+variables[str(i+1), p] <= 1)
++    terms, score = equality_terms(model, variables, slots, context)
++
++    def independent(sequence):
++        counts = [len(fixed[UUID(p)])+sequence.count(p) for p in people]
++        minutes = extras = 0
++        for p in people:
++            base = 480*len(fixed[UUID(p)])
++            new = sum(int((slots[str(i)].ends_at-slots[str(i)].starts_at).total_seconds()/60)
++                      for i, q in enumerate(sequence) if q == p)
++            minutes += (base+new)**2-base**2
++            base_extra = len(fixed[UUID(p)])
++            extra = sum(q == p and i in (0, 3) for i, q in enumerate(sequence))
++            extras += (base_extra+extra)**2-base_extra**2
++        gap = max(counts)-min(counts)
++        return [-sum(p is not None for p in sequence), gap, gap, minutes, extras]
++
++    feasible = []
++    for sequence in product(*[(None, *allowed[s]) for s in slots]):
++        if any(sequence.count(p) > 2 for p in people):
++            continue
++        if any(sequence[i] is not None and sequence[i] == sequence[i+1] for i in range(4)):
++            continue
++        feasible.append(independent(sequence))
++    expected = min(feasible)
++    solver = cp_model.CpSolver()
++    solver.parameters.num_search_workers = 1
++    for expression in [-sum(variables.values()), *(v for _, v in terms)]:
++        model.minimize(expression)
++        assert solver.solve(model) == cp_model.OPTIMAL
++        model.add(expression == solver.value(expression))
++    chosen = {s: p for (s, p), v in variables.items() if solver.value(v)}
++    assert [-len(chosen), *score(chosen)] == expected
++    assert [solver.value(v) for _, v in terms] == score(chosen)
++
++
++def probe_fixture(fixed_count=0, validation=lambda _: []):
++    a, b = str(UUID(int=1)), str(UUID(int=2))
++    slots = {str(i): slot(i) for i in range(3)}
++    context = SimpleNamespace(fairness_member_levels={UUID(a): '1ST_CALL', UUID(b): '1ST_CALL'},
++                              assignments_by_person={UUID(a): [SimpleNamespace(duty_slot=slot(9), source='manual')]*fixed_count})
++    model = cp_model.CpModel()
++    variables = {(s, p): model.new_bool_var(s+p) for s in slots for p in (a, b)}
++    for s in slots:
++        model.add(sum(v for (t, _), v in variables.items() if s == t) <= 1)
++    terms, score = equality_terms(model, variables, slots, context)
++    quality = lambda choices: [-len(choices), -len(choices), *score(choices)]
++    return model, variables, terms[0][1], a, b, quality, validation
++
++
++def test_feasibility_probe_can_improve_a_concentrated_incumbent_without_dropping_duties():
++    model, variables, gap, a, b, quality, validate = probe_fixture()
++    choices = {s: a for s, _ in variables}
++    receipts, better = probe_gap_limits(model, variables, gap, choices=choices, quality=quality,
++        validate=validate, deadline=perf_counter()+3, required=sum(variables.values()))
++    assert all(row['status'] == 'feasible' for row in receipts)
++    assert len(better) == 3 and max(Counter(better.values()).values()) == 2
++    assert quality(better) < quality(choices) and len(choices) == 3
++
++
++def test_infeasible_fixed_load_and_timeout_are_distinct():
++    model, variables, gap, a, b, quality, validate = probe_fixture(fixed_count=8)
++    choices = {s: b for s, _ in variables}
++    receipts, _ = probe_gap_limits(model, variables, gap, choices=choices, quality=quality,
++        validate=validate, deadline=perf_counter()+3, required=sum(variables.values()))
++    assert [r['status'] for r in receipts] == ['infeasible_in_candidate_model']*2
++    receipts, retained = probe_gap_limits(model, variables, gap, choices=choices, quality=quality,
++        validate=validate, deadline=perf_counter()-1, required=sum(variables.values()))
++    assert [r['status'] for r in receipts] == ['unknown']*2 and retained == choices
++
++
++def test_invalid_witnesses_are_never_reported_feasible():
++    model, variables, gap, a, b, quality, _ = probe_fixture()
++    receipts, retained = probe_gap_limits(model, variables, gap, choices={s: a for s, _ in variables},
++        quality=quality, validate=lambda _: [{'code': 'independent_safety_failure'}],
++        deadline=perf_counter()+3, required=sum(variables.values()))
++    assert all(r['status'] == 'infeasible_in_candidate_model' for r in receipts)
++    assert set(retained.values()) == {a}
++
++
++def test_outlier_evidence_reports_actual_restrictions_without_inventing_a_proof():
++    from app.services.allocation_equality import explain_count_outliers
++    a, b = UUID(int=1), UUID(int=2)
++    context = SimpleNamespace(fairness_member_levels={a: '1ST_CALL', b: '1ST_CALL'},
++        assignments_by_person={a: [object()]*3},
++        people={a: SimpleNamespace(canonical_name='A'), b: SimpleNamespace(canonical_name='B')})
++    rejected = {'x': [{'person_id': str(b), 'issues': [{'code': 'leave'}, {'code': 'rest_after_24hr'}]}]}
++    evidence = explain_count_outliers(context, {}, {'x': {str(a): {}}}, rejected)
++    assert evidence[0]['gap'] == 3
++    outlier = next(p for p in evidence[0]['outliers'] if p['person_id'] == str(b))
++    assert outlier['initial_candidate_restrictions'] == {'leave': 1, 'rest_after_24hr': 1}
++    assert outlier['clear_candidate_duties'] == 0 and 'do not prove' in evidence[0]['basis']
++    assert explain_count_outliers(context, {'x': str(b)}, {}, rejected) == []
+diff --git a/backend/tests/test_scope_membership_review_repair.py b/backend/tests/test_scope_membership_review_repair.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_scope_membership_review_repair.py
+@@ -0,0 +1,72 @@
++"""Dated-membership correction must use the reviewed, atomic ledger-aware path."""
++from datetime import date
++from uuid import UUID
++
++import pytest
++
++from app.models import DutyAssignment, ExtraDutyRecord, LeaveRequest
++from app.services import balance_duties as bd
++from app.services.extra_duty_verify import check_month
++from tests.test_balance_duties import (  # noqa: F401
++    MONTH, _manual_extra, _unposted_member, assign, edit_rules, make_slot, make_unit,
++    member, relaxed, setup_month, db, user,
++)
++
++
++@pytest.mark.parametrize('extra', [False, True])
++def test_scope_repair_preview_apply_and_unsafe_undo_rejection(db, user, extra):
++    edit_rules(db, relaxed)
++    unit = make_unit(db, 'UNIT_I')
++    eligible = member(db, 'Eligible', unit)
++    missing = _unposted_member(db, 'Missing posting')
++    setup_month(db, [unit])
++    slot = make_slot(db, unit, date(2026, 5, 10))
++    if extra:
++        row, record = _manual_extra(db, slot, missing, ['unposted_member'])
++    else:
++        row = assign(db, slot, missing)
++        record = None
++    db.commit()
++    original = row.person_id
++    preview = bd.preview(db, MONTH, user)
++    assert row.person_id == original and not check_month(db, MONTH)['ok']
++    assert preview['summary']['membership_repair']['repaired'] == 1
++    again = bd.preview(db, MONTH, user)
++    assert again['plan_hash'] == preview['plan_hash']
++    applied = bd.apply(db, MONTH, preview['token'], preview['plan_hash'], user)
++    db.expire_all()
++    assert db.get(DutyAssignment, row.id).person_id == eligible.id
++    if record is not None:
++        assert db.get(ExtraDutyRecord, record.id).person_id == eligible.id
++    assert check_month(db, MONTH)['ok']
++    # Exact restoration cannot authorize an ineligible holder. Failure must roll
++    # back the whole transaction and leave the repaired duty/ledger untouched.
++    with pytest.raises(bd.BalanceError) as err:
++        bd.undo(db, UUID(applied['batch_id']), user)
++    assert err.value.code == 'undo_conflict'
++    db.expire_all()
++    assert db.get(DutyAssignment, row.id).person_id == eligible.id
++    assert check_month(db, MONTH)['ok']
++
++
++@pytest.mark.parametrize('obstacle', ['protected', 'leave', 'wrong_call'])
++def test_unresolved_scope_repair_blocks_proposal_without_any_write(db, obstacle):
++    edit_rules(db, relaxed)
++    unit = make_unit(db, 'UNIT_I')
++    eligible = member(db, 'Eligible', unit, level='2ND_CALL' if obstacle == 'wrong_call' else '1ST_CALL')
++    missing = _unposted_member(db, 'Missing posting')
++    setup_month(db, [unit])
++    row = assign(db, make_slot(db, unit, date(2026, 5, 10)), missing)
++    if obstacle == 'protected':
++        row.status = 'confirmed'
++    if obstacle == 'leave':
++        db.add(LeaveRequest(person=eligible, leave_type='ANNUAL_LEAVE', leave_slot='FULL_DAY',
++                            starts_on=date(2026, 5, 10), ends_on=date(2026, 5, 10), status='approved'))
++    db.commit()
++    before = sorted((str(a.id), str(a.person_id), a.status) for a in db.query(DutyAssignment))
++    with pytest.raises(bd.BalanceError) as err:
++        bd.plan_balance(db, MONTH)
++    assert err.value.code == 'scope_repair_incomplete'
++    assert err.value.extra['unresolved'] == 1
++    db.expire_all()
++    assert sorted((str(a.id), str(a.person_id), a.status) for a in db.query(DutyAssignment)) == before
+diff --git a/backend/tests/test_balance_focused_tuning.py b/backend/tests/test_balance_focused_tuning.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_balance_focused_tuning.py
+@@ -0,0 +1,66 @@
++"""Fair search scheduling and honest posting-aware fairness diagnostics."""
++from collections import Counter
++from types import SimpleNamespace
++
++from app.services import balance_duties as bd
++from tests.test_balance_duties import (  # noqa: F401
++    MONTH, _manual_extra, _unposted_member, assign, days, edit_rules,
++    make_slot, make_unit, member, relaxed, setup_month,
++)
++from tests.test_balance_duties import db as db
++
++
++def test_swap_budget_does_not_starve_another_unbalanced_call_level(monkeypatch):
++    # Eight higher-deviation donors in one level have no repair. Another level
++    # has a viable swap; a global top-eight list never even visits that level.
++    donors = [f'second-{i}' for i in range(8)]
++    levels = {pid: '2ND_CALL' for pid in donors}
++    levels.update(first='1ST_CALL', low_first='1ST_CALL', low_second='2ND_CALL')
++    devs = {pid: 5 for pid in donors}
++    devs.update(first=2, low_first=-2, low_second=-40)
++    visited = []
++    solved = set()
++    state = SimpleNamespace(
++        level=levels, members_by_level={'1ST_CALL': ['first', 'low_first'],
++                                      '2ND_CALL': donors + ['low_second']},
++        levels=lambda: ['1ST_CALL', '2ND_CALL'],
++        level_ok=lambda level: level in solved,
++        dev=lambda pid: devs[pid], person_key=lambda pid: (pid,),
++    )
++    planner = bd._Planner(state)
++    monkeypatch.setattr(planner, 'try_direct', lambda donor: False)
++
++    def swap(donor):
++        visited.append(donor)
++        if donor == 'first':
++            solved.update(['1ST_CALL', '2ND_CALL'])
++            return True
++        return False
++
++    monkeypatch.setattr(planner, 'try_swap', swap)
++    planner.run()
++    assert 'first' in visited
++    assert len(visited) <= bd.SWAP_DONORS_PER_ROUND
++
++
++def test_unposted_extra_holder_is_visible_without_changing_targets_or_eligibility(db):
++    edit_rules(db, relaxed)
++    unit = make_unit(db, 'UNIT_I')
++    alpha = member(db, 'Alpha', unit)
++    uma = _unposted_member(db, 'Uma')
++    setup_month(db, [unit])
++    for day in days(1, 4, 7, 10):
++        assign(db, make_slot(db, unit, day), alpha)
++    _manual_extra(db, make_slot(db, unit, days(20)[0]), uma, ['unposted_member'])
++    db.commit()
++    row = bd.shares(db, MONTH)[0]
++    breakdown = row['availability_breakdown']
++    assert breakdown['posted']['members'] == 1
++    assert breakdown['fully_available_posted'] == dict(members=1, min=4, max=4, gap=0)
++    assert breakdown['unposted_holders'] == dict(members=1, min=1, max=1, gap=0)
++    assert row['ok']
++    shares = bd.shares(db, MONTH)[0]
++    assert shares['availability_breakdown']['unposted_holders']['min'] == 1
++    assert shares['members'] == 1
++    assert Counter(m['eligibility_scope'] for m in shares['members_detail']) == {'posted': 1}
++    assert uma.id not in bd._load(db, MONTH).level
+diff --git a/backend/tests/test_focused_allocation_refinement.py b/backend/tests/test_focused_allocation_refinement.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_focused_allocation_refinement.py
+@@ -0,0 +1,206 @@
++"""Forced search exhaustion exercises real candidates and the complete safety checker."""
++from collections import Counter
++from datetime import date
++from time import perf_counter
++
++import pytest
++from sqlalchemy import select
++
++from app.models import DutyAssignment, DutySlot, LeaveRequest, Person, MemberCallLevelChange, PersonPosting
++from app.services import rota_optimizer as optimizer
++from app.services.allocation_refinement import refine_incumbent, fairness_summary
++from app.services.rota_candidates import candidate_context, slot_candidates_with_context
++from tests.test_rota_auto_fill import create_slot
++from tests.test_rota_compute import compute_db as compute_db
++from tests.test_ot_assignment_integration import environment as environment  # noqa: F401
++
++
++def concentrated_candidates(monkeypatch, favored):
++    original = optimizer.slot_candidates_with_context
++    def ranked(db, *, slot, context):
++        row = original(db, slot=slot, context=context)
++        row['candidates'].sort(key=lambda c: (c['person_id'] != str(favored.id), c['person_id']))
++        return row
++    monkeypatch.setattr(optimizer, 'slot_candidates_with_context', ranked)
++    monkeypatch.setattr(optimizer.cp_model.CpSolver, 'solve', lambda *args: optimizer.cp_model.UNKNOWN)
++
++
++def test_exhausted_solver_still_balances_real_safe_month(compute_db, monkeypatch, record_property):
++    db, _ = compute_db
++    db.query(LeaveRequest).delete()
++    source = db.scalar(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))
++    for day in (7, 10, 13, 16, 19, 22):
++        create_slot(db, source.unit, date(2026, 5, day))
++    db.commit()
++    slots = {str(s.id): s for s in db.scalars(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))}
++    favored = db.scalar(select(Person).where(Person.canonical_name == 'Safe Member'))
++    concentrated_candidates(monkeypatch, favored)
++    context = candidate_context(db, '2026-05')
++    result = optimizer.solve_month(db, context, slots, seconds=20)
++    loads = sorted(Counter(result['choices'].values()).values())
++    assert result['uncovered'] == 0
++    assert loads == [2, 2, 2, 2]
++    assert result['refinement']['transfers'] == 6
++    assert result['fairness'][0]['gap'] == 0
++    assert optimizer.validate_plan(db, context, slots, result['choices']) == []
++    assert not any(o['proven'] for o in result['objectives'] if o['name'] == 'call_level_equality')
++    assert all(o['proven'] for o in result['objectives'][:2])
++    assert db.query(DutyAssignment).count() == 0
++    record_property('before_loads', '8,0,0,0')
++    record_property('after_loads', ','.join(map(str, loads)))
++
++
++@pytest.mark.parametrize('block', ['leave', 'rest', 'wrong_level'])
++def test_refinement_uses_full_validator_even_for_forged_candidate(block, compute_db):
++    db, _ = compute_db
++    db.query(LeaveRequest).delete()
++    source = db.scalar(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))
++    donor = db.scalar(select(Person).where(Person.canonical_name == 'Safe Member'))
++    recipient = db.scalar(select(Person).where(Person.canonical_name == 'Spare One'))
++    slots = {str(s.id): s for s in [source, *[
++        create_slot(db, source.unit, date(2026, 5, day)) for day in (8, 14, 20)]]}
++    if block == 'leave':
++        db.add(LeaveRequest(person=recipient, leave_type='ANNUAL_LEAVE', leave_slot='FULL_DAY',
++                            starts_on=date(2026, 5, 1), ends_on=date(2026, 5, 31), status='approved'))
++    elif block == 'rest':
++        for day in (1,):
++            db.add(DutyAssignment(duty_slot=create_slot(db, source.unit, date(2026, 5, day)),
++                                  person=recipient, status='assigned'))
++    else:
++        recipient.call_level = '2ND_CALL'
++        for posting in recipient.postings:
++            posting.posting_type = '2ND_CALL'
++    db.commit()
++    context = candidate_context(db, '2026-05')
++    choices = {sid: str(donor.id) for sid in slots}
++    candidates = {sid: {str(donor.id): {}} for sid in slots}
++    candidates[str(source.id)][str(recipient.id)] = {}
++    result, evidence = refine_incumbent(
++        choices, candidates, slots, context,
++        quality=lambda c: [sum(p == str(donor.id) for p in c.values())],
++        validate=lambda c: optimizer.validate_plan(db, context, slots, c),
++        incompatible=optimizer.incompatible, deadline=perf_counter()+5)
++    assert result == choices
++    assert evidence['improved'] is False
++    assert evidence['checks'] >= 1
++
++
++def test_hole_repair_preserves_every_other_duty_and_rejects_unsafe_trials(compute_db):
++    db, _ = compute_db
++    db.query(LeaveRequest).delete()
++    source = db.scalar(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))
++    other = create_slot(db, source.unit, date(2026, 5, 3))
++    db.commit()
++    context = candidate_context(db, '2026-05')
++    people = [str(p.id) for p in context.people.values()]
++    a, b = people[:2]
++    slots = {str(source.id): source, str(other.id): other}
++    choices = {str(source.id): a}
++    candidates = {str(source.id): {a: {}, b: {}}, str(other.id): {a: {}}}
++    result, evidence = refine_incumbent(
++        choices, candidates, slots, context, quality=lambda c: [-len(c)],
++        validate=lambda c: optimizer.validate_plan(db, context, slots, c),
++        incompatible=optimizer.incompatible, deadline=perf_counter()+5)
++    assert result == {str(source.id): b, str(other.id): a}
++    assert evidence['additional_covered'] == 1
++    assert optimizer.validate_plan(db, context, slots, result) == []
++    assert db.query(DutyAssignment).count() == 0
++
++
++def test_expired_refinement_does_no_search_and_summary_includes_zero_members(compute_db):
++    db, _ = compute_db
++    context = candidate_context(db, '2026-05')
++    people = list(context.people)
++    context.fairness_member_levels = {p: '1ST_CALL' for p in people}
++    choices = {'a': str(people[0]), 'b': str(people[0]), 'c': str(people[0])}
++    result, evidence = refine_incumbent(choices, {}, {}, context, quality=lambda c: [-len(c)],
++        validate=lambda c: pytest.fail('expired search validated a trial'),
++        incompatible=optimizer.incompatible, deadline=perf_counter()-1)
++    assert result == choices and evidence['checks'] == 0
++    row = fairness_summary(context, choices)[0]
++    assert row['minimum'] == 0 and row['gap'] == 3 and row['within_two'] is False
++
++
++@pytest.mark.parametrize('minimum', ['minimum_coverage', 'minimum_required'])
++def test_refinement_does_not_replace_an_infeasible_requested_minimum_with_partial_plan(environment, minimum):
++    from tests.test_ot_assignment_integration import slot
++    db, unit, _people, first = environment
++    second = slot(db, unit, first.duty_date)
++    context = candidate_context(db, '2026-11')
++    slots = {str(s.id): s for s in (first, second)}
++    result = optimizer.solve_month(db, context, slots, seconds=5, **{minimum: 2})
++    assert result['status'] == 'infeasible'
++    assert result['choices'] == {}
++    assert result['refinement']['additional_covered'] == 0
++    assert db.query(DutyAssignment).count() == 0
++
++
++def test_local_hole_repair_cannot_bypass_monthly_quota(compute_db):
++    db, _ = compute_db
++    source = db.scalar(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))
++    context = candidate_context(db, '2026-05')
++    context.rules.duty_count_limits.max_24hr_per_month = 0
++    person = str(db.scalar(select(Person).where(Person.canonical_name == 'Safe Member')).id)
++    slots = {str(source.id): source}
++    result, evidence = refine_incumbent({}, {str(source.id): {person: {}}}, slots, context,
++        quality=lambda c: [-len(c)], validate=lambda c: optimizer.validate_plan(db, context, slots, c),
++        incompatible=optimizer.incompatible, deadline=perf_counter()+5)
++    assert result == {} and evidence['checks'] == 1
++
++
++def test_local_hole_repair_cannot_consume_joint_ot_reservation(environment):
++    from tests.test_ot_assignment_integration import slot
++    db, unit, people, first = environment
++    second = slot(db, unit, first.duty_date)
++    context = candidate_context(db, '2026-11')
++    a, b = map(lambda p: str(p.id), people[:2])
++    slots = {str(s.id): s for s in (first, second)}
++    choices = {str(first.id): a}
++    assert optimizer.validate_plan(db, context, slots, choices) == []
++    result, evidence = refine_incumbent(choices,
++        {str(first.id): {a: {}}, str(second.id): {b: {}}}, slots, context,
++        quality=lambda c: [-len(c)], validate=lambda c: optimizer.validate_plan(db, context, slots, c),
++        incompatible=optimizer.incompatible, deadline=perf_counter()+5)
++    assert result == choices and evidence['checks'] == 1
++    assert optimizer.validate_plan(db, context, slots, result) == []
++    assert db.query(DutyAssignment).count() == 0
++
++
++def test_local_refinement_keeps_distinct_alternative_contract(compute_db):
++    db, _ = compute_db
++    source = db.scalar(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))
++    context = candidate_context(db, '2026-05')
++    people = [str(p.id) for p in db.scalars(select(Person).where(Person.canonical_name.in_(['Safe Member', 'Spare One'])))]
++    a, b = sorted(people)
++    sid = str(source.id)
++    slots = {sid: source}
++    result, _ = refine_incumbent({}, {sid: {a: {}, b: {}}}, slots, context,
++        quality=lambda c: [-len(c)], validate=lambda c: optimizer.validate_plan(db, context, slots, c),
++        incompatible=optimizer.incompatible, deadline=perf_counter()+5, forbidden=[{sid: a}])
++    assert result == {sid: b}
++    assert optimizer.validate_plan(db, context, slots, result) == []
++
++
++def test_promotion_candidate_target_matches_monthly_optimizer_basis_without_relaxing_eligibility(compute_db):
++    db, _ = compute_db
++    db.query(LeaveRequest).delete()
++    source = db.scalar(select(DutySlot).where(DutySlot.call_level == '1ST_CALL'))
++    promoted = db.scalar(select(Person).where(Person.canonical_name == 'Safe Member'))
++    unit = source.unit
++    colleague = Person(canonical_name='Stable second call', call_level='2ND_CALL')
++    db.add_all([colleague,
++        MemberCallLevelChange(person=promoted, call_level='2ND_CALL', effective_from=date(2026, 5, 16)),
++        PersonPosting(person=colleague, unit=unit, posting_type='2ND_CALL', starts_on=date(2026, 5, 1), source='unit_board')])
++    after = create_slot(db, unit, date(2026, 5, 20), call_level='2ND_CALL', duty_type='MAIN_2ND_24HR')
++    db.commit()
++    context = candidate_context(db, '2026-05')
++    row = slot_candidates_with_context(db, slot=after, context=context)
++    candidate = next(c for c in row['candidates'] if c['person_id'] == str(promoted.id))
++    assert candidate['call_level'] == '2ND_CALL'
++    assert candidate['fairness_call_level'] == '1ST_CALL'
++    assert context.fairness_targets['1ST_CALL'] != context.fairness_targets['2ND_CALL']
++    assert candidate['call_level_target'] == round(context.fairness_targets['1ST_CALL'], 2)
++    assert candidate['validation_status'] == 'clear'
++    before = slot_candidates_with_context(db, slot=source, context=context)
++    assert next(c for c in before['candidates'] if c['person_id'] == str(promoted.id))['call_level'] == '1ST_CALL'
++    assert db.query(DutyAssignment).count() == 0
+diff --git a/backend/tests/test_ordinary_duty_pool.py b/backend/tests/test_ordinary_duty_pool.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_ordinary_duty_pool.py
+@@ -0,0 +1,143 @@
++"""Owner clarification: dated included-unit postings precede every duty."""
++from datetime import date
++import pytest
++from app.models import PersonPosting, UnitFallback
++from app.services import balance_duties as bd, extra_duty as ed
++from app.services.extra_duty_verify import check_month
++from app.services.rota_assignment import validate_assignment
++from app.services.rota_candidates import candidate_context, slot_candidates_with_context
++from tests.test_balance_duties import (
++    MONTH, _manual_extra, _unposted_member, assign, days, edit_rules, leave,
++    make_slot, make_unit, member, relaxed, setup_month,
++)
++from tests.test_balance_duties import db as db  # noqa: F401
++
++
++def fixture(db):
++    edit_rules(db, relaxed)
++    unit = make_unit(db, 'UNIT_I')
++    alpha = member(db, 'Alpha', unit)
++    uma = _unposted_member(db, 'Uma')
++    setup_month(db, [unit])
++    target = make_slot(db, unit, days(4)[0])
++    for d in days(1, 7, 10, 13):
++        assign(db, make_slot(db, unit, d), alpha)
++    db.commit()
++    return unit, alpha, uma, target
++
++
++@pytest.mark.parametrize('kind', ['missing', 'excluded', 'before_posting', 'after_posting'])
++@pytest.mark.parametrize('cached', [False, True])
++def test_no_dated_included_posting_blocks_ordinary_extra_and_override(db, kind, cached):
++    unit, alpha, uma, target = fixture(db)
++    if kind != 'missing':
++        posted_unit = make_unit(db, 'CARDIAC') if kind == 'excluded' else unit
++        db.add(PersonPosting(person=uma, unit=posted_unit, posting_type='1ST_CALL',
++            starts_on=date(2026, 5, 15) if kind == 'before_posting' else date(2026, 5, 1),
++            ends_on=date(2026, 5, 3) if kind == 'after_posting' else None, source='unit_board'))
++        db.commit()
++    context = candidate_context(db, MONTH) if cached else None
++    result = validate_assignment(db, slot=target, person=uma, replace_existing=False, context=context)
++    assert result['status'] == 'blocked'
++    assert 'scope_member_excluded' in {i['code'] for i in result['issues']}
++    from app.services.extra_duty_verify import load_month_state
++    from app.services.superadmin_allocation import strict_blocks
++    verified = load_month_state(db, MONTH)
++    assert 'scope_member_excluded' in {b['code'] for b in strict_blocks(verified, uma.id, target)}
++    period, _ = ed._period_and_scope(db, MONTH)
++    strict = ed.build_context(db, MONTH, period, ed.get_phase_one_rules(db)[1])
++    for allow_unposted in (False, True):
++        blockers = ed.strict_blockers(strict, uma.id, target, unit.id, allow_unposted=allow_unposted)
++        assert 'scope_member_excluded' in {b['code'] for b in blockers}
++
++
++@pytest.mark.parametrize('source', ['ordinary', 'legacy_extra', 'superadmin'])
++def test_independent_checker_does_not_waive_missing_posting(db, source):
++    unit, alpha, uma, target = fixture(db)
++    if source == 'legacy_extra':
++        _manual_extra(db, target, uma, ['unposted_member'])
++    else:
++        row = assign(db, target, uma)
++        if source == 'superadmin':
++            row.source = 'superadmin_allocation'
++    db.commit()
++    result = check_month(db, MONTH)
++    assert not result['ok']
++    assert 'scope_member_excluded' in {i['code'] for i in result['violations']}
++    assert result['unposted_exempt'] == 0
++    assert result['ordinary_roster_fallback'] == 0
++
++
++def test_missing_posting_does_not_join_candidates_targets_or_balance(db):
++    unit, alpha, uma, target = fixture(db)
++    _manual_extra(db, make_slot(db, unit, days(20)[0]), uma, ['unposted_member'])
++    db.commit()
++    context = candidate_context(db, MONTH)
++    for optimized in (False, True):
++        rows = slot_candidates_with_context(db, slot=target, context=context, optimized=optimized)['candidates']
++        assert str(uma.id) not in {r['person_id'] for r in rows}
++    assert uma.id not in bd._load(db, MONTH).level
++    assert all(r['person_id'] != str(uma.id) for level in bd.shares(db, MONTH) for r in level['members_detail'])
++
++
++def test_real_dated_posting_admits_zero_duty_person_without_ledger(db):
++    unit, alpha, uma, target = fixture(db)
++    db.add(PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
++                         starts_on=target.duty_date, ends_on=target.duty_date, source='unit_board'))
++    db.commit()
++    context = candidate_context(db, MONTH)
++    result = validate_assignment(db, slot=target, person=uma, replace_existing=False, context=context)
++    assert result['status'] == 'clear', result['issues']
++    rows = slot_candidates_with_context(db, slot=target, context=context)['candidates']
++    assert next(r for r in rows if r['person_id'] == str(uma.id))['validation_status'] == 'clear'
++    assert bd._load(db, MONTH).avail[uma.id] == 1
++
++
++def test_unlocking_configured_scope_cannot_admit_excluded_member(db):
++    unit, alpha, uma, target = fixture(db)
++    outside = make_unit(db, 'CARDIAC')
++    db.add(PersonPosting(person=uma, unit=outside, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 1), source='unit_board'))
++    period, scope = ed._period_and_scope(db, MONTH)
++    scope.is_locked = False
++    db.commit()
++    result = validate_assignment(db, slot=target, person=uma, replace_existing=False)
++    assert result['status'] == 'blocked'
++    assert 'scope_member_excluded' in {i['code'] for i in result['issues']}
++
++
++@pytest.mark.parametrize('block', ['leave', 'pending_leave', 'rest', 'quota', 'level', 'inactive'])
++def test_real_posting_never_waives_other_rules(db, block):
++    unit, alpha, uma, target = fixture(db)
++    posting = PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 1), source='unit_board')
++    db.add(posting)
++    if block in {'leave', 'pending_leave'}:
++        leave(db, uma, target.duty_date, status='approved' if block == 'leave' else 'requested')
++    elif block == 'rest':
++        assign(db, make_slot(db, unit, date(2026, 5, 3)), uma)
++    elif block == 'quota':
++        assign(db, make_slot(db, unit, days(20)[0]), uma)
++        edit_rules(db, lambda r: setattr(r.duty_count_limits, 'max_24hr_per_month', 1))
++    elif block == 'level':
++        uma.call_level = '3RD_CALL'
++        posting.posting_type = '3RD_CALL'
++    else:
++        uma.active_status = 'archived'
++    db.commit()
++    result = validate_assignment(db, slot=target, person=uma, replace_existing=False)
++    assert result['status'] != 'clear', result
++
++
++@pytest.mark.parametrize('mode', [ed.MODE_STANDARD, ed.MODE_ALL_UNITS])
++def test_extra_cannot_use_missing_or_excluded_people_even_explicit_fallback(db, mode):
++    unit, alpha, uma, target = fixture(db)
++    outside = make_unit(db, 'CARDIAC')
++    member(db, 'Excluded person', outside)
++    db.add(UnitFallback(unit_id=unit.id, fallback_unit_id=outside.id, position=0))
++    leave(db, alpha, target.duty_date)
++    db.commit()
++    result = ed.plan_extra_duties(db, MONTH, mode=mode)
++    decision = next(d for d in result['decisions'] if d['slot_id'] == str(target.id))
++    assert decision['action'] == 'unfilled'
++    assert result['summary']['unposted_used'] == 0
+diff --git a/backend/tests/test_ordinary_pool_guard_edges.py b/backend/tests/test_ordinary_pool_guard_edges.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_ordinary_pool_guard_edges.py
+@@ -0,0 +1,64 @@
++"""Dated included-unit membership keeps eligibility and OT protection."""
++from datetime import date
++
++from app.models import MemberCallLevelChange, Person, PersonPosting
++from app.services.rota_assignment import validate_assignment
++from app.services.rota_candidates import candidate_context, slot_candidates_with_context
++from tests.test_balance_duties import db as db
++from tests.test_ordinary_duty_pool import fixture
++from tests.test_balance_duties import edit_rules, make_slot, days, member
++from tests.test_ot_assignment_integration import environment as environment, demand  # noqa: F401
++
++
++def test_no_posting_member_still_requires_duty_subgroup(db):
++    unit, alpha, uma, target = fixture(db)
++    db.add(PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 1), source='unit_board'))
++    db.commit()
++    edit_rules(db, lambda rules: setattr(rules.duty_rules_by_key[target.duty_type],
++                                        'allowed_cluster_keys', ['3rd_call_a']))
++    context = candidate_context(db, '2026-05')
++    check = validate_assignment(db, slot=target, person=uma, replace_existing=False, context=context)
++    assert check['status'] == 'blocked'
++    assert any(i['code'] == 'call_subgroup_mismatch' for i in check['issues'])
++
++
++def test_no_posting_member_uses_dated_promotion_without_switching_monthly_target(db):
++    unit, alpha, uma, target = fixture(db)
++    db.add(PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
++                         starts_on=date(2026, 5, 1), source='unit_board'))
++    db.add(MemberCallLevelChange(person=uma, call_level='2ND_CALL', effective_from=date(2026, 5, 16)))
++    member(db, 'Posted second call', unit, level='2ND_CALL')
++    after = make_slot(db, unit, days(25)[0], level='2ND_CALL', duty_type='MAIN_2ND_24HR')
++    wrong = make_slot(db, unit, days(26)[0])
++    db.commit()
++    context = candidate_context(db, '2026-05')
++    rows = slot_candidates_with_context(db, slot=after, context=context)['candidates']
++    row = next(c for c in rows if c['person_id'] == str(uma.id))
++    assert row['call_level'] == '2ND_CALL'
++    assert row['fairness_call_level'] == '1ST_CALL'
++    assert row['validation_status'] == 'clear'
++    assert validate_assignment(db, slot=wrong, person=uma, replace_existing=False, context=context)['status'] == 'blocked'
++
++
++def test_no_posting_fallback_does_not_invent_ot_staff(environment):
++    db, unit, people, target = environment
++    free = Person(canonical_name='No posting ordinary member', call_level='3RD_CALL', active_status='active')
++    db.add(free)
++    db.commit()
++    # Five OT staff are mandatory, but only four posted/qualified people exist.
++    # The fallback must not invent a posting or count this person as OT supply.
++    demand(db, unit, minimum=5)
++    context = candidate_context(db, '2026-11')
++    assert free.id not in context.ordinary_fallback_ids
++    validation = validate_assignment(db, slot=target, person=free, replace_existing=False, context=context)
++    assert validation['status'] == 'blocked'
++    assert 'scope_member_excluded' in {i['code'] for i in validation['issues']}
++    # The existing affected-component edit contract permits unrelated edits.
++    # Its whole-capacity assessment must still expose the pre-existing shortage;
++    # admission to ordinary duties must not invent an OT posting/qualification.
++    from types import SimpleNamespace
++    proposal = SimpleNamespace(person_id=free.id, duty_slot_id=target.id,
++                               duty_slot=target, status='assigned')
++    result = context.ot_guard.check([proposal], context.rules)
++    assert result['status'] == 'infeasible'

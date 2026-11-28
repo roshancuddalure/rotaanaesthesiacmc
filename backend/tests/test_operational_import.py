@@ -461,8 +461,10 @@ def test_approved_custom_session_uses_supported_behavior_and_blocks_24hour_duty(
     from app.services.rota_rules import DutyRule
 
     rule = DutyRule(key="TEST", label="Test", group="main", duration_hours=24, is_24hr=True)
-    slot = DutySlot(is_24hr=True)
-    assert slot_leave_blocks(LeaveRequest(leave_slot="CUSTOM"), slot)
+    slot = DutySlot(is_24hr=True, duty_date=date(2026, 10, 1),
+                    starts_at=datetime(2026, 10, 1, 8), ends_at=datetime(2026, 10, 2, 8))
+    assert slot_leave_blocks(LeaveRequest(leave_slot="CUSTOM", starts_on=date(2026, 10, 1),
+                                         ends_on=date(2026, 10, 1)), slot)
     assert leave_blocks_rule("CUSTOM", rule)
 
 

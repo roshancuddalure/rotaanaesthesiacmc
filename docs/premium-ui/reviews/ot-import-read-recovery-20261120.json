@@ -1,0 +1,65 @@
+{
+  "recorded_at_utc": "2026-11-20T13:07:00.940669+00:00",
+  "status": "applied; bounded runtime verified; full acceptance remains open",
+  "scope": "OT import confirmed feedback, failed calendar read and explicit GET-only recovery. Frontend only.",
+  "problem": "After a successful monthly import response, a failed read erased confirmation and claimed saved schedules were unchanged; error text also speculated about a database migration.",
+  "result": "Known import confirmation survives calendar read failures and explicit read retry within the current unit/view. Beginning another import clears old confirmation; uncertain responses never inherit it. Read failure wording identifies loading/access/setup without claiming rollback.",
+  "checks": {
+    "baseline_reproductions": 1,
+    "paragraph_fix_contexts": 6,
+    "final_recovery_contexts": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "width": 320,
+    "per_context_preview_posts": 2,
+    "per_context_apply_posts": 2,
+    "per_context_calendar_gets": 5,
+    "api_expressions_unchanged": 12,
+    "candidate_syntax_diagnostics": 0,
+    "source_and_test_held": true
+  },
+  "source_sha256": {
+    "frontend/src/ot-calendar.ts": "264cbbda92c34a328d9ee6ea8c2071923f79b482dc86cb0c8f839f1aef776d3c",
+    "frontend/src/ot-calendar-transfer.ts": "e2fb28be6b4342655c8109cac3fa7b9d9f557ff12f8b0f20ecef917aa09e3c7b"
+  },
+  "evidence_sha256": {
+    "tmp/frontend-current-nov20/ot-read-failure/baseline-2026-11-20T12-55-41-633Z.json": "7d2dafcb276bf1581e3ff75161faf78192f4d63b8b29248f91e9c7bd6f3a2892",
+    "tmp/frontend-current-nov20/ot-baseline-root-v2/exit.json": "f61969350b6000f74e4997baea726687d00c3d3432c927137f7600b8d3d5e6e5",
+    "tmp/frontend-current-nov20/ot-applied-root/exit.json": "bffe732cb8b971cbb75ed8aed3021d53062d82f0895bc77c956df3ea28d84e36",
+    "tmp/frontend-current-nov20/ot-confirmed-feedback/applied-2026-11-20T13-03-01-782Z.json": "066cd4c714c265e37c5c78221b2e47630a16b6b8f2173daf5c23095b09d8169b",
+    "tmp/frontend-current-nov20/ot-confirmed-root/exit.json": "d1eef116b9547499598cbfad7a18116edc388ccc6416e1158ec14e7cc96611d2",
+    "tmp/frontend-current-nov20/ot-confirmed-feedback/api-syntax-check.json": "79d374dc24d91000ec033f15270cc50e90640be03b1f699f512e32ec7d231cc4",
+    "tmp/frontend-current-nov20/ot-confirmed-feedback/application.json": "8c6f4435ae32da916169a8a1335b656be6beaa26e4641964567aef8bf5ebf0de"
+  },
+  "reviews": [
+    {
+      "agent": "current_guidance_format_keyboard_nov20",
+      "scope": "Exact original supplied excerpts; no repository/runtime access",
+      "finding": "Remove false unchanged assurance and migration diagnosis; confirmation retention remains a separate issue."
+    },
+    {
+      "agent": "frontend_access_recovery_nov20",
+      "scope": "Proposed flow excerpts only; no repository/runtime access",
+      "finding": "Retain confirmed outcome separately from read error; require ownership, unit, retry and uncertainty guards."
+    },
+    {
+      "agent": "frontend_scope_audit_nov20",
+      "scope": "Supplied final excerpts and reported API/syntax results only; no repository/runtime access",
+      "finding": "No additional defect evident in excerpts; runtime unit/navigation/out-of-order cases remain to verify."
+    }
+  ],
+  "limitations": [
+    "Intercepted fixtures do not prove live authorization, server validation or database persistence.",
+    "Delayed disposal, unit change and reversed read completion require additional bounded runtime checks before broader lifecycle acceptance.",
+    "Full project build and fresh final-source unit suite pending at this record.",
+    "No whole195/222/229 acceptance or global260 completion.",
+    "Physical devices and native assistive technology pending."
+  ]
+}

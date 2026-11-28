@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-11-27T00:23:04.894130+00:00",
+  "status": "confirmed_stale_test_expectation_fix_deferred_until_frozen_audit_finishes",
+  "test": "tests/test_month_full_objectives.py::test_full_objectives_keep_logical_targets_and_same_candidate_denominators",
+  "actual_contract": [
+    "required_coverage",
+    "coverage",
+    "worst_call_gap",
+    "call_gap_total",
+    "call_level_equality",
+    "hours_burden",
+    "extra_burden",
+    "weekend_burden",
+    "night_burden",
+    "holiday_burden",
+    "workload",
+    "spacing_history",
+    "preferences"
+  ],
+  "legacy_contract_length": 9,
+  "current_contract_length": 13,
+  "causal_evidence": [
+    "tools/compare_month_allocation_architectures.py:334 calls shared build_objectives with enhance_equality=True",
+    "backend/app/services/allocation_objective_model.py:107 inserts worst gap/count gap and hour/extra terms before burden/preferences",
+    "backend/app/services/allocation_equality.py:99 exposes exact declared enhanced terms",
+    "backend/tests/test_month_full_objectives.py:37 still expects legacy tier list and quality length9"
+  ],
+  "next_change": "Update the explicit independently declared expected contract to13tiers and validate quality length13; retain canonical candidate-denominator, model immutability, expired-no-proof and no-write assertions. Do not weaken production equality objectives.",
+  "production_behavior_changed": false,
+  "test_or_app_edits_during_frozen_run": false
+}

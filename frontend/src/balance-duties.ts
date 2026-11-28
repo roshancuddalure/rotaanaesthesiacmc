@@ -19,6 +19,27 @@ import { formatDate, formatMonth } from "./ui";
 import { formatAuditTimestamp } from "./audit-time";
 
 const API = "/api/v1/balance-duties";
+const assignmentToolsOpen = new Map<string, boolean>();
+function assignmentToolsMonth(details: HTMLDetailsElement): string | undefined {
+  return details.querySelector<HTMLElement>("[data-assignment-tools-month]")?.dataset.assignmentToolsMonth;
+}
+if (typeof document !== "undefined") {
+  // Remember the user's intent synchronously: an optional-report refresh can
+  // replace the old details node before its queued toggle event is dispatched.
+  document.addEventListener("click", event => {
+    const summary = event.target instanceof Element ? event.target.closest("details.assignment-tools > summary") : null;
+    const details = summary?.parentElement;
+    if (!(details instanceof HTMLDetailsElement)) return;
+    const month = assignmentToolsMonth(details);
+    if (month) assignmentToolsOpen.set(month, !details.open);
+  }, true);
+  document.addEventListener("toggle", event => {
+    const details = event.target;
+    if (!(details instanceof HTMLDetailsElement) || !details.matches("details.assignment-tools")) return;
+    const month = assignmentToolsMonth(details);
+    if (month) assignmentToolsOpen.set(month, details.open);
+  }, true);
+}
 export const BALANCE_UNDO = (batchId: string) => `${API}/batches/${encodeURIComponent(batchId)}/undo`;
 /** Batches recorded by Balance duties carry `summary.mode === "balance"`. */
 export const isBalanceBatch = (b: { summary?: unknown } | null | undefined) =>
@@ -93,7 +114,7 @@ export function balanceStatusText(status: BalanceStatus): { tone: "ok" | "uneven
     .map(l => ({ l, min: num(l.min ?? l.before?.min), max: num(l.max ?? l.before?.max), gap: num(l.gap ?? l.before?.gap), ok: l.ok ?? l.ok_after }))
     .filter(x => x.ok === false)
     .sort((a, b) => b.gap - a.gap || levelRank(a.l.call_level) - levelRank(b.l.call_level));
-  if (status.balanced || !uneven.length) return { tone: "ok", text: "Duties are balanced." };
+  if (status.balanced || !uneven.length) return { tone: "ok", text: "Duty totals are balanced." };
   const first = uneven[0];
   const target = goalText(first.l.goal_range ?? (first.l as { target?: number }).target ?? null);
   const head = `${levelName(first.l)}: ${first.min === first.max ? first.min : `${first.min}–${first.max}`} duties${target ? ` (target ${target})` : ""}`;
@@ -147,11 +168,18 @@ function hydrateStatusLines() {
  * Disabled when the month is not a draft, units are not locked, or nobody has a duty yet.
  */
 export function balanceStageHtml(month: string, options: { draft: boolean; locked: boolean; assigned: number }): string {
+  if (typeof document !== "undefined") queueMicrotask(() => {
+    const open = assignmentToolsOpen.get(month);
+    if (open === undefined) return;
+    document.querySelectorAll<HTMLDetailsElement>("details.assignment-tools").forEach(details => {
+      if (assignmentToolsMonth(details) === month) details.open = open;
+    });
+  });
   const disabled = !options.draft || !options.locked || !options.assigned;
   const why = !options.draft ? "This month is published." : !options.locked ? "Lock the month's units first."
     : !options.assigned ? "Autoassign members first; there is nothing to balance yet." : "";
   if (!disabled && !hydrateQueued) { hydrateQueued = true; setTimeout(hydrateStatusLines, 0); }
-  return `<span class="balance-stage__actions">
+  return `<span class="balance-stage__actions" data-assignment-tools-month="${esc(month)}">
     <button type="button" class="balance-button" data-balance-duties ${disabled ? "disabled" : ""} aria-describedby="balance-stage-status-${esc(month)}">Balance duties</button>
     <span class="balance-stage__status" id="balance-stage-status-${esc(month)}" ${disabled ? 'data-tone="off"' : `data-balance-status data-balance-month="${esc(month)}"`} role="status">${esc(disabled ? why : "Checking the balance…")}</span></span>`;
 }
@@ -176,8 +204,8 @@ const NEVER_BROKEN: [string, string][] = [
 function aboutHtml(folded = false): string {
   const box = `<section class="balance-about" aria-labelledby="balance-about-title">
     <div class="balance-about__lead"><h3 id="balance-about-title">What this does</h3>
-      <p>Moves duties from members with the most to members with the fewest <strong>in the same call level</strong>, until everyone is within the allowed gap of their fair share. A duty may move to another unit when that is the only fair way.</p>
-      <p class="balance-about__share"><strong>Fair share:</strong> members on leave or posted for only part of the month get a smaller share, in proportion to the days they are available.</p>
+      <p>Moves duties between eligible members <strong>in the same call level</strong> to improve the selected fairness measure. A bounded search may leave a larger gap when no further safe improving move is found. A duty may move to another permitted unit.</p>
+      <p class="balance-about__share"><strong>Fair share:</strong> in availability-based mode, members on leave or posted for only part of the month get a smaller share, in proportion to available days. Equal-count mode instead aims for similar duty totals, while preserving leave, rest and eligibility. The reviewed proposal records its selected approach.</p>
       <p class="balance-about__extra" data-balance-about-extra>Extra duties can be passed on too; the justice-ledger credit moves with the duty.</p></div>
     <div class="balance-about__never"><h4>Never broken</h4>
       <ul>${NEVER_BROKEN.map(([title, text]) => `<li><strong>${esc(title)}</strong><span>${esc(text)}</span></li>`).join("")}</ul></div>
@@ -195,18 +223,30 @@ function levelCard(level: BalanceLevel, done: boolean): string {
   const pos = (v: number) => `${((v - lo) / span * 100).toFixed(2)}%`;
   const width = (a: number, b: number) => `max(10px, ${((b - a) / span * 100).toFixed(2)}%)`;
   const band = goal ? `<span class="balance-bar__goal" style="left:${pos(goal[0])};width:${width(goal[0], goal[1])}"></span>` : "";
-  const beforeOk = level.allowed_gap === undefined ? null : level.before.gap <= level.allowed_gap;
+  const beforeOk = level.ok_before ?? (level.allowed_gap === undefined ? null : level.before.gap <= level.allowed_gap);
   const row = (label: string, r: BalanceRange, tone: string) => `<div class="balance-bar">
       <span class="balance-bar__label">${esc(label)}</span>
       <span class="balance-bar__track" aria-hidden="true">${band}<span class="balance-bar__range is-${tone}" style="left:${pos(r.min)};width:${width(r.min, r.max)}"></span></span>
       <span class="balance-bar__value"><strong>${esc(r.min === r.max ? String(r.min) : `${r.min}–${r.max}`)}</strong> <span>gap ${esc(r.gap)}</span></span></div>`;
   const ok = level.ok_after;
+  const availability = level.availability_breakdown;
+  const comparable = availability?.fully_available_posted;
+  const ordinary = availability?.fully_available_ordinary;
+  const unposted = availability?.unposted_holders.members ?? 0;
+  const outside = availability?.outside_scope_holders ?? 0;
+  const availabilityNote = availability ? `<p class="balance-level__goal">${comparable?.members
+    ? `Fully available with a posting: <strong>${esc(comparable.min)}–${esc(comparable.max)}</strong> duties (${esc(comparable.members)} people). ` : ""}${unposted
+    ? `${esc(unposted)} duty holder(s) lack a unit posting and are ineligible for ordinary and extra allocation. ` : ""}${ordinary?.members
+    ? `All fully available ordinary members: ${esc(ordinary.min)}–${esc(ordinary.max)} duties (gap ${esc(ordinary.gap)}). ` : ""}${outside
+    ? `${esc(outside)} duty holder(s) posted only outside this month’s scope are excluded from fairness and from ordinary and extra allocation.` : ""}</p>` : "";
   return `<li class="balance-level${ok ? " is-ok" : " is-uneven"}" data-balance-level="${esc(level.call_level)}">
     <div class="balance-level__head"><h4>${esc(levelName(level))}</h4>
       <span class="balance-badge balance-badge--${ok ? "ok" : "warn"}">${ok ? (done ? "Balanced" : "Balanced after") : "Still uneven"}</span></div>
     <p class="balance-level__goal">Fair share <strong>${esc(goalText(level.goal_range) || "—")}</strong> duties each${level.allowed_gap !== undefined ? ` · allowed gap ${esc(level.allowed_gap)}` : ""}</p>
     ${row("Before", level.before, beforeOk === false ? "warn" : "muted")}
     ${row(done ? "Now" : "After", level.after, ok ? "ok" : "warn")}
+    ${level.allocation_mode === 'availability' ? `<p class="balance-level__goal">Availability-adjusted deviation gap: ${esc(level.adjusted_gap_before ?? 'Not recorded')} before; ${esc(level.adjusted_gap_after ?? 'Not recorded')} ${done ? 'now' : 'after'}. The allowed gap applies to this measure; the bars show raw totals.</p>` : ''}
+    ${availabilityNote}
     <p class="visually-hidden">${esc(`${levelName(level)}: before ${rangeText(level.before)}, gap ${level.before.gap}; ${done ? "now" : "after"} ${rangeText(level.after)}, gap ${level.after.gap}. Fair share ${goalText(level.goal_range) || "not given"}.`)}</p>
     ${!ok && level.reason_if_not ? `<p class="balance-level__reason"><span>Why:</span> ${esc(level.reason_if_not)}</p>` : ""}</li>`;
 }
@@ -256,7 +296,7 @@ function movesHtml(moves: BalanceMove[], members: BalanceMember[], levels: Balan
     }).join("")}</section>`;
 }
 
-function membersHtml(members: BalanceMember[], levels: BalanceLevel[], month: string, done: boolean): string {
+function membersHtml(members: BalanceMember[], levels: BalanceLevel[], month: string, done: boolean, mode?: string): string {
   if (!members.length) return "";
   const days = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0)).getUTCDate() || 31;
   const labelOf = new Map(levels.map(l => [l.call_level, levelName(l)]));
@@ -285,7 +325,7 @@ function membersHtml(members: BalanceMember[], levels: BalanceLevel[], month: st
   return `<details class="balance-members" data-balance-members>
     <summary><span>Every member's share</span> <span class="balance-moves__meta">${esc(plural(members.length, "member"))} · ${esc(`${changed} changed`)}</span></summary>
     <div class="table-scroll"><table class="balance-table">
-      <caption>Duties per member, ${esc(formatMonth(month))}. Fair share is pro-rata to the days each member is available.</caption>
+      <caption>Duties per member, ${esc(formatMonth(month))}. ${mode === 'equal_counts' ? 'Equal duty count targets within each call level.' : 'Fair share is pro-rata to the days each member is available.'}</caption>
       <thead><tr><th scope="col">Member</th><th scope="col">Call level</th><th scope="col">Unit</th><th scope="col" class="is-num">Before</th>
         <th scope="col" class="is-num">${done ? "Now" : "After"}</th>${withExtra ? `<th scope="col" class="is-num">Extra duties ${done ? "before → now" : "before → after"}</th>` : ""}<th scope="col" class="is-num">Fair share</th><th scope="col" class="is-num">Days available</th></tr></thead>
       <tbody>${rows}</tbody></table></div></details>`;
@@ -310,13 +350,48 @@ function chipsHtml(preview: BalancePreview, done: boolean): string {
 
 function reportHtml(source: BalancePreview, month: string, done: boolean): string {
   const levels = [...source.levels].sort((a, b) => levelRank(a.call_level) - levelRank(b.call_level));
+  const weekends = source.summary.weekend_refinement;
+  const hours = source.summary.hours_refinement;
+  const nights = source.summary.night_refinement;
+  const joint = source.summary.joint_night_refinement;
+  const finalJoint = (callLevel: string) => joint?.levels.find(row => row.call_level === callLevel && row.accepted)?.after;
   return `${chipsHtml(source, done)}
+    ${source.summary.membership_repair?.repaired ? `<p class="extra-duty-notice" data-membership-repair><strong>${esc(source.summary.membership_repair.repaired)} ineligible assignment(s) ${done ? "reassigned" : "will be reassigned"}.</strong> Recipients require dated postings to included units. Undo cannot restore an ineligible holder; correct the underlying posting only if it is factually valid.</p>` : ""}
+    ${source.summary.clinical_repair?.repaired ? `<p class="extra-duty-notice" data-clinical-repair><strong>${esc(source.summary.clinical_repair.repaired)} duty safety conflict(s) ${done ? "repaired" : "will be repaired"}.</strong> Reassignments retain call level, dated postings, rest and staffing checks. Undo cannot restore a duty that still overlaps active leave or breaks rest requirements.</p>` : ""}
+    ${source.summary.individual_limit_repair?.repaired ? `<p class="extra-duty-notice" data-individual-limit-repair><strong>Individual duty limits ${done ? "repaired" : "will be repaired"} for ${esc(source.summary.individual_limit_repair.affected_members)} member(s).</strong> ${esc(source.summary.individual_limit_repair.reassigned)} duty change(s) ${done ? "made" : "proposed"}. Saved limits and recorded exceptions stay in force. Undo cannot restore an unapproved limit breach.</p>` : ""}
     <section class="balance-levels-section" aria-labelledby="balance-levels-title">
       <h3 id="balance-levels-title">${done ? "Before and now" : "Before and after"}, per call level</h3>
       <ul class="balance-levels">${levels.map(l => levelCard(l, done)).join("")}</ul>
       <p class="balance-legend" aria-hidden="true"><span class="balance-legend__goal"></span>Fair-share band <span class="balance-legend__range"></span>Lowest to highest member</p></section>
+    ${weekends ? `<section class="balance-levels-section" data-weekend-refinement aria-labelledby="balance-weekend-title">
+      <h3 id="balance-weekend-title">Weekend duties</h3>
+      <p>${esc(weekends.swaps)} weekend exchange(s) ${done ? "made" : "proposed"}. These exchanges preserve each person's duty total, recorded hours and extra-duty credits. The table includes any further improvement from joint night balancing.</p>
+      <div class="table-scroll"><table class="balance-table"><caption>Weekend-duty count gaps within each call level</caption>
+      <thead><tr><th scope="col">Call level</th><th scope="col">Before</th><th scope="col">${done ? "Now" : "After"}</th></tr></thead>
+      <tbody>${weekends.levels.map(level => `<tr><th scope="row">${esc(levelName(level))}</th><td data-label="Before">${esc(level.before_gap)}</td><td data-label="${done ? "Now" : "After"}">${esc(finalJoint(level.call_level)?.weekend.gap ?? level.after_gap)}</td></tr>`).join("")}</tbody></table></div>
+      <p>The search is bounded. Remaining gaps need review; this is not proof that a better allocation is impossible.</p></section>` : ""}
+    ${joint?.levels.length ? `<section class="balance-levels-section" data-joint-night-refinement aria-labelledby="balance-joint-night-title">
+      <h3 id="balance-joint-night-title">Further night-duty balancing</h3>
+      <p>${esc(joint.changed_rows ?? 0)} duty change(s) ${done ? "made" : "proposed"} in ${esc(joint.accepted_levels ?? 0)} call-level group(s). Individual totals may change. Call-level duty equality, working-hours balance, weekend balance and extra-duty credits do not worsen.</p>
+      <p>Each proposed batch must pass the dated eligibility, leave, rest, staffing and individual-limit checks. The search is bounded; an unfinished search does not prove that improvement is impossible.</p>
+      <ul>${joint.levels.map(row => `<li>${esc(levelName(row))}: ${row.accepted && row.before && row.after ? `night gap ${esc(row.before.night.gap)} to ${esc(row.after.night.gap)}` : "No further safe change found within the search limits."}</li>`).join("")}</ul>
+    </section>` : ""}
+    ${nights ? `<section class="balance-levels-section" data-night-refinement aria-labelledby="balance-night-title">
+      <h3 id="balance-night-title">Night and 24-hour duties</h3>
+      <p>${esc(nights.swaps)} count-preserving night-duty exchange(s) ${done ? "made" : "proposed"}. These exchanges preserve individual duty totals, weekend totals and extra-duty credits. The table includes any further improvement from joint night balancing.</p>
+      <div class="table-scroll"><table class="balance-table"><caption>Night-duty gaps within each call level</caption>
+      <thead><tr><th scope="col">Call level</th><th scope="col">Before</th><th scope="col">${done ? "Now" : "After"}</th></tr></thead>
+      <tbody>${nights.levels.map(level => `<tr><th scope="row">${esc(levelName(level))}</th><td data-label="Before">${esc(level.before_night_gap)}</td><td data-label="${done ? "Now" : "After"}">${esc(finalJoint(level.call_level)?.night.gap ?? level.after_night_gap)}</td></tr>`).join("")}</tbody></table></div>
+      <p>The search is bounded. Remaining differences need review; a better allocation may still be possible.</p></section>` : ""}
+    ${hours ? `<section class="balance-levels-section" data-hours-refinement aria-labelledby="balance-hours-title">
+      <h3 id="balance-hours-title">Working hours</h3>
+      <p>${esc(hours.swaps)} working-hours exchange(s) ${done ? "made" : "proposed"}. These exchanges preserve each person's duty total, weekend total and extra-duty credits. The table includes any further hours improvement from the night-duty exchanges.</p>
+      <div class="table-scroll"><table class="balance-table"><caption>Working-hours gaps within each call level</caption>
+      <thead><tr><th scope="col">Call level</th><th scope="col">Before</th><th scope="col">${done ? "Now" : "After"}</th></tr></thead>
+      <tbody>${hours.levels.map(level => `<tr><th scope="row">${esc(levelName(level))}</th><td data-label="Before">${esc(level.before_hour_gap)}</td><td data-label="${done ? "Now" : "After"}">${esc(finalJoint(level.call_level)?.minutes ? finalJoint(level.call_level)!.minutes.gap / 60 : nights?.levels.find(row => row.call_level === level.call_level)?.after_hour_gap ?? level.after_hour_gap)}</td></tr>`).join("")}</tbody></table></div>
+      <p>Each exchange must pass the safety checks. The search is bounded; remaining differences need review.</p></section>` : ""}
     ${movesHtml(source.moves, source.members, levels, done)}
-    ${membersHtml(source.members, levels, month, done)}`;
+    ${membersHtml(source.members, levels, month, done, source.summary.allocation_mode)}`;
 }
 
 /** Plain-words "Already balanced" view, from the status endpoint's levels. */
@@ -339,6 +414,9 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
   let busy: "" | "load" | "apply" | "undo-check" | "undo" = "";
   let status: BalanceStatus | null = null;
   let preview: BalancePreview | null = null;
+  let previewJobId = "";
+  let discardRequested = false;
+  let previewGeneration = 0;
   let applied: BalanceApplyResult | null = null;
   let reviewed = false;
   let notice: Notice | null = null;
@@ -377,7 +455,7 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
     return `<section class="extra-duty-undo panel" role="region" aria-labelledby="balance-undo-title" tabindex="-1" data-balance-undo-panel>
       <h3 id="balance-undo-title">${undo.phase === "conflict" ? "This run cannot be undone yet" : "Undo this balance run?"}</h3>
       ${undo.phase === "conflict"
-        ? `<p>These duties were changed after balancing, so undoing could remove someone else's work:</p>
+        ? `<p>Restoring these duties would conflict with current assignments or safety rules:</p>
            <ul data-balance-undo-conflicts>${conflicts.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
            <p class="hint">Next step: put those duties back as they were, or change them one by one in the day view. Nothing was changed.</p>
            <div class="button-row"><button type="button" data-balance-undo-keep>Close this message</button></div>`
@@ -388,7 +466,7 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
 
   /** Outcome first (notice, undo question), then the report; the explanation leads only while previewing. */
   function content() {
-    if (busy === "load") return `${aboutHtml()}<p role="status" class="extra-duty-loading balance-loading"><span class="balance-spinner" aria-hidden="true"></span>Working out a fair share for every member and the moves that get there…</p>`;
+    if (busy === "load") return `${noticeHtml()}${aboutHtml()}<p role="status" class="extra-duty-loading balance-loading"><span class="balance-spinner" aria-hidden="true"></span>Working out a fair share for every member and the moves that get there…</p>`;
     const top = `${noticeHtml()}${undoHtml()}`;
     if (applied) return `${top}${batchesHtml()}${reportHtml(applied, month, true)}${aboutHtml(true)}`;
     if (blocked === "balanced") return `${top}${balancedLevelsHtml(status)}${batchesHtml()}${aboutHtml(true)}`;
@@ -399,13 +477,15 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
   function footer() {
     if (applied || !preview || blocked) {
       return `<p class="extra-duty-status" role="status" aria-live="polite" data-balance-status-text>${busy === "undo" ? "Undoing…" : busy === "undo-check" ? "Checking the run…" : ""}</p>
+        ${previewJobId && !applied ? `<button type="button" data-balance-discard ${discardRequested || busy === "undo" || busy === "apply" ? "disabled" : ""}>Discard preview</button>` : ""}
         <button type="button" data-balance-close ${busy === "undo" ? "disabled" : ""}>Close</button>`;
     }
     const movable = preview.summary.moves + preview.summary.swaps > 0;
     return `<label class="extra-duty-review"><input type="checkbox" data-balance-reviewed ${reviewed ? "checked" : ""} ${!movable || busy ? "disabled" : ""}> I reviewed these moves</label>
       <p class="extra-duty-status" role="status" aria-live="polite" data-balance-status-text>${busy === "apply" ? "Applying… keep this window open."
-        : !movable ? "No duty can move without breaking a rule." : reviewed ? "Ready to apply. Nothing is saved until you apply." : "Tick the review box to apply. Nothing is saved yet."}</p>
-      <button type="button" data-balance-close ${busy === "apply" ? "disabled" : ""}>Cancel</button>
+        : !movable ? "No safe changes were found within this search. Remaining differences need review." : reviewed ? "Ready to apply. Nothing is saved until you apply." : "Tick the review box to apply. Nothing is saved yet."}</p>
+      ${previewJobId ? `<button type="button" data-balance-discard ${busy || discardRequested ? "disabled" : ""}>Discard preview</button>` : ""}
+      <button type="button" data-balance-close ${busy === "apply" ? "disabled" : ""}>Close</button>
       <button type="button" class="primary" data-balance-apply ${!movable || !reviewed || busy ? "disabled" : ""} aria-busy="${busy === "apply"}">${busy === "apply" ? "Applying…" : "Apply balance"}</button>`;
   }
 
@@ -440,31 +520,62 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
   }
 
   async function load() {
+    const generation = ++previewGeneration;
+    discardRequested = false; previewJobId = "";
     busy = "load"; preview = null; applied = null; reviewed = false; notice = null; blocked = ""; undo = null;
     render();
     try {
       invalidateBalanceStatus(month);
       status = await loadStatus(month, lifetimeSignal(lifetime, 15000)).catch(() => null);
-      if (closed) return;
+      if (closed || generation !== previewGeneration) return;
       if (status && !status.enabled) {
         blocked = "disabled";
         notice = { tone: "info", title: "Balance duties is turned off", text: "It is switched off for this deployment. Ask the system administrator to enable it." };
         return;
       }
-      if (status?.balanced) {
-        blocked = "balanced";
-        notice = { tone: "success", title: "Already balanced", text: "Every call level is within the allowed gap of its fair share. Nothing needs to move." };
-        return;
+      // Count balance does not rule out safe weekend exchanges. Only the
+      // current server preview can decide whether there are improving moves.
+      type PreviewJob = {id: string; status: string; preview?: BalancePreview; error?: string; error_code?: string};
+      let job = await post<PreviewJob>("preview-jobs", { month }, 60000);
+      previewJobId = job.id;
+      let observations = 0;
+      while (!closed && generation === previewGeneration && !discardRequested && ["queued", "running"].includes(job.status)) {
+        notice = { tone: "info", title: "Preparing a safe Balance preview", text: "Planning may take several minutes. No duties are changed. You can close this window and reopen Balance duties to resume the saved preview." };
+        render();
+        await new Promise<void>(resolve => {
+          const onAbort = () => { clearTimeout(timer); resolve(); };
+          const timer = setTimeout(() => {
+            lifetime.signal.removeEventListener("abort", onAbort);
+            resolve();
+          }, 1500);
+          lifetime.signal.addEventListener("abort", onAbort, {once: true});
+          if (lifetime.signal.aborted) onAbort();
+        });
+        if (closed || generation !== previewGeneration || discardRequested) return;
+        job = await request<PreviewJob>(`${API}/preview-jobs/${encodeURIComponent(job.id)}`, {signal: lifetime.signal});
+        observations += 1;
+        if (["queued", "running"].includes(job.status) && observations % 10 === 0) {
+          // PostgreSQL worker ownership prevents duplicate work. This also
+          // resumes a durable queued/running job after a server restart.
+          job = await post<PreviewJob>(`preview-jobs/${encodeURIComponent(job.id)}/resume`, {}, 15000);
+        }
       }
-      preview = await post<BalancePreview>("preview", { month }, 60000);
+      if (closed || generation !== previewGeneration || discardRequested) return;
+      if (job.status !== "completed" || !job.preview) {
+        const error = new Error(job.error || "The preview did not complete. Start again; no duties were changed.") as ApiError;
+        error.detail = {code: job.error_code || "preview_failed"};
+        throw error;
+      }
+      preview = job.preview;
+      notice = null;
     } catch (error) {
-      if (closed) return;
+      if (closed || generation !== previewGeneration) return;
       const code = errorCode(error);
       if (code === "proposal_active") { busy = ""; showConflict(error); return; }
       blocked = code || "error";
       if (code === "nothing_to_balance") {
         blocked = "balanced";
-        notice = { tone: "success", title: "Already balanced", text: `${sentence(errorMessage(error, "There is nothing to balance."))} Nothing needs to move.` };
+        notice = { tone: "success", title: "Already balanced", text: `${sentence(errorMessage(error, "There is nothing to balance."))} No changes were proposed.` };
         return;
       }
       const next = code === "not_draft" ? "Undo the publish first, or choose a draft month."
@@ -472,16 +583,40 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
         : code === "disabled" ? "Ask the system administrator to enable it." : "Check the connection, then try again.";
       notice = { tone: "error", text: `${sentence(errorMessage(error))} ${next}`, next: ["not_draft", "scope_unlocked", "disabled"].includes(code) ? "" : "retry" };
     } finally {
-      if (busy === "load") { busy = ""; render(notice?.next ? "[data-balance-repreview]" : undefined); }
+      if (generation === previewGeneration && busy === "load") { busy = ""; render(notice?.next ? "[data-balance-repreview]" : undefined); }
     }
+  }
+
+  async function discardPreview() {
+    if (!previewJobId || discardRequested || busy === "apply" || busy === "undo") return;
+    discardRequested = true;
+    previewGeneration += 1;
+    notice = {tone: "info", text: "Discarding the unapplied preview…"};
+    render();
+    try {
+      const result = await post<{status: string}>(`preview-jobs/${encodeURIComponent(previewJobId)}/cancel`, {}, 15000);
+      busy = ""; preview = null; previewJobId = ""; reviewed = false;
+      blocked = "discarded";
+      notice = result.status === "applied"
+        ? {tone: "info", text: "This preview had already been applied. No saved duties were discarded."}
+        : {tone: "success", text: "Preview discarded. No duties were changed.", next: "preview"};
+      if (result.status === "applied") onApplied();
+    } catch (error) {
+      busy = "";
+      discardRequested = false;
+      notice = {tone: "error", text: `${sentence(errorMessage(error))} Cancellation is not confirmed. Reopen the preview to check its current status.`, next: "preview"};
+    }
+    render();
   }
 
   async function apply() {
     if (!preview || !reviewed || busy) return;
     busy = "apply"; notice = null; render("[data-balance-apply]");
     try {
-      const result = await post<BalanceApplyResult>("apply", { month, token: preview.token, plan_hash: preview.plan_hash }, 120000);
+      const result = await post<BalanceApplyResult>("apply", { month, token: preview.token, plan_hash: preview.plan_hash,
+        ...(preview.preview_job_id ? {preview_job_id: preview.preview_job_id} : {}) }, 120000);
       applied = { ...preview, ...result, levels: result.levels ?? preview.levels, moves: result.moves ?? preview.moves, members: result.members ?? preview.members, summary: result.summary ?? preview.summary };
+      previewJobId = "";
       busy = "";
       await refreshStatus();
       const s = applied.summary;
@@ -533,7 +668,7 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
     busy = "undo"; render("[data-balance-undo-panel]");
     try {
       const result = await post<UndoResult>(BALANCE_UNDO(batchId), { dry_run: false }, 120000);
-      undo = null; applied = null; preview = null; busy = "";
+      undo = null; applied = null; preview = null; previewJobId = ""; busy = "";
       await refreshStatus();
       blocked = "undone";
       notice = { tone: "success", title: "Run undone", text: `${plural(result.restored ?? 0, "duty", "duties")} put back with the person and unit they had before balancing.` };
@@ -556,6 +691,7 @@ export async function openBalanceDuties(month: string, onApplied: () => void): P
     if (!button || button.disabled || !dialog.contains(button)) return;
     if (button.matches("[data-close], [data-balance-close]")) { if (busy !== "apply" && busy !== "undo") dialog.close(); return; }
     if (button.matches("[data-balance-apply]")) { void apply(); return; }
+    if (button.matches("[data-balance-discard]")) { void discardPreview(); return; }
     if (button.matches("[data-balance-repreview]")) { if (!busy) void load(); return; }
     if (button.dataset.balanceUndo) { void checkUndo(button.dataset.balanceUndo); return; }
     if (button.matches("[data-balance-undo-confirm]")) { void runUndo(); return; }

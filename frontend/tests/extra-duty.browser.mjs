@@ -23,7 +23,7 @@ const U1 = "u-1", U2 = "u-2", U3 = "u-3", U4 = "u-4";
 const justice = (ledger, month, h24 = 0, rest = 40, last = null) => ({ ledger_count: ledger, last_extra_date: last, month_duties: month, month_24hr: h24, rest_hours: rest });
 const previewBody = () => ({
   month: "2026-11", plan_hash: "plan-abc", context_hash: "ctx-1", token: "tok-123", generated_at: "2026-10-21T08:00:00Z",
-  summary: { filled: 3, fallback: 1, ledger_records: 2, unfilled: 1, slots_considered: 4 },
+  summary: { allocation_mode: "availability", filled: 3, fallback: 1, ledger_records: 2, unfilled: 1, slots_considered: 4 },
   decisions: [
     { slot_id: "s1", action: "assign", person_id: "p1", person_name: "Dr Asha", home_unit_id: U1, assigned_unit_id: U1,
       overridden_rules: ["monthly_24hr_limit"], ledger: true, justice: justice(0, 3, 1, 48), reason: "",
@@ -50,7 +50,7 @@ const state = {
   ],
   putBodies: [], jobs: [], balanceUndo: [],
 };
-const applied = { batch_id: "b-1", summary: { filled: 3, fallback: 1, ledger_records: 2, unfilled: 1, slots_considered: 4 }, decisions: previewBody().decisions };
+const applied = { batch_id: "b-1", summary: { allocation_mode: "availability", filled: 3, fallback: 1, ledger_records: 2, unfilled: 1, slots_considered: 4 }, decisions: previewBody().decisions };
 const ledgerRows = [
   { id: "r1", person_id: "p1", person_name: "Dr Asha", duty_date: "2026-11-03", duty_type: "MAIN_1ST_24HR", home_unit: "UNIT I", assigned_unit: "UNIT I",
     fallback_used: false, overridden_rules: ["monthly_24hr_limit"], status: "active", void_reason: null, batch_id: "b-1", created_at: "2026-10-21T08:00:00Z" },
@@ -132,7 +132,9 @@ await open();
 await dialog.getByRole("heading", { name: "Extra-duty layer" }).waitFor();
 await dialog.locator("[data-decision]").first().waitFor();
 const text = await dialog.innerText();
+ok(/Availability-based fairness/.test(await dialog.locator("[data-allocation-mode]").innerText()), "saved availability policy disclosed");
 ok(text.includes("Leave and rest after 24-hour duties are never broken. Unit staffing limits and equal-duty fairness may be exceeded; every such duty is recorded in the ledger, and whoever did one goes down the list next time."), "strict-rules explanation");
+ok(text.includes("dated postings") && text.includes("included units only"), "ordinary and extra duty scope prerequisite is explained");
 const chips = await dialog.locator(".extra-duty-chip").allInnerTexts();
 eq(chips.map(c => c.replace(/\s+/g, " ").trim()), ["3 to fill", "1 with a fallback unit", "2 ledger records", "1 cannot be filled"], "summary chips");
 eq(await dialog.locator("[data-decision]").count(), 3, "three filled rows");
@@ -307,7 +309,9 @@ await ledger.getByText("No extra duties recorded for this person.").waitFor();
 await page.evaluate(async () => { const host = document.querySelector("#slot"); await (await import("/src/extra-duty.ts")).renderMemberExtraDuties(host, "p3"); });
 await ledger.locator('[data-ledger-row="t3"]').waitFor();
 eq(await ledger.locator('[data-ledger-row="t1"] [data-ledger-transfer]').allInnerTexts(), ["Passed on from Dr Asha by Balance duties on 22 Oct"], "transfer note uses the backend text");
-eq((await ledger.locator('[data-ledger-row="t2"] [data-ledger-transfer]').allInnerTexts()).map(t => t.trim()), ["Passed on from Dr Bina by Balance duties on 22 Oct 2026"], "transfer note from a transfer object");
+const transferNotes = (await ledger.locator('[data-ledger-row="t2"] [data-ledger-transfer]').allInnerTexts()).map(t => t.trim());
+eq(transferNotes.length, 1, "one transfer note from the transfer object");
+ok(/^Passed on from Dr Bina by Balance duties on 22 Oct 2026, 15:30:00 GMT\+05:30 \(Asia\/(Calcutta|Kolkata)\)$/.test(transferNotes[0]), "transfer note retains the date, time and local timezone");
 eq(await ledger.locator('[data-ledger-row="t3"] [data-ledger-transfer]').count(), 0, "no note without a transfer");
 ok(/Rules overridden: Extra duty passed on by Balance duties/.test(await ledger.locator('[data-ledger-row="t1"]').innerText()), "rebalanced code in plain words");
 for (const scheme of ["light", "dark"]) { await page.emulateMedia({ colorScheme: scheme }); await axe("#slot"); }

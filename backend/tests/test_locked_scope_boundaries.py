@@ -27,6 +27,7 @@ def test_manual_override_cannot_import_member_outside_dated_locked_scope(db, mem
     target = member(db, "Adversarial recipient", outside if member_kind == "outside" else unit, **kwargs)
     if member_kind == "unposted":
         db.query(PersonPosting).filter_by(person_id=target.id).delete()
+        member(db, 'In-scope staff', unit)  # retain unit staffing; do not waive its guard
     slot = make_slot(db, unit, date(2026, 5, 15))
     db.commit()
     check = validate_assignment(db, slot=slot, person=target, replace_existing=False)

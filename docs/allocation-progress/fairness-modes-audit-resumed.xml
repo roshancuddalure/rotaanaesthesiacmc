@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="201.941" timestamp="2026-11-23T23:48:38.035006+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_generation_api" name="test_optimizer_benchmark_fingerprint_changes_only_with_active_learning" time="7.423"><failure message="AssertionError: assert 'a47b2519c105...c1468be865062' == '7b998a03221b...5f50fc345bd81'&#10;  &#10;  - 7b998a03221b555d10551bea3c520246ba76e39e9d4fd386ac65f50fc345bd81&#10;  + a47b2519c105f039fc99614441a9935022030676e2c7298822ac1468be865062">backend\tests\test_generation_api.py:119: in test_optimizer_benchmark_fingerprint_changes_only_with_active_learning
+    assert activated["context_hash"] == original["context_hash"]
+E   AssertionError: assert 'a47b2519c105...c1468be865062' == '7b998a03221b...5f50fc345bd81'
+E     
+E     - 7b998a03221b555d10551bea3c520246ba76e39e9d4fd386ac65f50fc345bd81
+E     + a47b2519c105f039fc99614441a9935022030676e2c7298822ac1468be865062</failure></testcase><testcase classname="tests.test_fairness_targets" name="test_simulated_month_keeps_duties_equal_within_each_call_level" time="121.074"><failure message="AssertionError: {'adjusted_gap': 1.665289, 'allocation_mode': 'availability', 'allowed_gap': 1, 'call_level': '1ST_CALL', ...}&#10;assert False is True">backend\tests\test_fairness_targets.py:249: in test_simulated_month_keeps_duties_equal_within_each_call_level
+    assert row["explained"] is True, row
+E   AssertionError: {'adjusted_gap': 1.665289, 'allocation_mode': 'availability', 'allowed_gap': 1, 'call_level': '1ST_CALL', ...}
+E   assert False is True</failure></testcase></testsuite></testsuites>

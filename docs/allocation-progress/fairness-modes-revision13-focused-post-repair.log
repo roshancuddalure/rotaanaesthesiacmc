@@ -1,0 +1,63 @@
+........................................................................ [ 22%]
+.......................................................................F [ 44%]
+F....................................................................... [ 67%]
+..............................................................FF.FF..... [ 89%]
+.................................                                        [100%]
+================================== FAILURES ===================================
+____________________ test_pool_slots_split_by_member_count ____________________
+backend\tests\test_fairness_targets.py:192: in test_pool_slots_split_by_member_count
+    assert spread["3RD_CALL"]["planned_target"] == 2.0
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'planned_target'
+___________________ test_spread_shape_before_any_assignment ___________________
+backend\tests\test_fairness_targets.py:205: in test_spread_shape_before_any_assignment
+    assert row["planned_target"] == round(row["slots"] / row["member_count"], 2)
+           ^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'planned_target'
+_ test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-False] _
+backend\tests\test_ot_whole_month_oracle.py:103: in test_real_month_optimizer_matches_independent_coverage_and_fairness
+    assert len(choices) == expected_coverage, result
+E   AssertionError: {'baseline_retained': False, 'candidates': {'04845aab-e89a-4355-a3d2-4726e3c5d95d': {'06d7e049-f3a9-4710-b1c6-89fbe9bb...41-b70a51703284', '403d1dbd-56b8-4789-abf2-fa924dddf29b': '06d7e049-f3a9-4710-b1c6-89fbe9bb5d94', ...}, 'cuts': 0, ...}
+E   assert 12 == 13
+E    +  where 12 = len({'238d4851-1d8c-43cf-9f41-51952a60cf63': '5acd9380-cc42-498a-bdc4-311f5a0176ca', '352453c9-b2e6-4f8e-935a-b5dd5cc238ad...5139-9a3d-4d19-8a41-b70a51703284', '403d1dbd-56b8-4789-abf2-fa924dddf29b': '06d7e049-f3a9-4710-b1c6-89fbe9bb5d94', ...})
+_ test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-True] _
+backend\tests\test_ot_whole_month_oracle.py:103: in test_real_month_optimizer_matches_independent_coverage_and_fairness
+    assert len(choices) == expected_coverage, result
+E   AssertionError: {'baseline_retained': False, 'candidates': {'047c0b5a-74ef-4941-96a5-8f515e790231': {'023cdc83-5ed4-477e-bd04-27754091...30-bdd1bc57ef23', '8413355a-b756-4611-bd0d-f3a9cb8528bc': 'b983dfaa-2eba-4798-a81f-4fc776ab6827', ...}, 'cuts': 0, ...}
+E   assert 12 == 13
+E    +  where 12 = len({'4d7f1080-e4c4-45a2-8bc5-61973165a718': '78d1bd82-32c9-496e-bc30-bdd1bc57ef23', '4ebde8dd-f877-4db5-8e7e-252b7424a78f...bd82-32c9-496e-bc30-bdd1bc57ef23', '8413355a-b756-4611-bd0d-f3a9cb8528bc': 'b983dfaa-2eba-4798-a81f-4fc776ab6827', ...})
+_ test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-False] _
+backend\tests\test_ot_whole_month_oracle.py:103: in test_real_month_optimizer_matches_independent_coverage_and_fairness
+    assert len(choices) == expected_coverage, result
+E   AssertionError: {'baseline_retained': False, 'candidates': {'0375fc37-a7b0-4b48-9d7f-c0dbb1bfedbe': {'280edfe5-6832-4c1e-b2ba-3d4fbac2...ba-3d4fbac2b86d', '593dc1af-56de-45ef-8f8d-3e1767815a16': 'f8881f1c-6f84-4b2e-aeb7-262114155c74', ...}, 'cuts': 0, ...}
+E   assert 12 == 13
+E    +  where 12 = len({'0375fc37-a7b0-4b48-9d7f-c0dbb1bfedbe': 'ea436820-45fd-4b51-9f3f-78c17216864e', '051889ed-d428-434a-8de6-eb6addc720b8...dfe5-6832-4c1e-b2ba-3d4fbac2b86d', '593dc1af-56de-45ef-8f8d-3e1767815a16': 'f8881f1c-6f84-4b2e-aeb7-262114155c74', ...})
+_ test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-True] _
+backend\tests\test_ot_whole_month_oracle.py:103: in test_real_month_optimizer_matches_independent_coverage_and_fairness
+    assert len(choices) == expected_coverage, result
+E   AssertionError: {'baseline_retained': False, 'candidates': {'0066c8aa-f0fd-4c64-a9ca-ae7c13907c14': {'026e1b1c-3114-44ae-8ab0-06958a2f...3c-5197f8bef718', '61060517-50de-415b-a7ce-bcf9f2f8d35f': 'a83b2cc0-d2a8-4791-963c-5197f8bef718', ...}, 'cuts': 0, ...}
+E   assert 12 == 13
+E    +  where 12 = len({'0066c8aa-f0fd-4c64-a9ca-ae7c13907c14': '18c571b3-db9b-4489-8f45-decbc347237c', '05e20032-2c01-4a1e-b3a2-8a55f7c19e3e...2cc0-d2a8-4791-963c-5197f8bef718', '61060517-50de-415b-a7ce-bcf9f2f8d35f': 'a83b2cc0-d2a8-4791-963c-5197f8bef718', ...})
+============================== warnings summary ===============================
+tests/test_focused_allocation_refinement.py::test_exhausted_solver_still_balances_real_safe_month
+  tests\test_focused_allocation_refinement.py:28: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    def test_exhausted_solver_still_balances_real_safe_month(compute_db, monkeypatch, record_property):
+
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-False-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-True]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-False-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-True]
+  tests\test_ot_whole_month_oracle.py:58: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("boundary_leave,reverse", [(False, False), (True, False), (True, True)])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend\tests\test_fairness_targets.py::test_pool_slots_split_by_member_count
+FAILED backend\tests\test_fairness_targets.py::test_spread_shape_before_any_assignment
+FAILED backend\tests\test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-False]
+FAILED backend\tests\test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-True]
+FAILED backend\tests\test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-False]
+FAILED backend\tests\test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-True]
+6 failed, 315 passed, 7 warnings in 51455.34s (14:17:35)

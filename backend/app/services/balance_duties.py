@@ -9,8 +9,7 @@ For every call level L of the draft month:
 
 * ``avail_i`` = days of the month member *i* is posted (any unit) and active, minus days with an
   active-status leave (``ACTIVE_LEAVE_STATUSES``; any leave on a day takes the whole day). A member
-  with no posting in the month who holds a duty (the extra-duty "unposted" tier) is available on
-  every day without leave.
+  with no included-unit posting is ineligible, even if they hold an old extra duty.
 * A member's level is the level they hold on their first posted day (as ``fairness_targets``).
 * ``slots(L)`` = the month's *filled* duties of L: every active assignment on a non-excluded
   template slot. A duty needing one level counts 1 for it; a *pool* duty (several levels, see
@@ -36,10 +35,11 @@ furthest below theirs (recipient), when that strictly improves the balance
   that was not already: this covers the recipient's unit and "the donor's unit no worse".
 
 A recipient posted to another unit takes the slot into their unit (as the extra-duty fallback
-does); only in-scope units allowed by the duty's unit rules qualify. For extra-duty rows only, a
-recipient with no posting at all on the date may take the duty in the slot's current unit (the
-owner-approved fill-all ``unposted_member`` tier; the record then carries that code and the
-independent checker waives the posting check). Ordinary rows always need a posted recipient.
+does); only in-scope units allowed by the duty's unit rules qualify. Owner clarification
+23 Nov 2026 requires dated included-unit postings for ordinary AND extra duties.
+Unposted and excluded-only people do not enter the fairness denominator or recipient pool.
+Historical extra-duty ledger exceptions do not grant eligibility. Partial postings
+retain their dated restrictions.
 Structural refusals (posting, level / pool, groups, unit rule, leave) are memoised and pruned
 before any costly check, at no work cost; the budget is ``max(MAX_WORK, WORK_PER_SLOT * slots)``. When no direct move works
 for a donor, a *swap* (donor duty X <-> recipient duty Y on different days) is tried together
@@ -79,6 +79,7 @@ independent checker on the touched rows and rolls back on any violation.
 """
 
 from __future__ import annotations
+from app.services.leave_semantics import leaves_for_slot
 
 import hashlib
 import json
@@ -105,8 +106,10 @@ from app.models import (
 )
 from app.services import extra_duty as ed
 from app.services.fairness_targets import split_pool_demand
+from app.services.allocation_fairness_policy import fairness_mode, personal_shares
 from app.services.leave import month_bounds
 from app.services.leave_semantics import is_active
+from app.services.ordinary_duty_pool import has_month_unit_posting
 from app.services.reference_registry import lock_namespace
 from app.services.rota_eligibility import CALL_LEVEL_ORDER, call_level_label, eligibility, member_call_level
 from app.services.rota_rules import RotaPhaseOneRules, get_phase_one_rules
@@ -356,6 +359,7 @@ class _State:
     # ---- members and shares ------------------------------------------------------------------
 
     def _members(self) -> None:
+        from app.services.allocation_day_capacity import posted_capacity
         ctx = self.ctx
         leave_days: dict[UUID, set[date]] = defaultdict(set)
         for day, people in ctx.leaves.items():
@@ -365,6 +369,8 @@ class _State:
         posted: dict[UUID, set[date]] = defaultdict(set)
         first: dict[UUID, Any] = {}
         persons: dict[UUID, Person] = {}
+        self.ordinary_fallback_people: set[UUID] = set()
+        self.outside_scope_holders: set[UUID] = set()
         for posting in ctx.postings:
             person = posting.person
             if posting.unit_id is None or person is None or person.active_status != "active":
@@ -388,7 +394,7 @@ class _State:
                 first[person.id] = (key, posting)
         self.level: dict[UUID, str] = {}
         self.unit_of: dict[UUID, UUID | None] = {}
-        self.avail: dict[UUID, int] = {}
+        self.avail: dict[UUID, float] = {}
         self.persons = persons
         for pid, days in posted.items():
             (lo, _ptype, _unit), posting = first[pid]
@@ -397,22 +403,13 @@ class _State:
                               posting_type=posting.posting_type, day=lo)
             )
             self.unit_of[pid] = posting.unit_id
-            self.avail[pid] = len(days - leave_days.get(pid, set()))
-        # Unposted members holding a duty this month: available on every day without leave.
-        for row in self.rows.values():
-            pid = row["person"]
-            if pid in self.level:
-                continue
-            person = ctx.persons.get(pid)
-            if person is None or person.active_status != "active":
-                continue
-            self.level[pid] = member_call_level(
-                MemberContext(person=person, unit_id=None, posting_type=person.call_level or "",
-                              day=row["slot"].duty_date)
-            )
-            self.unit_of[pid] = None
-            self.avail[pid] = self.month_days - len(leave_days.get(pid, set()))
-            persons[pid] = person
+            self.avail[pid] = posted_capacity(pid, days, ctx.leaves)
+        # Unposted and excluded-only holders stay visible as historical data,
+        # but never acquire ordinary/extra eligibility or fairness membership.
+        self.outside_scope_holders = {
+            pid for pid in self.duties if pid not in self.level
+            and has_month_unit_posting(pid, ctx.postings)
+        }
         self.members_by_level: dict[str, list[UUID]] = defaultdict(list)
         for pid, level in self.level.items():
             if self.avail.get(pid, 0) > 0 or self.duties.get(pid, 0) > 0:
@@ -438,16 +435,18 @@ class _State:
         counts = {lvl: len(pids) for lvl, pids in self.members_by_level.items()}
         self.level_slots: dict[str, float] = defaultdict(float)
         for row in self.rows.values():
+            if row["person"] in self.outside_scope_holders:
+                continue
             # Pool duties are split as fairness_targets does (single source: split_pool_demand).
             for lvl, part in split_pool_demand(self.levels_of.get(row["slot"].id, set()), counts).items():
                 self.level_slots[lvl] += part
         self.share: dict[UUID, float] = {}
         self.goal: dict[UUID, int] = {}
         for level, pids in self.members_by_level.items():
-            total_avail = sum(self.avail.get(pid, 0) for pid in pids)
             slots = self.level_slots.get(level, 0.0)
+            shares = personal_shares(slots, pids, self.avail, fairness_mode(self.rules))
             for pid in pids:
-                share = slots * self.avail.get(pid, 0) / total_avail if total_avail else 0.0
+                share = shares[pid]
                 self.share[pid] = share
                 self.goal[pid] = int(round(share))
 
@@ -476,6 +475,36 @@ class _State:
         totals = [duties.get(pid, 0) for pid in self.members_by_level.get(level, [])]
         low, high = (min(totals), max(totals)) if totals else (0, 0)
         return {"min": low, "max": high, "gap": high - low}
+
+    def availability_breakdown(self, level: str) -> dict[str, Any]:
+        """Explain comparable cohorts without changing the binding share calculation.
+
+        Only dated included-unit members count. Historical ineligible holders
+        must not gain fairness membership from an old assignment.
+        """
+        members = self.members_by_level.get(level, [])
+        posted = [pid for pid in members if self.unit_of.get(pid) is not None]
+        unposted = [pid for pid in self.duties if pid not in self.level
+                    and not has_month_unit_posting(pid, self.ctx.postings)
+                    and (person := self.ctx.persons.get(pid)) is not None
+                    and member_call_level(MemberContext(person, None,
+                        person.call_level or '', self.starts_on)) == level]
+
+        def cohort(pids):
+            totals = [self.duties.get(pid, 0) for pid in pids]
+            low, high = (min(totals), max(totals)) if totals else (None, None)
+            return {"members": len(pids), "min": low, "max": high,
+                    "gap": high - low if totals else None}
+
+        return {
+            "posted": cohort(posted),
+            "fully_available_posted": cohort([pid for pid in posted if self.avail.get(pid) == self.month_days]),
+            "fully_available_ordinary": cohort([pid for pid in members if self.avail.get(pid) == self.month_days]),
+            "unposted_holders": cohort(unposted),
+            "outside_scope_holders": sum(1 for pid in self.outside_scope_holders
+                if member_call_level(MemberContext(self.ctx.persons[pid], None,
+                    self.ctx.persons[pid].call_level or '', self.starts_on)) == level),
+        }
 
     # ---- plan state changes ------------------------------------------------------------------
 
@@ -592,6 +621,64 @@ class _State:
         """``pid`` has no posting at all on ``day`` (the fill-all ``unposted_member`` tier)."""
         return pid not in self.ctx.person_units(day)
 
+    def quota_exemptions(self):
+        """Verified existing exceptions; never permission for a new holder/unit."""
+        from app.services.rota_safety import assignments_for_month
+        if not hasattr(self, '_quota_exemptions'):
+            grouped = defaultdict(list)
+            for record, assignment, unit_id in self.db.execute(
+                    select(ExtraDutyRecord, DutyAssignment, DutySlot.unit_id)
+                    .join(DutyAssignment, DutyAssignment.id == ExtraDutyRecord.assignment_id)
+                    .join(DutySlot, DutySlot.id == DutyAssignment.duty_slot_id)
+                    .where(ExtraDutyRecord.month == self.month, ExtraDutyRecord.status == 'active')):
+                grouped[assignment.id].append((record, assignment, unit_id))
+            exemptions = {}
+            for aid, items in grouped.items():
+                if len(items) != 1:
+                    continue
+                record, assignment, unit_id = items[0]
+                if (assignment.source == EXTRA_SOURCE and _active(assignment)
+                        and record.person_id == assignment.person_id and record.assigned_unit_id == unit_id):
+                    exemptions[aid] = (assignment.person_id, unit_id,
+                                       frozenset(record.overridden_rules or ()) & frozenset(ed.LIMIT_CODES))
+            for assignment in assignments_for_month(self.db, self.starts_on, self.ends_on):
+                if assignment.source == ed.SUPERADMIN_SOURCE and _active(assignment):
+                    exemptions[assignment.id] = (assignment.person_id, assignment.duty_slot.unit_id,
+                                                 frozenset(ed.LIMIT_CODES))
+            self._quota_exemptions = exemptions
+        return self._quota_exemptions
+
+    def existing_quota_codes(self, aid: UUID) -> list[str]:
+        """Unapproved excess after subtracting only individually attributed exceptions.
+
+        An approved extra duty must not make the ordinary duties below its limit
+        appear invalid. Its exception cannot exempt another holder or unit.
+        """
+        from copy import copy
+        row = self.rows[aid]
+        pid, slot = row['person'], row['slot']
+        unit = self.slot_unit[slot.id]
+        raw = self.limit_codes(pid, slot, unit, exclude_slot=slot.id)
+        if not raw:
+            return []
+        exemptions = self.quota_exemptions()
+
+        def exempt(key, person, unit_id, code):
+            value = exemptions.get(key)
+            return bool(value and value[:2] == (person, unit_id) and code in value[2])
+
+        result = []
+        for code in raw:
+            if exempt(aid, pid, unit, code):
+                continue
+            view = copy(self)
+            view.ctx = copy(self.ctx)
+            view.ctx.entries_by_person = {pid: [entry for entry in self.ctx.entries_by_person.get(pid, ())
+                if not exempt(entry.assignment_id, pid, entry.unit_id, code)]}
+            if code in view.limit_codes(pid, slot, unit, exclude_slot=slot.id):
+                result.append(code)
+        return result
+
     def structural_block(self, pid: UUID, slot, allow_unposted: bool = False) -> str | None:
         """The plan-independent part of the placement check, free of work cost: active, a
         usable posting on the date (or, with ``allow_unposted`` - extra-duty rows only - no
@@ -629,7 +716,7 @@ class _State:
                     break
                 code = None if usable else (first or "not_in_unit")
             if code is None:
-                for leave in ctx.leaves.get(slot.duty_date, {}).get(pid, []):
+                for leave in leaves_for_slot(ctx.leaves, slot, pid).get(pid, []):
                     if is_active(leave.status) and slot_leave_blocks(leave, slot):
                         code = "leave"
                         break
@@ -743,7 +830,7 @@ class _State:
             if (unit_id, slot.duty_date) not in memo:
                 memo[(unit_id, slot.duty_date)] = self._blocker_indexes(unit_id, slot.duty_date)
             same_day, previous = memo[(unit_id, slot.duty_date)]
-        day_leaves = self.ctx.leaves.get(slot.duty_date, {})
+        day_leaves = leaves_for_slot(self.ctx.leaves, slot)
         hard = warning = available = 0
         for context in eligible:
             blocked, warnings = person_blockers(
@@ -958,9 +1045,58 @@ class _Planner:
         return result
 
     def unposted_ok(self, aid: UUID) -> bool:
-        """Only extra-duty rows may go to a member with no posting on the date (the owner
-        approved that fill-all tier; the record then carries ``unposted_member``)."""
-        return bool(self.s.rows[aid].get("extra"))
+        """No unposted recipient is authorized, including for historical extra rows."""
+        return False
+
+    def repair_scope_membership(self) -> dict[str, int]:
+        """Replace ineligible historical holders through the reviewed balance path.
+
+        Every transfer keeps the existing safety/quota/ledger checks. Protected
+        rows stay protected. An unresolved row blocks apply rather than being
+        silently excluded from the fairness denominator.
+        """
+        from app.services.ordinary_duty_pool import has_dated_scope_posting
+        s = self.s
+        invalid = [aid for aid, row in s.rows.items()
+                   if s.slot_unit[row['slot'].id] not in s.included
+                   or not has_dated_scope_posting(row['person'], s.ctx.postings,
+                                                 row['slot'].duty_date, s.included)]
+        repaired = 0
+        reasons = Counter()
+        for aid in sorted(invalid, key=lambda a: (s.rows[a]['slot'].duty_date, str(a))):
+            row = s.rows[aid]
+            if not row['movable']:
+                reasons['protected_assignment'] += 1
+                continue
+            pool = {pid for level in s.levels_of[row['slot'].id]
+                    for pid in s.members_by_level.get(level, [])}
+            for pid in sorted(pool, key=lambda p: (s.dev(p), s.person_key(p))):
+                code = self.structural_ok(pid, aid)
+                if code:
+                    reasons[code] += 1
+                    continue
+                if self.exhausted:
+                    reasons['search_budget_exhausted'] += 1
+                    break
+                ok, code, placed = self.transfer([(aid, pid)])
+                if ok:
+                    self.record('move', placed)
+                    self.moves[-1]['reason'] = (
+                        'Replace an ineligible holder with a dated included-unit member; '
+                        'call level, leave, rest, staffing and quota checks retained.')
+                    repaired += 1
+                    break
+                reasons[code or 'no_safe_transfer'] += 1
+        if repaired != len(invalid):
+            raise BalanceError('scope_repair_incomplete',
+                               'Some duties have ineligible holders and cannot be safely reassigned automatically. '
+                               'Review protected duties, dated postings and candidate restrictions first.',
+                               409, {'invalid_assignments': len(invalid), 'safe_repairs_found': repaired,
+                                     'unresolved': len(invalid)-repaired, 'refusals': dict(reasons),
+                                     'live_changes': 0})
+        if repaired:
+            s._shares()
+        return {'invalid_before': len(invalid), 'repaired': repaired, 'unresolved': 0}
 
     def structural_ok(self, pid: UUID, aid: UUID) -> str | None:
         """``None`` or the structural refusal code (``_State.structural_block``); costs no work."""
@@ -968,6 +1104,155 @@ class _Planner:
         if self.s.level.get(pid) not in self.s.levels_of.get(slot.id, set()):
             return "call_level_mismatch"
         return self.s.structural_block(pid, slot, self.unposted_ok(aid))
+
+    def repair_clinical_conflicts(self, max_inspections: int = 20000) -> dict[str, int]:
+        """Reviewed, bounded repair of existing leave/rest/overlap conflicts before fairness.
+
+        Protected rows remain protected. A failed search is not proof that no
+        complete safe rota exists; it refuses this automatic proposal unchanged.
+        """
+        s = self.s
+        from copy import copy
+        clinical_context = copy(s.ctx)
+        # Diagnosis concerns leave/rest/overlap only. Every proposed transfer
+        # still uses the original context and its mandatory OT validation.
+        clinical_context.ot_guard = None
+
+        clinical_codes = {'leave', 'same_day_duty', 'post_24hr_rest', 'pre_24hr_rest', 'rest_gap'}
+
+        def conflict_codes(aid):
+            row = s.rows[aid]
+            return {issue['code'] for issue in ed.strict_blockers(
+                clinical_context, row['person'], row['slot'], s.slot_unit[row['slot'].id],
+                exclude_assignment_id=aid) if issue['code'] in clinical_codes}
+
+        def conflicted(aid):
+            return bool(conflict_codes(aid))
+
+        invalid = [aid for aid in s.rows if conflicted(aid)]
+        reasons = Counter()
+        inspections = 0
+        for aid in sorted(invalid, key=lambda a: (s.rows[a]['slot'].duty_date, str(a))):
+            if not conflicted(aid):
+                continue
+            row = s.rows[aid]
+            if not row['movable'] or row['slot'].id in self.touched:
+                reasons['protected_or_already_changed'] += 1
+                continue
+            donor = row['person']
+            pool = sorted((p for level in s.levels_of[row['slot'].id]
+                           for p in s.members_by_level.get(level, []) if p != donor),
+                          key=lambda p: (s.dev(p), s.person_key(p)))
+            repaired = False
+            for swaps in (False, True):
+                for recipient in pool:
+                    partners = s.movable_rows(recipient, self.touched) if swaps else [None]
+                    for partner in partners:
+                        if (inspections >= max_inspections or self.exhausted
+                                or self.work + TRANSFER_COST > self.max_work):
+                            self.exhausted = self.exhausted or self.work + TRANSFER_COST > self.max_work
+                            reasons['search_budget_exhausted'] += 1
+                            break
+                        inspections += 1
+                        pairs = [(aid, recipient)] + ([(partner, donor)] if partner is not None else [])
+                        code = next((code for target, person in pairs
+                                     if (code := self.structural_ok(person, target))), None)
+                        if code:
+                            reasons[code] += 1
+                            continue
+                        ok, code, placed = self.transfer(pairs)
+                        if not ok:
+                            reasons[code or 'no_safe_transfer'] += 1
+                            continue
+                        self.record('swap' if partner is not None else 'move', placed)
+                        if partner is not None:
+                            self.swaps += 1
+                        for move in self.moves[-len(placed):]:
+                            move['reason'] = ('Repair an existing leave, rest or duty-overlap conflict; dated scope, call level, '
+                                              'rest, staffing and quota checks retained. '
+                                              'Undo cannot restore an assignment that still breaks clinical safety rules.')
+                        repaired = True
+                        break
+                    if repaired or inspections >= max_inspections or self.exhausted:
+                        break
+                if repaired or inspections >= max_inspections or self.exhausted:
+                    break
+        unresolved = sum(conflicted(aid) for aid in invalid)
+        if unresolved:
+            remaining_codes = set().union(*(conflict_codes(aid) for aid in invalid))
+            raise BalanceError('leave_repair_incomplete' if remaining_codes <= {'leave'} else 'clinical_repair_incomplete',
+                'Existing leave, rest or duty-overlap conflicts could not all be safely reassigned. '
+                'Review protected duties, recorded duty hours and candidate restrictions; '
+                'this bounded search does not prove full coverage impossible.',
+                409, {'invalid_assignments': len(invalid), 'safe_repairs_found': len(invalid)-unresolved,
+                      'unresolved': unresolved, 'refusals': dict(reasons), 'live_changes': 0})
+        return {'invalid_before': len(invalid), 'repaired': len(invalid), 'unresolved': 0,
+                'inspections': inspections}
+
+    def repair_individual_limit_conflicts(self, max_inspections: int = 20000) -> dict[str, int]:
+        """Repair existing unapproved excess without changing a limit or a protected row."""
+        s = self.s
+        invalid = [aid for aid in s.rows if s.existing_quota_codes(aid)]
+        people = {s.rows[aid]['person'] for aid in invalid}
+        reasons = Counter()
+        inspections = 0
+        first_move = len(self.moves)
+        for aid in sorted(invalid, key=lambda a: (s.rows[a]['slot'].duty_date, str(a))):
+            if not s.existing_quota_codes(aid):
+                continue
+            row = s.rows[aid]
+            if not row['movable'] or row['slot'].id in self.touched:
+                reasons['protected_or_already_changed'] += 1
+                continue
+            donor = row['person']
+            pool = sorted((pid for level in s.levels_of[row['slot'].id]
+                           for pid in s.members_by_level.get(level, ()) if pid != donor),
+                          key=lambda pid: (s.dev(pid), s.person_key(pid)))
+            repaired = False
+            for swaps in (False, True):
+                for recipient in pool:
+                    partners = s.movable_rows(recipient, self.touched) if swaps else [None]
+                    for partner in partners:
+                        if (inspections >= max_inspections or self.exhausted
+                                or self.work + TRANSFER_COST > self.max_work):
+                            self.exhausted = self.exhausted or self.work + TRANSFER_COST > self.max_work
+                            reasons['search_budget_exhausted'] += 1
+                            break
+                        inspections += 1
+                        pairs = [(aid, recipient)] + ([(partner, donor)] if partner is not None else [])
+                        code = next((code for target, person in pairs
+                                     if (code := self.structural_ok(person, target))), None)
+                        if code:
+                            reasons[code] += 1
+                            continue
+                        ok, code, placed = self.transfer(pairs)
+                        if not ok:
+                            reasons[code or 'no_safe_transfer'] += 1
+                            continue
+                        self.record('swap' if partner is not None else 'move', placed)
+                        if partner is not None:
+                            self.swaps += 1
+                        for move in self.moves[-len(placed):]:
+                            move['reason'] = ('Repair an existing individual-duty-limit breach; limits, '
+                                'dated posting, call level, leave, rest and staffing remain enforced. '
+                                'Undo cannot restore an unapproved limit breach.')
+                        repaired = True
+                        break
+                    if repaired or inspections >= max_inspections or self.exhausted:
+                        break
+                if repaired or inspections >= max_inspections or self.exhausted:
+                    break
+        unresolved = sum(bool(s.existing_quota_codes(aid)) for aid in invalid)
+        if unresolved:
+            raise BalanceError('individual_limit_repair_incomplete',
+                'Existing individual-duty-limit breaches could not all be safely reassigned. '
+                'Review protected duties and candidate restrictions; the bounded search is not '
+                'proof that full safe coverage is impossible.', 409,
+                {'invalid_assignments': len(invalid), 'safe_repairs_found': len(invalid)-unresolved,
+                 'unresolved': unresolved, 'refusals': dict(reasons), 'live_changes': 0})
+        return {'invalid_before': len(invalid), 'repaired': len(invalid), 'unresolved': 0,
+                'affected_members': len(people), 'reassigned': len(self.moves)-first_move,
+                'inspections': inspections}
 
     def spend(self, amount: int) -> None:
         self.work += amount
@@ -1260,7 +1545,22 @@ class _Planner:
                     moved = True
                     break
             if not moved:
-                for donor in donors[:SWAP_DONORS_PER_ROUND]:
+                # A global top-N can spend every swap opportunity on one blocked
+                # level, indefinitely starving another level with a viable repair.
+                # Round-robin the already ordered donors across levels, retaining
+                # the same deterministic global cap and all transfer checks.
+                by_level: dict[str, list] = defaultdict(list)
+                for donor in donors:
+                    if s.dev(donor) - low > 1 + EPS:
+                        by_level[s.level.get(donor)].append(donor)
+                swap_donors = []
+                for index in range(SWAP_DONORS_PER_ROUND):
+                    for level_donors in by_level.values():
+                        if index < len(level_donors):
+                            swap_donors.append(level_donors[index])
+                    if len(swap_donors) >= SWAP_DONORS_PER_ROUND:
+                        break
+                for donor in swap_donors[:SWAP_DONORS_PER_ROUND]:
                     if s.dev(donor) - low <= 1 + EPS:
                         break
                     if self.try_swap(donor):
@@ -1281,6 +1581,9 @@ def _level_rows(state: _State, before: dict, refusals: dict | None = None,
         reason = None
         if not ok_after:
             parts = []
+            unposted = state.availability_breakdown(level)["unposted_holders"]["members"]
+            if unposted:
+                parts.append(f"{unposted} historical holder(s) lack dated included-unit postings and are ineligible for ordinary and extra duties")
             if exhausted:
                 parts.append("the search reached its work limit (run Balance duties again to continue)")
             above = [pid for pid in pids if state.dev(pid) > state.gap - EPS]
@@ -1292,10 +1595,10 @@ def _level_rows(state: _State, before: dict, refusals: dict | None = None,
                     f"{REFUSAL_LABELS.get(code, code).lower()} ({n})"
                     for code, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:4]
                 )
-                parts.append(f"the remaining moves would break a hard rule: {top}")
+                parts.append(f"attempted moves were refused by hard rules: {top}")
             reason = (
                 "Not balanced: " + "; ".join(parts) + "."
-                if parts else "Not balanced: no further move improves the totals without breaking a hard rule."
+                if parts else "Not balanced: the bounded search found no further safe improving move; global infeasibility is not proved."
             )
         rows.append({
             "call_level": level,
@@ -1308,7 +1611,14 @@ def _level_rows(state: _State, before: dict, refusals: dict | None = None,
             "after": state.spread(level),
             "ok_before": ok_before,
             "ok_after": ok_after,
+            "allocation_mode": fairness_mode(state.rules),
+            "adjusted_gap_before": round(max((before.get(pid, 0)-state.share.get(pid, 0)
+                for pid in pids), default=0)-min((before.get(pid, 0)-state.share.get(pid, 0)
+                for pid in pids), default=0), 6),
+            "adjusted_gap_after": round(max((state.dev(pid) for pid in pids), default=0)
+                -min((state.dev(pid) for pid in pids), default=0), 6),
             "reason_if_not": reason,
+            "availability_breakdown": state.availability_breakdown(level),
         })
     return rows
 
@@ -1351,25 +1661,54 @@ def plan_balance(db: Session, month: str, *, max_work: int | None = None) -> dic
     return _plan(db, month, max_work=max_work)[0]
 
 
-def _plan(db: Session, month: str, *, max_work: int | None = None) -> tuple[dict[str, Any], _State]:
+def _plan(db: Session, month: str, *, max_work: int | None = None,
+          reviewed_plan: dict | None = None) -> tuple[dict[str, Any], _State]:
     """``(plan, final plan state)``; apply uses the state for the ledger transfers."""
     from app.services.rota_compute import context_hash
     from app.services.rota_rules_admin import rules_revision
 
     started = time.monotonic()
     state = _load(db, month)
-    if not any(row["movable"] for row in state.rows.values()):
-        raise BalanceError("nothing_to_balance", "There are no automatically assigned duties to move.")
+    if reviewed_plan is not None and (reviewed_plan.get('month') != month
+            or reviewed_plan.get('context_hash') != context_hash(db)
+            or reviewed_plan.get('rules_revision') != rules_revision(state.rules)):
+        raise BalanceError('stale_preview', 'The rota changed; generate a new preview.', 409)
     before = dict(state.duties)
-    if all(state.level_ok(level) for level in state.levels()):
-        raise BalanceError("nothing_to_balance", "Duties are already balanced within every call level.")
     has_movable = defaultdict(bool)
     for row in state.rows.values():
         if row["movable"]:
             has_movable[row["person"]] = True
     budget = max(MAX_WORK, WORK_PER_SLOT * len(state.slots)) if max_work is None else max_work
     planner = _Planner(state, budget)
+    membership_repair = planner.repair_scope_membership()
+    clinical_repair = planner.repair_clinical_conflicts()
+    individual_limit_repair = planner.repair_individual_limit_conflicts()
+    if not any(row["movable"] for row in state.rows.values()):
+        raise BalanceError("nothing_to_balance", "There are no automatically assigned duties to move.")
     planner.run()
+    weekend_refinement = None
+    if fairness_mode(state.rules) == 'equal_counts':
+        from app.services.allocation_weekend import refine_weekends
+        weekend_refinement = refine_weekends(state, planner=planner)
+    from app.services.allocation_hours import refine_hours
+    hours_refinement = refine_hours(state, planner=planner)
+    from app.services.allocation_nights import refine_nights
+    night_refinement = refine_nights(state, planner=planner)
+    from app.services.allocation_joint_nights import refine_joint_nights, replay_joint_nights
+    try:
+        joint_night_refinement = (replay_joint_nights(state, planner=planner, reviewed_plan=reviewed_plan)
+                                 if reviewed_plan is not None else refine_joint_nights(state, planner=planner))
+    except (KeyError, ValueError) as exc:
+        raise BalanceError('stale_preview', 'The reviewed refinement no longer validates; preview again.', 409) from exc
+    residual_nights = Counter()
+    for row in state.rows.values():
+        slot = row['slot']
+        residual_nights[row['person']] += int(slot.is_24hr or slot.starts_at.hour >= 18
+                                             or slot.ends_at.date() > slot.starts_at.date())
+    night_review_needed = any(max(residual_nights[p] for p in people)-min(residual_nights[p] for p in people) > 2
+                             for people in state.members_by_level.values() if people)
+    if not planner.moves and not night_review_needed and all(state.level_ok(level) for level in state.levels()):
+        raise BalanceError("nothing_to_balance", "Duty counts are balanced and no safe improving weekend or working-hours exchange was found.")
     moves = planner.moves
     for move in moves:
         if move["extra_duty"]:
@@ -1377,8 +1716,16 @@ def _plan(db: Session, month: str, *, max_work: int | None = None) -> tuple[dict
     levels = _level_rows(state, before, planner.refusals, has_movable, planner.exhausted)
     summary = {
         "mode": BALANCE_MODE,
+        "allocation_mode": fairness_mode(state.rules),
+        "membership_repair": membership_repair,
+        "clinical_repair": clinical_repair,
+        "individual_limit_repair": individual_limit_repair,
+        "weekend_refinement": weekend_refinement,
+        "hours_refinement": hours_refinement,
+        "night_refinement": night_refinement,
+        "joint_night_refinement": joint_night_refinement,
         "moves": sum(1 for m in moves if m["kind"] == "move"),
-        "swaps": planner.swaps,
+        "swaps": sum(m['kind'] == 'swap' for m in moves) // 2,
         "cross_unit": sum(1 for m in moves if m["cross_unit"]),
         "extra_moves": sum(1 for m in moves if m["extra_duty"]),
         "levels_balanced_before": sum(1 for row in levels if row["ok_before"]),
@@ -1442,6 +1789,7 @@ def shares(db: Session, month: str, rules: RotaPhaseOneRules | None = None) -> l
             **state.spread(level),
             "ok": state.level_ok(level),
             "movable": sum(movable_by_person[pid] for pid in pids),
+            "availability_breakdown": state.availability_breakdown(level),
             "members_detail": [
                 {
                     "person_id": str(pid),
@@ -1451,6 +1799,7 @@ def shares(db: Session, month: str, rules: RotaPhaseOneRules | None = None) -> l
                     "share": round(state.share.get(pid, 0.0), 2),
                     "goal": state.goal.get(pid, 0),
                     "duties": state.duties.get(pid, 0),
+                    "eligibility_scope": "posted" if state.unit_of.get(pid) is not None else "ordinary_roster_fallback",
                 }
                 for pid in pids
             ],
@@ -1507,7 +1856,15 @@ def status(db: Session, month: str) -> dict[str, Any]:
 # --------------------------------------------------------------------------------------------
 
 
-def _refuse_active_proposal(db: Session, month: str, user) -> None:
+def _refuse_active_proposal(db: Session, month: str, user, ignore_job_id=None) -> None:
+    if ignore_job_id is not None:
+        from app.models import RotaComputeJob
+        from app.services.rota_compute import ACTIVE
+        other = db.scalar(select(RotaComputeJob.id).where(
+            RotaComputeJob.month == month, RotaComputeJob.status.in_(ACTIVE),
+            RotaComputeJob.id != ignore_job_id))
+        if other is None:
+            return
     try:
         ed._refuse_active_proposal(db, month, user)
     except ed.ExtraDutyError as exc:
@@ -1531,7 +1888,8 @@ def preview(db: Session, month: str, user) -> dict[str, Any]:
     return plan
 
 
-def apply(db: Session, month: str, token: str, plan_hash: str, user) -> dict[str, Any]:
+def apply(db: Session, month: str, token: str, plan_hash: str, user,
+          *, reviewed_plan: dict | None = None, reviewed_job_id=None) -> dict[str, Any]:
     _ensure_enabled()
     month_bounds(month)
     if not plan_hash or not ed._token_valid(token, plan_hash, month, user, BALANCE_MODE):
@@ -1561,9 +1919,19 @@ def apply(db: Session, month: str, token: str, plan_hash: str, user) -> dict[str
             "batch_id": str(existing.id),
             "already_applied": True,
         }
-    _refuse_active_proposal(db, month, user)
+    reviewed_job = None
+    if reviewed_job_id is not None:
+        from app.models import RotaComputeJob
+        reviewed_job = db.scalar(select(RotaComputeJob).where(
+            RotaComputeJob.id == reviewed_job_id).with_for_update().execution_options(populate_existing=True))
+        if (reviewed_job is None or reviewed_job.month != month or reviewed_job.status != 'completed'
+                or (reviewed_job.operator_id != user.id and user.role != 'superadmin')
+                or reviewed_plan is None
+                or reviewed_job.state.get('balance_preview', {}).get('plan') != reviewed_plan):
+            raise BalanceError('stale_preview', 'The reviewed Balance job is no longer current.', 409)
+    _refuse_active_proposal(db, month, user, ignore_job_id=reviewed_job_id)
     try:
-        plan, state = _plan(db, month)
+        plan, state = _plan(db, month, reviewed_plan=reviewed_plan)
     except BalanceError as exc:
         if exc.code == "nothing_to_balance":
             raise BalanceError("stale_preview", "The month changed since the preview. Preview again.", 409) from exc
@@ -1693,6 +2061,12 @@ def apply(db: Session, month: str, token: str, plan_hash: str, user) -> dict[str
                 500,
                 {"violations": check["violations"]},
             )
+        if reviewed_job is not None:
+            reviewed_job.status = 'applied'
+            reviewed_job.state = {**reviewed_job.state,
+                'result': {**result, 'batch_id': str(batch.id), 'already_applied': False}}
+            reviewed_job.revision += 1
+            reviewed_job.updated_at = datetime.utcnow()
         db.commit()
     except BalanceError:
         db.rollback()
@@ -1710,10 +2084,9 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
         raise BalanceError("not_found", "Balance batch not found.", 404)
     lock_namespace(db, f"balance:{batch.month}")
     lock_namespace(db, f"extra-duty:{batch.month}")
-    from app.core.config import settings
-    if settings.ot_calendar_enabled:
-        from app.services.rota_compute import lock_operational_inputs
-        lock_operational_inputs(db)
+    from app.services.rota_compute import lock_operational_inputs
+    # Leave, quota and assignment evidence must serialize even with OT disabled.
+    lock_operational_inputs(db)
     db.refresh(batch)
     if batch.status == "undone":
         return {"batch_id": str(batch.id), "restored": 0, "conflicts": [], "dry_run": dry_run,
@@ -1810,6 +2183,71 @@ def undo(db: Session, batch_id: UUID, user, dry_run: bool = False) -> dict[str, 
             message = restoration_failure_message(report)
             conflicts.append({"code": "ot_reservation_conflict" if report["status"] == "infeasible" else "ot_capacity_unresolved",
                               "reason": message, "message": message})
+    if not conflicts and plan:
+        # Validate the entire hypothetical restoration together. Checking each
+        # original holder against the current after-image would reject valid
+        # swaps or overlook interactions between two restored duties.
+        from types import SimpleNamespace
+        from app.services.extra_duty_verify import load_month_state
+        with db.no_autoflush:
+            restored_state = load_month_state(db, batch.month, rules)
+        # The guarded whole-restoration OT adapter above already checks OT.
+        restored_state.ot_guard = None
+        removed = {assignment.id for _item, _slot, assignment, _record in plan}
+        for mapping in (restored_state.duties_by_person, restored_state.active_by_slot):
+            for key, duties in mapping.items():
+                mapping[key] = [duty for duty in duties if duty.key not in removed]
+        proposals = []
+        for item, slot, assignment, _record in plan:
+            virtual = SimpleNamespace(**{field: getattr(slot, field) for field in (
+                'id', 'duty_date', 'duty_type', 'call_level', 'starts_at', 'ends_at',
+                'is_24hr', 'max_assignees')})
+            virtual.unit_id = UUID(item['unit_id_before']) if item.get('unit_id_before') else None
+            person_id = UUID(item['person_id_before'])
+            restored_state.add_duty(person_id, virtual, assignment.id)
+            proposals.append((person_id, virtual, assignment.id,
+                              item.get('source_before') == 'superadmin_allocation'))
+        for person_id, slot, key, superadmin in proposals:
+            for code, message in restored_state.blockers(
+                    person_id, slot, slot.unit_id, exclude_key=key, superadmin=superadmin):
+                conflicts.append({'slot_id': str(slot.id), 'duty_date': slot.duty_date.isoformat(),
+                                  'duty_type': slot.duty_type, 'code': code,
+                                  'reason': message, 'message': message})
+        if any(value is not None for value in rules.duty_count_limits.model_dump().values()):
+            # Independent clinical checking does not include individual quotas.
+            # Replay the complete restoration in memory for those limits too.
+            quota_state = _load(db, batch.month, rules=rules)
+            exemptions = quota_state.quota_exemptions()
+            for _item, _slot, assignment, _record in plan:
+                if assignment.id in quota_state.rows:
+                    quota_state.remove(assignment.id)
+            for item, slot, assignment, record in plan:
+                aid = assignment.id
+                if aid not in quota_state.rows:
+                    conflicts.append({'slot_id': str(slot.id), 'code': 'individual_limit_restore_unverified',
+                                      'reason': 'The restored duty is outside the current quota-checking scope.'})
+                    continue
+                person_id = UUID(item['person_id_before'])
+                unit_id = UUID(item['unit_id_before']) if item.get('unit_id_before') else None
+                quota_state.add(aid, person_id, unit_id)
+                exemptions.pop(aid, None)
+                old = item.get('record') or {}
+                if (item.get('source_before') == EXTRA_SOURCE and record is not None
+                        and old.get('record_id') == str(record.id)
+                        and old.get('person_id') == str(person_id)
+                        and old.get('assigned_unit_id') == (str(unit_id) if unit_id else None)):
+                    exemptions[aid] = (person_id, unit_id,
+                        frozenset(old.get('overridden_rules') or ()) & frozenset(ed.LIMIT_CODES))
+                elif item.get('source_before') == ed.SUPERADMIN_SOURCE:
+                    exemptions[aid] = (person_id, unit_id, frozenset(ed.LIMIT_CODES))
+            for _item, slot, assignment, _record in plan:
+                if assignment.id not in quota_state.rows:
+                    continue
+                for code in quota_state.existing_quota_codes(assignment.id):
+                    message = 'Undo would restore an unapproved individual-duty-limit breach: ' + ed.LIMIT_LABELS[code]
+                    conflicts.append({'slot_id': str(slot.id), 'duty_date': slot.duty_date.isoformat(),
+                                      'duty_type': slot.duty_type, 'code': code,
+                                      'reason': message, 'message': message})
     if dry_run:
         return {"batch_id": str(batch.id), "restored": 0 if conflicts else len(plan),
                 "would_restore": len(plan), "conflicts": conflicts, "dry_run": True}

@@ -56,10 +56,12 @@ def test_leap_day_and_month_clipping_preserve_stored_dates():
 def test_short_duty_start_hour_policy_is_separate_from_ot_interval_overlap():
     day = date(2026, 11, 10)
     leave = LeaveRequest(leave_slot="PM", starts_on=day, ends_on=day)
-    duty = SimpleNamespace(is_24hr=False, starts_at=datetime(2026, 11, 10, 11),
+    duty = SimpleNamespace(is_24hr=False, duty_date=day, starts_at=datetime(2026, 11, 10, 11),
                            ends_at=datetime(2026, 11, 10, 15))
-    # Preserve the explicit legacy start-hour policy: N20 cannot silently replace it.
-    assert slot_leave_blocks(leave, duty) is False
+    # Owner-approved full-window overlap policy supersedes start-hour-only permission.
+    from app.services.leave_semantics import duty_leave_blocks
+    assert duty_leave_blocks("PM", is_24hr=False, start_hour=11) is False
+    assert slot_leave_blocks(leave, duty) is True
     span, = leave_windows(leave, day, day)
     assert duty.starts_at < span.ends_at and duty.ends_at > span.starts_at
     duty.is_24hr = True

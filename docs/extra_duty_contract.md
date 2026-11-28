@@ -201,3 +201,12 @@ Written **only from section 1.1 of this contract**, not from `extra_duty.py`. `c
 - `tests/test_extra_duty_invariants.py` (independent): random rosters (seeded `random.Random`, ≥ 200 cases) → plan + apply → `check_month` ok; nothing strict ever violated; every new assignment is in the home unit or a recorded fallback.
 - `tests/test_rota_report_360.py`: data totals add up; HTML is self-contained (no `http://`/`https://` src/href); xlsx opens with openpyxl and has the sheets.
 - Frontend `tests/extra-duty.browser.mjs` (mocked APIs, axe, 390px no horizontal scroll).
+
+
+## Owner-approved amendment - 24 November 2026
+
+The owner approved fractional availability (AM/PM leave removes0.5day), availability-mode targets based on duties safely covered rather than unfilled template demand, and any approved physical leave/duty intersection including next-date overlap. Existing stricter24-hour duty-date partial-leave denials and pending-status handling remain. Dated included-unit postings and call/group eligibility, protected rows, rest, quotas and OT reservations are unchanged. Interval unions prevent duplicate subtraction; these weights are not leave entitlement. Pooled duty demand retains its proportional call-level split. New objective revision13 stales earlier previews; historical objective descriptions retain their original basis.
+
+Prospective validators and independent verification inspect all civil dates touched by the actual recorded duty window. Reviewed Balance also repairs existing active-leave conflicts through normal atomic transfer/swap checks before optimizing fairness; unresolved or protected conflicts refuse the proposal without live changes. Undo cannot restore a still-ineligible or leave-conflicting holder. Weekend search prioritizes the worst cohort within the existing clinical trial/inspection budgets, preserving each person's duty total, recorded hours and extra ledger credits.
+
+This amendment authorizes local implementation/testing, not deployment or operational assignment changes. Actual ambiguous duty start/end durations (B9) still require concrete clinical values; generic assent does not supply those values. Final revision13 regression is pending; earlier revision11 results remain historical baseline evidence.

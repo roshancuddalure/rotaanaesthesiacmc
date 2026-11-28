@@ -15,6 +15,8 @@ from app.db.session import engine  # noqa: E402
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--full", action="store_true")
+    parser.add_argument("--only-extra-tests", action="store_true",
+                        help="Run only explicitly supplied tests in the guarded disposable database")
     parser.add_argument("--extra-test", action="append", default=[],
                         help="Additional backend test path for the same disposable database")
     parser.add_argument("--junitxml", help="JUnit report path passed to pytest (relative to backend)")
@@ -81,7 +83,7 @@ if __name__ == "__main__":
         test_engine.dispose()
         tests = (
             []
-            if args.full
+            if args.full or args.only_extra_tests
             else [
                 "tests/test_import_concurrency.py",
                 "tests/test_rota_compute_concurrency.py",

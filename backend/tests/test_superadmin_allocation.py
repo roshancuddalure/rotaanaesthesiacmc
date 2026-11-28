@@ -202,7 +202,8 @@ def test_options_list_statuses_and_reasons(api):
     codes = {o["code"] for o in sam["overrides"]}
     assert {"call_level_mismatch", "not_posted"} <= codes
     uma = people["Uma Unposted"]
-    assert uma["unit_id"] is None and "not_posted" in {o["code"] for o in uma["overrides"]}
+    assert uma["unit_id"] is None and uma["status"] == "blocked"
+    assert 'scope_member_excluded' in {b['code'] for b in uma['blocked']}
     assert all(set(p) >= {"person_id", "person_name", "call_level", "unit_id", "unit_name", "status", "blocked",
                           "overrides", "month_duties"} for p in body["people"])
 
@@ -282,8 +283,11 @@ def test_allocate_unposted_member(api):
     client, sessions, _state = api
     ids = seed(sessions)
     response = allocate(client, ids, "unposted")
-    assert response.status_code == 200, response.text
-    assert "not_posted" in {o["code"] for o in response.json()["overrides"]}
+    assert response.status_code == 409, response.text
+    assert response.json()['detail']['code'] == 'strict_blocked'
+    assert 'scope_member_excluded' in {b['code'] for b in response.json()['detail']['blocked']}
+    with sessions() as db:
+        assert db.get(DutyAssignment, ids['held']).person_id == ids['holder']
 
 
 @pytest.mark.parametrize("person_key,code,text", [

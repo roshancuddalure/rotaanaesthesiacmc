@@ -1,0 +1,137 @@
+{
+  "recorded_at": "2026-11-27T00:42:37.346601+00:00",
+  "outcome": "original_assertions_failed",
+  "production_source_modified": false,
+  "assertions_modified": false,
+  "budget_seconds": 3,
+  "observations": [
+    {
+      "status": "feasible",
+      "objectives": [
+        {
+          "name": "required_coverage",
+          "value": -2,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "coverage",
+          "value": -2,
+          "proven": true,
+          "proof": "independent_lower_bound"
+        },
+        {
+          "name": "worst_call_gap",
+          "value": 1000,
+          "proven": false
+        },
+        {
+          "name": "call_gap_total",
+          "value": 1000,
+          "proven": false
+        },
+        {
+          "name": "call_level_equality",
+          "value": 984192,
+          "proven": false
+        },
+        {
+          "name": "hours_burden",
+          "value": 4147200,
+          "proven": false
+        },
+        {
+          "name": "extra_burden",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "weekend_burden",
+          "value": 50,
+          "proven": false
+        },
+        {
+          "name": "night_burden",
+          "value": 100,
+          "proven": false
+        },
+        {
+          "name": "holiday_burden",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "workload",
+          "value": 100,
+          "proven": false
+        },
+        {
+          "name": "spacing_history",
+          "value": 0,
+          "proven": false
+        },
+        {
+          "name": "preferences",
+          "value": 0,
+          "proven": false
+        }
+      ],
+      "cuts": 0,
+      "baseline_retained": false,
+      "quality": [
+        -2,
+        -2,
+        1000,
+        1000,
+        984192,
+        4147200,
+        0,
+        50,
+        100,
+        0,
+        100,
+        0,
+        0
+      ],
+      "refinement": {
+        "checks": 1,
+        "transfers": 1,
+        "additional_covered": 0,
+        "improved": true,
+        "limit_reached": false,
+        "global_optimum_proven": false
+      },
+      "fairness": [
+        {
+          "call_level": "1ST_CALL",
+          "members": 4,
+          "minimum": 0,
+          "maximum": 1,
+          "gap": 1,
+          "within_one": true,
+          "within_two": true,
+          "adjusted_gap": 1.0,
+          "policy": "availability",
+          "policy_within_two": true,
+          "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+        }
+      ],
+      "gap_feasibility": [
+        {
+          "limit": 1,
+          "policy": "availability",
+          "status": "unknown",
+          "reason": "required_coverage_not_established"
+        },
+        {
+          "limit": 2,
+          "policy": "availability",
+          "status": "unknown",
+          "reason": "required_coverage_not_established"
+        }
+      ],
+      "elapsed_ms": 907.26,
+      "uncovered": 1
+    }
+  ]
+}

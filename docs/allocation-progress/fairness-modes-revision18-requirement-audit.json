@@ -1,0 +1,149 @@
+{
+  "recorded_at": "2026-11-27T10:23:52.686178+00:00",
+  "status": "full2503_running_one_optimality_assertion_failure_not_certified",
+  "objective_scope_preserved": true,
+  "original_programme_total": 50,
+  "original_programme_done": 21,
+  "requirements": [
+    {
+      "requirement": "Admin equal-count/availability switch",
+      "assessment": "Implemented; both actual18November policies replayed read-only; current full gate pending",
+      "evidence_sources": [
+        "backend/tests/test_fairness_modes.py",
+        "backend/tests/test_fairness_settings_concurrency.py"
+      ],
+      "limits": "Availability raw gaps intentionally exceed2. Admin save/concurrency paths remain in the current full/PG gate."
+    },
+    {
+      "requirement": "Eligible people require dated included-unit postings for ordinary AND extra",
+      "assessment": "Current18November scope/placement checks clear for all840holders in both modes",
+      "evidence_sources": [
+        "backend/tests/test_locked_scope_boundaries.py",
+        "backend/tests/test_call_level_strict.py"
+      ],
+      "limits": "Dated included-unit postings remain mandatory; existing7invalid holders safely repaired in projection. No missing posting inferred."
+    },
+    {
+      "requirement": "Half-day0.5, union overlaps, covered-duty proportional targets",
+      "assessment": "Implemented; existing fractional/covered-target cases included in frozen2491gate",
+      "evidence_sources": [
+        "backend/tests/test_partial_day_fairness.py",
+        "backend/tests/test_covered_demand_fairness.py"
+      ],
+      "limits": "Availability raw gaps may exceed2; third adjusted November1.5092 remains above saved1"
+    },
+    {
+      "requirement": "Approved-leave overlap and24h rest",
+      "assessment": "Both18November projections pass all8clinical checks/all840holders; targeted rest/monthboundary cases pass",
+      "evidence_sources": [
+        "backend/tests/test_approved_leave_intervals.py",
+        "backend/tests/test_confirmed_duty_timing.py",
+        "backend/tests/test_balance_leave_repair.py"
+      ],
+      "limits": "390savedproductiontiming windows/flags repair remains unapplied. Current-source full regression still pending."
+    },
+    {
+      "requirement": "Total-duty min/max gap at most2 in equal mode",
+      "assessment": "Met in actual18equal-count November replay",
+      "evidence_sources": [
+        "docs/allocation-progress/runtime18-november-reviewed-verification.json"
+      ],
+      "limits": "Raw gaps1/2/2/1/1. Savedgap1warnings persist insecond/third. No universal feasibility or optimality proof."
+    },
+    {
+      "requirement": "No unassigned duties while preserving mandatory safety",
+      "assessment": "840/840 covered with allholder/clinical checks clear in both18policies",
+      "evidence_sources": [
+        "backend/tests/test_extra_duty_invariants.py",
+        "backend/tests/test_balance_individual_limit_repair.py"
+      ],
+      "limits": "Mandatory safety never relaxed to manufacture coverage; infeasible future inputs can remain explicitly unresolved."
+    },
+    {
+      "requirement": "Fair weekends,night/24h,hours,extra burden",
+      "assessment": "November18equal-mode night andweekend gaps<=2; hours reported; widerN30scope stillopen",
+      "evidence_sources": [
+        "docs/allocation-progress/runtime18-november-reviewed-verification.json",
+        "backend/tests/test_joint_night_runtime.py",
+        "backend/tests/test_joint_night_model.py"
+      ],
+      "limits": "Night1/2/2/2/1,weekend1/1/1/2/1,hours24/48/40/40/24. No holiday inference or global optimum proof. Five staffing reviews/disabledOT remain."
+    },
+    {
+      "requirement": "Individual quotas and attributed exceptions",
+      "assessment": "Both18November all840holder replay passes; initial quota defect repaired in projection",
+      "evidence_sources": [
+        "backend/tests/test_balance_individual_limit_repair.py"
+      ],
+      "limits": "Canonical exact record attribution remains mandatory; new joint solver never grants a quota waiver."
+    },
+    {
+      "requirement": "Safe Apply/Undo with concurrency and protected rows",
+      "assessment": "Exact66PostgreSQL skipped casesPASS; ID/sourcehash/guardedcleanupverified. Focused40main/24candidatePASSaftertestcorrections; freshfullpending.",
+      "evidence_sources": [
+        "docs/allocation-progress/revision18-final-runtime-lifecycle-gate.xml",
+        "docs/allocation-progress/revision18-preview-jobs-postgres-claim-fixed.xml"
+      ],
+      "limits": "Durablepreview/revalidation/idempotentatomicApply/exactUndo/staleness/ownership/cancel/recovery tested. PriorclaimraceFAIL retained andfixed. Exact PostgreSQL-only skip count will be discovered from terminalXML, not assumed."
+    },
+    {
+      "requirement": "Performance thresholds unchanged",
+      "assessment": "Finalpermanent43reportgatePASS incloriginal3slimit after scalarhistoryloading; current2503fullpending",
+      "evidence_sources": [
+        "docs/allocation-progress/revision18-report-scalar-final-verification.json",
+        "docs/allocation-progress/fairness-modes-revision18-report-scalar-final-gate.xml"
+      ],
+      "limits": "Priorfullreport5.51sFAIL andprefetch3.82sFAILretained. Reportquery/ORMoptimizationpassedfocused43cases;original10/15/2/3secondthresholdsnotwaived. Needcurrentfullresults."
+    },
+    {
+      "requirement": "Full system and holistic algorithm audit",
+      "assessment": "Prior2491reconciled2490PASS1report-speedFAIL; bothobjective/workflowcorrectionsfullPASS. New2503current-sourcefullrunning.",
+      "evidence_sources": [
+        "docs/allocation-progress/fairness-modes-revision18-holistic-contract-fixed-detached-reconciliation.json",
+        "docs/allocation-progress/fairness-modes-revision18-holistic-report-scalar-audit-status.json"
+      ],
+      "limits": "Newreporthelperand12regressionsinvalidatepriorfullsourcecertificate. Need2503terminal+exactPGIDs/hashcleanup. Original50scope21Done."
+    },
+    {
+      "requirement": "Graphical live progress",
+      "assessment": "Nativewindow+identitycheckedloopbackprogressactive;newfull2503livecounterverified",
+      "evidence_sources": [
+        "docs/allocation-progress/equality-hour-window-health.json"
+      ],
+      "limits": "Current equal-mode charts use18read-only results; applicationUI main48checks pass, final candidate48checks pass. Backend2491gate stillrunning."
+    },
+    {
+      "requirement": "Original50-item programme",
+      "assessment": "21Done/50; NOT complete",
+      "evidence_sources": [
+        "Plan/to do/November26_allocation_action_tracker.md"
+      ],
+      "limits": "N26architecture,N27+dependentwork,pilots and acceptance evidence remain; cannot close via narrow fairness tests"
+    },
+    {
+      "requirement": "Production rollout",
+      "assessment": "Not performed; separately authorized review required",
+      "evidence_sources": [
+        "Review/November2026_confirmed_timing_repair_20261124.json"
+      ],
+      "limits": "No productionwrites/deploy; OT guard disabled;5/11staffreview warnings remain"
+    }
+  ],
+  "optimizer_revision": 18,
+  "current_ui_evidence": {
+    "main": "docs/allocation-progress/fairness-modes-revision18-final-main-browser.json",
+    "candidate": "Debug/Allocation-release-r9/docs/allocation-progress/fairness-modes-revision18-final-candidate-browser.json",
+    "checks_each": 48
+  },
+  "current_full_observation": {
+    "at": "2026-11-27T10:23:48.975732+00:00",
+    "driver_pid": 36120,
+    "alive": true,
+    "completed": 1313,
+    "previously_verified": 0,
+    "collected": 2503,
+    "failures": 1
+  },
+  "current_failure_evidence": "docs/allocation-progress/revision18-current-full-optimality-failure-triage.json",
+  "overall_goal_complete": false
+}

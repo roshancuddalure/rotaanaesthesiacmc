@@ -20,7 +20,7 @@ function list(){if(!data)return;const query=$('query').value.trim().toLowerCase(
 function renderEstimate(d){
  const e=d.live.time_estimate;
  const valid=e&&['hours_per_item_low','hours_per_item_high','integration_hours_low','integration_hours_high'].every(k=>typeof e[k]==='number'&&Number.isFinite(e[k])&&e[k]>=0)&&e.hours_per_item_low<=e.hours_per_item_high&&e.integration_hours_low<=e.integration_hours_high;
- if(!valid){$('eta-total').textContent='Estimate awaiting review';$('eta-batch').textContent='';$('eta-basis').textContent=e?'Estimate values are incomplete or invalid; awaiting review.':'No estimate has been recorded.';return;}
+ if(!valid){$('eta-total').textContent='Overall estimate being recalibrated';$('eta-batch').textContent=e&&typeof e.current_batch==='string'?e.current_batch:'No current batch estimate recorded.';const basis=e&&typeof e.basis==='string'?e.basis:'No reliable scope estimate has been recorded.';const reviewed=e&&typeof e.reviewed_at==='string'&&Number.isFinite(Date.parse(e.reviewed_at))?when(e.reviewed_at):'Not recorded';$('eta-basis').textContent=`${basis} Estimate reviewed: ${reviewed}.`;return;}
  const remaining=d.items.filter(i=>i.status!=='complete'&&i.status!=='dependency').length;
  const low=Math.ceil((remaining*e.hours_per_item_low+e.integration_hours_low)/10)*10;
  const high=Math.ceil((remaining*e.hours_per_item_high+e.integration_hours_high)/10)*10;

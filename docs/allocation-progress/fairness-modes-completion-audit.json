@@ -1,0 +1,538 @@
+{
+  "recorded_at": "2026-11-25T00:22:46.782439+00:00",
+  "status": "revision17-full-pg-and-original-scope-pending",
+  "production_deployed": false,
+  "operational_writes": 0,
+  "original_programme_done": 21,
+  "original_programme_total": 50,
+  "optimizer_revision": 18,
+  "verified_receipts": [
+    {
+      "scope": "Isolated revision10 fairness, objective precedence and snapshots",
+      "evidence": "docs\\allocation-progress\\fairness-modes-isolated-revision10-corrected.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "80",
+      "time": "109.855",
+      "timestamp": "2026-11-24T01:06:07.542469+05:30",
+      "hostname": "DESKTOP-7O391KT"
+    },
+    {
+      "scope": "Exact fairness feasibility boundaries",
+      "evidence": "docs\\allocation-progress\\fairness-modes-exact-gap-proof.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "53",
+      "time": "58.414",
+      "timestamp": "2026-11-24T00:41:20.093359+05:30",
+      "hostname": "DESKTOP-7O391KT"
+    },
+    {
+      "scope": "Concurrent settings save and restore PostgreSQL races",
+      "evidence": "docs\\allocation-progress\\fairness-modes-settings-race-after.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "2",
+      "time": "73.523",
+      "timestamp": "2026-11-24T00:19:34.821214+05:30",
+      "hostname": "DESKTOP-7O391KT"
+    },
+    {
+      "scope": "Settings history rollback and rules API",
+      "evidence": "docs\\allocation-progress\\fairness-modes-settings-rollback.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "20",
+      "time": "37.365",
+      "timestamp": "2026-11-24T00:19:02.921006+05:30",
+      "hostname": "DESKTOP-7O391KT"
+    },
+    {
+      "scope": "Disposable PostgreSQL migrations and concurrency",
+      "evidence": "docs\\allocation-progress\\fairness-modes-postgres-resumed.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "59",
+      "time": "1284.322",
+      "timestamp": "2026-11-23T23:55:12.208137+05:30",
+      "hostname": "DESKTOP-7O391KT"
+    },
+    {
+      "scope": "Cached and reference proposal parity",
+      "evidence": "docs\\allocation-progress\\fairness-modes-cache-parity.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "4",
+      "time": "27.865",
+      "timestamp": "2026-11-24T00:27:13.474680+05:30",
+      "hostname": "DESKTOP-7O391KT"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement": "Admin mode selection with history, authorization and no automatic reallocation",
+      "status": "verified in tested paths",
+      "evidence": [
+        "fairness-modes-atomic-settings.xml",
+        "fairness-modes-settings-race-after.xml",
+        "fairness-modes-settings-rollback.xml",
+        "fairness-modes-gap-cap-build.log"
+      ]
+    },
+    {
+      "requirement": "Same fairness definition across allocation paths",
+      "status": "NOT VERIFIED:partial-day roster omission confirmed;shortage basis also unresolved",
+      "decision": "Owner choice pending: covered demand or full-template demand",
+      "evidence": [
+        "fairness-modes-partial-leave-same-day-probe.json",
+        "fairness-modes-revision11-system-events.jsonl"
+      ]
+    },
+    {
+      "requirement": "November equal-count gap at most two, without losing filled duties",
+      "status": "verified for revision11 read-only server proposal; not applied to production",
+      "evidence": [
+        "production-nov2026-20261123/fairness-modes-engine11-final-equal-counts.json"
+      ]
+    },
+    {
+      "requirement": "Dated scope, call eligibility, leave, rest and other clinical checks",
+      "status": "NOT fully verified: eight recorded-rule checks clear on840 November rows, but synthetic approved-leave overlap bypass reproduced; B9 timing uncertainty remains",
+      "limitation": "ProductionOTdisabled;B9unflagged24hwindows;unchangedstaffing/quotasnotcomprehensivelycertified",
+      "evidence": [
+        "production-nov2026-20261123/fairness-modes-engine11-final-equal-counts.json",
+        "production-nov2026-20261123/duty-window-consistency.json",
+        "fairness-modes-short-duty-leave-overlap-probe.json"
+      ]
+    },
+    {
+      "requirement": "Fairness across hours, weekend, duty types and extra duties",
+      "status": "counts andweekendgapswithin2inactualequalcountproposal;broaderintensity/holidayfairnessnotuniversallycertified",
+      "finding": "Revision11countgaps1/2/1/1/1,weekendgaps1/1/2/2/1;secondaryexchangespreserverecordedhoursandcredits. Intendednon24hdutydurationsawaitconfirmation."
+    },
+    {
+      "requirement": "Independent simulations and full-system regression",
+      "status": "2302 distinct main-revision11 backend cases passed across frozen full run2241 and exact61PostgreSQL skip replay;0remaining skips in combined case set;source unchanged;isolated half-day compatibility125passed separately,notmain.",
+      "evidence": [
+        "fairness-modes-revision11-system-status.json",
+        "fairness-modes-revision11-system-events.jsonl",
+        "fairness-modes-revision11-system.xml",
+        "fairness-modes-revision11-skip-audit.json",
+        "fairness-modes-revision11-combined-regression-receipt.json",
+        "fairness-modes-revision11-postgres-skips.xml",
+        "fairness-modes-partial-leave-compatibility-resumed.xml"
+      ]
+    },
+    {
+      "requirement": "Existing performance gates",
+      "status": "latest10s/15scoldassertionsandserialized3sreportassertionpassed;priortimingvariationretained",
+      "finding": "Timingisconditionalonmachineworkload;notuniversallatencyguarantee.",
+      "evidence": [
+        "fairness-modes-slot-cold-timing.xml",
+        "fairness-modes-report-performance-recheck.xml"
+      ]
+    },
+    {
+      "requirement": "Native progress window",
+      "status": "visible; workload selector screenshot inspected",
+      "evidence": [
+        "fairness-modes-native-burden.png"
+      ]
+    },
+    {
+      "requirement": "Reviewable candidate and bug report",
+      "status": "DO NOT RELEASE:reviewable candidate and current report complete;known half-day fairness omission and legacy approved-leave overlap remain;owner domain decisions required.",
+      "evidence": [
+        "fairness-modes-release-manifest.json",
+        "fairness-modes-report.txt"
+      ]
+    }
+  ],
+  "known_fixed_bugs": [
+    "Settings save/restore lost-update race",
+    "Rules/history transaction atomicity",
+    "False feasible-gap receipt at rounded availability boundary",
+    "Stale selected-mode explanation in frontend",
+    "Equal-count gap configuration could exceed two"
+  ],
+  "open_findings": [
+    "Shortage demand policy inconsistency",
+    "Automatic joint unit-layout repair remains separate unfinished programme work",
+    "Pre-existing B9 confirmed in production:390unflagged duties have24h windows;intended durations require confirmation",
+    "Latestpreview10s/15sgatespassed;priortimingvariationretained",
+    "Weekendcountsnowwithin2inactualread-onlyproposal;otherduty-type/holidayfairnessnotuniversallycertified",
+    "Legacy short-duty start-hour leave validation accepts 3 synthetic approved-leave interval overlaps(6h/3h/2h); candidate and final validator both clear. Explicit interval-policy question pending."
+  ],
+  "broad_regression": {
+    "passed": 2070,
+    "failed": 5,
+    "skipped": 59,
+    "source_unchanged": false,
+    "receipt": "fairness-modes-system-resumed.xml"
+  },
+  "serialized_performance": {
+    "extra_standard": "failed17.6902s against10s",
+    "extra_all_units": "passed15s threshold",
+    "report": "passed3s threshold on serialized rerun",
+    "evidence": [
+      "fairness-modes-performance-final.xml",
+      "fairness-modes-report-performance-recheck.xml"
+    ],
+    "limitation": "Unrelated machine activity uncontrolled"
+  },
+  "performance_followup": {
+    "scope_cache_gate": "25passed91.52s",
+    "burden_oracle": "6passed27.15s;all90equal-countpartitions/bothpolicies/3modes",
+    "optional_ot_counterexample": "1failed26.46s beforecallerfix",
+    "optional_ot_after": "60passed123.71s;enabledclinicalintegration/disabledfresh-process/scopeboundaries",
+    "latest_timing": "Latest cold checks2passed57.91s includingsetup/apply/verify;unchanged standard<10s andallunits<15s assertionspassed. Previousfailuresretained;machineactivityuncontrolled.",
+    "evidence": [
+      "fairness-modes-scope-cache.xml",
+      "fairness-modes-burden-oracle.xml",
+      "fairness-modes-lazy-ot-before.xml",
+      "fairness-modes-optional-ot-after.xml",
+      "fairness-modes-performance-followup-sources.json"
+    ],
+    "fixed_slot_snapshot": {
+      "status": "125passed;oneunchangedstandardtimingfailure12.6754s",
+      "driver_pid": null,
+      "worker_pid": null,
+      "followup_pid": 32396,
+      "evidence": "fairness-modes-slot-snapshot.xml",
+      "guard": "No functional failures allowed before release refresh",
+      "isolated_worker": 3748,
+      "isolated_result": "16passed51.50s",
+      "cold_timing_receipt": "fairness-modes-slot-cold-timing.xml"
+    }
+  },
+  "weekend_study": {
+    "synthetic_result": "4passed35.99s",
+    "status": "productionREADONLYstudy17912/1172running",
+    "note": "Offline only;ordinarysameprofilepairsexchangedwithfulltransferchecks. Notintegratedserverproposal."
+  },
+  "ot_oracle_followup": {
+    "status": "bothpoliciesexplicitlytested;20936/18148running",
+    "note": "Currentfull-templateavailabilitypolicyverifiedindependently;shortagepolicyquestionremainsopen,notresolvedbytestchange."
+  },
+  "revision11": {
+    "weekend_refinement": "Integratedequal-countBalanceonly;ordinarysameprofileexchanges;counts/hours/extra preserved;128clinicalattempts/20000pairinspections/sharedworkbudget;reviewApplyUndo",
+    "terminal_receipts": [
+      {
+        "evidence": "fairness-modes-weekend-integration.xml",
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "125",
+        "time": "294.439",
+        "timestamp": "2026-11-24T01:52:35.655114+05:30",
+        "hostname": "DESKTOP-7O391KT"
+      },
+      {
+        "evidence": "fairness-modes-weekend-bounds.xml",
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "47",
+        "time": "103.998",
+        "timestamp": "2026-11-24T01:58:29.364921+05:30",
+        "hostname": "DESKTOP-7O391KT"
+      },
+      {
+        "evidence": "fairness-modes-ot-both-policy-oracle.xml",
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "6",
+        "time": "141.767",
+        "timestamp": "2026-11-24T01:49:20.427746+05:30",
+        "hostname": "DESKTOP-7O391KT"
+      }
+    ],
+    "ui_browser": "150passed aftershortcutfix;latestbuildpassed",
+    "build": "passed aftershortcutfix;existingbundlewarnings",
+    "production_readonly": "840filled/countgaps1,2,1,1,1/weekendgaps1,1,2,2,1/eightchecks840zero/changedholderfailures0/ORMdirtynew0",
+    "full_system": "TERMINAL:2302distinctcasespassed(main2241+exact61PGreplay),source unchanged;newtestDBremoved,olderDBpreserved",
+    "end_to_end": "8actualbundledUI/auth/APIchecksPASSafterfixtureserialization;beforeerrorsarchived",
+    "release": "DO NOT RELEASE:knownfairness/clinicalfindings andownerpolicydecisions",
+    "postgres_weekend": "1HTTPconcurrentstatus/apply/undoPASS55.03s;freshsessionbefore-image/restorationverified;guardedhelperfinishedwithouttraceback;remainingtestDBcreation23Nov23:35ISTpredatesrun,preserved",
+    "production_final": "sameinput/proposalhashaspriorr11replay;31swaps89trials3431inspections;limitsnotreached;all840checks0violations",
+    "isolated_backend": "16passed35.70s",
+    "isolated_frontend_build": "passed24.32s",
+    "isolated_end_to_end": "8actualcandidatebackend/bundledUI/auth/APIchecksPASS/no route mocks;Apply+Verify+UIUndo",
+    "clinical_timing_review": {
+      "artifact": "Review/November2026_duty_timing_confirmation_20261124.xlsx",
+      "duty_types": 28,
+      "flag_duration_issues": 13,
+      "owner_inputs": "allblank",
+      "formula_cells": 0,
+      "authority": "clinicalchecklistonly,norules/assignmentchanges"
+    }
+  },
+  "release_blockers": [
+    "Revision15 full2397-case verification and exact61PostgreSQL replay still running;2serialized speed gates pending",
+    "Residual rawworking-hoursgaps56h(equalcounts) and third-call adjusted1.5092>saved1.0(availability);boundedsearch not global optimality proof",
+    "390savedNovember timing/flagcorrections remain proposed,notapplied;productionrepair/deployment need separate authority"
+  ],
+  "broad_regression_revision11_terminal": {
+    "recorded_at": "2026-11-23T21:38:28.313496+00:00",
+    "tests": 2302,
+    "passed": 2241,
+    "skipped": 61,
+    "failures": 0,
+    "errors": 0,
+    "source_unchanged": true,
+    "evidence": "fairness-modes-revision11-system.xml",
+    "limitation": "Does not resolve separately reproduced partial-day fairness roster omission."
+  },
+  "approved_leave_correction_impact": {
+    "recorded_at": "2026-11-23T21:58:49.618058+00:00",
+    "status": "proposed only; domain-policy decision pending",
+    "evidence": "fairness-modes-approved-leave-correction-impact.txt",
+    "key_risk": "Helper-only fix misses next-date and cross-month leaves because callers filter by duty date; existing leave-impact already detects physical intervals."
+  },
+  "combined_regression_revision11_terminal": {
+    "recorded_at": "2026-11-23T21:59:48.691037+00:00",
+    "main_passed": 2241,
+    "main_skipped": 61,
+    "postgres_replay_passed": 61,
+    "exact_skipped_case_id_match": true,
+    "distinct_backend_cases_passed": 2302,
+    "source_unchanged_both_runs": true,
+    "postgres_driver_exit_code": 0,
+    "new_disposable_database_removed": true,
+    "older_preexisting_database_preserved": true,
+    "postgres_seconds": "1025.881",
+    "clinical_policy_changed": false,
+    "production_writes": 0,
+    "release_ready": false,
+    "limitation": "Separately reproduced half-day fairness omission and legacy approved-leave overlap remain release blockers; owner decisions pending."
+  },
+  "current_revision_note": "Revision15 integrates bounded hours refinement; all earlier14/13/11receipts historical. Current2397-case certification pending.",
+  "owner_decisions_resolved": [
+    "half-day availability 0.5",
+    "covered safely allocated demand for availability targets",
+    "block approved leave interval overlaps including next date",
+    "regular non24h duties08:00-16:00",
+    "CHAD/RUHSA/RC3rdA/B24hours"
+  ],
+  "current_revision_checks": {
+    "focused_lookup_objectives_scarcity": {
+      "passed": 98,
+      "failed": 2,
+      "failures": "Existing 10s and15s performance gates;17.4879s and19.8832s respectively",
+      "source_unchanged": false,
+      "evidence": "fairness-modes-revision13-lookup-objective-fixes.xml"
+    },
+    "limits_browser": {
+      "checks_passed": 218,
+      "evidence": "fairness-modes-revision13-limits-browser-verified.log"
+    },
+    "production_timing_rules": {
+      "readonly": true,
+      "writes": 0,
+      "rules": 51,
+      "active_zero_duration_equal_time_rules": 9,
+      "evidence": "production-nov2026-20261123/timing-rules-20261124.json"
+    },
+    "confirmed_timing_initial": {
+      "status": "failed-clinical-rest-check",
+      "slots_projected": 390,
+      "rows_filled": 840,
+      "rest_rule_reports": 100,
+      "evidence": "production-nov2026-20261123/fairness-modes-engine14-confirmed-timing-equal.json"
+    },
+    "clinical_rest_and_timing": {
+      "passed": 39,
+      "source_unchanged": true,
+      "evidence": "fairness-modes-revision14-clinical-rest-and-timing.xml"
+    },
+    "actual_main_ui_api": {
+      "status": "passed",
+      "checks": 16,
+      "response_mocks": 0,
+      "listener_ports_opened": 0,
+      "evidence": "fairness-modes-revision14-main-asgi-resumed-browser.json"
+    },
+    "projected_november_equal": {
+      "filled": 840,
+      "safety_violation_codes": {},
+      "clinical_repairs": 79,
+      "raw_count_gaps": [
+        1,
+        2,
+        2,
+        1,
+        1
+      ],
+      "weekend_gaps": [
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "hour_gaps": [
+        24,
+        48,
+        120,
+        136,
+        24
+      ],
+      "evidence": "production-nov2026-20261123/fairness-modes-engine14-clinical-repaired-equal.json"
+    },
+    "full_system": {
+      "status": "running-resumed",
+      "previously_completed_passes": 163,
+      "total": 2386,
+      "source_verified_unchanged_before_resume": true,
+      "status_file": "fairness-modes-revision14-full-system-resumed-status.json"
+    },
+    "hours_integration15": {
+      "passed": 88,
+      "source_unchanged": true,
+      "evidence": "fairness-modes-revision15-hours-integration.xml"
+    },
+    "main_actual_UI15": {
+      "checks_passed": 23,
+      "response_mocks": 0,
+      "listener_ports_opened": 0,
+      "evidence": "fairness-modes-revision15-main-asgi-browser.json"
+    },
+    "candidate_actual_UI15": {
+      "checks_passed": 23,
+      "cases": 3,
+      "response_mocks": 0,
+      "listener_ports_opened": 0,
+      "backend_ast_equal_files": 182,
+      "candidate_build_passed": true,
+      "evidence": "fairness-modes-revision15-candidate-asgi-browser.json"
+    }
+  },
+  "historical_release_blockers_revision11": [
+    "Confirmed partial-day fairness roster omission:eligiblePMstaff excluded;synthetic6/0reportedgap0",
+    "Owner shortage-targetbasis decision pending",
+    "Owner clinical timing confirmation pending(B9)",
+    "Approved-leave interval overlap allowed by legacy start-hour checks; owner clinical policy decision pending"
+  ],
+  "historical_blocked_audit_revision11": {
+    "condition": "Owner domain-policy choices required for partial-day targets, shortage denominator, approved-leave intersections and actual duty timing; no approval inferred",
+    "recurrence_evidence": [
+      "21:20partialdayquestion",
+      "21:38pendingdecisions",
+      "21:44clinicalquestion",
+      "21:49pendingdecisions",
+      "currentterminalregressiondecisionreview"
+    ],
+    "independent_verification": "all known live jobs now terminal; main2302distinct/isolated125 passed",
+    "completion": "NOT achieved;scope unchanged;original50programme21Done",
+    "next": "Receive owner decisions,apply approved corrections,rerun affected integration/full-system/readonly diagnostics;separate deployment authority"
+  },
+  "updated_at": "2026-11-26T18:43:33.970201+00:00",
+  "current_regression_result": {
+    "recorded_at": "2026-11-25T18:10:52.303995+00:00",
+    "status": "all_test_cases_passed",
+    "unique_collected": 2456,
+    "unique_passed": 2456,
+    "failed": [],
+    "performance_failures": [],
+    "other_failures": [],
+    "postgres_replaced_skips": 63,
+    "exact_ids_match": true,
+    "current_source_hashes_match": true,
+    "postgres_guarded_cleanup_complete": true,
+    "production_deployed": false,
+    "overall_goal_complete": false,
+    "limitations": [
+      "Original 50-item programme remains open (21 Done).",
+      "Production timing repair not applied; simulation uses confirmed timing projection.",
+      "Equal-mode raw third-call night gap is 3; fourth-call night gap is 2.",
+      "Staffing review warnings: equal 5, availability 11; production OT guard disabled.",
+      "Availability mode raw duty gaps exceed 2 by design; third adjusted gap exceeds saved tolerance.",
+      "No global optimality or universal feasibility proof; no production deployment."
+    ],
+    "reviewed_at": "2026-11-26T00:50:05.618536+00:00",
+    "candidate_owned_hashes_match": 101,
+    "candidate_backend_ast_modules_match": 184,
+    "frontend_unit_passed": 156,
+    "original_receipt": "fairness-modes-revision17-holistic-reconciliation.json",
+    "original_receipt_note": "Retained unchanged; its third/fourth-night limitation text is historical. Current fourth-call gap is 2."
+  },
+  "responsive_hours_ui": {
+    "checks": 13,
+    "status": "passed",
+    "evidence": "fairness-modes-revision15-responsive-hours-browser.json"
+  },
+  "current_source_guard": {
+    "passed": 3,
+    "source_unchanged": true,
+    "evidence": "fairness-modes-revision15-report-template-source-guard-status.json"
+  },
+  "report_snapshot_gate": {
+    "passed": 37,
+    "source_unchanged": false,
+    "limitation": "Final template-source filter and manual-source test extension occurred during the run; full final run required."
+  },
+  "candidate_ui": {
+    "checks": 41,
+    "scenarios": 3,
+    "status": "passed",
+    "evidence": "fairness-modes-revision15-candidate-corrected-browser.json",
+    "limitation": "Latest report-only helpers refreshed afterward; no report API exercised by UI workflow."
+  },
+  "current_full_run": "fairness-modes-revision17-holistic-complete-audit",
+  "current_postgres_run": "fairness-modes-revision17-holistic-independent-postgres",
+  "current_backend_gate": "43focusedPASS+3actualPGracesPASS; new2491fullRUNNING",
+  "current_november": {
+    "source_revision": 16,
+    "filled": 840,
+    "unassigned": 0,
+    "all_holder_failures": 0,
+    "staffing_hard_blocks": 0,
+    "equal_staffing_reviews": 5,
+    "availability_staffing_reviews": 11,
+    "quota_reassigned": 1,
+    "equal_max_duty_gap": 2,
+    "production_writes": 0
+  },
+  "current_checkpoint": "PROGRESS+FREEZE: actual18NovemberreadOnlyreplay840/840/all840holder0/eightclinical0/finalrollback/sourceunchanged; totalgaps1/2/2/1/1,night1/2/2/2/1,hours24/48/40/40/24,staff835safe5review. Fixedinitialclaim/errorrowlocking after PGbeforefix2PASS1reproducedraceFAIL; freshguardedPG3PASS105.14s/exit0/disposablecleanupcomplete. Finaltargeted43PASS81.65s includescachedwitnessApply/idempotent/exactUndo,expiry,realbackgroundcancel andvisibleprotectednightgap. Main156unitPASS/prior45actualUIchecksPASS; finaldiscard/resumeUIlive45379; firstUIrevision17assertFAILretained. MainfinalbuildPASS10.15s. Backendapp/test18FROZEN; full2491distinctlive7854/driver37812/pytest6456(parent3668),monitor97401/actual21752; exactPGqueue41255/actual25604waitingfullterminalXML+source; reconciler68221/actual15496waitingboth. DoNOTrestartmerelyfortimingfailures; collectfulloutcomes. Candidate18ownedrefresh112hashes/188ASTmatch; currentbackendhashesmatchfullstart. Candidatebuildrunning; finalcandidateUIafterbuild. Noapp/backendtesteditsduringfreeze. Original50scope21Done/390timingproposal/OTdisabled/staffreviews preserved; no productionwrites/deploy/releaseapproval/overallcomplete. Nextsamefull/PG sourceIDcleanupreconciliation pluscurrentmain/candidateUI/availabilityprojection andfinalreport.",
+  "night_gap_root_cause": {
+    "recorded_at": "2026-11-26T16:53:41.436848+00:00",
+    "status": "structural-opportunity-verified-clinical-prototype-pending",
+    "input_assignments_sha256": "9053cda88ce2d33d021aeee5177a84cf43b06516af69b3af966dba8b5df27ce8",
+    "scheduling_context_sha256": "51fc13e3ecb6a7af80766b0e4f5859ddc546aff25c3f47ca2866370c50da7772",
+    "fixed_counts_gap2_infeasible": true,
+    "variable_counts_gap2_necessary_condition_feasible": true,
+    "minimum_count_cost": 2777,
+    "current_count_cost": 2785,
+    "diagnostic_witness_clinically_verified": false,
+    "baseline_server_plan_840_checks_clear": true,
+    "application_source_matches_full_audit": true,
+    "source_reports": [
+      "docs/allocation-progress/production-nov2026-20261123/fairness-modes-engine17-night-gap-two-relaxation-exact-flow.json",
+      "docs/allocation-progress/production-nov2026-20261123/fairness-modes-engine17-night-gap-two-relaxation-exact-flow-flexible-counts.json",
+      "docs/allocation-progress/production-nov2026-20261123/fairness-modes-engine17-night-gap-two-relaxation-exact-flow-flexible-counts-count-cost-verified.json"
+    ],
+    "excluded_failed_receipt": "production-nov2026-20261123/fairness-modes-engine17-night-gap-two-relaxation-exact-flow-flexible-counts-count-cost.json",
+    "production_writes": 0,
+    "overall_goal_complete": false,
+    "next_action": "Minimum-change structural witness, bounded clinical-guided cuts, atomic Planner.transfer and full840checks; no engine promotion before verified safe benefit."
+  },
+  "joint_clinical_prototype": "docs/allocation-progress/joint-clinical-night-success-reviewed.json",
+  "deterministic_replays": "docs/allocation-progress/joint-clinical-night-deterministic-replay-status.json",
+  "transport_blocker": "Durablepathandclaimfixverified; finaldiscard/resumeUI running; fullsystem+candidate gates pending"
+}

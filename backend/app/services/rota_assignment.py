@@ -5,6 +5,8 @@
 - needs_override: inactive member, not posted to the unit, safety blockers, unit staffing
   warnings, monthly count limits.
 Assignments that need an override must carry an ``override_reason``.
+Owner23Nov clarification: a dated posting to an included unit is required for
+ordinary and extra duties. Missing postings never grant eligibility.
 """
 
 from __future__ import annotations
@@ -116,7 +118,7 @@ def slot_safety_for_assignment(db: Session, slot: DutySlot) -> dict[str, object]
     starts_on, ends_on = month_bounds(month)
     _rule_version, rules = get_phase_one_rules(db)
     postings = postings_for_month(db, starts_on, ends_on)
-    leaves = leaves_by_day_and_person(db, month)
+    leaves = leaves_by_day_and_person(db, month, rules=rules, prospective_slots=(slot,))
     assignments = assignments_for_safety(db, starts_on, ends_on)
     same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
     return slot_safety(
@@ -292,7 +294,7 @@ def validate_assignment(
     if context is None:
         _rule_version, rules = get_phase_one_rules(db)
         postings = postings_for_month(db, starts_on, ends_on)
-        leaves = leaves_by_day_and_person(db, month)
+        leaves = leaves_by_day_and_person(db, month, rules=rules, prospective_slots=(slot,))
         assignments = assignments_for_safety(db, starts_on, ends_on)
         same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
     else:
@@ -314,17 +316,16 @@ def validate_assignment(
         )
     )
     validation_issues: list[dict[str, str]] = []
+    from app.services.ordinary_duty_pool import has_dated_scope_posting
     from app.services.allocation_scope import locked_unit_ids
     included = locked_unit_ids(db, slot.rota_period_id, context)
     if included is not None:
         if slot.unit_id not in included:
             validation_issues.append(issue("blocked", "scope_unit_excluded",
                 "This duty's unit is outside the month's locked included scope."))
-        elif not any(p.person_id == person.id and p.unit_id in included
-                     and p.starts_on <= slot.duty_date and (p.ends_on is None or p.ends_on >= slot.duty_date)
-                     for p in postings):
-            validation_issues.append(issue("blocked", "scope_member_excluded",
-                "This member has no dated posting in the month's locked included units."))
+    if not has_dated_scope_posting(person.id, postings, slot.duty_date, included):
+        validation_issues.append(issue("blocked", "scope_member_excluded",
+            "A dated posting to an included unit is required for ordinary and extra duties."))
     for other in nearby_duties(
         db,
         slot,
@@ -460,10 +461,16 @@ def validate_assignment(
         )
     )
 
-    from app.services.ot_assignment_validation import validate_ot_assignment
+    # Import the optional capacity solver only when the existing guard is enabled.
+    # Its module initialization otherwise adds substantial first-preview latency.
+    from app.core.config import settings
 
-    ot_protection = validate_ot_assignment(db, slot, person, rules,
-        replace_existing=replace_existing, context=context)
+    ot_protection = None
+    if settings.ot_calendar_enabled:
+        from app.services.ot_assignment_validation import validate_ot_assignment
+
+        ot_protection = validate_ot_assignment(db, slot, person, rules,
+            replace_existing=replace_existing, context=context)
     if ot_protection is not None and ot_protection["status"] != "feasible":
         uncertain = ot_protection["status"] != "infeasible"
         validation_issues.append(issue("blocked",

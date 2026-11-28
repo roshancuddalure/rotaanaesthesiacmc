@@ -27,14 +27,19 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import Base
-from app.models import CallCluster, DutyAssignment, DutySlot, LeaveRequest, OtCalendar, Person, PersonCallClusterMembership, PersonPosting, Unit
+from app.models import CallCluster, DutyAssignment, DutySlot, LeaveRequest, MemberCallLevelChange, OtCalendar, Person, PersonCallClusterMembership, PersonPosting, Unit
 from app.services.ot_calendar_store import CalendarConfiguration, canonical, revision
 from app.services.ot_joint_reservations import add_joint_reservations
 from app.services.allocation_objective_model import build_objectives
+from app.services.allocation_count_constraints import add_monthly_count_limits
+from app.services.allocation_fairness_policy import fairness_mode, personal_shares
+from app.services.allocation_objectives import OPTIMIZER_OBJECTIVE_REVISION
+from app.services.fairness_targets import objective_target_basis
+from app.services.rota_eligibility import required_call_levels
 from app.services.rota_candidates import candidate_context, context_targets, slot_candidates_with_context
 from app.services.rota_optimizer import incompatible, validate_plan
 from app.services.rota_rules import get_phase_one_rules, save_phase_one_rules
-from app.services.rota_safety import rule_for_slot
+from app.services.rota_safety import rule_for_slot, rules_groups
 from app.services.rota_setup import monthly_setup
 from tests.test_ot_assignment_integration import demand, slot
 
@@ -88,7 +93,7 @@ class Samples:
                 "maximum_observed_bytes": max(values, default=None)}
 
 
-def fixture(db, *, preserved=False, plateau=False):
+def fixture(db, *, preserved=False, plateau=False, count_limited=False, mixed_calls=False):
     units = [Unit(code=code, name=code, minimum_free_people=0) for code in ("UNIT_IV", "UNIT_V")]
     db.add_all(units)
     db.flush()
@@ -146,6 +151,36 @@ def fixture(db, *, preserved=False, plateau=False):
                     DutyAssignment(person=people[2], duty_slot=alternatives[15, 0], status="assigned"),
                     DutyAssignment(person=people[4], duty_slot=future, status="assigned")])
         db.commit()
+    if count_limited:
+        for unit in units:
+            unit.campus = "MAIN"
+        _, rules = get_phase_one_rules(db)
+        rules.duty_count_limits.max_24hr_per_month = 3
+        rules.duty_count_limits.max_weekend_24hr_per_month = 1
+        rules.duty_count_limits.max_same_group_per_month = 3
+        rules.duty_count_limits.max_same_campus_per_month = 3
+        save_phase_one_rules(db, rules)
+    if mixed_calls:
+        for index in (3, 7):
+            people[index].call_level = "4TH_CALL"
+            for posting in people[index].postings:
+                posting.posting_type = "4TH_CALL"
+        db.add(MemberCallLevelChange(person=people[0], call_level="4TH_CALL", effective_from=date(2026, 11, 16)))
+        _, rules = get_phase_one_rules(db)
+        pool_rule = next(rule for rule in rules.duty_rules if rule.key == "MAIN_4TH_24HR")
+        pool_rule.allowed_call_levels = ["3RD_CALL", "4TH_CALL"]
+        save_phase_one_rules(db, rules)
+        for (day, _), row in alternatives.items():
+            if day % 2 == 0:
+                row.duty_type = "MAIN_4TH_24HR"
+                row.call_level = None
+        for calendar in db.query(OtCalendar):
+            value = dict(calendar.configuration)
+            value["weekly"] = [{**row, "bands": [{**band, "call_levels": ["3RD_CALL", "4TH_CALL"]} for band in row["bands"]]}
+                for row in value["weekly"]]
+            value = canonical(CalendarConfiguration.model_validate(value))
+            calendar.configuration, calendar.revision = value, revision(value)
+        db.commit()
     return units, people, alternatives
 
 
@@ -155,14 +190,35 @@ class Experiment:
         self.full_objectives = full_objectives
         self.context = candidate_context(db, "2026-11")
         assert self.context.ot_guard.reviewed_complete and not self.context.ot_guard.unresolved
-        assert all(v is None for v in self.context.rules.duty_count_limits.model_dump().values()), "Fixture requires unlimited monthly hard counts"
         assert all(rule_for_slot(row, self.context.rules).is_mandatory for row in alternatives.values())
         context_targets(db, self.context)
-        assert set(self.context.fairness_member_levels.values()) == {"3RD_CALL"}, "Squared loads require the common fixture call target"
-        # Physical alternative rows are not additional required duties. The
-        # fixture's eight monthly members share thirty logical requirements.
-        self.targets = {"3RD_CALL": len({day for day, _ in alternatives}) / len(people)}
+        logical = {}
+        pools = {}
+        for (day, _), row in alternatives.items():
+            levels = required_call_levels(row, rule_for_slot(row, self.context.rules), rules_groups(self.context.rules, row))
+            assert levels, "Logical duty requires a resolved call pool"
+            assert day not in pools or levels == pools[day], "Unit alternatives must share the logical call pool"
+            pools[day] = levels
+            logical.setdefault(day, row)
+        self.targets, self.context.fairness_member_levels = objective_target_basis(db, "2026-11", self.context.rules,
+            postings=self.context.postings, leaves=self.context.leaves, logical_slots=logical.values())
         self.context.fairness_targets = dict(self.targets)
+        # The database stores two unit alternatives for each logical duty.
+        # Replace planned equal-count targets loaded from those physical rows;
+        # availability mode uses the shared dynamic covered-duty model below.
+        groups = defaultdict(list)
+        for person, level in self.context.fairness_member_levels.items():
+            groups[level].append(person)
+        self.context.fairness_person_targets = {
+            person: value
+            for level, members in groups.items()
+            for person, value in personal_shares(
+                self.targets.get(level, 0) * len(members), members,
+                self.context.fairness_available_days, fairness_mode(self.context.rules)
+            ).items()
+        }
+        self.common_target = len(set(self.targets.values())) == 1
+        assert full_objectives or self.common_target, "Unequal call targets require the shared full objective model"
         self.month_fixed = tuple(a for rows in self.context.assignments_by_person.values() for a in rows)
         self.fixed_days = {a.duty_slot.duty_date.day for a in self.month_fixed}
         assert len(self.fixed_days) == len(self.month_fixed), "Fixture has at most one preserved duty per logical day"
@@ -187,6 +243,30 @@ class Experiment:
                     self.score_candidates[str(duty_slot.id)][person["person_id"]] = person
         self.locked = {19} if locked_open else set()
         self.upper_coverage = len({day for day, _, _ in self.options} | self.fixed_days)
+        self.seed = None
+        model_started = perf_counter()
+        self.model_template = self.build_model_template()
+        self.common_model_seconds = perf_counter()-model_started
+        self.template_basis = self.model_basis()
+
+    def prepare_seed(self):
+        """One shared validated incumbent, counted as common preprocessing."""
+        if self.seed is not None:
+            return
+        selected = []
+        loads = Counter(str(a.person_id) for a in self.month_fixed)
+        for day in sorted({day for day, _, _ in self.options}):
+            candidates = sorted((key for key in self.options if key[0] == day),
+                key=lambda key: (loads[key[2]], key[1], key[2]))
+            for key in candidates:
+                try:
+                    self.check((*selected, key))
+                except InvalidPlan:
+                    continue
+                selected.append(key)
+                loads[key[2]] += 1
+                break
+        self.seed = tuple(selected)
 
     def signature(self):
         # Column queries see persisted values, independently of ORM identity cache.
@@ -206,16 +286,35 @@ class Experiment:
             raise InvalidPlan("Complete canonical final check failed")
         assert self.db.query(DutyAssignment).count() == len(self.saved_signature)
 
-    def solve(self, deadline, layout=None):
-        began = perf_counter()
+    def grow_layout_seed(self, seed, layout, deadline):
+        """Complete a valid layout incumbent within the caller's time budget."""
+        selected = list(seed)
+        self.check(selected)
+        used = {key[0] for key in selected} | self.fixed_days
+        loads = Counter(str(a.person_id) for a in self.month_fixed)
+        loads.update(key[2] for key in selected)
+        levels = {str(person): level for person, level in self.context.fairness_member_levels.items()}
+        for day in sorted({day for day, _, _ in self.options} - used):
+            candidates = [key for key in self.options if key[0] == day and (layout is None or layout[day-1] == key[1])]
+            candidates.sort(key=lambda key: (
+                2*loads[key[2]]+1-2*self.targets.get(levels.get(key[2]), self.context.average_assignments), key[1], key[2]))
+            for key in candidates:
+                if perf_counter() >= deadline:
+                    return tuple(selected)
+                try:
+                    self.check((*selected, key))
+                except InvalidPlan:
+                    continue
+                selected.append(key)
+                loads[key[2]] += 1
+                break
+        return tuple(selected)
+
+    def build_model_template(self):
         model = cp_model.CpModel()
         variables = {key: model.new_bool_var(str(key)) for key in self.options}
         # Keep one common opportunity universe for every layout. Removing the
         # forbidden rows would change workload denominators between methods.
-        if layout is not None:
-            for key, variable in variables.items():
-                if layout[key[0]-1] != key[1]:
-                    model.add(variable == 0)
         for day in range(1, 31):
             model.add(sum(v for (d, _, _), v in variables.items() if day == d) <= 1)
         by_person = defaultdict(list)
@@ -228,13 +327,15 @@ class Experiment:
                         model.add(variable + second <= 1)
         slots = {str(row.id): row for row in self.options.values()}
         choices = {(str(self.options[key].id), person): variable for key, variable in variables.items() for person in (key[2],)}
+        count_stats = add_monthly_count_limits(model, choices, slots, self.context)
         stats = add_joint_reservations(model, self.context.ot_guard, self.fixed_assignments, slots, choices, self.context.rules)
         terms = None
         if self.full_objectives:
             terms = build_objectives(model, choices, self.score_candidates, slots, self.context,
                 targets=self.targets, mandatory=sum(variables.values()), coverage=sum(variables.values()),
                 mode="balanced", originals={}, preferences={}, weights={"burden": 1, "history": 1, "spacing": 1},
-                holiday_dates={"2026-11-14", "2026-11-26"}, incompatible=incompatible)
+                holiday_dates={"2026-11-14", "2026-11-26"}, incompatible=incompatible,
+                enhance_equality=True)
             tiers = terms.tiers
         else:
             squares = []
@@ -246,13 +347,65 @@ class Experiment:
                 model.add_element(load, [n*n for n in range(31)], square)
                 squares.append(square)
             tiers = [("coverage", -len(self.fixed_days)-sum(variables.values())), ("call_level_squared_load", sum(squares))]
+        return model, variables, terms, tiers, count_stats, stats
+
+    def model_basis(self):
+        return (self.context.rules.model_dump_json(), tuple(sorted(self.targets.items())),
+                tuple(sorted((key, str(row.id), str(row.unit_id), str(row.duty_date),
+                              str(row.starts_at), str(row.ends_at), row.duty_type, row.is_24hr)
+                             for key, row in self.options.items())))
+
+    def solve(self, deadline, layout=None, *, incumbent=()):
+        began = perf_counter()
+        assert self.model_basis() == self.template_basis, "Model inputs changed; rebuild the experiment"
+        template, variables, terms, tiers, count_stats, stats = self.model_template
+        # Installed OR-Tools cloning preserves variable indices; each method gets
+        # its own constraints, hints, objectives and fixed layout decisions.
+        model = template.clone()
+        if layout is not None:
+            for key, variable in variables.items():
+                if layout[key[0]-1] != key[1]:
+                    model.add(variable == 0)
+        model_ready = perf_counter()
         solver = cp_model.CpSolver()
         solver.parameters.num_search_workers = 1
         solver.parameters.random_seed = 0
-        keys, receipts, cuts = (), [], 0
+        def score(selected):
+            if terms:
+                return terms.quality({str(self.options[key].id): key[2] for key in selected})
+            counts = Counter(str(a.person_id) for a in self.month_fixed)
+            counts.update(key[2] for key in selected)
+            return [-len(selected)-len(self.fixed_days), sum(counts[str(p.id)]**2 for p in self.people)]
+        seeds = [tuple(key for key in candidate if layout is None or layout[key[0]-1] == key[1])
+                 for candidate in ((self.seed or ()), incumbent)]
+        for candidate in seeds:
+            self.check(candidate)
+        seed = min(seeds, key=score)
+        filtered_seed_covered = len(seed)+len(self.fixed_days)
+        # Count local warm-start construction in the method's existing deadline.
+        # It may consume at most one quarter of the time remaining after model
+        # construction; an expired call retains its validated incumbent.
+        warm_started = perf_counter()
+        seed = self.grow_layout_seed(seed, layout, perf_counter()+max(0, deadline-perf_counter())*.25)
+        warm_seconds = perf_counter()-warm_started
+        self.check(seed)
+        for key, variable in variables.items():
+            model.add_hint(variable, int(key in seed))
+        keys, receipts, cuts = seed, [], 0
         for index, (name, expression) in enumerate(tiers):
+            possible = {key[0] for key in variables if layout is None or layout[key[0]-1] == key[1]}
+            if name in {"required_coverage", "coverage"} and len(keys) == len(possible):
+                # Fixture admission asserts every logical duty mandatory.
+                # Candidate-day count is an independent upper bound shared by
+                # both coverage expressions; fixed duties are outside variables.
+                value = -len(keys) if terms else -len(keys)-len(self.fixed_days)
+                receipts.append({"tier": name, "value": value, "proven": True,
+                                 "proof": "candidate_day_upper_bound"})
+                model.add(expression == value)
+                continue
             while perf_counter() < deadline:
-                solver.parameters.max_time_in_seconds = max(.001, (deadline-perf_counter()) / (len(tiers)-index))
+                priorities = [4 if tier in {"required_coverage", "call_level_equality"} else 1 for tier, _ in tiers[index:]]
+                solver.parameters.max_time_in_seconds = max(.001, (deadline-perf_counter())*priorities[0]/sum(priorities))
                 model.minimize(expression)
                 status = solver.solve(model)
                 if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
@@ -273,6 +426,9 @@ class Experiment:
                 break
             if len(receipts) <= index:
                 break
+        retained = score(seed) < score(keys)
+        if retained:
+            keys, receipts = seed, []
         self.check(keys)
         loads = Counter(str(a.person_id) for a in self.month_fixed)
         loads.update(key[2] for key in keys)
@@ -282,12 +438,16 @@ class Experiment:
         return {"keys": keys, "covered": len(keys)+len(self.fixed_days), "new_choices": len(keys),
                 "fixed_logical_days": sorted(self.fixed_days), "square_load": square_load,
                 "quality": quality, "objective_tiers": [name for name, _ in tiers],
+                "seed_covered": len(seed)+len(self.fixed_days), "seed_retained": retained,
+                "filtered_seed_covered": filtered_seed_covered,
+                "model_clone_seconds": model_ready-began, "warm_start_seconds": warm_seconds,
                 "unit_contributions": {str(unit): count for unit, count in unit_counts.items()},
                 "member_loads": [loads[str(p.id)] for p in self.people], "proofs": receipts,
+                "monthly_count_constraints": count_stats,
                 "seconds": perf_counter()-began, "cuts": cuts, "ot_model": stats}
 
     def bounds_reached(self, result):
-        if self.full_objectives:
+        if self.full_objectives or not self.common_target:
             # Coverage/equality certificates alone say nothing about later tiers.
             return False
         n, remainder = divmod(result["covered"], len(self.people))
@@ -326,9 +486,10 @@ class Experiment:
                 result.append((days, reason))
         return result
 
-    def compare(self, seconds, *, coordinated=False):
+    def compare(self, seconds, *, coordinated=False, reverse_methods=False):
         reports = {}
-        for method in (("joint", "repair", "repair_pairs") if coordinated else ("joint", "repair")):
+        methods = ("joint", "repair", "repair_pairs") if coordinated else ("joint", "repair")
+        for method in (tuple(reversed(methods)) if reverse_methods else methods):
             with Samples() as samples:
                 began = perf_counter()
                 deadline = began + seconds
@@ -351,7 +512,7 @@ class Experiment:
                             if perf_counter() >= deadline:
                                 break
                             neighbor = tuple(1-unit if index+1 in days else unit for index, unit in enumerate(layout))
-                            trial = self.solve(min(deadline, perf_counter()+5), neighbor)
+                            trial = self.solve(min(deadline, perf_counter()+5), neighbor, incumbent=best["keys"])
                             calls += 1
                             trace.append({"changed_days": days, "priority_reason": reason,
                                           "covered": trial["covered"], "square_load": trial["square_load"],
@@ -379,7 +540,8 @@ class Experiment:
             n, remainder = divmod(best["covered"], len(self.people))
             lower = remainder*(n+1)**2+(len(self.people)-remainder)*n*n
             best["arithmetic_square_load_lower_bound_at_coverage"] = lower
-            best["equality_optimal_by_lower_bound"] = best["square_load"] == lower
+            best["equality_optimal_by_lower_bound"] = self.common_target and best["square_load"] == lower
+            best["target_by_call_level"] = self.targets
             reports[method] = best
         return reports
 
@@ -392,6 +554,10 @@ def main():
     parser.add_argument("--preserved", action="store_true")
     parser.add_argument("--plateau", action="store_true")
     parser.add_argument("--full-objectives", action="store_true")
+    parser.add_argument("--count-limited", action="store_true")
+    parser.add_argument("--mixed-calls", action="store_true")
+    parser.add_argument("--fairness-mode", choices=("equal_counts", "availability"), default="equal_counts")
+    parser.add_argument("--reverse-methods", action="store_true")
     args = parser.parse_args()
     if args.output.exists() or not 5 <= args.seconds <= 120:
         parser.error("Use a fresh evidence path and a 5–120 second method budget")
@@ -401,11 +567,16 @@ def main():
               "source_sha256": hashes, "python": platform.python_version(), "platform": platform.platform(),
               "locked_open": args.locked_open, "preserved": args.preserved, "plateau": args.plateau,
               "full_objectives": args.full_objectives}
+    report["optimizer_revision"] = OPTIMIZER_OBJECTIVE_REVISION
+    report["fairness_mode"] = args.fairness_mode
+    report["reverse_methods"] = args.reverse_methods
+    report["count_limited"] = args.count_limited
+    report["mixed_calls"] = args.mixed_calls
     report["objective_scope"] = "All30 logical duties mandatory; coverage then common-call equality. At fixed coverage common target terms cancel. Unit contributions are descriptive, not a new objective. Weekend/night/history/preferences tiers not compared."
     report["budget_scope"] = "Same per-method monotonic wall allowance including model construction, all solver calls and canonical validation; common fixture/candidate preprocessing reported separately. Blocking stages may overrun; report actual overrun, not a hard-cancel guarantee."
     report["template_scope"] = "Initial alternating unit layout is prescribed for this experiment, not generated by the current production template."
     if args.full_objectives:
-        report["objective_scope"] = "Shared production balanced tiers: required coverage, coverage, call-level equality, weekend, night, holiday, workload, spacing/history, preferences. Logical target30/8; fixed opportunity universe for every layout. Two synthetic holiday dates; no preference costs or repair replacement requests in this fixture. Per-tier proof receipts remain authoritative."
+        report["objective_scope"] = "Current production enhanced balanced tiers: required coverage, coverage, worst call-level gap, total call-level gaps, squared count deviation, hours, extra, weekend, night, holiday, workload, spacing/history, preferences. Selected equal-count or covered-duty availability policy, canonical monthly membership and normalized logical demand; fixed opportunity universe for every layout. Two synthetic holiday dates; no preference costs or repair replacement requests. Per-tier proof receipts remain authoritative."
     engine = create_engine("sqlite+pysqlite:///:memory:")
     old = settings.ot_calendar_enabled
     settings.ot_calendar_enabled = True
@@ -413,13 +584,23 @@ def main():
         Base.metadata.create_all(engine)
         with Session(engine, expire_on_commit=False) as db:
             began = perf_counter()
-            _, people, alternatives = fixture(db, preserved=args.preserved, plateau=args.plateau)
+            _, people, alternatives = fixture(db, preserved=args.preserved, plateau=args.plateau,
+                count_limited=args.count_limited, mixed_calls=args.mixed_calls)
+            _, rules = get_phase_one_rules(db)
+            rules.fairness_rules.allocation_mode = args.fairness_mode
+            save_phase_one_rules(db, rules)
             experiment = Experiment(db, people, alternatives, locked_open=args.locked_open, full_objectives=args.full_objectives)
+            experiment.prepare_seed()
             report["common_setup_seconds"] = perf_counter()-began
+            report["common_model_seconds"] = experiment.common_model_seconds
             report["logical_required_duties"] = 30
             report["candidate_edges"] = len(experiment.options)
+            report["monthly_limits"] = experiment.context.rules.duty_count_limits.model_dump()
+            report["target_by_call_level"] = experiment.targets
+            report["monthly_membership_counts"] = dict(Counter(experiment.context.fairness_member_levels.values()))
             print("Comparing joint and repair", flush=True)
-            report["methods"] = experiment.compare(args.seconds, coordinated=args.plateau)
+            report["methods"] = experiment.compare(args.seconds, coordinated=args.plateau,
+                reverse_methods=args.reverse_methods)
             assert db.query(DutyAssignment).count() == len(experiment.saved_signature)
             report["assignment_writes"] = 0
         assert all(hashlib.sha256((ROOT/p).read_bytes()).hexdigest()==h for p,h in hashes.items())

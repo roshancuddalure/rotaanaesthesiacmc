@@ -1,0 +1,1223 @@
+<!DOCTYPE html><html lang="en" data-frontend-ready="true"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#172033">
+    <title>Duty Rota Software</title>
+    <script type="module" crossorigin="" src="/assets/index-D06U2uBw.js"></script>
+    <link rel="stylesheet" crossorigin="" href="/assets/index-oBk4jE5T.css">
+  </head>
+  <body>
+    <div id="app">
+  <a href="#view-root" class="skip-link">Skip to content</a>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <main class="shell">
+    <aside class="sidebar" id="sidebar" inert="">
+      <div class="brand">
+        <span class="brand-mark">DR</span>
+        <div>
+          <h1>Duty Rota</h1>
+          <p>Rota board</p>
+        </div>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">
+          <svg class="app-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m18 6-12 12M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <nav class="nav" aria-label="Main navigation">
+        <button data-view="overview" class="">Overview</button><button data-view="analysis">Duty Analysis</button><button data-view="members">Department Members</button><button data-view="leave">Leave</button><button data-view="units">Unit Management</button><div class="nav-workflow" id="workflow-tracker" role="group" aria-labelledby="workflow-tracker-label">
+        <div class="nav-section-label" id="workflow-tracker-label">Monthly rota · <span data-workflow-month="">May 2026</span></div>
+        <button data-view="rota-setup" data-workflow-step="rota-setup" data-workflow-operation="setup" data-state="done" class="nav-step">
+    <span class="nav-step__num" aria-hidden="true">1</span>
+    <span class="nav-step__label">Setup</span>
+    <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden">, Done</span>
+  </button><button data-view="rota-template" data-workflow-step="rota-template" data-workflow-operation="template" data-state="done" class="nav-step active" aria-current="page">
+    <span class="nav-step__num" aria-hidden="true">2</span>
+    <span class="nav-step__label">Build template</span>
+    <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden">, Done</span>
+  </button><button data-view="rota-template" data-workflow-step="rota-template" data-workflow-operation="assignment" data-state="done" class="nav-step active" aria-current="page">
+    <span class="nav-step__num" aria-hidden="true">3</span>
+    <span class="nav-step__label">Assign members</span>
+    <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden">, Done</span>
+  </button><button data-view="rota-review" data-workflow-step="rota-review" data-workflow-operation="review" data-state="done" class="nav-step">
+    <span class="nav-step__num" aria-hidden="true">4</span>
+    <span class="nav-step__label">Review</span>
+    <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden">, Done</span>
+  </button><button data-view="rota-publish" data-workflow-step="rota-publish" data-workflow-operation="publish" data-state="blocked" class="nav-step">
+    <span class="nav-step__num" aria-hidden="true">5</span>
+    <span class="nav-step__label">Publish</span>
+    <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden">, Needs action</span>
+  </button>
+        <p class="workflow-freshness" data-workflow-freshness="" role="status">Checklist checked for this month.</p>
+      </div><button data-view="user-guide">User Guide</button>
+        
+        <div class="nav-section-label">Admin tools</div>
+        <button data-view="rota-rules">Rota Rules</button><button data-view="limits">Limits</button><button data-view="call-clusters">Eligibility Groups</button><button data-view="mappings">Mappings</button><button data-view="imports">Past Duties</button><button data-view="accounts">Login Accounts</button><button data-view="diagnostics">Diagnostics</button><button data-view="compute-settings">Compute Settings</button><button data-view="ot-calendars">Unit OT Calendars</button><button data-view="recycle-bin">Recycle bin</button>
+      
+      </nav>
+    </aside>
+    <section class="content">
+      <header class="topbar">
+        <div class="topbar-actions">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open menu" aria-expanded="false">
+            <svg class="app-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+          </button>
+          <div>
+            <p class="eyebrow" id="section-eyebrow">Rota Template</p>
+            <h2 id="section-title" tabindex="-1">Steps 2–3 · Build the template and assign members</h2>
+          </div>
+        </div>
+        <div class="topbar-tools">
+          <a class="icon-button context-help-link" id="section-help" target="_blank" rel="noopener noreferrer" href="http://127.0.0.1:5219/#view=user-guide&amp;section=guide-rota-template" aria-label="Section help for Rota Template. Opens in a new tab.">Section help</a>
+          <label class="working-month" id="working-month-field">
+            <span>Month</span>
+            <input type="month" id="working-month" value="2026-05" aria-label="Working month for leave, units and the monthly rota">
+          </label>
+          <details class="connection-checker" id="connection-checker" data-state="checked" aria-busy="false">
+            <summary aria-label="Server connection. Last server check succeeded. Check again to confirm current availability."><span id="api-status" class="api-dot" aria-hidden="true" data-state="ok"></span><span>Server</span></summary>
+            <div class="connection-checker-panel"><strong>Server connection</strong><p data-connection-message="" role="status">Last server check succeeded. Check again to confirm current availability.</p><p data-connection-detail="" class="muted-text">Last successful check: 24/11/2026, 23:02:11.</p><button type="button" class="primary" data-check-connection="">Check server</button></div>
+          </details>
+          <div class="account-menu">
+            <button type="button" class="account-button" id="account-menu-button" aria-label="Account: Fairness Fixture Admin" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu">
+              <span class="account-avatar" aria-hidden="true">FF</span>
+              <span class="account-name">Fairness Fixture Admin</span>
+            </button>
+            <div class="account-menu__list" id="account-menu" role="menu" aria-labelledby="account-menu-button" hidden="">
+              <p class="account-menu__who">Superadmin</p>
+              <button type="button" role="menuitem" id="profile">Profile</button>
+              <button type="button" role="menuitem" id="change-password">Change password</button>
+              <button type="button" role="menuitem" id="sign-out">Sign out</button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div id="route-availability-notice" hidden=""></div>
+      <div id="view-root">
+    <section class="generation-overview panel" aria-label="Generation workflow"><div class="generation-heading"><div><p class="eyebrow">Generation workspace</p><h2>Build the duties. Find the right people.</h2><p>May 2026 · 1 units · 4 duties · 4 filled · 0 open</p></div><button type="button" class="icon-button" data-view-shortcut="compute-settings" title="Choose server or this computer's GPU for generation">Compute: Server · change</button></div>
+    <ol class="generation-stages" data-workflow-operations="">
+      <li data-workflow-operation="setup" data-state="done"><strong>1 · Setup</strong><span>Choose and lock the included units.</span><span data-workflow-state-text="">Done</span></li>
+      <li data-workflow-operation="template" data-state="done"><strong>2 · Build template</strong><span>Allocate duty slots to the included units.</span><span data-workflow-state-text="">Done</span></li>
+      <li class="balance-stage" data-workflow-operation="assignment" data-state="done"><strong>3 · Assign members</strong><span>Use Autoassign members to prepare safe proposals for the duty slots.</span><span data-workflow-state-text="">Done</span><details class="assignment-tools" open=""><summary>Optional assignment tools</summary><span class="balance-stage__actions" data-assignment-tools-month="2026-05">
+    <button type="button" class="balance-button" data-balance-duties="" aria-describedby="balance-stage-status-2026-05">Balance duties</button>
+    <span class="balance-stage__status" id="balance-stage-status-2026-05" data-balance-status="" data-balance-month="2026-05" role="status" data-balance-loaded="1" data-tone="ok">Duty totals are balanced.</span></span><section class="extra-duty-stage"><strong>Extra-duty layer</strong><span>Fills duties that are still open, even when the unit is short-staffed. Leave and rest are never broken.</span><span class="extra-duty-stage__actions"><button type="button" data-extra-duty="" disabled="">Preview extra duties</button><button type="button" class="fill-all-button" data-fill-all="" disabled="">Fill remaining duties (all units)</button></span></section></details></li>
+      <li data-workflow-operation="review" data-state="done"><strong>4 · Review</strong><span>Check warnings and final validation before approval.</span><span data-workflow-state-text="">Done</span></li>
+      <li data-workflow-operation="publish" data-state="blocked"><strong>5 · Publish</strong><span>Record board approval, then export the final rota.</span><span data-workflow-state-text="">Needs action</span></li>
+    </ol><p class="workflow-freshness" data-workflow-freshness="" role="status">Checklist checked for this month.</p>
+    <p role="status">All duties have members. Review the draft or use explicit repair in Whole-month optimisation.</p>
+    </section>
+    <div data-template-optional-next=""><section class="ds-next ds-next--success" role="status">
+    <div>
+      <p class="ds-next__title">Every slot has a person</p>
+      <p class="ds-next__body">Review warnings, overrides and workload next.</p>
+    </div>
+    <div class="ds-next__action"><button type="button" class="primary" data-view-shortcut="rota-review">Go to Rota Review</button></div>
+  </section></div>
+    <section class="panel" data-template-optional-status="" aria-label="Optional report recovery" hidden="" aria-busy="false"><p role="status">Optional reports are up to date.</p></section>
+    <form id="rota-template-form">
+      <section class="page-toolbar" aria-label="Rota template actions">
+        <p class="page-toolbar__context"><strong>May 2026</strong> · 1 unit: Unit I</p>
+        <div class="page-toolbar__actions">
+          <button class="primary" type="submit" id="generate-rota-template">Preview rebuilt template</button>
+          <button class="icon-button" type="button" id="run-safe-auto-fill" disabled="">Autoassign members</button>
+          <button class="icon-button" type="button" id="run-intelligent-rota">Whole-month optimisation</button>
+          <details class="row-menu">
+            <summary class="icon-button" aria-label="Export rota">Export</summary>
+            <div class="row-menu__list" role="menu">
+              <button type="button" role="menuitem" id="download-eagle-eye-export">Draft assignments Excel (Eagle Eye)</button>
+              <button type="button" role="menuitem" id="download-call-wise-template-export">Call-wise workbook</button>
+            </div>
+          </details>
+          <details class="row-menu">
+            <summary class="icon-button" aria-label="Clear duties">Clear</summary>
+            <div class="row-menu__list" role="menu">
+              <button type="button" role="menuitem" id="clear-rota-template-cache">Clear draft duties…</button>
+              <button type="button" role="menuitem" class="row-menu__danger" id="clear-rota-template-with-assignments">Clear duties and assignments…</button>
+            </div>
+          </details>
+        </div>
+      </section>
+      <section class="summary-grid four-col">
+        <article class="metric"><span>4</span><p><span class="stat-label">Template slots<button type="button" class="help-icon" data-help="Empty duty slots generated for the month before people are assigned." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+        <article class="metric"><span>4</span><p><span class="stat-label">Assigned slots<button type="button" class="help-icon" data-help="Generated slots that already have a saved member assignment." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+        <article class="metric is-good"><span>0</span><p><span class="stat-label">Open slots<button type="button" class="help-icon" data-help="Generated slots that still need a member assignment." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+        <article data-template-optional-blocked="" class="metric"><span>0</span><p><span class="stat-label">Cannot assign<button type="button" class="help-icon" data-help="Duties where leave, rest, staffing, or eligibility rules prevent a safe assignment." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+      </section>
+      
+      <details class="panel disclosure-panel template-figures">
+        <summary>All safety and suggestion figures</summary>
+        <div class="summary-grid four-col">
+          <article class="metric"><span>4</span><p><span class="stat-label">Ready slots<button type="button" class="help-icon" data-help="Generated empty slots that passed the current leave-pressure checks." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>0</span><p><span class="stat-label">Need review<button type="button" class="help-icon" data-help="Items that can proceed only after board review or explanation." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>0</span><p><span class="stat-label">Forced review</span></p></article>
+          <article class="metric"><span>4</span><p><span class="stat-label">Safety checked<button type="button" class="help-icon" data-help="Generated slots checked against current leave, unit membership, same-day duties, and rest rules." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>4</span><p><span class="stat-label">Safe slots<button type="button" class="help-icon" data-help="Slots with enough eligible available members under the current rules." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>0</span><p><span class="stat-label">Needs review<button type="button" class="help-icon" data-help="Slots that can still be planned, but have pending leave or staffing pressure that needs board review." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>2</span><p><span class="stat-label">Minimum available<button type="button" class="help-icon" data-help="Lowest available eligible member count found across unit-day safety checks." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>4</span><p><span class="stat-label">Unit-day checks<button type="button" class="help-icon" data-help="Distinct unit and date combinations checked for staffing safety." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>4</span><p><span class="stat-label">Suggestion slots<button type="button" class="help-icon" data-help="Generated slots where the software found at least one candidate from Unit Management." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>8</span><p><span class="stat-label">Safe suggestions<button type="button" class="help-icon" data-help="Candidates with no person-specific leave, rest, or validation blocker." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>0</span><p><span class="stat-label">Review suggestions<button type="button" class="help-icon" data-help="Candidates that may be usable but need board review or an override reason." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+          <article class="metric"><span>0</span><p><span class="stat-label">Blocked suggestions<button type="button" class="help-icon" data-help="Candidates with hard blockers such as approved leave, rest conflict, or rule-limit problems." aria-label="Explain this metric" aria-expanded="false">?</button></span></p></article>
+        </div>
+        <p class="template-figures__rule"><strong>Safe auto-fill rule.</strong> A slot is filled only when its call level is known and the chosen person has the same call level. Ambiguous call slots are left open for board review.</p>
+        <label class="checkbox-line"><input id="rota-template-fast-mode" type="checkbox"> Fast load: skip suggestions and auto-fill history when opening this page</label>
+      </details>
+  
+      
+      <details class="panel template-settings-panel">
+        <summary>
+          <div>
+            <h3>Template Generation Settings</h3>
+            <p>25 of 49 duty types selected. 25 mandatory and 0 adjustable duties included.</p>
+          </div>
+          <span class="settings-disclosure-badge">Edit settings</span>
+        </summary>
+        <div class="template-settings-body">
+          <div class="template-settings-group">
+            <h4>Generation Window</h4>
+            <div class="form-grid">
+              <label>Start date<input id="template-start" type="date" value="2026-05-01"></label>
+              <label>End date<input id="template-end" type="date" value="2026-05-31"></label>
+              <label>Fairness policy
+                <select id="template-fairness-policy">
+                  <option value="hybrid" selected="">Hybrid</option>
+                  <option value="equal_unit">Equal Unit</option>
+                  <option value="equal_people">Equal People</option>
+                </select>
+              </label>
+            </div>
+            <div class="settings-check-row">
+              <label class="checkbox-line"><input id="template-weekdays" type="checkbox" checked=""> Include weekdays</label>
+              <label class="checkbox-line"><input id="template-weekends" type="checkbox" checked=""> Include weekends</label>
+              <label class="checkbox-line"><input id="template-replace" type="checkbox" checked=""> Replace existing generated empty slots</label>
+            </div>
+          </div>
+          <div class="template-settings-group">
+            <div class="settings-group-title">
+              <h4>Duty Template Editor</h4>
+              <span>25/49 selected</span>
+            </div>
+            <div class="template-duty-sections">
+        <section class="template-duty-section" data-template-duty-section="main">
+          <header>
+            <div>
+              <h5>Main Duties</h5>
+              <span>7/7 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="main">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="main">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_1ST_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main 1st Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_1ST_CO_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main Co-1st Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_2ND_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main 2nd Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_3RD_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main 3rd Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_4TH_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main 4th Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_CO3RD_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main Co-3rd Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_CO4TH_24HR" data-template-duty-group="main" checked="">
+                <span>
+                  <strong>Main Co-4th Call</strong>
+                  <small>Main Duties / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="rc">
+          <header>
+            <div>
+              <h5>RC Duties</h5>
+              <span>7/11 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="rc">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="rc">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_1ST_A_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC 1st Call A</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_1ST_B_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC 1st Call B</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_2ND_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC 2nd Call</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_3RD_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC 3rd Call</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_4TH_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC 4th Call</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_CO3RD_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC Co-3rd Call</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_CO4TH_24HR" data-template-duty-group="rc" checked="">
+                <span>
+                  <strong>RC Co-4th Call</strong>
+                  <small>RC Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_12HR" data-template-duty-group="rc">
+                <span>
+                  <strong>RC 12hr</strong>
+                  <small>RC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_CO_12HR" data-template-duty-group="rc">
+                <span>
+                  <strong>RC Co-Call 12hr</strong>
+                  <small>RC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_3RD_CALL_A" data-template-duty-group="rc">
+                <span>
+                  <strong>RC 3rd Call A</strong>
+                  <small>RC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_3RD_CALL_B" data-template-duty-group="rc">
+                <span>
+                  <strong>RC 3rd Call B</strong>
+                  <small>RC Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="cb">
+          <header>
+            <div>
+              <h5>CB Duties</h5>
+              <span>5/7 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="cb">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="cb">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_1ST_24HR" data-template-duty-group="cb" checked="">
+                <span>
+                  <strong>CB 1st Call</strong>
+                  <small>CB Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_3RD_24HR" data-template-duty-group="cb" checked="">
+                <span>
+                  <strong>CB 3rd Call</strong>
+                  <small>CB Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_4TH_24HR" data-template-duty-group="cb" checked="">
+                <span>
+                  <strong>CB 4th Call</strong>
+                  <small>CB Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_CO3RD_24HR" data-template-duty-group="cb" checked="">
+                <span>
+                  <strong>CB Co-3rd Call</strong>
+                  <small>CB Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_CO4TH_24HR" data-template-duty-group="cb" checked="">
+                <span>
+                  <strong>CB Co-4th Call</strong>
+                  <small>CB Duties / mandatory</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_CO_12HR" data-template-duty-group="cb">
+                <span>
+                  <strong>CB Co-Call 12hr</strong>
+                  <small>CB Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CB_PAEDS" data-template-duty-group="cb">
+                <span>
+                  <strong>CB Paeds</strong>
+                  <small>CB Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="caesar">
+          <header>
+            <div>
+              <h5>Caesar Duties</h5>
+              <span>1/2 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="caesar">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="caesar">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CAESAR_A_12HR" data-template-duty-group="caesar">
+                <span>
+                  <strong>Caesar A</strong>
+                  <small>Caesar Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CAESAR_B_24HR" data-template-duty-group="caesar" checked="">
+                <span>
+                  <strong>Caesar B</strong>
+                  <small>Caesar Duties / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="pac">
+          <header>
+            <div>
+              <h5>PAC Duties</h5>
+              <span>0/9 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="pac">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="pac">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_PAC_PG" data-template-duty-group="pac">
+                <span>
+                  <strong>Main PAC PG (3rd Call C)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_PAC_SR_A" data-template-duty-group="pac">
+                <span>
+                  <strong>Main PAC SR (3rd Call A)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_PAC_SR_B" data-template-duty-group="pac">
+                <span>
+                  <strong>Main PAC SR (3rd Call B)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_PAC_3RD" data-template-duty-group="pac">
+                <span>
+                  <strong>Main PAC 3rd Call</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_PAC_SENIOR" data-template-duty-group="pac">
+                <span>
+                  <strong>Main PAC Senior (4th Call)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_PAC_SR_A" data-template-duty-group="pac">
+                <span>
+                  <strong>RC PAC SR (3rd Call A)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_PAC_SR_B" data-template-duty-group="pac">
+                <span>
+                  <strong>RC PAC SR (3rd Call B)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_PAC_3RD" data-template-duty-group="pac">
+                <span>
+                  <strong>RC PAC 3rd Call</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_PAC_SENIOR" data-template-duty-group="pac">
+                <span>
+                  <strong>RC PAC Senior (4th Call)</strong>
+                  <small>PAC Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="shift">
+          <header>
+            <div>
+              <h5>Shift Duties</h5>
+              <span>0/4 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="shift">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="shift">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="MAIN_SHIFT" data-template-duty-group="shift">
+                <span>
+                  <strong>Main Shift</strong>
+                  <small>Shift Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RC_SHIFT" data-template-duty-group="shift">
+                <span>
+                  <strong>RC Shift</strong>
+                  <small>Shift Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="PB_SHIFT" data-template-duty-group="shift">
+                <span>
+                  <strong>PB Shift</strong>
+                  <small>Shift Duties / adjustable</small>
+                </span>
+              </label>
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="SHIFT" data-template-duty-group="shift">
+                <span>
+                  <strong>Shift (Legacy)</strong>
+                  <small>Shift Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="chad">
+          <header>
+            <div>
+              <h5>CHAD Duties</h5>
+              <span>0/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="chad">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="chad">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CHAD" data-template-duty-group="chad">
+                <span>
+                  <strong>CHAD</strong>
+                  <small>CHAD Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="cart">
+          <header>
+            <div>
+              <h5>CART Duties</h5>
+              <span>1/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="cart">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="cart">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="CART" data-template-duty-group="cart" checked="">
+                <span>
+                  <strong>CART</strong>
+                  <small>CART Duties / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="schell">
+          <header>
+            <div>
+              <h5>Schell Duties</h5>
+              <span>1/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="schell">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="schell">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="SCHELL_24HR" data-template-duty-group="schell" checked="">
+                <span>
+                  <strong>Schell Call</strong>
+                  <small>Schell Duties / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="floating">
+          <header>
+            <div>
+              <h5>Floating Duties</h5>
+              <span>1/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="floating">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="floating">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="FLOATING_24HR" data-template-duty-group="floating" checked="">
+                <span>
+                  <strong>Floating Consultant</strong>
+                  <small>Floating Duties / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="fifth_call">
+          <header>
+            <div>
+              <h5>5th Call Duties</h5>
+              <span>1/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="fifth_call">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="fifth_call">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="FIFTH_CALL" data-template-duty-group="fifth_call" checked="">
+                <span>
+                  <strong>5th Call</strong>
+                  <small>5th Call Duties / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="ruhsa">
+          <header>
+            <div>
+              <h5>RUHSA Duties</h5>
+              <span>0/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="ruhsa">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="ruhsa">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="RUHSA" data-template-duty-group="ruhsa">
+                <span>
+                  <strong>RUHSA</strong>
+                  <small>RUHSA Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="paeds">
+          <header>
+            <div>
+              <h5>Paeds Duties</h5>
+              <span>0/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="paeds">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="paeds">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="PAEDS_CALL" data-template-duty-group="paeds">
+                <span>
+                  <strong>Paeds Call</strong>
+                  <small>Paeds Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="neuro">
+          <header>
+            <div>
+              <h5>Neuro Duties</h5>
+              <span>0/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="neuro">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="neuro">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="NEURO_DEPT" data-template-duty-group="neuro">
+                <span>
+                  <strong>Neuro Department</strong>
+                  <small>Neuro Duties / adjustable</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      
+        <section class="template-duty-section" data-template-duty-section="audit">
+          <header>
+            <div>
+              <h5>Audit</h5>
+              <span>1/1 selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="audit">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="audit">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            
+              <label class="template-duty-option">
+                <input type="checkbox" data-template-duty="HOURS_FIXTURE" data-template-duty-group="audit" checked="">
+                <span>
+                  <strong>Fixture day duty</strong>
+                  <small>Audit / mandatory</small>
+                </span>
+              </label>
+            
+          </div>
+        </section>
+      </div>
+          </div>
+          <div class="template-settings-actions">
+            <span>Save these settings by regenerating the empty template for this month.</span>
+            <button class="primary" type="submit" id="save-rota-template-settings">Save Settings &amp; Generate Template</button>
+          </div>
+        </div>
+      </details>
+    </form>
+    <div data-template-optional-overview="">
+    <section class="panel rota-overview-panel">
+      <div class="settings-group-title">
+        <div>
+          <h3>Rota Overview</h3>
+          <p>Switch between calendar, short, and detailed views of the generated template.</p>
+        </div>
+        
+    <div class="segmented rota-overview-toggle" role="group" aria-label="Rota template overview mode">
+      
+        <button type="button" class="selected" data-rota-overview-mode="calendar" aria-pressed="true">Calendar</button>
+      
+        <button type="button" class="" data-rota-overview-mode="short" aria-pressed="false">Short</button>
+      
+        <button type="button" class="" data-rota-overview-mode="statistics" aria-pressed="false">Statistics</button>
+      
+        <button type="button" class="" data-rota-overview-mode="detailed" aria-pressed="false">Detailed</button>
+      
+    </div>
+  
+      </div>
+      <section class="summary-grid four-col">
+        <article class="metric"><span>4</span><p><span class="stat-label">Total slots</span></p></article>
+        <article class="metric"><span>1</span><p><span class="stat-label">Units used</span></p></article>
+        <article class="metric"><span>Unit 1: 4</span><p><span class="stat-label">Most loaded</span></p></article>
+        <article class="metric"><span>0</span><p><span class="stat-label">Imbalance</span></p></article>
+      </section>
+      
+    <div class="rota-distribution-list">
+      
+          <div class="rota-distribution-row">
+            <span>Unit 1</span>
+            <div class="rota-distribution-track"><i style="width:100%"></i></div>
+            <strong>4</strong>
+          </div>
+        
+    </div>
+  
+    </section>
+    
+    <section class="panel rota-calendar-panel">
+      <h3>Rota Calendar</h3>
+      <p class="panel-note">Click a day to review generated slots, current assignments, safety notes, suggested members, and manual assignment controls.</p>
+      <div class="leave-calendar-grid rota-calendar-grid">
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-01" aria-label="0 rota slots on 2026-05-01, 0 assigned">
+        <span>Fri 1</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-02" aria-label="0 rota slots on 2026-05-02, 0 assigned">
+        <span>Sat 2</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-03" aria-label="0 rota slots on 2026-05-03, 0 assigned">
+        <span>Sun 3</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-assigned" type="button" data-rota-day="2026-05-04" aria-label="1 rota slot on 2026-05-04, 1 assigned">
+        <span>Mon 4</span>
+        <strong>1/1</strong>
+        
+        <small class="rota-day-duty safe">
+          Main 1st 24hr: Unit 1
+        </small>
+      
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-05" aria-label="0 rota slots on 2026-05-05, 0 assigned">
+        <span>Tue 5</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-06" aria-label="0 rota slots on 2026-05-06, 0 assigned">
+        <span>Wed 6</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-assigned" type="button" data-rota-day="2026-05-07" aria-label="1 rota slot on 2026-05-07, 1 assigned">
+        <span>Thu 7</span>
+        <strong>1/1</strong>
+        
+        <small class="rota-day-duty safe">
+          Hours Fixture: Unit 1
+        </small>
+      
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-08" aria-label="0 rota slots on 2026-05-08, 0 assigned">
+        <span>Fri 8</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-09" aria-label="0 rota slots on 2026-05-09, 0 assigned">
+        <span>Sat 9</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-assigned" type="button" data-rota-day="2026-05-10" aria-label="1 rota slot on 2026-05-10, 1 assigned">
+        <span>Sun 10</span>
+        <strong>1/1</strong>
+        
+        <small class="rota-day-duty safe">
+          Main 1st 24hr: Unit 1
+        </small>
+      
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-11" aria-label="0 rota slots on 2026-05-11, 0 assigned">
+        <span>Mon 11</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-12" aria-label="0 rota slots on 2026-05-12, 0 assigned">
+        <span>Tue 12</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-assigned" type="button" data-rota-day="2026-05-13" aria-label="1 rota slot on 2026-05-13, 1 assigned">
+        <span>Wed 13</span>
+        <strong>1/1</strong>
+        
+        <small class="rota-day-duty safe">
+          Hours Fixture: Unit 1
+        </small>
+      
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-14" aria-label="0 rota slots on 2026-05-14, 0 assigned">
+        <span>Thu 14</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-15" aria-label="0 rota slots on 2026-05-15, 0 assigned">
+        <span>Fri 15</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-16" aria-label="0 rota slots on 2026-05-16, 0 assigned">
+        <span>Sat 16</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-17" aria-label="0 rota slots on 2026-05-17, 0 assigned">
+        <span>Sun 17</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-18" aria-label="0 rota slots on 2026-05-18, 0 assigned">
+        <span>Mon 18</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-19" aria-label="0 rota slots on 2026-05-19, 0 assigned">
+        <span>Tue 19</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-20" aria-label="0 rota slots on 2026-05-20, 0 assigned">
+        <span>Wed 20</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-21" aria-label="0 rota slots on 2026-05-21, 0 assigned">
+        <span>Thu 21</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-22" aria-label="0 rota slots on 2026-05-22, 0 assigned">
+        <span>Fri 22</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-23" aria-label="0 rota slots on 2026-05-23, 0 assigned">
+        <span>Sat 23</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-24" aria-label="0 rota slots on 2026-05-24, 0 assigned">
+        <span>Sun 24</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-25" aria-label="0 rota slots on 2026-05-25, 0 assigned">
+        <span>Mon 25</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-26" aria-label="0 rota slots on 2026-05-26, 0 assigned">
+        <span>Tue 26</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-27" aria-label="0 rota slots on 2026-05-27, 0 assigned">
+        <span>Wed 27</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-28" aria-label="0 rota slots on 2026-05-28, 0 assigned">
+        <span>Thu 28</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-29" aria-label="0 rota slots on 2026-05-29, 0 assigned">
+        <span>Fri 29</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-30" aria-label="0 rota slots on 2026-05-30, 0 assigned">
+        <span>Sat 30</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    
+      <button class="leave-day-card rota-day-card rota-day-empty" type="button" data-rota-day="2026-05-31" aria-label="0 rota slots on 2026-05-31, 0 assigned">
+        <span>Sun 31</span>
+        <strong>0</strong>
+        <small>No generated slots</small>
+        
+      </button>
+    </div>
+    </section>
+  
+    
+    
+    
+  </div>
+  </div>
+    </section>
+    <nav class="mobile-bottom-nav" aria-label="Mobile section navigation">
+      <button data-view="overview" class="">Overview</button><button data-view="leave">Leave</button><button data-view="units">Units</button><button data-view="rota-template" class="active" aria-current="page">Rota</button>
+      <button type="button" id="mobile-more" aria-haspopup="dialog" aria-expanded="false">More</button>
+    </nav>
+  </main>
+</div>
+    <script defer="" src="/frontend-bootstrap.js"></script>
+  
+
+<dialog class="member-workspace compute-workspace extra-duty-workspace balance-workspace" aria-label="Balance duties" open="" style="height: 1000px; max-height: 1000px; top: 0px;"><header class="mw-header"><div><h2>Balance duties</h2><p>May 2026 · Equal duties within each call level. Nothing is saved until you apply.</p></div>
+      <button type="button" data-close="" aria-label="Close balance duties">Close</button></header>
+      <div class="mw-content extra-duty-content balance-content" tabindex="0" role="region" aria-label="Balance report"><section class="balance-about" aria-labelledby="balance-about-title">
+    <div class="balance-about__lead"><h3 id="balance-about-title">What this does</h3>
+      <p>Moves duties between eligible members <strong>in the same call level</strong> to improve the selected fairness measure. A bounded search may leave a larger gap when no further safe improving move is found. A duty may move to another permitted unit.</p>
+      <p class="balance-about__share"><strong>Fair share:</strong> in availability-based mode, members on leave or posted for only part of the month get a smaller share, in proportion to available days. Equal-count mode instead aims for similar duty totals, while preserving leave, rest and eligibility. The reviewed proposal records its selected approach.</p>
+      <p class="balance-about__extra" data-balance-about-extra="">Extra duties can be passed on too; the justice-ledger credit moves with the duty.</p></div>
+    <div class="balance-about__never"><h4>Never broken</h4>
+      <ul><li><strong>Leave</strong><span>Nobody on leave is given a duty.</span></li><li><strong>Rest</strong><span>Rest before and after every duty, and no two duties at once.</span></li><li><strong>Call level</strong><span>Only the duty's own call level, or its pool (for example 3rd + 4th call).</span></li><li><strong>Groups</strong><span>Allowed and excluded groups are followed exactly.</span></li><li><strong>Unit rules</strong><span>A duty never goes to a unit its rules leave out, or one that would be left short.</span></li><li><strong>Limits</strong><span>Nobody goes past an individual duty limit.</span></li></ul></div>
+  </section><ul class="extra-duty-chips balance-chips" aria-label="Summary">
+    <li class="extra-duty-chip extra-duty-chip--info"><strong>0</strong><span>duties move</span></li>
+    <li class="extra-duty-chip extra-duty-chip--neutral"><strong>1</strong><span>swap</span></li>
+    <li class="extra-duty-chip extra-duty-chip--neutral"><strong>0</strong><span>change unit</span></li>
+    
+    <li class="extra-duty-chip extra-duty-chip--success"><strong>1 → 1</strong><span>of 1 levels balanced</span></li></ul>
+    
+    
+    <section class="balance-levels-section" aria-labelledby="balance-levels-title">
+      <h3 id="balance-levels-title">Before and after, per call level</h3>
+      <ul class="balance-levels"><li class="balance-level is-ok" data-balance-level="1ST_CALL">
+    <div class="balance-level__head"><h4>1st call</h4>
+      <span class="balance-badge balance-badge--ok">Balanced after</span></div>
+    <p class="balance-level__goal">Fair share <strong>2</strong> duties each · allowed gap 1</p>
+    <div class="balance-bar">
+      <span class="balance-bar__label">Before</span>
+      <span class="balance-bar__track" aria-hidden="true"><span class="balance-bar__goal" style="left:50.00%;width:max(10px, 0.00%)"></span><span class="balance-bar__range is-muted" style="left:50.00%;width:max(10px, 0.00%)"></span></span>
+      <span class="balance-bar__value"><strong>2</strong> <span>gap 0</span></span></div>
+    <div class="balance-bar">
+      <span class="balance-bar__label">After</span>
+      <span class="balance-bar__track" aria-hidden="true"><span class="balance-bar__goal" style="left:50.00%;width:max(10px, 0.00%)"></span><span class="balance-bar__range is-ok" style="left:50.00%;width:max(10px, 0.00%)"></span></span>
+      <span class="balance-bar__value"><strong>2</strong> <span>gap 0</span></span></div>
+    
+    <p class="balance-level__goal">Fully available with a posting: <strong>2–2</strong> duties (2 people). All fully available ordinary members: 2–2 duties (gap 0). </p>
+    <p class="visually-hidden">1st call: before 2 duties, gap 0; after 2 duties, gap 0. Fair share 2.</p>
+    </li></ul>
+      <p class="balance-legend" aria-hidden="true"><span class="balance-legend__goal"></span>Fair-share band <span class="balance-legend__range"></span>Lowest to highest member</p></section>
+    <section class="balance-levels-section" data-weekend-refinement="" aria-labelledby="balance-weekend-title">
+      <h3 id="balance-weekend-title">Weekend duties</h3>
+      <p>0 weekend exchange(s) proposed. These exchanges preserve each person's duty total, recorded hours and extra-duty credits.</p>
+      <div class="balance-table-wrap"><table><caption>Weekend-duty count gaps within each call level</caption>
+      <thead><tr><th scope="col">Call level</th><th scope="col">Before</th><th scope="col">After</th></tr></thead>
+      <tbody><tr><th scope="row">1st call</th><td>1</td><td>1</td></tr></tbody></table></div>
+      <p>The search is bounded. Remaining gaps need review; this is not proof that a better allocation is impossible.</p></section>
+    <section class="balance-levels-section" data-hours-refinement="" aria-labelledby="balance-hours-title">
+      <h3 id="balance-hours-title">Working hours</h3>
+      <p>1 working-hours exchange(s) proposed. These exchanges preserve each person's duty total, weekend total and extra-duty credits.</p>
+      <div class="balance-table-wrap"><table><caption>Working-hours gaps within each call level</caption>
+      <thead><tr><th scope="col">Call level</th><th scope="col">Before</th><th scope="col">After</th></tr></thead>
+      <tbody><tr><th scope="row">1st call</th><td>32</td><td>0</td></tr></tbody></table></div>
+      <p>Each exchange must pass the safety checks. The search is bounded; remaining differences need review.</p></section>
+    <section class="balance-moves" aria-labelledby="balance-moves-title">
+    <h3 id="balance-moves-title">Duties that move <span class="fill-all-count">2</span></h3>
+    <div class="balance-moves__group" data-balance-group="1ST_CALL">
+        <h4>1st call <span class="balance-moves__meta">0 moves · 2 swaps</span></h4>
+        <ul><li class="balance-move is-swap" data-balance-move="bbf89f5c-0cc1-4f3d-abea-88289bb2a298">
+    <p class="balance-move__what"><span class="balance-move__duty">Mon 4 May 2026 · Main 1st Call:</span>
+      <span class="balance-move__people"><span>Fixture Full Availability</span><span class="balance-move__arrow" aria-hidden="true">⇄</span><span class="visually-hidden"> swaps with </span><strong>Fixture Half Availability</strong></span></p>
+    <p class="balance-move__tags"><span class="balance-badge balance-badge--swap">Swap</span><span class="balance-move__unit">Unit I</span></p>
+    <span class="balance-move__back">In return: Thu 7 May 2026 · Fixture day duty goes from Fixture Half Availability to Fixture Full Availability</span>
+    <p class="balance-move__reason">Exchanged duties to share recorded working hours more evenly; individual duty totals, weekend totals and extra-duty credits are unchanged.</p></li><li class="balance-move is-swap" data-balance-move="79e9aa48-32e3-44e0-bb4c-841488cc9dac">
+    <p class="balance-move__what"><span class="balance-move__duty">Thu 7 May 2026 · Fixture day duty:</span>
+      <span class="balance-move__people"><span>Fixture Half Availability</span><span class="balance-move__arrow" aria-hidden="true">⇄</span><span class="visually-hidden"> swaps with </span><strong>Fixture Full Availability</strong></span></p>
+    <p class="balance-move__tags"><span class="balance-badge balance-badge--swap">Swap</span><span class="balance-move__unit">Unit I</span></p>
+    <span class="balance-move__back">In return: Mon 4 May 2026 · Main 1st Call goes from Fixture Full Availability to Fixture Half Availability</span>
+    <p class="balance-move__reason">Exchanged duties to share recorded working hours more evenly; individual duty totals, weekend totals and extra-duty credits are unchanged.</p></li></ul>
+        </div></section>
+    <details class="balance-members" data-balance-members="">
+    <summary><span>Every member's share</span> <span class="balance-moves__meta">2 members · 0 changed</span></summary>
+    <div class="table-scroll"><table class="balance-table">
+      <caption>Duties per member, May 2026. Equal duty count targets within each call level.</caption>
+      <thead><tr><th scope="col">Member</th><th scope="col">Call level</th><th scope="col">Unit</th><th scope="col" class="is-num">Before</th>
+        <th scope="col" class="is-num">After</th><th scope="col" class="is-num">Fair share</th><th scope="col" class="is-num">Days available</th></tr></thead>
+      <tbody><tr data-balance-member="099377af-6f16-4958-889e-e05f48d5998e">
+      <th scope="row" data-label="Member">Fixture Full Availability</th>
+      <td data-label="Call level">1st call</td>
+      <td data-label="Unit">Unit I</td>
+      <td data-label="Before" class="is-num">2</td>
+      <td data-label="After" class="is-num"><span><strong>2</strong></span></td>
+      <td data-label="Fair share" class="is-num"><span>2</span></td>
+      <td data-label="Days available" class="is-num"><span>31</span></td></tr><tr data-balance-member="7a113071-2b35-4058-9277-5d7bca33e1bd">
+      <th scope="row" data-label="Member">Fixture Half Availability</th>
+      <td data-label="Call level">1st call</td>
+      <td data-label="Unit">Unit I</td>
+      <td data-label="Before" class="is-num">2</td>
+      <td data-label="After" class="is-num"><span><strong>2</strong></span></td>
+      <td data-label="Fair share" class="is-num"><span>2</span></td>
+      <td data-label="Days available" class="is-num"><span>31</span></td></tr></tbody></table><nav class="paginator list-paginator" aria-label="Duties per member, May 2026. Equal duty count targets within each call level. pages"><label>Rows per page <select aria-label="Rows per page"><option>10</option><option>20</option><option>30</option></select></label><div class="paginator-controls"><button type="button" data-list-prev="" disabled="">Previous</button><span aria-live="polite">1–2 of 2 · Page 1 of 1</span><button type="button" data-list-next="" disabled="">Next</button></div></nav></div></details></div>
+      <footer class="mw-footer extra-duty-footer balance-footer"><label class="extra-duty-review"><input type="checkbox" data-balance-reviewed=""> I reviewed these moves</label>
+      <p class="extra-duty-status" role="status" aria-live="polite" data-balance-status-text="">Tick the review box to apply. Nothing is saved yet.</p>
+      <button type="button" data-balance-close="">Cancel</button>
+      <button type="button" class="primary" data-balance-apply="" disabled="" aria-busy="false">Apply balance</button></footer></dialog></body></html>

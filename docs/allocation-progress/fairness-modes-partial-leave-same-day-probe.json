@@ -1,0 +1,38 @@
+{
+  "synthetic": true,
+  "operational_connection": false,
+  "policy": "equal_counts",
+  "morning_only_leave_days": 31,
+  "duty_window": "13:00-21:00,8hours",
+  "canonical_leave_interval_intersections": 0,
+  "eligible_candidates": [
+    "A",
+    "B"
+  ],
+  "monthly_fairness_members": [
+    "A"
+  ],
+  "proposed_counts": {
+    "A": 6,
+    "B": 0
+  },
+  "covered": 6,
+  "clinical_failures": [],
+  "optimizer_status": "optimal",
+  "reported_fairness": [
+    {
+      "call_level": "1ST_CALL",
+      "members": 1,
+      "minimum": 6,
+      "maximum": 6,
+      "gap": 0,
+      "within_one": true,
+      "within_two": true,
+      "adjusted_gap": 0.0,
+      "policy": "equal_counts",
+      "policy_within_two": true,
+      "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+    }
+  ],
+  "interpretation": "A partial-day leave must not silently be treated as whole-month ineligibility when compatible evening duties remain. This is a synthetic probe, not a November production finding."
+}

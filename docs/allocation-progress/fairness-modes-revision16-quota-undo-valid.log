@@ -1,0 +1,22 @@
+....................................F................................... [ 80%]
+..................                                                       [100%]
+================================== FAILURES ===================================
+_____________________ test_individual_limit_refuses_move ______________________
+backend\tests\test_balance_duties.py:363: in test_individual_limit_refuses_move
+    plan = _refused(db, data)
+           ^^^^^^^^^^^^^^^^^^
+backend\tests\test_balance_duties.py:243: in _refused
+    plan = bd.plan_balance(db, MONTH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\balance_duties.py:1661: in plan_balance
+    return _plan(db, month, max_work=max_work)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\balance_duties.py:1680: in _plan
+    individual_limit_repair = planner.repair_individual_limit_conflicts()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\balance_duties.py:1247: in repair_individual_limit_conflicts
+    raise BalanceError('individual_limit_repair_incomplete',
+E   app.services.balance_duties.BalanceError: Existing individual-duty-limit breaches could not all be safely reassigned. Review protected duties and candidate restrictions; the bounded search is not proof that full safe coverage is impossible.
+=========================== short test summary info ===========================
+FAILED backend\tests\test_balance_duties.py::test_individual_limit_refuses_move
+1 failed, 89 passed in 329.16s (0:05:29)

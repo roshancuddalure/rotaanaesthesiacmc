@@ -1,0 +1,72 @@
+{
+  "status": "Audit-derived integration requirements; not production implementation or activation",
+  "recorded_at": "2026-11-20T13:46:38.995624+00:00",
+  "evidence": "focused-template-repair-probe-r4.json",
+  "counterexample": {
+    "fixed_layout": "61/62 duties, gap1; one duty has zero clear candidates",
+    "reviewed_unit_change": "62/62 duties, gap1, OT feasible, fixed assignment unchanged"
+  },
+  "observed_integration_assumptions": [
+    {
+      "path": "backend/app/services/rota_intelligence.py",
+      "function": "advance",
+      "finding": "Candidate variables and decisions reference existing fixed-unit slots; generated alternatives currently vary people, not unit placement."
+    },
+    {
+      "path": "backend/app/services/rota_compute.py",
+      "function": "apply_job",
+      "finding": "Application validates existing ORM slots and people; a unit-layout proposal requires an explicit before/after unit representation and atomic final-set validation before persistence."
+    },
+    {
+      "path": "backend/app/services/rota_review_export.py",
+      "function": "proposal export",
+      "finding": "Review export reads the actual slot unit. A future staged unit change must be rendered from the selected proposal without mutating saved slots."
+    },
+    {
+      "path": "backend/app/services/balance_duties.py",
+      "function": "apply/undo",
+      "finding": "Existing balance operations demonstrate attributable cross-unit before-images, original-state checks and exact undo, but operate on already filled duties."
+    }
+  ],
+  "required_proposal_fields": [
+    "stable logical duty/slot ID",
+    "unchanged duty type, call-level pool, date and interval",
+    "original unit ID",
+    "proposed unit ID",
+    "proposed eligible person ID",
+    "original fixed-assignment signatures",
+    "canonical context hash including rules, leave, postings, OT and scope",
+    "selected alternative/revision",
+    "complete safety and objective evidence"
+  ],
+  "review_requirements": [
+    "Clearly show old and new unit, person and call level before Apply",
+    "Include unit moves in the selected Excel preview and workload comparison",
+    "Never move locked/confirmed/out-of-scope duties implicitly",
+    "State that a timeout is not proof that other layouts are infeasible"
+  ],
+  "atomic_apply_requirements": [
+    "Use existing input locks and stale-context checks",
+    "Verify original slot/unit and fixed signatures before mutation",
+    "Construct an isolated proposed context; avoid ORM autoflush of temporary unit changes",
+    "Validate every proposed and affected preserved duty against the complete final schedule, including next-month rest and global OT matching",
+    "Persist slot-unit changes and assignments in one transaction with attributable before-images",
+    "Roll back all unit/assignment changes if any validation, concurrent edit or commit check fails"
+  ],
+  "acceptance_cases": [
+    "Reproduce the known dated_fixed shortage and recover62/62 without clinical-policy changes",
+    "Review/export must show selected proposed unit while saved unit remains unchanged",
+    "A concurrent unit, leave, OT, posting, lock or rule edit rejects the stale proposal",
+    "Wrong call, leave, rest, quota, OT or unit eligibility cannot be waived by layout repair",
+    "Failure halfway through apply leaves every original unit/person/assignment intact",
+    "A locked empty duty remains visible and cannot be moved",
+    "Alternatives remain distinct and never regress approved higher-priority objectives",
+    "Undo, if exposed, refuses intervening edits and restores exact before-images"
+  ],
+  "gates": [
+    "Retain N26/N27 architecture and acceptance prerequisites",
+    "No new policy, cloud routing or deployment authority inferred",
+    "All50tracker items and existing unrelated work remain preserved"
+  ],
+  "next_concrete_action": "Extend the canonical reviewed proposal representation for explicit unit changes, then verify preview/export and atomic apply together before activating production template repair."
+}

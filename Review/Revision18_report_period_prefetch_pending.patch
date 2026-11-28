@@ -1,0 +1,58 @@
+--- a/backend/app/services/rota_report_360.py
++++ b/backend/app/services/rota_report_360.py
+@@ -296,14 +296,15 @@
+     cache: dict[str, Any] = field(default_factory=dict)
+ 
+ 
+-def _choose_period(db: Session, starts_on: date, ends_on: date) -> RotaPeriod | None:
+-    periods = list(
+-        db.scalars(
+-            select(RotaPeriod)
+-            .where(RotaPeriod.starts_on == starts_on, RotaPeriod.ends_on == ends_on)
+-            .order_by(RotaPeriod.created_at)
+-        )
+-    )
++def _choose_period(db: Session, starts_on: date, ends_on: date,
++                   *, periods: list[RotaPeriod] | None = None) -> RotaPeriod | None:
++    if periods is None:
++        periods = list(db.scalars(select(RotaPeriod).where(
++            RotaPeriod.starts_on == starts_on, RotaPeriod.ends_on == ends_on
++        ).order_by(RotaPeriod.created_at)))
++    else:
++        periods = [period for period in periods
++                   if period.starts_on == starts_on and period.ends_on == ends_on]
+     if not periods:
+         return None
+     # Prefer the working (non-historical) period: handbook B3, historical imports add their own.
+@@ -311,9 +312,10 @@
+     return (working or periods)[0]
+ 
+ 
+-def load_month_core(db: Session, month: str, *, postings_without_slots: bool = True) -> MonthCore:
++def load_month_core(db: Session, month: str, *, postings_without_slots: bool = True,
++                    periods: list[RotaPeriod] | None = None) -> MonthCore:
+     starts_on, ends_on = month_bounds(month)
+-    period = _choose_period(db, starts_on, ends_on)
++    period = _choose_period(db, starts_on, ends_on, periods=periods)
+     slots: list[DutySlot] = []
+     if period is not None:
+         slots = list(
+@@ -1038,11 +1040,17 @@
+ 
+ def _build_trend(ctx: ReportContext, month: str) -> list[dict[str, Any]]:
+     trend: list[dict[str, Any]] = []
++    # One report-local period snapshot; preserve working/historical precedence.
++    starts = [month_bounds(_month_shift(month, -back))[0]
++              for back in range(1, TREND_LOOKBACK + 1)]
++    periods = list(ctx.db.scalars(select(RotaPeriod).where(
++        RotaPeriod.starts_on.in_(starts)
++    ).order_by(RotaPeriod.created_at)))
+     for back in range(1, TREND_LOOKBACK + 1):
+         if len(trend) >= TREND_MONTHS:
+             break
+         prev = _month_shift(month, -back)
+-        core = load_month_core(ctx.db, prev, postings_without_slots=False)
++        core = load_month_core(ctx.db, prev, postings_without_slots=False, periods=periods)
+         if not core.slots:
+             continue
+         rows = workload_rows(core, ctx.holidays)

@@ -1,0 +1,89 @@
+DUTY ALLOCATION AUDIT - WORKING REVISION 15
+Updated: 25 November 2026 00:27 IST
+Status: tuning implemented locally; final full-system verification RUNNING.
+Production has not been changed. This is not a completion or deployment certificate.
+
+NOVEMBER RESULTS - HYPOTHETICAL CORRECTED TIMINGS, READ-ONLY DATABASE
+Equal-count mode:
+Call level  People  Duties min-max  Count gap  Weekend gap  Hours gap before -> after
+1st         28      4-5             1          1            24 -> 24
+2nd         15      5-7             2          1            48 -> 48
+3rd         58      6-8             2          2           120 -> 56
+4th         21      9-10            1          2           136 -> 56
+5th         13      2-3             1          1            24 -> 24
+All 840 duties remain filled. Eight independent checks report zero violations.
+79 clinically conflicting assignments repaired; 7 posting/scope repairs separate.
+30 hours exchanges preserve each person's duty count, weekend count and extra credits.
+These count gaps meet the owner's maximum-two goal. The saved stricter gap-one
+setting still flags second/third-call gaps of two and has not been silently changed.
+
+Availability mode:
+All 840 filled; eight independent checks report zero violations; 26 hours exchanges.
+Raw count gaps: 2, 4, 4, 6, 2, reflecting availability-based targets.
+Third-call adjusted spread is 1.5092, above saved tolerance 1.0; remains disclosed.
+Third/fourth raw hours gaps reduce from 144/160 to 80/80 hours.
+Neither mode is certified globally optimal. Hours differences remain for review.
+
+APPROVED RULES IMPLEMENTED
+Admin can select equal counts or availability-based fairness.
+Ordinary AND extra duties require a dated posting to an included unit.
+Missing postings are not invented; excluded-unit people stay excluded.
+Call eligibility and explicitly configured call pools remain enforced.
+Half-day leave counts as 0.5 availability; overlapping leave is unioned.
+Proportional targets use actual covered duties; planned demand remains visible.
+Approved leave interval overlap blocks allocation across midnight and month edges.
+24-hour duty/rest, staffing, OT when enabled, limits and protected rows remain checked.
+Existing leave/rest/overlap conflicts are repaired before fairness, with bounded search.
+Actual transfers receive complete safety validation; there is no positive safety cache.
+Unsafe Undo is refused during preview and final independent validation.
+
+CLINICAL TIMING AND PRODUCTION REVIEW
+Regular PAC/shift: 08:00-16:00. CHAD/RUHSA/RC third A/B: 24 hours.
+Configured 24-hour post-duty rest remains required. Explicit other saved durations retained.
+Existing November requires 390 slot-window/flag corrections: 270 regular, 120 long-duty.
+Review/November2026_confirmed_timing_repair_20261124.json is a proposal, not applied.
+The quoted safety results concern projected corrected timings and repaired assignments.
+Timing changes must be reviewed together with the resulting clinical repairs; the timing
+proposal alone is not a certificate that current assignments remain safe afterward.
+The production OT guard was disabled; no production OT-capacity certificate is claimed.
+No holiday calendar inference or universal fairness guarantee is made.
+
+BUGS FOUND AND CORRECTED DURING THIS AUDIT
+Full-window approved leave, adjacent-date loading and post-duty conflict repair strengthened.
+Undo dry-run now independently checks the whole restored assignment set.
+Read-only leave/report loading no longer initialises rule settings or missing call groups.
+Leave-impact explanations distinguish legacy date denial from physical overlap accurately.
+Hours/weekend tables now fit phone widths and retain readable before/after labels.
+Report reuses matching template rows and skips person loading for discarded empty history.
+Wrong-period snapshots fall back to fresh loading; manual slots do not inflate template demand.
+No safety thresholds, fairness tolerances or performance test limits were weakened.
+
+VERIFICATION AND HONEST LIMITS
+Focused integration: 88 passed on earlier revision15 source; not a final-source certificate.
+First regression-corrections gate: 105 passed, source unchanged.
+Real main UI: 23 checks passed across 3 synthetic auth/API scenarios.
+Responsive real hours UI: 13 passed, including light/dark, 1280/390 widths, no overflow.
+Isolated candidate UI: 41 passed across weekend/leave/hours, with accessibility scans,
+Apply, independent Verify, exact safe Undo and refusal of unsafe leave restoration.
+UI tests use real compiled frontend and FastAPI via stdio, no response mocks or listeners.
+Candidate refreshed: 182 backend AST modules match main; no deployment.
+Latest source guard: 3 passed, source unchanged; saved/unsaved all-table read-only checks.
+Report snapshot gate: 37 selected, final result pending; original 3-second gate passed.
+Fresh full-system run: expected 2400 cases, including original 10/15-second extra preview gates.
+PostgreSQL rerun waits for verified full completion; exact skip-ID/source reconciliation required.
+Earlier full run: 2326 passed, 8 failed, 61 skipped, 2 deferred; NOT a passing certificate.
+Its separate PostgreSQL61 pass is historical evidence, not certification of modified source.
+Earlier failed/partial receipts are preserved. Distinct case counts will not double-count reruns.
+
+REVIEW FILES
+Review/November2026_fairness-modes-engine15-main-equal_review.xlsx
+Review/November2026_fairness-modes-engine15-main-availability_review.xlsx
+Simulation JSON: docs/allocation-progress/production-nov2026-20261123/
+Full run: fairness-modes-revision15-full-system-final-status.json/.log/.xml
+Queued PostgreSQL: fairness-modes-revision15-postgres-final-status.json/.log/.xml
+
+Original 50-item programme remains 21 Done. This focused work does not close its other items.
+No production settings, slots, assignments, uploads or deployment have been changed.
+
+2026-11-24T19:09:34.884709+00:00 DEEP AUDIT UPDATE
+DEEP COVERAGE/SAFETY AUDIT: separate DB-enforced READ ONLY SQL confirms840configured November template slots,840filled,0unassigned,0overcapacity (coverage-readonly-20261125.json). Recorded261needs_review:205forced-hard-block provenance,56otherwarnings; not cleared. Fresh actual-server hypothetical equal study confirmscoverage840->840/no unassigned/eight independent clinical checks0/ORMdirty0, but broader placement replay ofALL840 finds3individual_limit restrictions, including unchanged holders. This placement replay is NOT unit-staffing certification; earlier informal full-transfer wording is too broad. New quota-review probe31574running captures exact limit codes, matching ledger attribution and before/after staffing statuses to distinguish approved exceptions from unresolved violations. No application source changed; frozenfull15continues. Candidate/report37PASS gate sourcechangedflag retained, finalsourceguard3PASS/frozen. No production changes;50scope21Done.

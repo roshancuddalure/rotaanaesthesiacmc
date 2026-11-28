@@ -13,7 +13,7 @@ const escape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g,
 export const stageName = (kind?: string) => kind === "extra_duty" ? "Extra-duty layer" : kind === "balance" ? "Balance duties" : kind === "template" ? "Build template (unit allocation)"
   : kind === "intelligent" ? "Whole-month optimisation" : "Autoassign members (quick safe fill)";
 const statusText = (c: ProposalConflict) => c.status === "completed" ? "Ready for review — not applied yet"
-  : c.status === "queued" ? "Waiting to start" : `Paused at ${c.processed} of ${c.total} duties`;
+  : c.status === "queued" ? "Waiting to start" : c.kind === "balance" ? "Preparing a safe Balance preview" : `Paused at ${c.processed} of ${c.total} duties`;
 
 /** Jobs from the list endpoint, or the structured 409/429 detail from a start request. */
 export function conflictsFromError(error: unknown): ProposalConflict[] | null {
@@ -73,7 +73,10 @@ export function showProposalConflict(dialog: HTMLDialogElement, opts: {
     busy = true; notice = cancelId ? "Cancelling…" : "Opening…"; render();
     try {
       if (cancelId) {
-        const job = await request<{ status: string }>(`/api/v1/rota-compute/jobs/${encodeURIComponent(cancelId)}/cancel`,
+        const cancelPath = target.kind === "balance"
+          ? `/api/v1/balance-duties/preview-jobs/${encodeURIComponent(cancelId)}/cancel`
+          : `/api/v1/rota-compute/jobs/${encodeURIComponent(cancelId)}/cancel`;
+        const job = await request<{ status: string }>(cancelPath,
           { method: "POST", body: "{}", signal: AbortSignal.timeout(30000) });
         conflicts = conflicts.filter(c => c.job_id !== cancelId);
         busy = false; confirming = "";
@@ -92,7 +95,8 @@ export function showProposalConflict(dialog: HTMLDialogElement, opts: {
         }
       }
       dialog.close();
-      if (target.kind === "intelligent") await (await import("./rota-intelligence")).openIntelligentRota(jobMonth, admin, onApplied);
+      if (target.kind === "balance") await (await import("./balance-duties")).openBalanceDuties(jobMonth, onApplied);
+      else if (target.kind === "intelligent") await (await import("./rota-intelligence")).openIntelligentRota(jobMonth, admin, onApplied);
       else await (await import("./rota-compute")).openRotaCompute(jobMonth, admin, onApplied, options);
     } catch (error) {
       busy = false;

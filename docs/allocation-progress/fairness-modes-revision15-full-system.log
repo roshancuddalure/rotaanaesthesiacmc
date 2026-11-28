@@ -1,0 +1,160 @@
+........................................................................ [  3%]
+........................................................................ [  6%]
+........................................................................ [  9%]
+........................................................................ [ 12%]
+........................................................................ [ 15%]
+..................ss.................................................... [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 24%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+.....................................ss................................. [ 42%]
+............................ss.....................................sss.. [ 45%]
+..................F..sssss.............s..............................ss [ 48%]
+.F...........FF...ss.....ssss..............................s............ [ 51%]
+........ss.............................................................. [ 54%]
+........................................................................ [ 57%]
+........................................................................ [ 60%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+.......................................F................................ [ 69%]
+.ssssssssssssssss....................................................... [ 72%]
+......................................ss................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 81%]
+.sss.................................................................... [ 84%]
+........................................................................ [ 87%]
+.......ssssss........................................................... [ 90%]
+........................FF.F............................................ [ 93%]
+........................................................................ [ 96%]
+.................ssss.........................ssss...................... [ 99%]
+...................                                                      [100%]
+================================== FAILURES ===================================
+___ test_short_duty_start_hour_policy_is_separate_from_ot_interval_overlap ____
+backend\tests\test_leave_accounting_inventory.py:62: in test_short_duty_start_hour_policy_is_separate_from_ot_interval_overlap
+    assert slot_leave_blocks(leave, duty) is False
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\rota_safety.py:130: in slot_leave_blocks
+    return leave_blocks_slot(leave, slot)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\leave_semantics.py:116: in leave_blocks_slot
+    if (leave.starts_on <= slot.duty_date <= leave.ends_on
+                           ^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'duty_date'
+______ test_legacy_start_hour_rule_and_physical_overlap_remain_distinct _______
+backend\tests\test_leave_impact.py:55: in test_legacy_start_hour_rule_and_physical_overlap_remain_distinct
+    assert slot_leave_blocks(row, assignment.duty_slot) is False
+E   assert True is False
+E    +  where True = <function slot_leave_blocks at 0x0000029725F3D3A0>(<app.models.leave.LeaveRequest object at 0x000002973612FF90>, <app.models.rota.DutySlot object at 0x0000029730497BD0>)
+E    +    where <app.models.rota.DutySlot object at 0x0000029730497BD0> = <app.models.rota.DutyAssignment object at 0x00000297369442D0>.duty_slot
+_ test_import_physical_overlap_is_distinct_from_date_policy_and_matches_manual[approved] _
+backend\tests\test_leave_import_impact.py:107: in test_import_physical_overlap_is_distinct_from_date_policy_and_matches_manual
+    assert impact["reasons"] == counterpart["reasons"] == ["physical_interval_overlap"]
+E   AssertionError: assert ['duty_date_p...rval_overlap'] == ['physical_interval_overlap']
+E     
+E     At index 0 diff: 'duty_date_policy_overlap' != 'physical_interval_overlap'
+E     Left contains one more item: 'physical_interval_overlap'
+E     Use -v to get more diff
+_ test_import_physical_overlap_is_distinct_from_date_policy_and_matches_manual[imported_pending_review] _
+backend\tests\test_leave_import_impact.py:107: in test_import_physical_overlap_is_distinct_from_date_policy_and_matches_manual
+    assert impact["reasons"] == counterpart["reasons"] == ["physical_interval_overlap"]
+E   AssertionError: assert ['duty_date_p...rval_overlap'] == ['physical_interval_overlap']
+E     
+E     At index 0 diff: 'duty_date_policy_overlap' != 'physical_interval_overlap'
+E     Left contains one more item: 'physical_interval_overlap'
+E     Use -v to get more diff
+_ test_approved_custom_session_uses_supported_behavior_and_blocks_24hour_duty _
+backend\tests\test_operational_import.py:465: in test_approved_custom_session_uses_supported_behavior_and_blocks_24hour_duty
+    assert slot_leave_blocks(LeaveRequest(leave_slot="CUSTOM"), slot)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\rota_safety.py:130: in slot_leave_blocks
+    return leave_blocks_slot(leave, slot)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\app\services\leave_semantics.py:116: in leave_blocks_slot
+    if (leave.starts_on <= slot.duty_date <= leave.ends_on
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: '<=' not supported between instances of 'NoneType' and 'NoneType'
+__________________ test_fingerprint_changes_with_assignments __________________
+backend\tests\test_rota_report_360.py:469: in test_fingerprint_changes_with_assignments
+    assert first["report_fingerprint"] == again["report_fingerprint"]
+E   AssertionError: assert '2c9069506992...b17720c1b7d48' == '160743090548...32251381f75ab'
+E     
+E     - 160743090548cc222549800cdfe99dbb25fd2309923db275e6332251381f75ab
+E     + 2c9069506992d39fdf76e2c46ea543b9ca60d5a7b899ade46cbb17720c1b7d48
+___________________ test_performance_300_slots_150_members ____________________
+backend\tests\test_rota_report_360.py:488: in test_performance_300_slots_150_members
+    assert elapsed < 3.0, elapsed
+E   AssertionError: 7.4463625000207685
+E   assert 7.4463625000207685 < 3.0
+___________ test_individual_limits_none_when_within_limits_or_unset ___________
+backend\tests\test_rota_report_360.py:556: in test_individual_limits_none_when_within_limits_or_unset
+    assert session.query(RuleSetting).count() == before  # rules never saved: the report wrote nothing
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   assert 2 == 1
+E    +  where 2 = count()
+E    +    where count = <sqlalchemy.orm.query.Query object at 0x0000029736705C10>.count
+E    +      where <sqlalchemy.orm.query.Query object at 0x0000029736705C10> = query(RuleSetting)
+E    +        where query = <sqlalchemy.orm.session.Session object at 0x000002973586B9D0>.query
+============================== warnings summary ===============================
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_restore_verification_failure_preserves_source
+tests/test_backup_clean_database.py::test_production_failure_rolls_back_migration_and_clear
+tests/test_backup_clean_database.py::test_production_failure_rolls_back_migration_and_clear
+tests/test_backup_clean_database.py::test_production_failure_rolls_back_migration_and_clear
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\alembic\config.py:612: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+tests/test_focused_allocation_refinement.py::test_exhausted_solver_still_balances_real_safe_month
+  tests\test_focused_allocation_refinement.py:28: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    def test_exhausted_solver_still_balances_real_safe_month(compute_db, monkeypatch, record_property):
+
+tests/test_ot_dated_month_oracle.py::test_dated_month_matches_independent_call_pool_and_partial_leave_oracle[promotion-False]
+tests/test_ot_dated_month_oracle.py::test_dated_month_matches_independent_call_pool_and_partial_leave_oracle[promotion-True]
+tests/test_ot_dated_month_oracle.py::test_dated_month_matches_independent_call_pool_and_partial_leave_oracle[posting-True]
+  tests\test_ot_dated_month_oracle.py:17: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("dated_change,partial_leave", [("promotion", False), ("promotion", True), ("posting", True)])
+
+tests/test_ot_skilled_month_oracle.py::test_dated_skills_preserve_distinct_ot_roles_and_best_monthly_load[False-False]
+tests/test_ot_skilled_month_oracle.py::test_dated_skills_preserve_distinct_ot_roles_and_best_monthly_load[True-False]
+tests/test_ot_skilled_month_oracle.py::test_dated_skills_preserve_distinct_ot_roles_and_best_monthly_load[True-True]
+  tests\test_ot_skilled_month_oracle.py:18: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("expires,reverse", [(False, False), (True, False), (True, True)])
+
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-False-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-True]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-False-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-True]
+  tests\test_ot_whole_month_oracle.py:63: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("boundary_leave,reverse", [(False, False), (True, False), (True, True)])
+
+tests/test_rota_publish.py: 1 warning
+tests/test_rota_report_360.py: 10 warnings
+tests/test_rota_review_export.py: 1 warning
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Unknown extension is not supported and will be removed
+    warn(msg)
+
+tests/test_rota_publish.py: 1 warning
+tests/test_rota_report_360.py: 10 warnings
+tests/test_rota_review_export.py: 1 warning
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Conditional Formatting extension is not supported and will be removed
+    warn(msg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend\tests\test_leave_accounting_inventory.py::test_short_duty_start_hour_policy_is_separate_from_ot_interval_overlap
+FAILED backend\tests\test_leave_impact.py::test_legacy_start_hour_rule_and_physical_overlap_remain_distinct
+FAILED backend\tests\test_leave_import_impact.py::test_import_physical_overlap_is_distinct_from_date_policy_and_matches_manual[approved]
+FAILED backend\tests\test_leave_import_impact.py::test_import_physical_overlap_is_distinct_from_date_policy_and_matches_manual[imported_pending_review]
+FAILED backend\tests\test_operational_import.py::test_approved_custom_session_uses_supported_behavior_and_blocks_24hour_duty
+FAILED backend\tests\test_rota_report_360.py::test_fingerprint_changes_with_assignments
+FAILED backend\tests\test_rota_report_360.py::test_performance_300_slots_150_members
+FAILED backend\tests\test_rota_report_360.py::test_individual_limits_none_when_within_limits_or_unset
+8 failed, 2326 passed, 61 skipped, 2 deselected, 45 warnings in 4788.81s (1:19:48)

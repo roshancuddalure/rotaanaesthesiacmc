@@ -28,6 +28,7 @@ from app.services.rota_candidates import (
     add_provisional_assignment,
 )
 from app.services.rota_eligibility import call_level_missing_message
+from app.services.rota_rules import get_phase_one_rules
 from app.services.rota_safety import required_call_levels, rule_for_slot, rules_groups
 from app.services.rota_setup import monthly_setup
 from app.services.rota_template import PHASE4_SLOT_SOURCE
@@ -338,6 +339,7 @@ def _run_safe_auto_fill(
     performance["save_ms"] = save_ms
     run.summary = {
         **run.summary,
+        "allocation_mode": (context.rules if context else get_phase_one_rules(db)[1]).fairness_rules.allocation_mode,
         "performance": {k: round(v, 2) for k, v in performance.items()},
         "assigned_slots": assigned,
         "skipped_slots": skipped,

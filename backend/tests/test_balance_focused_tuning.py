@@ -1,0 +1,66 @@
+"""Fair search scheduling and honest posting-aware fairness diagnostics."""
+from collections import Counter
+from types import SimpleNamespace
+
+from app.services import balance_duties as bd
+from tests.test_balance_duties import (  # noqa: F401
+    MONTH, _manual_extra, _unposted_member, assign, days, edit_rules,
+    make_slot, make_unit, member, relaxed, setup_month,
+)
+from tests.test_balance_duties import db as db
+
+
+def test_swap_budget_does_not_starve_another_unbalanced_call_level(monkeypatch):
+    # Eight higher-deviation donors in one level have no repair. Another level
+    # has a viable swap; a global top-eight list never even visits that level.
+    donors = [f'second-{i}' for i in range(8)]
+    levels = {pid: '2ND_CALL' for pid in donors}
+    levels.update(first='1ST_CALL', low_first='1ST_CALL', low_second='2ND_CALL')
+    devs = {pid: 5 for pid in donors}
+    devs.update(first=2, low_first=-2, low_second=-40)
+    visited = []
+    solved = set()
+    state = SimpleNamespace(
+        level=levels, members_by_level={'1ST_CALL': ['first', 'low_first'],
+                                      '2ND_CALL': donors + ['low_second']},
+        levels=lambda: ['1ST_CALL', '2ND_CALL'],
+        level_ok=lambda level: level in solved,
+        dev=lambda pid: devs[pid], person_key=lambda pid: (pid,),
+    )
+    planner = bd._Planner(state)
+    monkeypatch.setattr(planner, 'try_direct', lambda donor: False)
+
+    def swap(donor):
+        visited.append(donor)
+        if donor == 'first':
+            solved.update(['1ST_CALL', '2ND_CALL'])
+            return True
+        return False
+
+    monkeypatch.setattr(planner, 'try_swap', swap)
+    planner.run()
+    assert 'first' in visited
+    assert len(visited) <= bd.SWAP_DONORS_PER_ROUND
+
+
+def test_unposted_extra_holder_is_visible_without_changing_targets_or_eligibility(db):
+    edit_rules(db, relaxed)
+    unit = make_unit(db, 'UNIT_I')
+    alpha = member(db, 'Alpha', unit)
+    uma = _unposted_member(db, 'Uma')
+    setup_month(db, [unit])
+    for day in days(1, 4, 7, 10):
+        assign(db, make_slot(db, unit, day), alpha)
+    _manual_extra(db, make_slot(db, unit, days(20)[0]), uma, ['unposted_member'])
+    db.commit()
+    row = bd.shares(db, MONTH)[0]
+    breakdown = row['availability_breakdown']
+    assert breakdown['posted']['members'] == 1
+    assert breakdown['fully_available_posted'] == dict(members=1, min=4, max=4, gap=0)
+    assert breakdown['unposted_holders'] == dict(members=1, min=1, max=1, gap=0)
+    assert row['ok']
+    shares = bd.shares(db, MONTH)[0]
+    assert shares['availability_breakdown']['unposted_holders']['min'] == 1
+    assert shares['members'] == 1
+    assert Counter(m['eligibility_scope'] for m in shares['members_detail']) == {'posted': 1}
+    assert uma.id not in bd._load(db, MONTH).level

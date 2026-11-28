@@ -1,0 +1,19 @@
+FF....F.............................                                     [100%]
+================================== FAILURES ===================================
+__ test_repair_apply_independent_verify_and_refuse_unsafe_undo[availability] __
+backend\tests\test_balance_individual_limit_repair.py:65: in test_repair_apply_independent_verify_and_refuse_unsafe_undo
+    with pytest.raises(bd.BalanceError) as error:
+E   Failed: DID NOT RAISE <class 'app.services.balance_duties.BalanceError'>
+__ test_repair_apply_independent_verify_and_refuse_unsafe_undo[equal_counts] __
+backend\tests\test_balance_individual_limit_repair.py:65: in test_repair_apply_independent_verify_and_refuse_unsafe_undo
+    with pytest.raises(bd.BalanceError) as error:
+E   Failed: DID NOT RAISE <class 'app.services.balance_duties.BalanceError'>
+____________ test_zero_budget_refuses_excess_without_live_changes _____________
+backend\tests\test_balance_individual_limit_repair.py:103: in test_zero_budget_refuses_excess_without_live_changes
+    with pytest.raises(bd.BalanceError) as error:
+E   Failed: DID NOT RAISE <class 'app.services.balance_duties.BalanceError'>
+=========================== short test summary info ===========================
+FAILED backend\tests\test_balance_individual_limit_repair.py::test_repair_apply_independent_verify_and_refuse_unsafe_undo[availability]
+FAILED backend\tests\test_balance_individual_limit_repair.py::test_repair_apply_independent_verify_and_refuse_unsafe_undo[equal_counts]
+FAILED backend\tests\test_balance_individual_limit_repair.py::test_zero_budget_refuses_excess_without_live_changes
+3 failed, 33 passed in 116.10s (0:01:56)

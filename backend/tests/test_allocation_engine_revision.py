@@ -19,17 +19,18 @@ def test_algorithm_revision_changes_scheduling_and_benchmark_not_import_data(com
     rota_compute.prepare_planning_inputs(db, "2026-05")
     before = capture(db)
     raw = json.loads(before.canonical_json)
-    assert raw["engine_revisions"] == {"optimizer_objective": 2}
+    revision = allocation_objectives.OPTIMIZER_OBJECTIVE_REVISION
+    assert raw["engine_revisions"] == {"optimizer_objective": revision}
     assert raw["snapshot_version"] == 5
     imported = fingerprint(db)
     proof = rota_intelligence.benchmark_context_hash(before.digest, None)
-    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", 3)
+    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", revision + 1)
     changed = capture(db)
     assert json.loads(changed.canonical_json)["tables"] == raw["tables"]
     assert changed.digest != before.digest
     assert rota_intelligence.benchmark_context_hash(changed.digest, None) != proof
     assert fingerprint(db) == imported
-    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", 2)
+    monkeypatch.setattr(allocation_objectives, "OPTIMIZER_OBJECTIVE_REVISION", revision)
     assert capture(db) == before
 
 

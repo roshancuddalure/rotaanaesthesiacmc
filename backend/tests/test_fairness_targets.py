@@ -139,8 +139,10 @@ def test_targets_count_slots_and_available_members(db):
     assert set(rows) == {level for level, *_ in LEVELS}
     first = rows["1ST_CALL"]
     assert first["slots"] == 6 * DAYS and first["members"] == 6 * 8 - 1
-    assert first["target"] == round(186 / 47, 2)
-    assert first["min_expected"] == 3 and first["max_expected"] == 4
+    assert first["planned_target"] == round(186 / 47, 2)
+    assert first["target"] == 0 and first["covered_slots"] == 0
+    assert first["demand_basis"] == "covered_duties"
+    assert first["min_expected"] == first["max_expected"] == 0
     assert first["label"] == "1st call"
     weekend_days = sum(1 for d in range(1, DAYS + 1) if date(2026, 5, d).weekday() >= 5)
     assert rows["5TH_CALL"]["slots"] == 6 * weekend_days and rows["5TH_CALL"]["members"] == 12
@@ -181,11 +183,14 @@ def test_pool_slots_split_by_member_count(db):
     rows = {row["call_level"]: row for row in call_level_targets(db, MONTH)}
     assert set(rows) == {"3RD_CALL", "4TH_CALL"}
     assert rows["3RD_CALL"]["slots"] == 6 and rows["3RD_CALL"]["pool_slots"] == 6
-    assert rows["3RD_CALL"]["target"] == 2.0
+    assert rows["3RD_CALL"]["planned_target"] == 2.0
+    assert rows["3RD_CALL"]["target"] == 0
     assert rows["4TH_CALL"]["slots"] == 6 and rows["4TH_CALL"]["pool_slots"] == 2
-    assert rows["4TH_CALL"]["target"] == 6.0
+    assert rows["4TH_CALL"]["planned_target"] == 6.0
+    assert rows["4TH_CALL"]["target"] == 0
     spread = {row["call_level"]: row for row in call_level_spread(db, MONTH)}
-    assert spread["3RD_CALL"]["target"] == 2.0 and spread["3RD_CALL"]["member_count"] == 3
+    assert spread["3RD_CALL"]["planned_target"] == 2.0
+    assert spread["3RD_CALL"]["target"] == 0 and spread["3RD_CALL"]["member_count"] == 3
 
 
 def test_spread_shape_before_any_assignment(db):
@@ -196,7 +201,8 @@ def test_spread_shape_before_any_assignment(db):
     assert row["allowed_gap"] == 1 and row["reasons"] == []
     member = row["members"][0]
     assert set(member) >= {"person_id", "name", "duties", "extra_duties", "diff_from_target"}
-    assert member["diff_from_target"] == round(-row["slots"] / row["member_count"], 2)
+    assert member["diff_from_target"] == member["personal_target"] == 0
+    assert row["planned_target"] == round(row["slots"] / row["member_count"], 2)
 
 
 def test_campus_term_only_for_tight_candidates():
@@ -226,8 +232,16 @@ def test_campus_term_only_for_tight_candidates():
     assert loose_home - fewer < 2 * EQUALITY_WEIGHT
 
 
-def test_simulated_month_keeps_duties_equal_within_each_call_level(db):
+@pytest.mark.parametrize('mode', ['equal_counts', 'availability'])
+def test_simulated_month_keeps_duties_equal_within_each_call_level(db, mode):
     units, people, on_leave = build_month(db)
+    from app.models import RuleSetting
+    from app.services.rota_rules import PHASE_ONE_SETTING_KEY
+    from sqlalchemy import select
+    setting = db.scalar(select(RuleSetting).where(RuleSetting.key == PHASE_ONE_SETTING_KEY))
+    setting.value = {**setting.value, 'fairness_rules': {
+        **setting.value.get('fairness_rules', {}), 'allocation_mode': mode}}
+    db.commit()
     result = run_safe_auto_fill(db, MONTH)
     total = db.query(DutySlot).count()
     # Some slots stay open on purpose: a unit hard blocked by staffing (leave + rest) is left
@@ -245,6 +259,13 @@ def test_simulated_month_keeps_duties_equal_within_each_call_level(db):
         # Members available all month in fully staffed units are within the allowed gap.
         assert not full or max(full) - min(full) <= row["allowed_gap"], (row["call_level"], sorted(full))
         if not row["ok"]:
+            if mode == 'availability':
+                # Availability already changes individual targets; partial leave
+                # alone cannot certify a remaining adjusted gap as unavoidable.
+                assert row['adjusted_gap'] > row['allowed_gap']
+                assert row['reasons'] and row['reason']
+                assert row['explained'] is False or any(r['code']=='extra_duties' for r in row['reasons'])
+                continue
             # Only leave (or extra duties) may explain a wider gap, and the output says so.
             assert row["explained"] is True, row
             assert row["reasons"] and {r["code"] for r in row["reasons"]} <= {

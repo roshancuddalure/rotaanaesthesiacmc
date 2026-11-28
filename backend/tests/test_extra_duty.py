@@ -305,9 +305,9 @@ def test_hardest_slot_is_filled_first(db):
     alpha, bravo, charlie = member(db, "Alpha", unit), member(db, "Bravo", unit), member(db, "Charlie", unit)
     setup_month(db, [unit])
     easy = make_slot(db, unit, date(2026, 5, 10))
-    hard = make_slot(db, unit, date(2026, 5, 11))
-    leave(db, bravo, date(2026, 5, 11))
-    leave(db, charlie, date(2026, 5, 11))
+    hard = make_slot(db, unit, date(2026, 5, 13))
+    leave(db, bravo, date(2026, 5, 13))
+    leave(db, charlie, date(2026, 5, 13))
     db.commit()
     plan = ed.plan_extra_duties(db, MONTH)
     assert plan["decisions"][0]["slot_id"] == str(hard.id)
@@ -317,6 +317,27 @@ def test_hardest_slot_is_filled_first(db):
 
 
 # ---------------------------------------------------------------------- overridable + ledger
+
+
+def test_adjacent_overnight_duties_do_not_override_next_date_leave(db):
+    unit = make_unit(db, "UNIT_I")
+    alpha, bravo, charlie = [member(db, name, unit) for name in ("Alpha", "Bravo", "Charlie")]
+    setup_month(db, [unit])
+    slots = [make_slot(db, unit, date(2026, 5, day)) for day in (10, 11)]
+    for person in (bravo, charlie):
+        leave(db, person, date(2026, 5, 11))
+    db.commit()
+    plan = ed.plan_extra_duties(db, MONTH)
+    decisions = [decision_for(plan, slot) for slot in slots]
+    allocated = [row for row in decisions if row.get("person_id")]
+    assert len(allocated) == 1  # Alpha cannot safely cover consecutive 24-hour duties.
+    assert allocated[0]["person_id"] == str(alpha.id)
+    assert plan["summary"]["unfilled"] == 1
+    unfilled = next(row for row in decisions if row["action"] == "unfilled")
+    assert unfilled["reason"] and unfilled["cause"] and unfilled["fix"]
+    for slot in slots:
+        assert "leave" in codes(db, bravo, slot)
+        assert "leave" in codes(db, charlie, slot)
 
 
 def filtered_codes(db, slot, person):
@@ -883,46 +904,27 @@ def test_all_units_tier_same_campus_then_any_unit(db):
     assert decision["overridden_rules"] == ["any_unit"] and decision["ledger"] is True
 
 
-def test_all_units_tier_outside_scope(db, user):
+def test_all_units_rejects_outside_scope(db, user):
     home, _same, _other, out, slot = tier_world(db)
-    outsider = member(db, "Out Person", out)
+    member(db, 'Out Person', out)
     db.commit()
-    standard = decision_for(ed.plan_extra_duties(db, MONTH), slot)
-    assert standard["action"] == "unfilled"
-    plan = ed.preview(db, MONTH, user, mode=ALL)
-    decision = decision_for(plan, slot)
-    assert decision["tier"] == "outside_scope" and decision["person_id"] == str(outsider.id)
-    assert decision["assigned_unit_id"] == str(out.id) and decision["overridden_rules"] == ["outside_scope_unit"]
-    assert plan["summary"]["cross_unit"] == 1
-    ed.apply(db, MONTH, plan["token"], plan["plan_hash"], user, mode=ALL)
-    db.refresh(slot)
-    assert slot.unit_id == out.id
-    assert ed.verify_month(db, MONTH)["ok"] is True
-
-
-def test_all_units_unposted_member_keeps_slot_unit(db, user):
-    home, _same, _other, _out, slot = tier_world(db)
-    free = unposted(db, "Free Unposted")
-    unposted(db, "Retired Unposted", active=False)
-    db.commit()
-    plan = ed.preview(db, MONTH, user, mode=ALL)
-    decision = decision_for(plan, slot)
-    assert decision["tier"] == "unposted" and decision["person_id"] == str(free.id)
-    assert decision["action"] == "assign" and decision["assigned_unit_id"] == str(home.id)
-    assert decision["overridden_rules"][-1] == "unposted_member" and decision["ledger"] is True
-    assert plan["summary"]["unposted_used"] == 1 and plan["summary"]["cross_unit"] == 0
-    assert plan["diagnostics"]["unposted_by_level"] == {"1ST_CALL": 1}
-    result = ed.apply(db, MONTH, plan["token"], plan["plan_hash"], user, mode=ALL)
-    assert result["mode"] == ALL and result["summary"]["mode"] == ALL
+    for mode in (ed.MODE_STANDARD, ALL):
+        plan = ed.plan_extra_duties(db, MONTH, mode)
+        assert decision_for(plan, slot)['action'] == 'unfilled'
     db.refresh(slot)
     assert slot.unit_id == home.id
-    record = db.scalars(select(ExtraDutyRecord)).one()
-    assert "unposted_member" in record.overridden_rules and record.fallback_used is False
-    # The unposted assignment is exempt from the posted-to-unit check, nothing else.
-    assert ed.verify_month(db, MONTH) == {"ok": True, "checked": 1, "violations": []}
-    leave(db, free, date(2026, 5, 10), status="requested")
+    assert extra_assignments(db) == []
+
+
+def test_all_units_rejects_unposted_member(db, user):
+    home, _same, _other, _out, slot = tier_world(db)
+    unposted(db, 'Free Unposted')
+    unposted(db, 'Retired Unposted', active=False)
     db.commit()
-    assert [v["code"] for v in ed.verify_month(db, MONTH)["violations"]] == ["leave"]
+    plan = ed.plan_extra_duties(db, MONTH, ALL)
+    assert decision_for(plan, slot)['action'] == 'unfilled'
+    assert plan['summary']['unposted_used'] == 0
+    assert extra_assignments(db) == []
 
 
 def test_unposted_exemption_needs_the_ledger_record(db):
@@ -932,7 +934,7 @@ def test_unposted_exemption_needs_the_ledger_record(db):
     slot = make_slot(db, home, date(2026, 5, 10))
     assign(db, slot, free)
     db.commit()
-    assert [v["code"] for v in ed.verify_month(db, MONTH)["violations"]] == ["not_in_unit"]
+    assert [v["code"] for v in ed.verify_month(db, MONTH)["violations"]] == ["scope_member_excluded"]
 
 
 def test_within_limit_other_unit_beats_over_limit_home(db, user):
@@ -1056,7 +1058,12 @@ def test_groups_never_crossed_allowed_and_excluded(db):
 
     edit_rules(db, lambda rules: setattr(rules.duty_rules_by_key["RC_3RD_CALL_A"], "excluded_cluster_keys", []))
     decision = decision_for(ed.plan_extra_duties(db, MONTH, ALL), slot)
-    assert decision["person_id"] == str(loose.id) and decision["tier"] == "unposted"
+    assert decision['action'] == 'unfilled'
+    db.add(PersonPosting(person=loose, unit=home, posting_type='3RD_CALL',
+                         starts_on=date(2026, 5, 1), source='unit_board'))
+    db.commit()
+    decision = decision_for(ed.plan_extra_duties(db, MONTH, ALL), slot)
+    assert decision['person_id'] == str(loose.id) and decision['tier'] == 'home'
 
 
 def test_unit_rule_is_strict(db):
@@ -1136,7 +1143,15 @@ def test_undo_all_units_batch_restores_exactly(db, user):
     leave(db, free, date(2026, 5, 10))
     db.commit()
     plan = ed.preview(db, MONTH, user, mode=ALL)
-    assert {decision_for(plan, s)["tier"] for s in (slot, second)} == {"outside_scope", "unposted"}
+    assert all(decision_for(plan, s)['action'] == 'unfilled' for s in (slot, second))
+    # Actual dated included-unit postings permit allocation and exact undo.
+    db.add(PersonPosting(person=out_person, unit=home, posting_type='1ST_CALL',
+                         starts_on=date(2026, 5, 10), ends_on=date(2026, 5, 10), source='unit_board'))
+    db.add(PersonPosting(person=free, unit=home, posting_type='1ST_CALL',
+                         starts_on=date(2026, 5, 12), ends_on=date(2026, 5, 12), source='unit_board'))
+    db.commit()
+    plan = ed.preview(db, MONTH, user, mode=ALL)
+    assert all(decision_for(plan, s)['tier'] == 'home' for s in (slot, second))
     result = ed.apply(db, MONTH, plan["token"], plan["plan_hash"], user, mode=ALL)
     batch_id = __import__("uuid").UUID(result["batch_id"])
     assert db.get(ExtraDutyBatch, batch_id).summary["mode"] == ALL
@@ -1289,7 +1304,7 @@ def test_verify_month_exempts_superadmin_allocations_from_rules_not_leave(db):
     home = make_unit(db, "HOME", "Home Unit")
     setup_month(db, [home])
     slot = make_slot(db, home, date(2026, 5, 10))
-    outsider = unposted(db, "Third Call Outsider", level="3RD_CALL")
+    outsider = member(db, "Third Call Outsider", home, level="3RD_CALL")
     row = DutyAssignment(duty_slot=slot, person=outsider, status="assigned", source="superadmin_allocation",
                          override_reason="Superadmin allocation: cover")
     db.add(row)
@@ -1299,7 +1314,7 @@ def test_verify_month_exempts_superadmin_allocations_from_rules_not_leave(db):
     # The same assignment from any other source is a violation.
     row.source = "manual_rota_board"
     db.commit()
-    assert {v["code"] for v in ed.verify_month(db, MONTH)["violations"]} >= {"not_in_unit"}
+    assert {v["code"] for v in ed.verify_month(db, MONTH)["violations"]} >= {"call_level_mismatch"}
     row.source = "superadmin_allocation"
     db.commit()
     leave(db, outsider, date(2026, 5, 10))

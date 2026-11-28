@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-11-27T04:41:36.010232+00:00",
+  "status": "profile_complete_optimization_not_yet_implemented",
+  "profile": "revision18-current-report-profile.txt",
+  "original_full_failure_seconds": 5.513578499958385,
+  "isolated_original_assertion_failure_seconds": 11.534210700017866,
+  "stage_observation": [
+    {
+      "stage": "build_report_data",
+      "wall_seconds": 10.97536179999588,
+      "cpu_seconds": 2.84375
+    },
+    {
+      "stage": "render_html",
+      "wall_seconds": 0.06281659996602684,
+      "cpu_seconds": 0.046875
+    },
+    {
+      "stage": "render_xlsx",
+      "wall_seconds": 0.47326599998632446,
+      "cpu_seconds": 0.34375
+    }
+  ],
+  "profile_observations": [
+    "build_report_data11.196profiledwall; fairnesssection4.091 including first-use imports; trend3.082; context2.843",
+    "13load_month_corecalls4.011profiledwall across current+12historical lookbacks;63SQLAlchemyexecute calls",
+    "Coldimportopen/readcostsubstantial:55get_codecalls3.244wall;fullsuitehasdifferentimportstate",
+    "ProfileoverheadandconcurrentPGpreventtreatingthesetimesasanoperationlatencycertificate"
+  ],
+  "next_steps": [
+    "WaitsameexactPG66terminal/hashcleanupbeforeanybackendchange",
+    "Isolatewarm-module reportbuild and query counts before selectingoptimization",
+    "Anytrendbatchingmustretainworking-vs-historicalperiodselection,excludedslotfiltering,zero-dutyrosterandexactoutput; donotprewarmtheperformanceassertiontomanipulatepass",
+    "Retain3soriginalthresholdandfailingevidence;afterrealfixrunaffectedreportread-only/exportsemanticsandcurrentfullgates"
+  ],
+  "current_pg": "fairness-modes-revision18-holistic-contract-fixed-detached-postgres-status.json",
+  "application_changed": false
+}

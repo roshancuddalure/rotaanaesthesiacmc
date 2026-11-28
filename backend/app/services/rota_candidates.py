@@ -12,7 +12,7 @@ An uncached reference path remains available for parity and performance checks.
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, time, timedelta
 from types import SimpleNamespace
 from time import perf_counter
@@ -95,8 +95,14 @@ class CandidateContext:
     fairness_targets: dict | None = None
     # Monthly objective membership, distinct from each duty's dated eligibility.
     fairness_member_levels: dict | None = None
+    fairness_person_targets: dict | None = None
+    fairness_available_days: dict | None = None
     # Immutable OT inputs; retained when optimizer copies/removes mutable duties.
     ot_guard: object | None = None
+    ordinary_fallback_ids: frozenset = frozenset()
+    # Scope is immutable within this planning snapshot. Keep it when dataclass
+    # copies narrow postings for individual validation; dynamic attributes vanish.
+    allocation_scope_cache: dict = field(default_factory=dict)
 
 
 def candidate_context(db: Session, month: str, *, prospective_slots=(), rules=None) -> CandidateContext:
@@ -105,7 +111,7 @@ def candidate_context(db: Session, month: str, *, prospective_slots=(), rules=No
     if rules is None:
         _rule_version, rules = get_phase_one_rules(db)
     postings = postings_for_month(db, starts_on, ends_on)
-    leaves = leaves_by_day_and_person(db, month)
+    leaves = leaves_by_day_and_person(db, month, rules=rules, prospective_slots=prospective_slots)
     assignments = assignments_for_month(db, starts_on, ends_on)
     assignments = unique_assignments(a for a in assignments if active_assignment(a))
     same_day_assignments, previous_day_assignments = assignment_indexes(
@@ -351,15 +357,15 @@ def is_tight(validation: dict[str, object]) -> bool:
 def context_targets(db: Session, context: CandidateContext) -> dict:
     """The month's call-level targets, computed once per context from its preloaded data."""
     if context.fairness_targets is None:
-        from app.services.fairness_targets import objective_target_basis
+        from app.services.fairness_targets import policy_target_basis
 
-        try:
-            context.fairness_targets, context.fairness_member_levels = objective_target_basis(
-                db, context.month, context.rules, postings=context.postings, leaves=context.leaves
-            )
-        except Exception:  # noqa: BLE001 - ranking must not fail on a reporting helper
-            context.fairness_targets = {}
-            context.fairness_member_levels = {}
+        # A failed policy load must not silently become a different fairness policy.
+        context.fairness_available_days = {}
+        (context.fairness_targets, context.fairness_member_levels,
+         context.fairness_person_targets) = policy_target_basis(
+            db, context.month, context.rules, postings=context.postings, leaves=context.leaves,
+            availability_out=context.fairness_available_days,
+        )
     return context.fairness_targets
 
 
@@ -462,7 +468,11 @@ def candidate_to_dict(
         slot,
     )
     call_level = safety_row.get("call_level") or person.call_level
-    target = context_targets(db, context).get(call_level)
+    targets = context_targets(db, context)
+    fairness_level = (context.fairness_member_levels or {}).get(person_id, call_level)
+    target = targets.get(fairness_level)
+    from app.services.allocation_fairness_policy import person_target
+    target = person_target(context, person_id, target)
     tight = is_tight(validation)
     score, score_parts = candidate_score(
         status=status,
@@ -483,6 +493,7 @@ def candidate_to_dict(
         "person_id": str(person.id),
         "person_name": person.canonical_name,
         "call_level": call_level,
+        "fairness_call_level": fairness_level,
         "posting_type": safety_row.get("posting_type"),
         "candidate_status": status,
         "tight": tight,
@@ -538,9 +549,10 @@ def slot_candidates_with_context(
         previous_day_assignments=context.previous_day_assignments,
     )
     context.timings["safety_ms"] += (perf_counter() - safety_began) * 1000
+    pool = candidate_pool_from_safety(safety)
     candidates = [
         candidate
-        for safety_row, status in candidate_pool_from_safety(safety)
+        for safety_row, status in pool
         if (
             candidate := candidate_to_dict(
                 db,

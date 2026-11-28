@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="21" time="31.649" timestamp="2026-11-23T21:18:19.467046+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[0]" time="0.034" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[1]" time="0.010" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[2]" time="0.010" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[3]" time="0.009"><failure message="assert (True and 5 == 6)">seed = 3
+
+    @pytest.mark.parametrize('seed', range(20))
+    def test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle(seed):
+        rng = random.Random(seed)
+        rules = RotaPhaseOneRules(duty_rules=[DutyRule(key='AUDIT', label='Audit', group='audit', duration_hours=8)])
+        rules.rest_rules.minimum_gap_after_24hr_hours = 24
+        slots = []
+        for i in range(7):
+            start = datetime(2026, 11, rng.randrange(1, 10), rng.choice([8, 18]))
+            duration = rng.choice([8, 24])
+            slots.append(SimpleNamespace(starts_at=start, ends_at=start+timedelta(hours=duration),
+                is_24hr=duration == 24, duty_date=start.date(), duty_type='AUDIT'))
+    
+        def can_share(a, b):
+            if a.starts_at &gt; b.starts_at:
+                a, b = b, a
+            if a.ends_at &gt; b.starts_at:
+                return False
+            if a.duty_date == b.duty_date and (a.is_24hr or b.is_24hr):
+                return False
+            if a.is_24hr and (b.starts_at-a.ends_at).total_seconds() &lt; 24*3600:
+                return False
+            return not (a.is_24hr and (b.duty_date-a.duty_date).days == 1)
+    
+        expected = 0
+        for selected in product((False, True), repeat=len(slots)):
+            chosen = [s for s, include in zip(slots, selected) if include]
+            if all(can_share(a, b) for i, a in enumerate(chosen) for b in chosen[i+1:]):
+                expected = max(expected, len(chosen))
+        upper, proven = individual_bound(slots, rules)
+&gt;       assert proven and upper == expected
+E       assert (True and 5 == 6)
+
+tests\test_capacity_audit_oracle.py:46: AssertionError</failure></testcase><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[4]" time="0.013" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[5]" time="0.011" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[6]" time="0.008" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[7]" time="0.009"><failure message="assert (True and 4 == 5)">seed = 7
+
+    @pytest.mark.parametrize('seed', range(20))
+    def test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle(seed):
+        rng = random.Random(seed)
+        rules = RotaPhaseOneRules(duty_rules=[DutyRule(key='AUDIT', label='Audit', group='audit', duration_hours=8)])
+        rules.rest_rules.minimum_gap_after_24hr_hours = 24
+        slots = []
+        for i in range(7):
+            start = datetime(2026, 11, rng.randrange(1, 10), rng.choice([8, 18]))
+            duration = rng.choice([8, 24])
+            slots.append(SimpleNamespace(starts_at=start, ends_at=start+timedelta(hours=duration),
+                is_24hr=duration == 24, duty_date=start.date(), duty_type='AUDIT'))
+    
+        def can_share(a, b):
+            if a.starts_at &gt; b.starts_at:
+                a, b = b, a
+            if a.ends_at &gt; b.starts_at:
+                return False
+            if a.duty_date == b.duty_date and (a.is_24hr or b.is_24hr):
+                return False
+            if a.is_24hr and (b.starts_at-a.ends_at).total_seconds() &lt; 24*3600:
+                return False
+            return not (a.is_24hr and (b.duty_date-a.duty_date).days == 1)
+    
+        expected = 0
+        for selected in product((False, True), repeat=len(slots)):
+            chosen = [s for s, include in zip(slots, selected) if include]
+            if all(can_share(a, b) for i, a in enumerate(chosen) for b in chosen[i+1:]):
+                expected = max(expected, len(chosen))
+        upper, proven = individual_bound(slots, rules)
+&gt;       assert proven and upper == expected
+E       assert (True and 4 == 5)
+
+tests\test_capacity_audit_oracle.py:46: AssertionError</failure></testcase><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[8]" time="0.009" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[9]" time="0.017" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[10]" time="0.012" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[11]" time="0.010"><failure message="assert (True and 4 == 5)">seed = 11
+
+    @pytest.mark.parametrize('seed', range(20))
+    def test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle(seed):
+        rng = random.Random(seed)
+        rules = RotaPhaseOneRules(duty_rules=[DutyRule(key='AUDIT', label='Audit', group='audit', duration_hours=8)])
+        rules.rest_rules.minimum_gap_after_24hr_hours = 24
+        slots = []
+        for i in range(7):
+            start = datetime(2026, 11, rng.randrange(1, 10), rng.choice([8, 18]))
+            duration = rng.choice([8, 24])
+            slots.append(SimpleNamespace(starts_at=start, ends_at=start+timedelta(hours=duration),
+                is_24hr=duration == 24, duty_date=start.date(), duty_type='AUDIT'))
+    
+        def can_share(a, b):
+            if a.starts_at &gt; b.starts_at:
+                a, b = b, a
+            if a.ends_at &gt; b.starts_at:
+                return False
+            if a.duty_date == b.duty_date and (a.is_24hr or b.is_24hr):
+                return False
+            if a.is_24hr and (b.starts_at-a.ends_at).total_seconds() &lt; 24*3600:
+                return False
+            return not (a.is_24hr and (b.duty_date-a.duty_date).days == 1)
+    
+        expected = 0
+        for selected in product((False, True), repeat=len(slots)):
+            chosen = [s for s, include in zip(slots, selected) if include]
+            if all(can_share(a, b) for i, a in enumerate(chosen) for b in chosen[i+1:]):
+                expected = max(expected, len(chosen))
+        upper, proven = individual_bound(slots, rules)
+&gt;       assert proven and upper == expected
+E       assert (True and 4 == 5)
+
+tests\test_capacity_audit_oracle.py:46: AssertionError</failure></testcase><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[12]" time="0.009" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[13]" time="0.029" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[14]" time="0.010" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[15]" time="0.009" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[16]" time="0.011"><failure message="assert (True and 4 == 5)">seed = 16
+
+    @pytest.mark.parametrize('seed', range(20))
+    def test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle(seed):
+        rng = random.Random(seed)
+        rules = RotaPhaseOneRules(duty_rules=[DutyRule(key='AUDIT', label='Audit', group='audit', duration_hours=8)])
+        rules.rest_rules.minimum_gap_after_24hr_hours = 24
+        slots = []
+        for i in range(7):
+            start = datetime(2026, 11, rng.randrange(1, 10), rng.choice([8, 18]))
+            duration = rng.choice([8, 24])
+            slots.append(SimpleNamespace(starts_at=start, ends_at=start+timedelta(hours=duration),
+                is_24hr=duration == 24, duty_date=start.date(), duty_type='AUDIT'))
+    
+        def can_share(a, b):
+            if a.starts_at &gt; b.starts_at:
+                a, b = b, a
+            if a.ends_at &gt; b.starts_at:
+                return False
+            if a.duty_date == b.duty_date and (a.is_24hr or b.is_24hr):
+                return False
+            if a.is_24hr and (b.starts_at-a.ends_at).total_seconds() &lt; 24*3600:
+                return False
+            return not (a.is_24hr and (b.duty_date-a.duty_date).days == 1)
+    
+        expected = 0
+        for selected in product((False, True), repeat=len(slots)):
+            chosen = [s for s, include in zip(slots, selected) if include]
+            if all(can_share(a, b) for i, a in enumerate(chosen) for b in chosen[i+1:]):
+                expected = max(expected, len(chosen))
+        upper, proven = individual_bound(slots, rules)
+&gt;       assert proven and upper == expected
+E       assert (True and 4 == 5)
+
+tests\test_capacity_audit_oracle.py:46: AssertionError</failure></testcase><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[17]" time="0.052" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[18]" time="0.012" /><testcase classname="tests.test_capacity_audit_oracle" name="test_capacity_upper_bound_matches_exhaustive_interval_and_rest_oracle[19]" time="0.034" /><testcase classname="tests.test_capacity_audit_oracle" name="test_necessary_range_capacity_bound_cannot_exclude_a_feasible_count_vector" time="0.028" /></testsuite></testsuites>

@@ -1,0 +1,31 @@
+"""Owner policy, 23 Nov 2026: no extra-duty-only class of monthly roster members.
+
+Active members with no unit posting throughout the month receive the ordinary
+no-posting fallback, including members with zero duties. A partial posting does not become full availability,
+and a posting solely outside locked scope never grants ordinary membership.
+No posting records or clinical qualifications are synthesized.
+"""
+
+
+def has_month_unit_posting(person_id, postings, first=None, last=None):
+    return any(p.person_id == person_id and p.unit_id is not None
+               and (last is None or p.starts_on <= last)
+               and (first is None or p.ends_on is None or p.ends_on >= first)
+               for p in postings)
+
+
+def ordinary_fallback_member(person, postings):
+    return bool(person is not None and person.active_status == 'active'
+                and not has_month_unit_posting(person.id, postings))
+
+
+def load_fallback_people(db, postings):
+    from sqlalchemy import select
+    from sqlalchemy.orm import selectinload
+    from app.models import Person, PersonCallClusterMembership
+
+    return {person.id: person for person in db.scalars(select(Person)
+        .where(Person.active_status == 'active').options(
+            selectinload(Person.call_level_changes),
+            selectinload(Person.call_cluster_memberships).selectinload(PersonCallClusterMembership.cluster)))
+        if ordinary_fallback_member(person, postings)}

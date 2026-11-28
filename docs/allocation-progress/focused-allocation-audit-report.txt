@@ -1,0 +1,266 @@
+CURRENT REVISION7 SCOPE CORRECTION - LOCALLY VERIFIED 2026-11-23T14:07:06.079373+00:00
+
+Only people with a dated unit posting into the month's included units may receive ordinary OR extra duties. Missing postings and excluded-only postings grant neither. There is no extra-duty-only category. The earlier revision 5/6 fallback interpretation, 151-person proposal and release patch are superseded; do not deploy them.
+
+Production November scope: 135 active included-unit members (1st: 28; 2nd: 15; 3rd: 58; 4th: 21; 5th: 13). Another 16 active people have no monthly unit posting; four are posted only outside scope. Seven existing assignments across six people fail the clarified rule. The checker now reports these; old ledger records grant no eligibility.
+
+Implemented locally: remove unposted candidate and target admission; require dated included-unit membership in ordinary/manual validation and extra-duty strict eligibility; eliminate outside/unposted all-unit tiers and excluded explicit fallbacks; preserve posting dates and existing call/group, leave, rest, capacity, quota and staffing checks; block scope bypass in superadmin allocation; independently check membership without ledger exemptions. Unlocking an already configured scope does not remove its membership boundary. Engine revision 7 invalidates earlier compute contexts.
+
+Verification: 294 distinct backend cases passed (291 core cases, 48 affected-boundary rechecks with overlap, and two performance cases). Another 226 distinct UI checks passed (141 balance and 85 extra-duty checks), repeated successfully in the isolated release. Main and isolated builds passed; all 175 backend modules match. Source hashes match the latest read-only replay. Existing build warnings and one JUnit record_property warning remain. Ruff passed. Initial policy-expectation failures, a UTF-8 rewrite caught by assertions, and an obsolete timestamp assertion were corrected; initial failing logs are retained.
+
+One existing performance target remains UNMET. The standard extra-duty preview took 10.55 seconds against its unchanged 10-second limit; a standalone rerun took 29.96 seconds. The same test against the untouched production-base backend also failed, taking 50.90 seconds. These variable runs do not establish a reliable speed comparison or prove regression absence. The profiler records 63,258 strict checks and 310 final validations; the new dated-posting helper accounts for 0.067 seconds within an 87.58-second profiled preview. Profiling adds overhead. No threshold was weakened and no all-green performance claim is made.
+
+Read-only offline repair study: all seven ineligible assignments safely replaced, nine total changes, and 840/840 duties filled using 135 eligible people. All 840 assignments pass eight independent checks with zero violations; all nine changed-holder placement/quota checks are clear. No postings or ORM records were changed. Fully available cohort gaps by call level: [1, 0, 1, 0, 0]. Adjusted spreads after: 1st 1.0; 2nd 0.8125; 3rd 1.5092; 4th 0.9053; 5th 1.0. Third call remains above the saved tolerance of one but below the requested maximum of two. Raw ranges of 3-5, 3-7, 4-8, 5-11 and 1-3 differ with leave and partial postings. The bounded search does not prove global optimality.
+
+This is a local software correction and an offline repair proposal. The offline membership-repair stage is not integrated into the server Balance preview and the workbook is not an apply token. A supported reviewed application path and current locked preview are still required before operational reassignment. The production OT guard is disabled in this snapshot; these eight checks do not certify production OT or every unchanged monthly quota. No deployment, migration, posting change or live duty write occurred. The broader 50-item scope remains 21/50 Done; the full goal is not complete.
+
+Review workbook:Review\November2026_scoped_allocation_repair_r7_verified_20261123.xlsx
+Focused patch:Review\Allocation_engine_scope_r7_verified.patch
+Patch SHA256:3677a2bddc8077c1f7c66ecd2ed1d52fd647dcfc8768f00db00331ee396481f3
+Isolated checkout:Debug\Allocation-release-r7
+Authoritative replay:docs/allocation-progress/production-nov2026-20261123/scope-r7-final-production-safety.json
+
+HISTORICAL REPORTS BELOW - REVISION6 PROPOSAL SUPERSEDED BY LATEST OWNER POLICY
+
+DUTY ALLOCATION FINE-TUNING - REVISION 6 VERIFIED LOCAL RELEASE
+Checkpoint UTC: 2026-11-23T13:04:31.127498+00:00
+Production snapshot UTC: 2026-11-23T11:58:47.666672+00:00
+
+RESULT: ordinary-duty eligibility corrected; production not deployed or modified.
+Read-only production-data simulation proposes57 transfers, keeps840/840slotsfilled,
+and meets the saved availability-adjusted fairness tolerance1 in all five call levels.
+
+OWNER POLICY - 23 NOVEMBER 2026
+- Active people with NO monthly unit posting are ordinary-duty candidates, including zero-duty people.
+- No extra-duty seed, extra-only category, ledger or invented posting is required.
+- People posted only to excluded units stay OUT of ordinary allocation and its fairness denominator.
+- Partial postings remain date-limited. Call levels/pools/groups, active status, leave, rest, quotas, unit rules, protected duties and staffing/OT guards remain.
+Authority is recorded in Plan/05_confirmed_decisions.md and the allocation tracker.
+
+ACTUAL PRODUCTION-DATA PROPOSAL
+Level | Ordinary members | No-posting members | Before adjusted spread | After adjusted spread | Fully available ordinary gap
+1ST_CALL | 30 | 2 | 4.00 | 1.00 | 1
+2ND_CALL | 27 | 12 | 7.00 | 1.00 | 1
+3RD_CALL | 60 | 2 | 8.50 | 1.00 | 1
+4TH_CALL | 21 | 0 | 0.91 | 0.91 | 0
+5TH_CALL | 13 | 0 | 1.00 | 1.00 | 0
+
+151ordinary members receive at least one duty in the simulation. Eleven formerly omitted zero-duty active people are now included.
+One existing out-of-scope Cardiac holder remains untouched and is not admitted to ordinary allocation.
+Raw after-ranges:1st3-5,2nd1-4,3rd4-8,4th5-11,5th1-3. Larger raw ranges reflect leave/partial availability;
+they are not a claim of raw max-min<=1. Fully available ordinary cohorts each have raw gap<=1.
+All840 assignments pass the existing independent eight-category check; no call/group/leave/rest/double-booking/unit-rule/capacity/active-member violations.
+All changed holders pass final placement and individual-limit checks. Transfer safety rejects new/worsened unit hard blocks.
+The search uses637/33600 deterministic work units and does not exhaust its budget; this is not a global optimum proof.
+
+OT AND CLINICAL LIMITS
+Production OT guard is disabled in this snapshot. The production result is NOT certification of elective OT or qualification coverage.
+Existing scoped OT validation checks affected reservation components; an unrelated pre-existing OT shortage can remain.
+The added regression proves that admitting an unposted person to ordinary duties does not invent OT staffing or qualifications.
+Do not interpret an affected-component placement check as complete monthly OT certification. Full50-item OT/pilot scope remains separate.
+
+IMPLEMENTATION
+- One no-posting pool feeds candidates, manual validation, optimizer and balancing, including zero-duty members.
+- Canonical fairness membership includes the same eligible pool and excludes outside-scope postings.
+- Independent checker derives the policy separately; approved ordinary no-posting allocations no longer require ledger exemptions.
+- Balancer swap opportunities are distributed across call levels to prevent one blocked level starving another.
+- Candidate/rule checks retain dated call promotion and group membership; no level substitution is introduced.
+- Objective revision6 invalidates earlier scheduling fingerprints. No schema migration or production posting repair is needed.
+- Diagnostics distinguish true postings, ordinary fallback and outside-scope holders without hiding raw duty ranges.
+
+VERIFICATION
+153current backend regression cases passed235.86s;3distinct guard-edge cases passed42.38s:156total.
+141UIchecks passed in current workspace AND isolated release (same141workflows, not282distinct checks).
+Both frontend builds pass. Existing bundle-size/mixed-import warnings remain; backend retains one JUnit record_property format warning.
+Ruff and scoped whitespace checks pass. Final Excel verified840rota rows/57changes/1outside-scope retained/no formulas.
+All175backend modules in the isolated release match the validated working-copy AST. Full156is not added to older overlapping gates.
+Earlier failed test fixtures and intermediate gates are preserved. Group-field fixture, unit staffing fixture and scoped-OT expectation were corrected; the final guard gate passes.
+Some execution durations include long process/environment pauses; these are not calibrated runtime benchmarks or a completion-time estimate.
+
+REVIEW ARTIFACTS
+Excel: Review\November2026_ordinary_allocation_proposal_r6_verified_20261123.xlsx
+Focused source patch: Review\Allocation_engine_tuning_r6_verified.patch
+Isolated release: Debug\Allocation-release-r6 (base95e97e28e6693a24f9050bf240451d648dc8dc8a)
+Evidence: ordinary-policy-production-verified.json; focused-release-manifest.json; verified-source-r6/.
+The workbook contains names and current/proposed duties locally for review. Aggregate JSON has no names/IDs; credentials were not exported.
+Initial posting-review and revision5workbooks are superseded: do not create artificial postings from them.
+
+DEPLOYMENT / APPLICATION / ROLLBACK
+Production deployment and live assignment changes need the separately recorded authority. Neither has occurred.
+After approved deployment, regenerate the server Balance duties preview under current inputs/locks; compare against this workbook and review before Apply.
+This offline Excel is review evidence, not an apply token. Fresh preview/apply must reject stale inputs and revalidate the full plan.
+If rolling back AFTER applying ordinary no-posting allocations, undo that balance batch under the new code first; old validators would reject those new ordinary rows.
+Retain before-images and respect undo conflicts. Do not force restore over intervening changes.
+
+GOAL STATUS
+Focused local fine-tuning is implemented and verified; production completion awaits separate deployment/application review.
+The full50-item allocation scope is preserved at21/50Done. Unit-layout integration and other outstanding full-plan tasks are not relabeled complete.
+The original one-hour timer remains closed; user explicitly authorized further continuation. No implementation/test worker is left running after handoff.
+Native dashboard reads local evidence. Its latest screen capture was black under the desktop session; no visual-success claim is based on that image.
+
+EARLIER AUDIT HISTORY - SUPERSEDED WHERE OWNER POLICY CHANGED
+
+PRODUCTION BASELINE ADDED 23 NOVEMBER 2026
+Actual production audit: D:\Coding\Duty Rota software\docs\allocation-progress\production-nov2026-20261123\production-allocation-audit-report.txt
+840/840 filled; 1st/2nd-call full-availability gaps 4/6. No production changes.
+
+DUTY ALLOCATION ENGINE — FOCUSED AUDIT AND FINE-TUNING
+20 November 2026 | Local implementation and disposable-fixture verification
+Recorded 2026-11-20T19:30:18.702208+05:30; fixed deadline 19:34:11 Asia/Calcutta.
+
+RESULT
+The whole-month optimizer now has a bounded, independently validated repair pass.
+A deliberately concentrated exhausted-search case changed from 8/0/0/0 duties
+to 2/2/2/2, retaining all eight duties. A second case recovers a missing duty by
+moving its one conflicting assignment to another eligible person. All accepted
+changes pass the complete canonical validator. This is a measured improvement,
+not a guarantee that every input can be covered with a gap of at most two.
+
+WHY LARGE GAPS CAN SURVIVE
+1. The unit template is chosen sequentially before people are assigned. Fair
+   unit totals do not establish equal feasible opportunities for individual people.
+2. Short whole-month searches can stop before equality is optimized. Coverage-only
+   incumbents can concentrate work. Previously remaining time was divided equally
+   among tiers, including lower-priority objectives.
+3. Repair stability and explicit preference mode intentionally precede equality.
+   Repair is therefore not a substitute for the dedicated Balance duties action.
+4. Balance duties redistributes existing filled duties; it cannot fill open ones.
+   Manual/locked/confirmed assignments, hard limits and small eligible pools can
+   prevent improvement. Its availability-proportional shares differ from the
+   optimizer's uniform per-call-level targets. Both existing contracts are retained.
+5. Candidates needing staffing review are excluded from ordinary automatic choices.
+   More search cannot fill a fixed-unit duty with zero admissible candidates.
+6. After a mid-month promotion, candidate ranking previously used the new dated
+   call-level target while optimization used the original monthly membership.
+   Revision4 aligns those targets; it does not relax dated call eligibility.
+
+WHAT CHANGED
+* Search time favors coverage and call-level equality (allocation of time only;
+  the lexicographic objective order is unchanged). Twenty percent of remaining
+  post-construction time is reserved for safe local refinement.
+* Refinement first tries to recover holes, optionally relocating one conflicting
+  assignment, then tries duty transfers that improve monthly squared equality.
+  It never drops another filled duty and accepts only an improvement of the full
+  existing objective vector. Forbidden alternatives and requested coverage minima
+  remain enforced. Search is bounded by the original deadline and96 validations.
+* Per-call-level diagnostics include fixed duties and members with zero duties:
+  minimum, maximum, gap, within-one and within-two. Gaps above two and open duties
+  generate visible warnings. A larger gap is not labelled unavoidable without proof.
+* Candidate ranking now uses the same canonical monthly membership as the
+  optimizer after a mid-month promotion. Actual duty eligibility remains dated;
+  the candidate response distinguishes fairness_call_level from call_level.
+* Changed optimization prefixes invalidate subsequent proof receipts. Engine
+  revision4 invalidates stale proposals and benchmark fingerprints.
+* Native desktop dashboard has a fixed countdown, live evidence cards, distribution
+  and test charts, a progress log and a local report button. It uses no browser.
+
+SAFETY AND FAIRNESS RETAINED
+Strict membership in each duty's allowed call-level set, including only explicitly
+configured pools; dated postings/promotions; active status; group and unit rules;
+leave status/interval semantics; overlaps; 24-hour post-duty rest in both directions;
+monthly count limits; unit staffing; simultaneous OT reservations; fixed duties;
+reviewed apply and stale-proposal checks. Weekend, night, holiday, workload,
+spacing/history and preference objectives remain in their existing order.
+Partial-month availability is reported honestly; no leave penalty or new exception
+policy has been invented. Unknown holiday configuration remains a warning.
+
+VERIFICATION
+Final combined regression: 168 passed, 0 failures,
+0 errors, 0 skips, 219.75s.
+Separate existing balancing suite: 54 passed, 344.12s.
+Earlier additional boundary gate: 11 passed, 22.77s;
+all now overlap the final revision4 regression and are not added again.
+They prove local repair cannot bypass monthly
+quotas, consume joint OT reservations or return a forbidden alternative. Coverage
+proofs survive a later equality improvement; changed equality proofs are cleared.
+Earlier baseline gates overlap. record_property/JUnit-format warnings are retained.
+The revision4 full run also recorded a SQLAlchemy autoflush warning in the new
+promotion fixture. The fixture now loads its unit before constructing relationship
+objects; a focused rerun passed with SAWarning treated as an error
+(1 case, 13.88s). No production code changed
+between the168-case run and that rerun; the rerun overlaps the combined total.
+
+48-person,62-duty fixed synthetic corpus:
+  control        62/62 covered; person range 1–2; safety failures 0; optimizer 23.233s
+  ot_pressure    62/62 covered; person range 1–2; safety failures 0; optimizer 54.597s
+  dated_fixed    61/62 covered; person range 1–2; safety failures 0; optimizer 36.843s
+
+Archived pre-audit optimizer comparisons on identical control/dated fixtures show
+no coverage or duty-range regression. They do not demonstrate a general runtime
+advantage; concurrent workers and an uncontrolled host prohibit that claim.
+The documented forced-exhaustion case demonstrates the specific improvement.
+
+THE REMAINING UNIT-LAYOUT PROBLEM AND A SAFE PROPOSAL
+The dated/fixed fixture has one open duty, BENCH:26 on14May: zero admissible
+candidates,24 staffing-review rejections and one leave rejection. Coverage is
+maximum only within that fixed layout/candidate set, not department-wide.
+An audit-only proposal moves that empty duty from BENCH_0
+to BENCH_1 without changing its call level, interval,
+rules, leave or any fixed assignment. The probe covers
+62/62 duties with zero independent
+validation failures and feasible joint OT; all fixed signatures remain identical.
+It is evidence for reviewed unit-template repair, not a production activation.
+Automatic reviewed unit/person repair remains the next concrete implementation
+step under the existing50-item architecture/acceptance gates. The prototype is
+not silently applied to operational templates.
+Apply/export integration was inspected: existing reviewed decisions assume fixed
+slot units. The concrete integration contract is saved in
+focused-unit-repair-integration-contract.json: explicit old/new units, unchanged
+logical duty identity, selected-review/Excel representation, stale-context checks,
+isolated proposed context, complete final validation and atomic slot+person writes.
+Changing only the allocator would leave preview/export/application inconsistent.
+
+DEVELOPMENT FAILURES AND LIMITATIONS
+An initial integration gate found1 regression: local repair could return a partial
+draft despite a requested minimum coverage of2. The validator now enforces both
+minimum_coverage and minimum_required. The corrective focused gate passed47 tests;
+both minima also have dedicated cases in the final168-case gate. Failed artifacts
+remain recorded. The initial corpus run was invalidated by a source change during
+that correction; focused-corpus-final.json is the completed frozen-source run.
+The revision3 frozen-source corpus is retained as historical evidence; the final
+revision4 measurements are focused-corpus-r4.json after the promotion correction.
+The solver allowance is not a hard request timeout: model construction and blocking
+validation may overrun it. Actual timings are recorded; no finish-time estimate or
+speed claim is fabricated. The session itself remains inside the user's one hour.
+No operational rota, database schema, clinical policy, cloud routing or deployment
+was changed. No claim is made that a real departmental month is fully balanced.
+The broader tracker remains21/50 Done. Its remaining scope is preserved.
+
+READ-ONLY CHECK OF THE CONFIGURED DATABASE
+Two PostgreSQL transactions explicitly enforced transaction_read_only=on and a
+5-second statement timeout. No personal identifiers were exported and no rules
+were seeded. Saved rules exist, but no November2026 period exists in this database.
+The latest listed periods are October,June,May,April,March andFebruary2026;
+October/June returned no populated canonical call-level spread. These observations
+do not prove those months are balanced. The actual problem month/app instance is
+needed to verify the user's reported imbalance against operational data.
+Evidence:focused-operational-readonly.json and
+focused-operational-month-inventory.json. This limitation is separate from the
+safe synthetic counterexamples and the verified source-code corrections.
+
+FILES AND REPRODUCTION
+Production: backend/app/services/rota_optimizer.py, allocation_refinement.py,
+allocation_objectives.py, rota_candidates.py. New cases: backend/tests/test_focused_allocation_refinement.py.
+Evidence: docs/allocation-progress/focused-final-r4.xml,
+focused-balance-baseline.xml, focused-corpus-r4.json,
+focused-archived-comparison.json, focused-template-repair-probe-r4.json.
+Source hashes and counts: focused-audit-summary.json.
+Pre-audit source: focused-before/ and focused-source-before.json.
+Run: backend/.venv/Scripts/python.exe -m pytest backend/tests/test_focused_allocation_refinement.py -q
+Native GUI: backend/.venv/Scripts/pythonw.exe tools/allocation_audit_window.py
+Rollback: restore the archived optimizer/objective/candidate files from focused-before and
+remove the new refinement integration/helper; retain unrelated working-tree changes.
+Do not decrement revision4 in a running deployment because that could resurrect
+stale drafts. Any later algorithm rollback requires another revision increment.
+
+NATIVE GUI FINAL VISUAL CHECK
+focused-native-window-r4.png shows the current168+54 verification counts,
+fixed countdown, correctly scaled charts and enabled report button. Native
+viewer PID50716 is read-only; it is not an implementation worker.
+
+GOAL HANDOFF STATUS
+Blocked pending identification of the actual problem month/app instance.
+The same missing-dataset condition persisted across three consecutive goal turns.
+Verified fixes and all evidence are retained; production unit-template repair
+remains unfinished. No claim of full completion. The original one-hour cutoff
+is unchanged; no implementation worker remains running.

@@ -1,0 +1,71 @@
+SUPERSEDING CLINICAL RESULT - 26NOVEMBER2026
+The structural-only limitation below is historical. A subsequent timed joint
+prototype accepted38hypothetical changes, loweringthird-call nightgap3to2 and
+hoursgap48to40. Totalcount andweekend costsdidnotworsen. All840dutiesremainedfilled;
+all840holder placement/quota checksandall8independentclinicalchecks passed.
+Five staffingreviewwarningsremainandOTguardingisdisabled. Timingrepairsstay
+hypothetical; no productionchanges. ThemodelreturnedFEASIBLE,notoptimal.
+ThisresultisclinicallyverifiedOFFLINE;theapplicationstillrunsrevision17.
+Source:docs/allocation-progress/joint-clinical-night-success-reviewed.json.
+Main/candidate runtimeintegration, deterministicreplay, reviewedApplyUndo andnew
+fullregressionarepending. Thedeterministicextensionpassed31tests; actualtwo-seed
+Novemberreplaybatchislive, notyetcertified. See currentprogressreport separately.
+
+HISTORICAL STRUCTURAL ANALYSIS FOLLOWS
+
+NOVEMBER 2026: THIRD-CALL NIGHT GAP - ROOT CAUSE AND NEXT SAFE STEP
+Reviewed UTC: 2026-11-26T16:53:41.436848+00:00
+
+The verified revision17 server-plan projection covers all840duties. Total-duty
+gaps by call level are1/2/2/1/1. Third-call doctors still have night counts3-6.
+This report identifies a missed search direction; it does not supply a new rota.
+
+1. Keeping each doctor's current duty count cannot reduce the third-call night
+gap to2 within the declared current duty rows, eligibility and protected/extra
+holders. Exact flow checked every possible night band:58people,401duties,
+10033eligible edges,9fixed rows; no complete matching. This is a restricted-family
+proof, not global impossibility for the whole rota.
+
+2. Allowing totals to change within6-8 permits nights3-5 at the structural level.
+Posting, call/group, unit and active-leave checks and protected holders remain.
+Rest, overlaps, staffing/OT, weekends, hours and other quotas are omitted here.
+Therefore this diagnostic matching is NOT a clinically safe proposal.
+
+3. Exact minimum-cost flow shows that this direction can improve count equality:
+five doctors on6duties and53on7, with nights3-5. Squared total-count cost improves
+2785to2777, the arithmetic minimum for401duties among58people. At fixed covered
+demand and uniform targets, squared-deviation cost differs only by a constant.
+All possible night bands were considered. Clinical feasibility remains unproved.
+
+The present night pass preserves individual counts, so cannot reach this profile.
+Next: minimize unnecessary changes in the structural witness, then test a bounded
+multi-row refinement through atomic placement and independent clinical checks.
+Keep higher objectives, protected/extra rows and approved rules. Reject unsafe
+witnesses; never Apply the diagnostic directly or claim a global optimum.
+
+VERIFICATION AND LIMITS
+All three successful diagnostics have identical assignment AND scheduling-context
+hashes, database-enforced read-only transactions, zero operational writes and zero
+dirty/new ORM rows. Baseline server-plan coverage remains840/840; all840holders
+pass placement/individual-limit replay and all eight clinical checks have zero
+violations. Those clinical checks refer to the BASELINE SERVER PLAN, not the
+diagnostic matching. Staffing retains5review warnings and OT guarding is disabled.
+The390timing repairs remain hypothetical; production has not been changed.
+
+The first minimum-cost replay lost its DB connection during final cleanup after
+a long environment interruption. Its failed receipt is retained and EXCLUDED.
+It is not a runtime benchmark. The fresh verified replay completed rollback and
+reproduced the result. The probe now exits nonzero on failure, and the wrapper
+independently checks the receipt. The real CLI failure-contract test passed.
+Ten matching/minimum-cost tests passed, including independent exhaustive oracles,
+input-order invariance, protected holders, invalid input and timeout inference.
+New diagnostic modules pass Ruff; the existing probe's unrelated old E702 remains.
+The initial CP-SAT attempt timed out UNKNOWN; that receipt is also retained.
+
+Application/test hashes still match2456distinct passing backend cases. Prior
+156frontend unit passes and main/candidate32actualUIchecks each remain evidence
+for unchanged product code. No application/frontend/release-owned code changed
+in this diagnostic batch. A separate architecture-harness objective mismatch was
+corrected; three current13-tier comparisons and six focused checks passed.
+
+Overall goal remains incomplete. Original50-item programme remains21Done.

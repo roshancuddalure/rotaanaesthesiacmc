@@ -1,0 +1,158 @@
+"""23 Nov owner amendment: ordinary allocation without fictitious unit postings."""
+from datetime import date
+
+import pytest
+from sqlalchemy import select
+
+from app.models import PersonPosting
+from app.services import balance_duties as bd
+from app.services.extra_duty_verify import check_month
+from app.services.rota_assignment import validate_assignment
+from app.services.rota_candidates import candidate_context, slot_candidates_with_context
+from tests.test_balance_duties import (  # noqa: F401
+    MONTH, _manual_extra, _unposted_member, assign, days, edit_rules, leave,
+    make_slot, make_unit, member, relaxed, setup_month,
+)
+from tests.test_balance_duties import db as db, user as user
+
+
+def fixture(db):
+    edit_rules(db, relaxed)
+    unit = make_unit(db, 'UNIT_I')
+    alpha = member(db, 'Alpha', unit)
+    uma = _unposted_member(db, 'Uma')
+    setup_month(db, [unit])
+    target = make_slot(db, unit, days(4)[0])
+    for d in days(1, 7, 10, 13):
+        assign(db, make_slot(db, unit, d), alpha)
+    _manual_extra(db, make_slot(db, unit, days(20)[0]), uma, ['unposted_member'])
+    db.commit()
+    return unit, alpha, uma, target
+
+
+def test_no_posting_monthly_member_is_clear_candidate_and_balance_apply_undo_safe(db, user):
+    unit, alpha, uma, target = fixture(db)
+    context = candidate_context(db, MONTH)
+    candidates = slot_candidates_with_context(db, slot=target, context=context)['candidates']
+    choice = next(c for c in candidates if c['person_id'] == str(uma.id))
+    assert choice['candidate_status'] == 'eligible'
+    assert choice['validation_status'] == 'clear'
+    assert any(i['code'] == 'ordinary_roster_fallback' for i in choice['validation_issues'])
+    assert validate_assignment(db, slot=target, person=uma, replace_existing=False)['status'] == 'clear'
+    preview = bd.preview(db, MONTH, user)
+    assert any(m['to_person_id'] == str(uma.id) and not m['extra_duty'] for m in preview['moves'])
+    result = bd.apply(db, MONTH, preview['token'], preview['plan_hash'], user)
+    check = check_month(db, MONTH)
+    assert check['ok'], check['violations']
+    assert check['ordinary_roster_fallback'] > 0
+    assert not list(db.scalars(select(PersonPosting).where(PersonPosting.person_id == uma.id)))
+    assert bd.shares(db, MONTH)[0]['gap'] <= 1
+    from uuid import UUID
+    bd.undo(db, UUID(result['batch_id']), user)
+    assert check_month(db, MONTH)['ok']
+
+
+@pytest.mark.parametrize('block', ['leave', 'pending_leave', 'rest', 'quota', 'level', 'inactive'])
+def test_fallback_never_waives_other_rules(db, block):
+    unit, alpha, uma, target = fixture(db)
+    if block in {'leave', 'pending_leave'}:
+        leave(db, uma, target.duty_date, status='approved' if block == 'leave' else 'requested')
+    elif block == 'rest':
+        assign(db, make_slot(db, unit, date(2026, 5, 3)), uma)
+    elif block == 'quota':
+        edit_rules(db, lambda r: setattr(r.duty_count_limits, 'max_24hr_per_month', 1))
+    elif block == 'level':
+        uma.call_level = '3RD_CALL'
+    elif block == 'inactive':
+        uma.active_status = 'inactive'
+    db.commit()
+    context = candidate_context(db, MONTH)
+    choices = slot_candidates_with_context(db, slot=target, context=context)['candidates']
+    rows = [c for c in choices if c['person_id'] == str(uma.id)]
+    assert not rows or rows[0]['validation_status'] != 'clear'
+
+
+def test_posted_only_outside_scope_is_excluded_even_when_holding_extra_duty(db):
+    unit, alpha, uma, target = fixture(db)
+    cardiac = make_unit(db, 'CARDIAC')
+    excluded = member(db, 'Cardiac member', cardiac)
+    _manual_extra(db, make_slot(db, unit, days(24)[0]), excluded, ['outside_scope_unit'])
+    db.commit()
+    context = candidate_context(db, MONTH)
+    rows = slot_candidates_with_context(db, slot=target, context=context)['candidates']
+    assert str(excluded.id) not in {r['person_id'] for r in rows}
+    check = validate_assignment(db, slot=target, person=excluded, replace_existing=False, context=context)
+    assert check['status'] == 'blocked'
+    assert any(i['code'] == 'scope_member_excluded' for i in check['issues'])
+    assert excluded.id not in bd._load(db, MONTH).level
+    assert all(m['to_person_id'] != str(excluded.id) for m in bd.plan_balance(db, MONTH)['moves'])
+
+
+def test_no_posting_fallback_cannot_move_ordinary_slot_outside_scope(db):
+    unit, alpha, uma, target = fixture(db)
+    outside = make_unit(db, 'CARDIAC')
+    excluded_slot = make_slot(db, outside, days(24)[0])
+    db.commit()
+    state = bd._load(db, MONTH)
+    assert state.structural_block(uma.id, excluded_slot) == 'no_unit'
+    assert state.place_check(uma.id, excluded_slot) == (None, 'no_unit')
+    assert validate_assignment(db, slot=excluded_slot, person=uma, replace_existing=False)['status'] == 'blocked'
+
+
+def test_partial_posting_does_not_expand_to_full_month_fallback(db):
+    unit, alpha, uma, target = fixture(db)
+    # This is a genuinely partial posting, not the no-posting cohort.
+    db.add(PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
+                         starts_on=date(2026, 5, 15), source='unit_board'))
+    db.commit()
+    context = candidate_context(db, MONTH)
+    assert uma.id not in context.ordinary_fallback_ids
+    assert validate_assignment(db, slot=target, person=uma, replace_existing=False, context=context)['status'] == 'blocked'
+
+
+def test_optimizer_can_use_ordinary_fallback_and_full_final_validator(db):
+    from app.services.rota_optimizer import solve_month, validate_plan
+    unit, alpha, uma, target = fixture(db)
+    context = candidate_context(db, MONTH)
+    result = solve_month(db, context, {str(target.id): target}, seconds=15)
+    assert result['choices'] == {str(target.id): str(uma.id)}
+    assert result['uncovered'] == 0
+    assert validate_plan(db, context, {str(target.id): target}, result['choices']) == []
+
+
+@pytest.mark.parametrize('optimized', [False, True])
+def test_fallback_reference_and_cached_candidates_match(db, optimized):
+    unit, alpha, uma, target = fixture(db)
+    context = candidate_context(db, MONTH)
+    candidates = slot_candidates_with_context(db, slot=target, context=context, optimized=optimized)['candidates']
+    row = next(c for c in candidates if c['person_id'] == str(uma.id))
+    assert row['call_level'] == '1ST_CALL'
+    assert row['validation_status'] == 'clear'
+    assert not row['requires_override']
+
+
+def test_zero_duty_active_member_needs_no_extra_duty_seed_or_ledger(db):
+    from app.models import DutyAssignment, ExtraDutyRecord
+    from app.services.rota_assignment import assign_person_to_slot
+    edit_rules(db, relaxed)
+    unit = make_unit(db, 'UNIT_I')
+    member(db, 'Posted member', unit)
+    zero = _unposted_member(db, 'Zero duty member')
+    setup_month(db, [unit])
+    target = make_slot(db, unit, days(4)[0])
+    db.commit()
+    assert db.query(DutyAssignment).count() == db.query(ExtraDutyRecord).count() == 0
+    context = candidate_context(db, MONTH)
+    assert zero.id in context.ordinary_fallback_ids
+    candidates = slot_candidates_with_context(db, slot=target, context=context)['candidates']
+    assert next(c for c in candidates if c['person_id'] == str(zero.id))['validation_status'] == 'clear'
+    # Balance shares are defined over filled duties, so the empty month has
+    # no share rows yet. Its roster must nevertheless include the zero member.
+    state = bd._load(db, MONTH)
+    assert len(state.members_by_level['1ST_CALL']) == 2
+    assert state.duties[zero.id] == 0
+    assign_person_to_slot(db, slot_id=target.id, person_id=zero.id)
+    check = check_month(db, MONTH)
+    assert check['ok'], check['violations']
+    assert check['ordinary_roster_fallback'] == 1
+    assert db.query(ExtraDutyRecord).count() == 0

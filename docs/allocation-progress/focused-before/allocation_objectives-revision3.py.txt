@@ -1,0 +1,41 @@
+"""Recorded explanation of existing optimizer objectives; no scoring changes."""
+
+# Revision 3 adds bounded validated coverage/fairness refinement and search budgets.
+# Revision 2 fixed monthly target selection for dated call-level changes.
+# Include in scheduling fingerprints so pre-correction drafts/timing proofs stale.
+OPTIMIZER_OBJECTIVE_REVISION = 3
+
+
+def describe_objectives(mode, targets):
+    return {
+        "version": 1,
+        "equality": "uniform_call_level_v1",
+        "target_by_call_level": dict(sorted(targets.items())),
+        "fixed_duties": "included_in_month_total",
+        "personal_prorata_optimized": False,
+        "preferences_before_equality": mode == "preferences",
+        "basis": (
+            "This proposal uses a shared target within each call level, with fixed duties included. "
+            "Dated eligibility limits assignments, but this objective does not minimize personal "
+            "pro-rata deviation. Safety and required coverage remain higher priorities."
+        ),
+    }
+
+
+def objective_basis_text(value):
+    if (
+        not isinstance(value, dict)
+        or value.get("version") != 1
+        or value.get("equality") != "uniform_call_level_v1"
+        or value.get("personal_prorata_optimized") is not False
+        or value.get("fixed_duties") != "included_in_month_total"
+        or type(value.get("preferences_before_equality")) is not bool
+    ):
+        return "The fairness objective basis was not recorded in this saved proposal. Review its original evidence before comparing targets."
+    return describe_objectives(
+        "preferences" if value.get("preferences_before_equality") else "balanced", {}
+    )["basis"] + (
+        " Explicit preferences precede equality in this proposal."
+        if value.get("preferences_before_equality")
+        else ""
+    )

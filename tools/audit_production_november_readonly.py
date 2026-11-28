@@ -1,0 +1,164 @@
+"""Aggregate production November audit using existing deployment credentials.
+
+Credentials stay in-process. DB startup and transaction both enforce read-only;
+no login session, operational row, schema or deployment is created/changed.
+"""
+from collections import Counter
+from datetime import date, datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import re
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/'backend'))
+from sqlalchemy import create_engine, func, select, text  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
+from app.models import RotaPeriod, DutySlot, DutyAssignment, Person, RotaComputeJob, ExtraDutyBatch  # noqa: E402
+from app.services.fairness_targets import call_level_spread  # noqa: E402
+from app.services.rota_rules import read_phase_one_rules  # noqa: E402
+
+BASE = 'https://rotaanaesthesiacmc-production-a630.up.railway.app'
+OUTPUT = ROOT/'docs/allocation-progress/production-nov2026-20261123'
+
+
+def main():
+    OUTPUT.mkdir(exist_ok=True)
+    target = OUTPUT/'baseline-readonly-v4.json'
+    if target.exists():
+        raise RuntimeError('Preserve the recorded snapshot')
+    report = dict(recorded_at=datetime.now(timezone.utc).isoformat(), app_url=BASE,
+                  month='2026-11', operational_writes=0, personal_identifiers_exported=False,
+                  connection_basis='Existing workspace Railway deployment record; app health separately verified.',
+                  levels=[])
+    engine = None
+    try:
+        if '--railway-stdin' in sys.argv:
+            variables = json.loads(sys.stdin.read())
+            url = variables['DATABASE_PUBLIC_URL']
+            report['connection_basis'] = 'Authenticated Railway project680ef8b0 production/Postgres current public connection; app service domain independently matched.'
+        else:
+            records = (ROOT/'cred/Dutyrotapostgresql db url.txt').read_text(encoding='utf-8-sig')
+            match = re.search(r'postgres(?:ql)?(?:\+psycopg)?://[^\s\"\x27]+', records)
+            if not match:
+                raise RuntimeError('Public deployment connection record unavailable')
+            url = match.group(0)
+        url = re.sub(r'^postgres(?:ql)?://', 'postgresql+psycopg://', url)
+        engine = create_engine(url, connect_args={'connect_timeout':5,
+            'options':'-c default_transaction_read_only=on -c statement_timeout=10000'})
+        with Session(engine, autoflush=False) as db:
+            db.execute(text('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY'))
+            assert db.scalar(text('SHOW transaction_read_only')) == 'on'
+            report['database_enforced_readonly'] = True
+            report['snapshot_isolation'] = db.scalar(text('SHOW transaction_isolation'))
+            first, last = date(2026,11,1), date(2026,11,30)
+            periods = db.execute(select(RotaPeriod.starts_on, RotaPeriod.ends_on, RotaPeriod.status)
+                .where(RotaPeriod.starts_on <= last, RotaPeriod.ends_on >= first)).all()
+            report['periods'] = [dict(starts_on=str(r[0]), ends_on=str(r[1]), status=r[2]) for r in periods]
+            bounds = [DutySlot.duty_date >= first, DutySlot.duty_date <= last]
+            report['slots_by_status'] = {str(s):n for s,n in db.execute(select(
+                DutySlot.template_status,func.count()).where(*bounds).group_by(DutySlot.template_status))}
+            report['slots_by_source'] = {str(s):n for s,n in db.execute(select(
+                DutySlot.source,func.count()).where(*bounds).group_by(DutySlot.source))}
+            active = func.lower(DutyAssignment.status).in_(['assigned','draft','confirmed'])
+            counts = db.execute(select(Person.call_level, Person.id, func.count(DutyAssignment.id))
+                .join(DutyAssignment, DutyAssignment.person_id == Person.id)
+                .join(DutySlot, DutySlot.id == DutyAssignment.duty_slot_id)
+                .where(*bounds, active).group_by(Person.call_level, Person.id)).all()
+            assigned = Counter()
+            for level, _pid, count in counts:
+                assigned[str(level)] += count
+            report['active_assignment_count_by_current_person_level'] = dict(assigned)
+            report['active_assignment_rows'] = sum(assigned.values())
+            report['filled_distinct_slots'] = db.scalar(select(func.count(func.distinct(DutyAssignment.duty_slot_id)))
+                .join(DutySlot, DutySlot.id == DutyAssignment.duty_slot_id).where(*bounds, active))
+            report['assignment_sources'] = {str(s):n for s,n in db.execute(select(
+                DutyAssignment.source,func.count()).join(DutySlot,DutySlot.id == DutyAssignment.duty_slot_id)
+                .where(*bounds,active).group_by(DutyAssignment.source))}
+            report['assignment_statuses'] = {str(s):n for s,n in db.execute(select(
+                DutyAssignment.status,func.count()).join(DutySlot,DutySlot.id == DutyAssignment.duty_slot_id)
+                .where(*bounds,active).group_by(DutyAssignment.status))}
+            signatures = db.execute(select(DutyAssignment.id,DutyAssignment.person_id,
+                DutyAssignment.duty_slot_id,DutyAssignment.status,DutyAssignment.source)
+                .join(DutySlot,DutySlot.id == DutyAssignment.duty_slot_id).where(*bounds,active)).all()
+            report['assignment_signature_sha256'] = hashlib.sha256('\n'.join(sorted(
+                '|'.join(map(str,r)) for r in signatures)).encode()).hexdigest()
+            try:
+                with db.begin_nested():
+                    rules = read_phase_one_rules(db)
+                    report['saved_rules_present'] = rules is not None
+                    if rules is not None:
+                        for row in call_level_spread(db, '2026-11', rules):
+                            safe = {k:row[k] for k in ('call_level','slots','member_count','target',
+                                    'min','max','gap','allowed_gap','ok','explained')}
+                            safe['duty_histogram'] = dict(sorted(Counter(m['duties'] for m in row['members']).items()))
+                            safe['partial_availability_members'] = sum(0 < m['available_days'] < 30 for m in row['members'])
+                            safe['reason_codes'] = sorted({r['code'] for r in row['reasons']})
+                            full = [m['duties'] for m in row['members'] if m['available_days'] == 30]
+                            safe['full_availability_cohort'] = dict(members=len(full),minimum=min(full,default=None),
+                                maximum=max(full,default=None),gap=max(full)-min(full) if full else None)
+                            report['levels'].append(safe)
+                        report['canonical_fairness_status'] = 'complete'
+                    else:
+                        report['canonical_fairness_status'] = 'saved_rules_missing'
+            except Exception as exc:
+                report['canonical_fairness_status'] = 'unavailable'
+                report['canonical_error_class'] = type(exc).__name__
+            if report.get('canonical_fairness_status') == 'complete':
+                try:
+                    with db.begin_nested():
+                        from app.services.balance_duties import shares
+                        report['availability_adjusted_balance'] = []
+                        for row in shares(db,'2026-11',rules):
+                            devs = [m['duties']-m['share'] for m in row['members_detail']]
+                            report['availability_adjusted_balance'].append({
+                                **{k:row[k] for k in ('call_level','members','goal_range','allowed_gap','min','max','gap','ok','movable')},
+                                'minimum_deviation_from_share':round(min(devs,default=0),2),
+                                'maximum_deviation_from_share':round(max(devs,default=0),2),
+                                'deviation_spread':round(max(devs)-min(devs),2) if devs else 0})
+                except Exception as exc:
+                    report['balance_error_class'] = type(exc).__name__
+                try:
+                    with db.begin_nested():
+                        from app.services.extra_duty_verify import check_month
+                        check = check_month(db,'2026-11',rules=rules)
+                        report['independent_safety_check'] = {k:check[k] for k in (
+                            'ok','checked','checks','unposted_exempt','superadmin_exempt','superadmin_cross_level_count')}
+                        report['independent_safety_check']['violation_codes'] = dict(Counter(v['code'] for v in check['violations']))
+                except Exception as exc:
+                    report['safety_error_class'] = type(exc).__name__
+            try:
+                with db.begin_nested():
+                    report['recent_compute_jobs'] = []
+                    for status,engine_name,created,job in db.execute(select(RotaComputeJob.status,RotaComputeJob.engine,
+                        RotaComputeJob.created_at,RotaComputeJob.state).where(RotaComputeJob.month=='2026-11')
+                        .order_by(RotaComputeJob.created_at.desc()).limit(5)):
+                        intelligence = (job or {}).get('intelligence') or {}
+                        report['recent_compute_jobs'].append(dict(status=status,engine=engine_name,
+                            created_at=str(created),whole_month_optimizer=bool(intelligence),
+                            mode=intelligence.get('options',{}).get('mode')))
+                    report['recent_extra_balance_batches'] = []
+                    for status,created,summary in db.execute(select(ExtraDutyBatch.status,ExtraDutyBatch.created_at,
+                        ExtraDutyBatch.summary).where(ExtraDutyBatch.month=='2026-11')
+                        .order_by(ExtraDutyBatch.created_at.desc()).limit(8)):
+                        report['recent_extra_balance_batches'].append(dict(status=status,created_at=str(created),
+                            mode=(summary or {}).get('mode'),moves=(summary or {}).get('moves')))
+            except Exception as exc:
+                report['history_error_class'] = type(exc).__name__
+            report['status'] = 'read_only_snapshot_complete'
+            db.rollback()
+    except Exception as exc:
+        # Do not expose credential-bearing exception messages or tracebacks.
+        report['status'] = 'unavailable'
+        report['error_class'] = type(exc).__name__
+    finally:
+        if engine is not None:
+            engine.dispose()
+        report['audit_script_sha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        target.write_text(json.dumps(report,indent=2),encoding='utf-8')
+        print(json.dumps(report,indent=2))
+
+
+if __name__ == '__main__':
+    main()

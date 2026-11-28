@@ -1,0 +1,37 @@
+{
+  "recorded_at": "2026-11-27T04:37:07.216592+00:00",
+  "status": "full_terminal_report_performance_failure_under_investigation",
+  "full_collected": 2491,
+  "passed": 2424,
+  "postgres_only_skips": 66,
+  "failures": [
+    {
+      "at": "2026-11-27T04:27:38.218374+00:00",
+      "nodeid": "tests/test_rota_report_360.py::test_performance_300_slots_150_members",
+      "stage": "call",
+      "outcome": "failed",
+      "duration": 10.405430000042543,
+      "failure": "backend\\tests\\test_rota_report_360.py:588: in test_performance_300_slots_150_members\n    assert elapsed < 3.0, elapsed\nE   AssertionError: 5.513578499958385\nE   assert 5.513578499958385 < 3.0"
+    }
+  ],
+  "corrected_cases_passed": [
+    {
+      "at": "2026-11-27T03:57:26.953918+00:00",
+      "nodeid": "tests/test_month_full_objectives.py::test_full_objectives_keep_logical_targets_and_same_candidate_denominators",
+      "stage": "call",
+      "outcome": "passed",
+      "duration": 8.787551099958364
+    },
+    {
+      "at": "2026-11-27T04:24:12.540388+00:00",
+      "nodeid": "tests/test_rota_intelligence.py::test_whole_month_validated_reviewed_and_alternatives",
+      "stage": "call",
+      "outcome": "passed",
+      "duration": 1.7463129999814555
+    }
+  ],
+  "report_source_and_test_unchanged_from_prior_passing_revision18": true,
+  "root_cause": "unproven; unchanged assertion/stagewallCPUdiagnostic running",
+  "production_modified": false,
+  "full_goal_complete": false
+}

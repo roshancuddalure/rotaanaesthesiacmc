@@ -1,0 +1,2909 @@
+/**
+ * Typed client for the FastAPI backend (`/api/...`).
+ *
+ * - All JSON calls go through `request()`; multipart uploads and Excel downloads use `fetch`
+ *   directly so the browser can set the multipart boundary / read the blob.
+ * - Interfaces in this file mirror the backend response shapes by hand. When a backend response
+ *   changes, update the matching interface here (there is no code generation).
+ * - The bearer token lives in `localStorage` ("duty_rota_auth_token"); any script injected
+ *   into the page can read it, which is why HTML escaping in main.ts matters (handbook S5).
+ * - `VITE_API_BASE_URL` is empty for same-origin deployments (Railway, Vite dev proxy).
+ */
+import { notifyDataChange } from "../data-sync";
+import { formatApiError, networkRecoveryMessage } from "../api-errors";
+import { safeLocalStorage } from "../frontend-runtime";
+export { downloadPreviewIssues } from "../import-report";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "";
+
+export interface MemberProfile {
+  member: DepartmentMember; today: string; current_call_level: string | null; can_manage: boolean;
+  call_history: { id: string; from: string | null; to: string | null; effective_from: string;
+    reason: string; source: string; scheduled: boolean; recorded_at: string; author: string }[];
+  comments: { id: string; author: string; role: string; body: string; recorded_at: string }[];
+  postings: { unit: string | null; type: string; starts_on: string; ends_on: string | null }[];
+  leaves: { type: string; from: string; to: string; status: string }[];
+  statistics: { official_duties: number; hours24: number; weekend_duties: number };
+  imports: { file: string; sheet: string | null; row: number | null; recorded_at: string }[];
+}
+export function getMemberProfile(id: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/profile`);
+}
+export function addMemberCallChange(id: string, call_level: string | null, effective_from: string, reason: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/call-changes`, { method: "POST", body: JSON.stringify({ call_level, effective_from, reason }) });
+}
+export function addMemberComment(id: string, body: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/comments`, { method: "POST", body: JSON.stringify({ body }) });
+}
+
+export interface HistoryFairnessPolicy {
+  enabled: boolean; lookback_months: number; total_weight: number;
+  hours24_weight: number; weekend_weight: number; group_weight: number;
+}
+export interface PastDutyOptions {
+  month: string; sheet: string; layout: string; header_row: number;
+  mapping: Record<string, number>; resolutions: Record<string, Record<string, string>>;
+  confirm_corrections: boolean; confirm_warnings: boolean;
+}
+export interface PastDutyPreview {
+  preview_hash: string; month: string; sheet: string; counts: Record<string, number>;
+  warnings: { row: number | null; code: string; message: string }[];
+  rows: { key: string; row: number; column: number; raw: Record<string, string>;
+    normalized: Record<string, unknown>; action: string; errors: string[];
+    person_candidates: { id: string; name: string }[];
+    conflicts: { id: string; name: string; slot: string; source: string }[];
+    target_assignment: string | null;
+  }[];
+}
+export interface PastDutyStatus {
+  coverage: { month: string; assignments: number; members: number; days_with_records: number; latest_duty_date: string; coverage: string }[];
+  history: { id: string; filename: string; month: string; sheet: string; actor: string; at: string | null; counts: Record<string, number> }[];
+  policy: HistoryFairnessPolicy; today: string; duty_types: { key: string; label: string }[];
+}
+export function getPastDutyStatus(): Promise<PastDutyStatus> { return request("/api/v1/admin/past-duties/status"); }
+export function saveHistoryFairness(policy: HistoryFairnessPolicy, effective_from: string): Promise<unknown> {
+  return request("/api/v1/admin/past-duties/policy", { method: "PUT", body: JSON.stringify({ policy, effective_from }) });
+}
+export interface PastDutyHistoryDetail {
+  filename: string;
+  rows: { row: number; column: number; action: string; raw: Record<string, string>;
+    normalized: Record<string, unknown>; before: { name: string; status: string } | null; errors: string[] }[];
+}
+export function getPastDutyHistory(id: string): Promise<PastDutyHistoryDetail> {
+  return request(`/api/v1/admin/past-duties/history/${encodeURIComponent(id)}`);
+}
+export async function pastDutyUpload<T>(action: string, file: File, options: PastDutyOptions, hash = ""): Promise<T> {
+  assertSessionCanSubmit(`/api/v1/admin/past-duties/${action}`);
+  const generation = authGeneration;
+  const body = new FormData(); body.append("file", file); body.append("header_row", String(options.header_row));
+  body.append("options", JSON.stringify(options)); body.append("preview_hash", hash);
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/${action}`, {
+    method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
+  });
+  return readUploadResult<T>(response, `/api/v1/admin/past-duties/${action}`, generation);
+}
+export async function downloadPastDutyTemplate(): Promise<Blob> {
+  const generation = authGeneration;
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/template`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  return readDownloadBlob(response, generation, '/api/v1/admin/past-duties/template');
+}
+
+export interface MemberImportOptions {
+  sheet: string;
+  header_row: number;
+  mapping: Record<string, number>;
+  resolutions: Record<string, string>;
+  confirm_call_changes?: boolean;
+}
+
+export interface MemberWorkbookInspection {
+  sheets: { name: string; headers: string[]; mapping: Record<string, number> }[];
+  fields: string[];
+  header_row: number;
+}
+
+export interface MemberImportPreview {
+  preview_hash: string;
+  counts: Record<string, number>;
+  sheet: string;
+  rows: {
+    row: number;
+    raw: Record<string, string>;
+    normalized: Record<string, unknown>;
+    action: string;
+    target_id: string | null;
+    target_name: string | null;
+    changes: Record<string, unknown>;
+    errors: string[];
+    candidates: { id: string; name: string }[];
+  }[];
+}
+
+export async function memberWorkbookRequest<T>(
+  action: "inspect" | "preview" | "apply", file: File,
+  options: MemberImportOptions, previewHash = "",
+): Promise<T> {
+  assertSessionCanSubmit(`/api/v1/admin/members/import/${action}`);
+  const generation = authGeneration;
+  const body = new FormData();
+  body.append("file", file);
+  body.append("header_row", String(options.header_row));
+  body.append("options", JSON.stringify(options));
+  body.append("preview_hash", previewHash);
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/${action}`, {
+    method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
+  });
+  return readUploadResult<T>(response, `/api/v1/admin/members/import/${action}`, generation);
+}
+
+export async function downloadMemberImportTemplate(format: "csv" | "xlsx" = "xlsx"): Promise<Blob> {
+  const generation = authGeneration;
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/template?format=${format}`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  return readDownloadBlob(response, generation, '/api/v1/admin/members/import/template');
+}
+
+export interface MemberImportHistory {
+  id: string;
+  filename: string;
+  status: string;
+  completed_at: string | null;
+  actor: string;
+  counts: Record<string, number>;
+  sheet: string | null;
+  call_changes_confirmed: boolean;
+}
+
+export interface MemberImportHistoryDetail {
+  batch: MemberImportHistory;
+  rows: {
+    row: number; sheet: string; action: string;
+    raw: Record<string, string>; normalized: Record<string, unknown>;
+    changes: Record<string, unknown>; errors: string[]; member_id: string | null;
+  }[];
+}
+
+export function getMemberImportHistory(): Promise<MemberImportHistory[]> {
+  return request("/api/v1/admin/members/import/history");
+}
+
+export function getMemberImportHistoryDetail(id: string): Promise<MemberImportHistoryDetail> {
+  return request(`/api/v1/admin/members/import/history/${encodeURIComponent(id)}`);
+}
+
+export type WorkflowImportKind = "members" | "past" | "leave" | "units";
+export interface WorkflowImportHistory {
+  items: {id: string; filename: string; month: string | null; status: string; at: string | null; actor: string; counts: Record<string, number>}[];
+  offset: number; has_more: boolean;
+}
+export interface WorkflowImportRows {
+  filename: string; offset: number; has_more: boolean;
+  rows: {sheet: string | null; row: number | null; raw: unknown; normalized: unknown; outcome: unknown; record_id: string | null}[];
+}
+export function getWorkflowImportHistory(kind: WorkflowImportKind, month?: string, offset=0): Promise<WorkflowImportHistory> {
+  return request(`/api/v1/imports/${kind}/history?offset=${offset}${month ? `&month=${encodeURIComponent(month)}` : ""}`);
+}
+export function getWorkflowImportRows(kind: WorkflowImportKind, id: string, offset=0): Promise<WorkflowImportRows> {
+  return request(`/api/v1/imports/${kind}/history/${encodeURIComponent(id)}?offset=${offset}`);
+}
+export async function downloadRejectedImportRows(kind: WorkflowImportKind, id: string): Promise<void> {
+  const generation = authGeneration;
+  const response = await fetch(`${API_BASE_URL}/api/v1/imports/${kind}/history/${encodeURIComponent(id)}/rejected.csv`, {
+    headers: authToken ? {Authorization: `Bearer ${authToken}`} : {},
+  });
+  const blob = await readDownloadBlob(response, generation, `/api/v1/imports/${kind}/history/${encodeURIComponent(id)}/rejected.csv`);
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");link.href=url;link.download=`rejected_${kind}_${id}.csv`;
+  link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+let authToken = safeLocalStorage.getItem("duty_rota_auth_token") ?? "";
+let authGeneration = 0;
+let expiredGeneration = -1;
+const publicAuthenticationPath = (path: string) => /^\/api\/v1\/auth\/(sign-in|forgot-password|reset-password)(?:\?|$)/.test(path);
+
+function markSessionExpired(generation: number, path: string) {
+  if (!authToken || generation !== authGeneration || publicAuthenticationPath(path) || expiredGeneration === generation) return;
+  expiredGeneration = generation;
+  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') window.dispatchEvent(new Event('duty-rota:session-expired'));
+}
+
+function assertSessionCanSubmit(path: string) {
+  if (expiredGeneration === authGeneration && !publicAuthenticationPath(path))
+    throw new ApiRequestError('Sign in again before submitting another change. Your draft has not been submitted again.', 'http', 401);
+}
+
+/** Stop old-account responses from repainting a new session; never replay requests. */
+export function installSessionSynchronization(target: Window): () => void {
+  const changed = (event: StorageEvent) => {
+    if (event.key !== "duty_rota_auth_token" && event.key !== null) return;
+    // Ignore sessionStorage events; a storage-clear event applies only to localStorage.
+    try { if (event.storageArea && event.storageArea !== target.localStorage) return; }
+    catch { /* Blocked storage still permits a safe session reset. */ }
+    const next = event.key === null ? "" : event.newValue ?? "";
+    if (next === authToken) return;
+    authToken = next;
+    authGeneration++;
+    target.dispatchEvent(new Event("duty-rota:session-changed"));
+  };
+  target.addEventListener("storage", changed);
+  return () => target.removeEventListener("storage", changed);
+}
+
+if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+  installSessionSynchronization(window);
+}
+
+export function setAuthToken(token: string) {
+  expiredGeneration = -1;
+  if (authToken !== token) authGeneration++;
+  authToken = token;
+  safeLocalStorage.setItem("duty_rota_auth_token", token);
+}
+
+export function clearAuthToken() {
+  expiredGeneration = -1;
+  authGeneration++;
+  authToken = "";
+  safeLocalStorage.removeItem("duty_rota_auth_token");
+}
+
+/**
+ * JSON request helper: adds the bearer token, throws `Error` with the backend `detail`
+ * message (and `error.detail` for structured validation payloads).
+ * Headers are merged. Read requests have a generous bounded deadline; mutations retain
+ * their existing lifetime and are never retried. Caller cancellation stays an AbortError.
+ */
+export class ApiRequestError extends Error {
+  constructor(message: string, public kind: "http" | "network" | "timeout" | "invalid-response", public status?: number, public detail?: unknown) {
+    super(message);
+    this.name = "ApiRequestError";
+  }
+}
+
+export interface ApiRequestOptions extends RequestInit { readTimeoutMs?: number; }
+
+async function readDownloadBlob(response: Response, generation: number, path: string, spreadsheet = false): Promise<Blob> {
+  const checkSession = () => {
+    if (generation !== authGeneration) throw new DOMException('Session changed; download cancelled.', 'AbortError');
+  };
+  checkSession();
+  if (response.status === 401) markSessionExpired(generation, path);
+  if (!response.ok) throw await errorForSession(response, generation, true);
+  const blob = await response.blob();
+  checkSession();
+  if (!blob.size) throw new ApiRequestError("The server returned an empty download. No file was created. Try the download again when the service is available.", "invalid-response", response.status);
+  if (spreadsheet) {
+    // XLSX is a ZIP container. Reject proxy/login/error documents even if a
+    // successful response or filename describes them as a workbook. This is
+    // transport validation, not a parser or a claim that every ZIP is valid XLSX.
+    const type = blob.type.split(';', 1)[0].trim().toLowerCase();
+    const header = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
+    checkSession();
+    const allowedType = !type || [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/octet-stream', 'application/zip',
+    ].includes(type);
+    if (!allowedType || header.length !== 4 || header[0] !== 0x50 || header[1] !== 0x4b || header[2] !== 0x03 || header[3] !== 0x04) {
+      throw new ApiRequestError("The server did not return an Excel workbook. No file was created. Try the download again when the service is available.", "invalid-response", response.status);
+    }
+  }
+  return blob;
+}
+
+/** Multipart responses belong to the session that submitted them, including slow body decoding. */
+async function readUploadResult<T>(response: Response, path: string, generation: number, mutation = true): Promise<T> {
+  const checkSession = () => {
+    if (generation !== authGeneration) throw new ApiRequestError("Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.", "network");
+  };
+  checkSession();
+  if (response.status === 401) markSessionExpired(generation, path);
+  if (!response.ok) throw await errorForSession(response, generation, !mutation);
+  let result: T;
+  if (mutation) result = await readMutationResult<T>(response, path, "POST");
+  else {
+    try { result = await response.json() as T; }
+    catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      throw new ApiRequestError('The server returned an unreadable preview. Prepare the preview again; nothing has been applied by this preview request.', 'invalid-response', response.status);
+    }
+  }
+  checkSession();
+  return result;
+}
+
+export async function request<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
+  const generation = authGeneration;
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+  if (authToken) headers.set("Authorization", `Bearer ${authToken}`);
+  const method = (options.method ?? "GET").toUpperCase();
+  const isRead = ["GET", "HEAD"].includes(method);
+  if (!isRead) assertSessionCanSubmit(path);
+  // Existing large analytics/report reads keep their original lifetime.
+  const defaultReadTimeout = /\/analysis\/|\/diagnostics(?:\/|\?|$)|statistics(?:\?|$)/.test(path) ? 0 : 120000;
+  const { readTimeoutMs = defaultReadTimeout, ...fetchOptions } = options;
+  const controller = new AbortController();
+  let timedOut = false;
+  const cancel = () => controller.abort(options.signal?.reason);
+  if (options.signal?.aborted) cancel();
+  else options.signal?.addEventListener("abort", cancel, { once: true });
+  const timer = isRead && Number.isFinite(readTimeoutMs) && readTimeoutMs > 0
+    ? setTimeout(() => { timedOut = true; controller.abort(); }, readTimeoutMs) : undefined;
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      ...fetchOptions,
+      headers,
+      signal: controller.signal,
+    });
+    if (generation !== authGeneration) {
+      if (isRead) throw new DOMException("Session changed", "AbortError");
+      throw new ApiRequestError("Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.", "network");
+    }
+    if (response.status === 401) markSessionExpired(generation, path);
+    if (!response.ok) throw await errorForSession(response, generation, isRead);
+    const result = await readMutationResult<T>(response, path, method);
+    // Account changes can also happen while decoding a slow response body.
+    if (generation !== authGeneration) {
+      if (isRead) throw new DOMException("Session changed", "AbortError");
+      throw new ApiRequestError("Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.", "network");
+    }
+    return result;
+  } catch (error) {
+    if (options.signal?.aborted) throw new DOMException("Request cancelled", "AbortError");
+    if (timedOut) throw new ApiRequestError("This request took too long. Check your connection and retry.", "timeout");
+    if (error instanceof ApiRequestError) throw error;
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    const recovery = networkRecoveryMessage(Boolean(import.meta.env.DEV));
+    throw new ApiRequestError(isRead ? recovery : `${recovery} The save outcome is not confirmed. Check the current record before submitting again.`, "network");
+  } finally {
+    clearTimeout(timer);
+    options.signal?.removeEventListener("abort", cancel);
+  }
+}
+
+async function readMutationResult<T>(response: Response, path: string, method: string): Promise<T> {
+  if ([204, 205].includes(response.status) || method.toUpperCase() === "HEAD") {
+    notifyDataChange(path, method);
+    return undefined as T;
+  }
+  let result: T;
+  try { result = await response.json() as T; }
+  catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    const mutation = !["GET", "HEAD"].includes(method.toUpperCase());
+    if (mutation) notifyDataChange(path, method);
+    throw new ApiRequestError(mutation
+      ? "The server replied, but the save result could not be read. Check the current record before submitting again."
+      : "The server returned an unreadable response. Retry; if this continues, contact your department administrator.", "invalid-response", response.status);
+  }
+  if (!(result && typeof result === "object" && "replayed" in result && result.replayed)) notifyDataChange(path, method);
+  return result;
+}
+
+/** Shared structured status handling for JSON, upload and download responses. */
+async function errorFromResponse(response: Response): Promise<Error> {
+  let message = `API request failed: ${response.status}`;
+  let detail: unknown = null;
+  if (response.status >= 500) {
+    message = "The server could not complete this request. Retry, or contact your department administrator if it continues.";
+  }
+  try {
+    const payload = await response.json();
+    detail = payload.detail;
+    message = formatApiError(detail, message);
+  } catch {
+    // Keep the status-based fallback when the server does not return JSON.
+  }
+  return new ApiRequestError(message, "http", response.status, detail);
+}
+
+async function errorForSession(response: Response, generation: number, read: boolean): Promise<Error> {
+  const error = await errorFromResponse(response);
+  if (generation !== authGeneration) {
+    if (read) throw new DOMException('Session changed', 'AbortError');
+    throw new ApiRequestError('Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.', 'network');
+  }
+  return error;
+}
+
+/** Browser-owned multipart boundaries, shared auth context and no automatic retry. */
+export async function requestMultipartJSON<T>(path: string, body: FormData): Promise<T> {
+  assertSessionCanSubmit(path);
+  const generation = authGeneration;
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {method:'POST', headers:{Authorization:`Bearer ${authToken}`}, body});
+    return await readUploadResult<T>(response, path, generation, false);
+  } catch (error) {
+    if (error instanceof ApiRequestError || (error instanceof DOMException && error.name === 'AbortError')) throw error;
+    throw new ApiRequestError(networkRecoveryMessage(Boolean(import.meta.env.DEV)), 'network');
+  }
+}
+
+/** Authenticated file bytes remain unchanged; only session lifetime and refusal are handled. */
+export async function requestDownload(path: string, signal?: AbortSignal): Promise<{blob: Blob; filename: string | null}> {
+  const generation = authGeneration;
+  const response = await fetch(`${API_BASE_URL}${path}`, {headers:authToken ? {Authorization:`Bearer ${authToken}`} : {}, signal});
+  const blob = await readDownloadBlob(response, generation, path);
+  return {blob, filename: response.headers.get('Content-Disposition')?.match(/filename="?([^";]+)"?/i)?.[1] ?? null};
+}
+
+export function healthCheck(): Promise<{ status: string }> {
+  return request<{ status: string }>("/api/health");
+}
+
+export function getMetadata(): Promise<unknown> {
+  return request<unknown>("/api/v1/metadata");
+}
+
+export type MappingType = "duty_label" | "unit_label" | "posting_label";
+
+export interface AdminMapping {
+  id: string;
+  mapping_type: MappingType;
+  source_label: string;
+  target_key: string | null;
+  target_label: string | null;
+  status: string;
+  source: string;
+  notes: string | null;
+}
+
+export interface AdminMappingPayload {
+  mapping_type: MappingType;
+  source_label: string;
+  target_key?: string | null;
+  target_label?: string | null;
+  status?: string;
+  notes?: string | null;
+}
+
+export interface MappingOptions {
+  duty_types: Array<{ key: string; label: string }>;
+  mapping_types: MappingType[];
+}
+
+export interface MappingScanResult {
+  created: number;
+  existing: number;
+  total: number;
+}
+
+export interface HistoricalImportStatus {
+  people: number;
+  units: number;
+  duty_slots: number;
+  duty_assignments: number;
+  postings: number;
+  import_batches: number;
+  import_warnings: number;
+}
+
+export interface HistoricalImportSummary {
+  rota_files: number;
+  unitwise_files: number;
+  periods_created: number;
+  people_created: number;
+  aliases_created: number;
+  units_created: number;
+  duty_slots_created: number;
+  duty_assignments_created: number;
+  postings_created: number;
+  source_records_created: number;
+  warnings_created: number;
+  skipped_assignments: number;
+}
+
+export interface HistoricalAnalysisImportResult {
+  dry_run: {
+    matched_rota_assignments: number;
+    skipped_rota_assignments: number;
+    matched_main_24hr_assignments: number;
+    matched_weekend_main_24hr_assignments: number;
+  };
+  import: {
+    duty_rows_read: number;
+    posting_rows_read: number;
+    people_created: number;
+    periods_created: number;
+    units_created: number;
+    duty_slots_created: number;
+    duty_assignments_created: number;
+    postings_created: number;
+    existing_duty_assignments: number;
+    existing_postings: number;
+    skipped_unknown_people: number;
+    skipped_unmapped_duties: number;
+    source: string;
+  };
+}
+
+export interface AnalysisPerson {
+  person_id: string;
+  name: string;
+  total_24hr: number;
+  total_weekend_24hr: number;
+  total_weekday_24hr: number;
+  main_24hr: number;
+  cb_24hr: number;
+  rc_24hr: number;
+  schell: number;
+  floating: number;
+  fifth_call: number;
+  fifth_call_weekend: number;
+  caesar_b: number;
+  cart: number;
+  caesar_a: number;
+  pac: number;
+  shift: number;
+  main_shift: number;
+  rc_shift: number;
+  pb_shift: number;
+  rc12hr: number;
+  cb_co12hr: number;
+  chad: number;
+  ruhsa: number;
+  neuro_dept: number;
+  day_breakdown: Record<string, number>;
+  monthly_24hr: Record<string, number>;
+  fifth_call_monthly: Record<string, number>;
+  fifth_call_days: Record<string, number>;
+  pain_months: string[];
+  sicu_months: string[];
+  drp_months: string[];
+  neuro_icu_months: string[];
+  call_levels: Record<string, string>;
+  units: Record<string, string>;
+  promotions: Array<{ month: string; from: string; to: string }>;
+  months_active: string[];
+}
+
+export interface AnalysisDashboard {
+  summary: {
+    personnel: number;
+    active_personnel: number;
+    total_records: number;
+    total_24hr: number;
+    total_weekend_24hr: number;
+    weekend_percent: number;
+    months: number;
+    avg_24hr_per_active_person: number;
+  };
+  months: string[];
+  month_labels: Record<string, string>;
+  month_stats: Record<
+    string,
+    {
+      total: number;
+      total_24hr: number;
+      weekend_24hr: number;
+      persons: number;
+      duty_type_counts: Record<string, number>;
+    }
+  >;
+  days: string[];
+  duty_category_totals: Record<string, number>;
+  people: AnalysisPerson[];
+}
+
+export interface AnalysisPreflight {
+  safe_to_publish: boolean;
+  status: "ready" | "needs_review";
+  issues: string[];
+  included_periods: string[];
+  counts: {
+    analysis_periods: number;
+    invalid_members: number;
+    duplicate_groups: number;
+    unresolved_duty_mappings: number;
+    unknown_duty_types: number;
+    empty_periods: number;
+  };
+  examples: {
+    invalid_members: string[];
+    duplicate_groups: Array<{ key: string; names: string[] }>;
+    unresolved_duty_mappings: string[];
+    unknown_duty_types: string[];
+    empty_periods: string[];
+  };
+}
+
+export interface AnalysisManualReview {
+  summary: {
+    skipped_names: number;
+    unique_skipped_names: number;
+    parser_warnings: number;
+    unmapped_duty_warnings: number;
+    status_counts: Record<string, number>;
+    warning_counts: Record<string, number>;
+    current_main_24hr: number;
+    reference_main_24hr: number;
+    main_24hr_gap: number;
+    current_weekend_24hr: number;
+    reference_weekend_24hr: number;
+    weekend_24hr_gap: number;
+  };
+  files: {
+    skipped_names: string;
+    parser_warnings: string;
+  };
+  top_skipped_names: Array<{
+    cleaned_person_name: string;
+    status: string;
+    reason: string;
+    count: number;
+  }>;
+  sample_rows: Array<Record<string, string>>;
+  unmapped_duty_rows: Array<Record<string, string>>;
+  reference_comparison: Array<Record<string, string>>;
+}
+
+export interface DepartmentMember {
+  call_level_changes?: Array<{id?:string; call_level:string; effective_from:string; notes?:string | null}>;
+  effective_call_level?: string | null;
+  revision: string;
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+  archived_at: string | null;
+  aliases: Array<{ id: string; alias: string; source: string }>;
+  designations: Array<{
+    id: string;
+    designation: string;
+    effective_from: string;
+    effective_to: string | null;
+    source: string;
+    notes: string | null;
+  }>;
+}
+
+export interface LeavePerson {
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+}
+
+export interface LeaveRequest {
+  id: string;
+  person: LeavePerson;
+  leave_type: string;
+  leave_slot: string;
+  starts_on: string;
+  ends_on: string;
+  status: string;
+  source: string;
+  raw_person_name: string | null;
+  notes: string | null;
+  days: number;
+}
+
+export interface LeaveSummary {
+  interval_coverage?: unknown;
+  attribution_warnings?: unknown;
+  total_leave_days_basis?: string;
+  month: string;
+  starts_on: string;
+  ends_on: string;
+  total_requests: number;
+  blocking_requests: number;
+  people_on_leave: number;
+  total_leave_days: number;
+  busiest_day: { date: string; count: number } | null;
+  status_counts: Record<string, number>;
+  type_counts: Record<string, number>;
+  slot_counts: Record<string, number>;
+  unit_counts: Record<string, number>;
+  call_level_counts: Record<string, number>;
+}
+
+export interface LeaveDayEntry {
+  leave_id: string;
+  person_id: string;
+  person_name: string;
+  leave_type: string;
+  leave_slot: string;
+  status: string;
+  unit: string | null;
+  posting_type: string | null;
+  call_level: string;
+}
+
+export interface LeaveCalendar {
+  month: string;
+  summary: LeaveSummary;
+  days: Record<string, LeaveDayEntry[]>;
+}
+
+export interface LeavePressure {
+  month: string;
+  starts_on: string;
+  ends_on: string;
+  days: Array<{
+    date: string;
+    total_people: number;
+    blocking_people: number;
+    unit_counts: Record<string, number>;
+    call_level_counts: Record<string, number>;
+    entries: LeaveDayEntry[];
+  }>;
+  unit_totals: Record<string, number>;
+  call_level_totals: Record<string, number>;
+  blockers: Array<Record<string, unknown>>;
+}
+
+export interface LeaveImportPreview {
+  affected_duties?: unknown;
+  ot_impact?: unknown;
+  preview_hash: string;
+  filename: string;
+  month: string;
+  total_rows: number;
+  matched_rows: number;
+  unresolved_rows: number;
+  invalid_rows: number;
+  sheets: string[];
+  source_formats: string[];
+  parser_warnings: string[];
+  rows: Array<{
+    row_number: number;
+    sheet_name?: string;
+    source_format?: string;
+    confidence?: string;
+    match_confidence?: string;
+    raw_person_name: string;
+    cleaned_person_name?: string;
+    person_id: string | null;
+    person_name: string | null;
+    suggested_person_id?: string | null;
+    suggested_person_name?: string | null;
+    match_method?: string | null;
+    starts_on: string | null;
+    ends_on: string | null;
+    leave_type: string;
+    leave_slot: string;
+    status: string;
+    notes: string;
+    preview_status: string;
+    issues: string[];
+  }>;
+}
+
+export interface LeaveImportApplyResult {
+  batch_id?: string;
+  replayed?: boolean;
+  filename: string;
+  month: string;
+  created_rows: number;
+  skipped_rows: number;
+  skipped_preview_rows: LeaveImportPreview["rows"];
+  preview: LeaveImportPreview;
+}
+
+export interface UnitAssignmentImportPreview {
+  preview_hash: string;
+  filename: string;
+  month: string;
+  total_rows: number;
+  matched_rows: number;
+  auto_resolved_rows: number;
+  auto_assignable_rows: number;
+  needs_review_rows: number;
+  review_suggested_rows: number;
+  unresolved_rows: number;
+  invalid_rows: number;
+  sheets: string[];
+  source_formats: string[];
+  parser_warnings: string[];
+  rows: Array<{
+    row_key: string;
+    row_number: number;
+    sheet_name?: string;
+    column_label?: string;
+    raw_person_name: string;
+    cleaned_person_name?: string;
+    person_id: string | null;
+    person_name: string | null;
+    suggested_person_id?: string | null;
+    suggested_person_name?: string | null;
+    match_method?: string | null;
+    match_confidence?: string;
+    match_score?: number | null;
+    raw_unit_label: string;
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_match_method?: string | null;
+    unit_match_score?: number | null;
+    raw_posting_label: string;
+    posting_type: string;
+    special_posting?: boolean;
+    skip?: boolean;
+    section_posting_label?: string | null;
+    child_posting_label?: string | null;
+    parser_rule?: string | null;
+    parser_confidence?: string | null;
+    source_context?: string | null;
+    preview_status: string;
+    auto_assignable?: boolean;
+    row_action?: "auto_assign" | "needs_review";
+    auto_resolved?: boolean;
+    auto_resolved_fields?: string[];
+    review_suggested?: boolean;
+    resolution_notes?: string[];
+    auto_assign_blockers?: string[];
+    auto_decision_reason?: string;
+    issues: string[];
+  }>;
+}
+
+export interface UnitImportResolution {
+  person_id?: string;
+  unit_id?: string;
+  posting_type?: string;
+  skip?: boolean;
+}
+
+export interface UnitAssignmentImportApplyResult {
+  batch_id?: string;
+  replayed?: boolean;
+  filename: string;
+  month: string;
+  created_rows: number;
+  auto_assigned_rows: number;
+  learned_mappings: number;
+  deleted_existing_rows: number;
+  skipped_rows: number;
+  skipped_preview_rows: UnitAssignmentImportPreview["rows"];
+  preview: UnitAssignmentImportPreview;
+}
+
+export interface LeaveRequestPayload {
+  person_id: string;
+  leave_type: string;
+  leave_slot: string;
+  starts_on: string;
+  ends_on: string;
+  status: string;
+  notes?: string | null;
+}
+
+export interface UnitRead {
+  id: string;
+  code: string;
+  name: string;
+  campus: string | null;
+  minimum_free_people: number;
+  active_status: string;
+  notes: string | null;
+}
+
+export interface UnitPerson {
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+}
+
+export interface UnitAssignment {
+  id: string;
+  person: UnitPerson;
+  unit: UnitRead | null;
+  posting_type: string;
+  effective_call_level?: string | null;
+  starts_on: string;
+  ends_on: string | null;
+  source: string;
+  notes: string | null;
+}
+
+export interface UnitSummary {
+  unresolved_leave_person_dates?: number;
+  leave_days_basis?: string;
+  unit_id: string;
+  assigned_members: number;
+  people_with_leave: number;
+  leave_days: number;
+  leave_by_call_level: Record<string, number>;
+}
+
+export interface UnitCallMinimum {
+  unit_id: string;
+  call_level: string;
+  assigned_members: number;
+  minimum_free_people: number;
+  max_allowed: number;
+}
+
+export interface UnitValidationIssue {
+  severity: "error" | "warning" | "info";
+  code: string;
+  message: string;
+  person_id: string | null;
+  unit_id: string | null;
+  posting_id: string | null;
+}
+
+export interface UnitManagementMonth {
+  month: string;
+  starts_on: string;
+  ends_on: string;
+  units: UnitRead[];
+  assignments: UnitAssignment[];
+  unit_summaries: UnitSummary[];
+  unit_call_minimums: UnitCallMinimum[];
+  validation_issues: UnitValidationIssue[];
+}
+
+export interface UnitAssignmentPayload {
+  person_id: string;
+  unit_id?: string | null;
+  posting_type: string;
+  starts_on: string;
+  ends_on?: string | null;
+  notes?: string | null;
+}
+
+export interface UnitSettingsPayload {
+  minimum_free_people: number;
+  call_minimums?: Array<{ call_level: string; minimum_free_people: number }>;
+}
+
+export interface MemberAudit {
+  total_members: number;
+  active_members: number;
+  inactive_members: number;
+  aliases: number;
+  designations: number;
+  invalid_members: number;
+  duplicate_groups: number;
+  missing_designations: number;
+  missing_call_levels: number;
+  positions: Record<string, number>;
+  call_levels: Record<string, number>;
+  sources: Record<string, number>;
+  status: "clean" | "needs_review";
+}
+
+export interface DuplicateCandidate {
+  normalized_name: string;
+  people: DepartmentMember[];
+}
+
+export interface InvalidMembersResult {
+  count: number;
+  people: DepartmentMember[];
+}
+
+/** Admin member tools preview first; applying needs the token of the reviewed preview. */
+export interface ReviewedPreview {
+  mode?: "preview" | "applied";
+  preview_token?: string;
+}
+
+export interface PreviewRow {
+  raw_name?: string;
+  roster_name?: string;
+  cleaned_name?: string;
+  current_name?: string | null;
+  canonical_name?: string | null;
+  current_call_level?: string | null;
+  new_call_level?: string;
+  status?: string;
+  action?: string;
+  reason?: string;
+  candidates?: { name: string; status?: string }[];
+  merge_from?: { name?: string; canonical_name?: string }[];
+  colliding_with?: { name?: string; canonical_name?: string }[];
+}
+
+export interface CleanupMembersResult extends ReviewedPreview {
+  normalized: number;
+  deleted: number;
+  renames?: PreviewRow[];
+  collisions?: PreviewRow[];
+  to_delete?: PreviewRow[];
+}
+
+export interface RosterReconciliationResult extends ReviewedPreview {
+  needs_review?: number;
+  rows?: PreviewRow[];
+  roster_entries: number;
+  matched_people: number;
+  created_people: number;
+  renamed_people: number;
+  merged_people: number;
+  aliases_created: number;
+  designations_created: number;
+  unmatched_database_people: number;
+  examples: string[];
+}
+
+export interface AutoMergeDuplicatesResult extends ReviewedPreview {
+  merged_groups: number;
+  merged_people: number;
+  remaining_groups: number;
+}
+
+export interface CallLevelPrefillResult extends ReviewedPreview {
+  changes?: number;
+  needs_review?: number;
+  rows?: PreviewRow[];
+  matched: number;
+  unmatched: number;
+  cleared: number;
+  unmatched_names: string[];
+  examples: string[];
+}
+
+export interface UserAccount {
+  permissions?: string[];
+  id: string;
+  username: string;
+  display_name: string;
+  email: string | null;
+  role: "rota_board_member" | "computer_admin" | "superadmin";
+  role_label: string;
+  active_status: string;
+}
+
+export interface SignInResponse {
+  token: string;
+  user: UserAccount;
+}
+
+export interface DiagnosticsSummary {
+  generated_at: string;
+  database_counts: Record<string, number>;
+  mapping_status: Record<string, number>;
+  import_warnings: Record<string, number>;
+  rota_period_status: Record<string, number>;
+  invalid_member_names: number;
+  auth_accounts_by_role: Record<string, number>;
+  invalid_name_rules: string[];
+}
+
+export interface DutyRule {
+  key: string;
+  label: string;
+  group: string;
+  campus: string | null;
+  duration_hours: number;
+  start_time: string;
+  end_time: string;
+  is_24hr: boolean;
+  counts_in_main_24hr: boolean;
+  is_mandatory: boolean;
+  is_adjustable: boolean;
+  blocks_elective_same_day: boolean;
+  blocks_elective_next_day: boolean;
+  active: boolean;
+  allowed_call_levels: string[];
+  allowed_cluster_keys: string[];
+  excluded_cluster_keys: string[];
+  allowed_designations: string[];
+  allowed_units: string[];
+  excluded_units: string[];
+}
+
+export interface CallClusterMember {
+  id: string;
+  person_id: string;
+  canonical_name: string;
+  call_level: string | null;
+  effective_from: string;
+  effective_to: string | null;
+  source: string;
+  notes: string | null;
+}
+
+export interface CallCluster {
+  id: string;
+  key: string;
+  name: string;
+  call_level: string;
+  description: string | null;
+  active: boolean;
+  member_count: number;
+  members?: CallClusterMember[];
+}
+
+/** A unit as the rules endpoints list it, for "Only these units" / "Never these units". */
+export interface RotaRuleUnit { id: string; code: string; name: string; campus: string | null; active: boolean }
+
+export interface RotaPhaseOneRules {
+  /** Hash of the saved rules; sent back as `base_revision` so a stale save is refused (409). */
+  revision?: string;
+  /** Eligibility groups with today's active member counts (read-only; not part of the save payload). */
+  groups?: RotaRuleGroup[];
+  /** Every registered unit, active first (read-only; not part of the save payload). */
+  units?: RotaRuleUnit[];
+  rule_version: {
+    id: string;
+    name: string;
+    description: string | null;
+    effective_from: string;
+    effective_to: string | null;
+    is_active: boolean;
+    created_at: string;
+  };
+  duty_rules: DutyRule[];
+  duty_count_limits: {
+    max_24hr_per_month: number | null;
+    max_weekend_24hr_per_month: number | null;
+    max_same_group_per_month: number | null;
+    max_same_campus_per_month: number | null;
+  };
+  rest_rules: {
+    minimum_gap_after_24hr_hours: number;
+    post_24hr_blocks_next_day_elective: boolean;
+  };
+  unit_staffing_rules: {
+    minimum_available_count: number;
+    warning_unavailable_percent: number;
+    hard_block_unavailable_percent: number;
+    small_unit_uses_absolute_minimum: boolean;
+  };
+  /** Limit section (docs/limits_callevel_fairness_contract.md §3); changed only through the Limits page. */
+  fairness_rules?: { max_gap_within_call_level: number; target_mode: string };
+  /** Limit section; changed only through the Limits page. */
+  extra_duty_rules?: { justice_lookback_months: number };
+  notes: string | null;
+}
+
+export interface RotaSetupUnitReadiness {
+  unit_id: string;
+  unit_name: string;
+  unit_code: string;
+  campus: string | null;
+  scope_status: "included" | "excluded" | "unselected";
+  readiness: "ready" | "needs_review";
+  assigned_members: number;
+  call_level_counts: Record<string, number>;
+  people_with_leave: number;
+  leave_days: number;
+  warnings: string[];
+}
+
+export interface RotaSetupMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    include_excluded_units_in_safety: boolean;
+    is_locked: boolean;
+    lock_reason: string | null;
+    units: Array<{ unit_id: string; status: "included" | "excluded"; notes: string | null }>;
+  };
+  unit_readiness: RotaSetupUnitReadiness[];
+}
+
+export interface RotaTemplateMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    is_locked: boolean;
+    included_units: Array<{ id: string; code: string; name: string; campus: string | null }>;
+  };
+  rule_version: {
+    id: string;
+    name: string;
+  };
+  duty_options: Array<{
+    key: string;
+    label: string;
+    group: string;
+    is_mandatory: boolean;
+    is_adjustable: boolean;
+    active: boolean;
+  }>;
+  summary: {
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    forced_review_slots: number;
+    status_counts: Record<string, number>;
+  };
+  latest_run: null | {
+    id: string;
+    status: string;
+    included_units: number;
+    created_slots: number;
+    needs_review_slots: number;
+    skipped_slots: number;
+    blocked_slots: number;
+    summary: Record<string, unknown>;
+    created_at: string;
+    events: Array<{
+      id: string;
+      unit_id: string | null;
+      unit_name: string | null;
+      unit_code: string | null;
+      duty_date: string | null;
+      duty_type: string | null;
+      action: string;
+      severity: string;
+      reason: string;
+      details: Record<string, unknown>;
+      created_at: string;
+    }>;
+  };
+  slots: Array<{
+    id: string;
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_code: string | null;
+    unit_assignment_label: string | null;
+    unit_cluster_suffix: string | null;
+    duty_date: string;
+    duty_type: string;
+    call_level: string | null;
+    slot_label: string;
+    starts_at: string;
+    ends_at: string;
+    is_24hr: boolean;
+    max_assignees: number;
+    source: string;
+    template_status: string;
+    is_forced_allocation: boolean;
+    template_reason: string | null;
+    assignments: RotaSlotAssignment[];
+    notes: string | null;
+  }>;
+}
+
+export interface RotaTemplateAllocationStatistics {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  summary: {
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    forced_review_slots: number;
+    unresolved_slots: number;
+    included_units: number;
+    units_used: number;
+    blocked_or_skipped_events: number;
+  };
+  duty_keys: Array<{ key: string; label: string }>;
+  duty_groups: Array<{ key: string; label: string }>;
+  group_call_buckets: Array<{ key: string; group: string; call_level: string; label: string }>;
+  unit_tallies: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    unit_code: string | null;
+    campus: string | null;
+    is_unresolved: boolean;
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    forced_review_slots: number;
+    unresolved_slots: number;
+    weekday_slots: number;
+    saturday_slots: number;
+    sunday_slots: number;
+    weekend_slots: number;
+    twenty_four_hour_slots: number;
+    non_24hr_slots: number;
+  }>;
+  unit_duty_matrix: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  unit_group_matrix: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  unit_group_call_matrix: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  unit_target_tallies: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    allocation_fairness_policy: string;
+    active_people: number;
+    target_weight: number;
+    target_slots: number;
+    actual_slots: number;
+    difference: number;
+  }>;
+  unit_generation_diagnostics: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    active_people: number;
+    active_call_counts: Record<string, number>;
+    created_events: number;
+    forced_events: number;
+    blocked_events: number;
+    skipped_warning_events: number;
+    skipped_info_events: number;
+    blocked_by_group: Record<string, number>;
+    skipped_by_group: Record<string, number>;
+  }>;
+  date_distribution: Array<{
+    date: string;
+    day_name: string;
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    forced_review_slots: number;
+    unresolved_slots: number;
+    unit_counts: Record<string, number>;
+  }>;
+  call_level_distribution: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  blocked_or_skipped_events: Array<{
+    id: string;
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_code: string | null;
+    duty_date: string | null;
+    duty_type: string | null;
+    action: string;
+    severity: string;
+    reason: string;
+    details: Record<string, unknown>;
+    created_at: string;
+  }>;
+}
+
+export interface RotaSlotAssignment {
+  id: string;
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  status: string;
+  source: string;
+  override_reason: string | null;
+  created_at: string;
+}
+
+export interface RotaSafetyPerson {
+  person_id: string;
+  person_name: string;
+  call_level: string;
+  posting_type: string;
+  blockers?: Array<Record<string, unknown>>;
+}
+
+export interface RotaSafetySlot {
+  slot_id: string;
+  unit_id: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  duty_date: string;
+  duty_type: string;
+  slot_label: string;
+  required_call_levels: string[];
+  safety_status: "safe" | "needs_review" | "hard_blocked" | string;
+  reasons: string[];
+  total_unit_members: number;
+  eligible_members: number;
+  available_members: number;
+  hard_blocked_members: number;
+  warning_members: number;
+  available_people: RotaSafetyPerson[];
+  hard_blocked_people: RotaSafetyPerson[];
+  warning_people: RotaSafetyPerson[];
+}
+
+export interface RotaSafetyMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    is_locked: boolean;
+  };
+  summary: {
+    total_slots: number;
+    safe_slots: number;
+    needs_review_slots: number;
+    hard_blocked_slots: number;
+    status_counts: Record<string, number>;
+  };
+  slots: RotaSafetySlot[];
+  unit_day_safety: Array<{
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_code: string | null;
+    date: string;
+    safety_status: "safe" | "needs_review" | "hard_blocked" | string;
+    slots: number;
+    safe_slots: number;
+    needs_review_slots: number;
+    hard_blocked_slots: number;
+    minimum_available_members: number;
+  }>;
+}
+
+export interface RotaTemplateGeneratePayload {
+  duty_keys: string[] | null;
+  starts_on?: string | null;
+  ends_on?: string | null;
+  include_weekdays: boolean;
+  include_weekends: boolean;
+  replace_existing: boolean;
+  allocation_fairness_policy: "equal_unit" | "equal_people" | "hybrid";
+}
+
+export interface RotaTemplateClearResult {
+  month: string;
+  cleared_slots: number;
+  cleared_assignments: number;
+  cleared_runs: number;
+  cleared_events: number;
+}
+
+export interface RotaManualAssignmentPayload {
+  person_id: string;
+  replace_existing: boolean;
+  override_reason?: string | null;
+}
+
+export interface RotaManualAssignmentResult {
+  status: string;
+  assignment: RotaSlotAssignment | null;
+  validation: {
+    status: string;
+    issues: Array<{ severity: string; code: string; message: string }>;
+    requires_override: boolean;
+    slot_safety?: RotaSafetySlot;
+  } | null;
+  slot_safety: RotaSafetySlot | null;
+}
+
+export interface RotaCandidate {
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  posting_type: string | null;
+  candidate_status: "eligible" | "needs_review" | "blocked" | string;
+  rank_score: number;
+  score_parts: Record<string, number>;
+  requires_override: boolean;
+  validation_status: string;
+  validation_issues: Array<{ severity: string; code: string; message: string }>;
+  counts: {
+    total_assignments: number;
+    target_is_weekend?: number;
+    same_day_type?: number;
+    weekday_assignments?: number;
+    weekend_assignments?: number;
+    total_24hr: number;
+    weekend_24hr: number;
+    same_group: number;
+    same_campus: number;
+  };
+  rest_gap_hours: number | null;
+  reasons: string[];
+}
+
+export interface RotaCandidateSlot {
+  slot_id: string;
+  duty_date: string;
+  duty_type: string;
+  unit_id: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  safety_status: string;
+  candidates: RotaCandidate[];
+}
+
+export interface RotaCandidateMonth {
+  month: string;
+  summary: {
+    slots_checked: number;
+    slots_with_candidates: number;
+    eligible_candidates: number;
+    needs_review_candidates: number;
+    blocked_candidates: number;
+  };
+  slots: RotaCandidateSlot[];
+}
+
+export interface RotaAutoFillEvent {
+  id: string;
+  slot_id: string | null;
+  assignment_id: string | null;
+  person_id: string | null;
+  person_name: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  duty_date: string | null;
+  duty_type: string | null;
+  action: string;
+  severity: string;
+  reason: string;
+  details: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface RotaAutoFillRun {
+  id: string;
+  status: string;
+  total_slots: number;
+  assigned_slots: number;
+  skipped_slots: number;
+  review_slots: number;
+  blocked_slots: number;
+  summary: Record<string, unknown>;
+  created_at: string;
+  events: RotaAutoFillEvent[];
+}
+
+export interface RotaAutoFillMonth {
+  month: string;
+  latest_run: RotaAutoFillRun | null;
+}
+
+export interface RotaReviewSlot {
+  id: string;
+  unit_id: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  duty_date: string;
+  duty_type: string;
+  slot_label: string;
+  call_level: string | null;
+  template_status: string;
+  template_reason: string | null;
+}
+
+export interface RotaReviewIssue {
+  severity: string;
+  code: string;
+  message: string;
+  accepted?: boolean;
+  decision?: {
+    id: string;
+    issue_code: string;
+    decision_type: string;
+    note: string;
+    decided_by: string | null;
+    created_at: string;
+    updated_at: string;
+  } | null;
+}
+
+export interface RotaReviewItem {
+  slot: RotaReviewSlot;
+  severity: string;
+  issues: RotaReviewIssue[];
+  safety: RotaSafetySlot | null;
+  assignments: RotaSlotAssignment[];
+  candidates: RotaCandidate[];
+  recommended_action: string;
+  accepted?: boolean;
+}
+
+export interface RotaPersonWorkload {
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  total_assignments: number;
+  total_24hr: number;
+  weekday_assignments?: number;
+  weekend_assignments?: number;
+  weekend_24hr: number;
+  override_assignments: number;
+  group_counts?: Record<string, number>;
+  assignments: Array<{
+    assignment_id: string;
+    slot_id: string;
+    duty_date: string;
+    duty_type: string;
+    unit_name: string | null;
+    override_reason: string | null;
+  }>;
+}
+
+export interface RotaCallLevelFairness {
+  call_level: string;
+  people: number;
+  total_assignments: number;
+  average_assignments: number;
+  total_24hr: number;
+  weekend_24hr: number;
+  over_assigned: Array<{
+    person_id: string;
+    person_name: string;
+    total_assignments: number;
+    total_24hr: number;
+    weekend_24hr: number;
+  }>;
+  under_assigned: Array<{
+    person_id: string;
+    person_name: string;
+    total_assignments: number;
+    total_24hr: number;
+    weekend_24hr: number;
+  }>;
+  group_totals: Record<string, number>;
+}
+
+export interface RotaAssignmentOption {
+  assignment: RotaSlotAssignment & { slot_id: string };
+  slot: RotaReviewSlot;
+  label: string;
+}
+
+export interface RotaExchangeRequest {
+  id: string;
+  rota_period_id: string;
+  from_assignment_id: string | null;
+  from_slot: RotaReviewSlot | null;
+  from_person: { id: string; canonical_name: string; call_level: string | null } | null;
+  to_person: { id: string; canonical_name: string; call_level: string | null } | null;
+  requested_by: string | null;
+  approved_by: string | null;
+  applied_assignment_id: string | null;
+  status: string;
+  request_reason: string;
+  decision_reason: string | null;
+  validation_status: string;
+  validation_snapshot: Record<string, unknown>;
+  created_at: string;
+  decided_at: string | null;
+}
+
+export interface RotaReviewMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    is_locked: boolean;
+  };
+  summary: {
+    total_slots: number;
+    assigned_slots: number;
+    open_slots: number;
+    review_items: number;
+    hard_blocked_items: number;
+    accepted_review_items?: number;
+    unresolved_warning_items?: number;
+    override_assignments: number;
+    exchange_requests: number;
+    pending_exchange_requests: number;
+    fairness_call_levels?: number;
+    over_assigned_people?: number;
+    under_assigned_people?: number;
+  };
+  review_items: RotaReviewItem[];
+  person_workload: RotaPersonWorkload[];
+  call_level_fairness?: RotaCallLevelFairness[];
+  exchange_requests: RotaExchangeRequest[];
+  assignment_options: RotaAssignmentOption[];
+}
+
+export interface RotaPublishChecklistItem {
+  status: string;
+  title: string;
+  detail: string;
+}
+
+export interface RotaPublishApproval {
+  id: string;
+  rota_period_id: string;
+  approved_by: string | null;
+  status: string;
+  confirmed_warnings: boolean;
+  approval_note: string;
+  summary: Record<string, unknown>;
+  created_at: string;
+}
+
+/** One member above an individual duty limit after the plan (docs/extra_duty_fill_all_contract.md §4). */
+export interface OverLimitPerson {
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  home_unit_name: string | null;
+  month_duties: number;
+  month_24hr: number;
+  limits: { code: string; label: string; limit: number; actual: number }[];
+}
+
+export interface RotaPublishMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  rule_version: {
+    id: string;
+    name: string;
+  };
+  summary: RotaReviewMonth["summary"];
+  can_publish: boolean;
+  requires_warning_confirmation: boolean;
+  checks: RotaPublishChecklistItem[];
+  blockers: RotaPublishChecklistItem[];
+  warnings: RotaPublishChecklistItem[];
+  latest_publish: RotaPublishApproval | null;
+  /** Full list behind the "Members over their individual limit" warning. */
+  over_limit_people?: OverLimitPerson[];
+  /** Duty totals per call level (docs/limits_callevel_fairness_contract.md §2). */
+  call_level_spread?: CallLevelSpread[];
+}
+
+export function getMappingOptions(): Promise<MappingOptions> {
+  return request<MappingOptions>("/api/v1/admin/mappings/options");
+}
+
+export function getMappings(mappingType?: MappingType): Promise<AdminMapping[]> {
+  const query = mappingType ? `?mapping_type=${mappingType}` : "";
+  return request<AdminMapping[]>(`/api/v1/admin/mappings${query}`);
+}
+
+export function scanHistoricalMappings(): Promise<MappingScanResult> {
+  return request<MappingScanResult>("/api/v1/admin/mappings/scan-historical", {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function updateMapping(
+  mapping: AdminMapping,
+): Promise<AdminMapping> {
+  return request<AdminMapping>(`/api/v1/admin/mappings/${mapping.id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      target_key: mapping.target_key,
+      target_label: mapping.target_label,
+      status: mapping.status,
+      notes: mapping.notes,
+    }),
+  });
+}
+
+export function createMapping(payload: AdminMappingPayload): Promise<AdminMapping> {
+  return request<AdminMapping>("/api/v1/admin/mappings", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getHistoricalImportStatus(): Promise<HistoricalImportStatus> {
+  return request<HistoricalImportStatus>("/api/v1/admin/imports/historical/status");
+}
+
+export function runHistoricalImport(): Promise<HistoricalAnalysisImportResult> {
+  return request<HistoricalAnalysisImportResult>("/api/v1/admin/imports/historical/run", {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function getAnalysisDashboard(): Promise<AnalysisDashboard> {
+  return request<AnalysisDashboard>("/api/v1/analysis/dashboard");
+}
+
+export function getAnalysisPreflight(): Promise<AnalysisPreflight> {
+  return request<AnalysisPreflight>("/api/v1/analysis/preflight");
+}
+
+export function getAnalysisManualReview(): Promise<AnalysisManualReview> {
+  return request<AnalysisManualReview>("/api/v1/analysis/manual-review");
+}
+
+export function getMembers(q = ""): Promise<DepartmentMember[]> {
+  const query = q ? `?q=${encodeURIComponent(q)}` : "";
+  return request<DepartmentMember[]>(`/api/v1/admin/members${query}`);
+}
+
+export function getLeaveCalendar(month: string): Promise<LeaveCalendar> {
+  return request<LeaveCalendar>(`/api/v1/leave/calendar?month=${encodeURIComponent(month)}`);
+}
+
+export function getLeavePressure(month: string): Promise<LeavePressure> {
+  return request<LeavePressure>(`/api/v1/leave/pressure?month=${encodeURIComponent(month)}`);
+}
+
+export async function previewLeaveImport(month: string, file: File): Promise<LeaveImportPreview> {
+  assertSessionCanSubmit('/api/v1/leave/import-preview');
+  const generation = authGeneration;
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-preview?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: formData,
+  });
+  return readUploadResult<LeaveImportPreview>(response, "/api/v1/leave/import-preview", generation, false);
+}
+
+export async function applyLeaveImport(month: string, file: File, previewHash: string, acknowledgeDuties=false): Promise<LeaveImportApplyResult> {
+  assertSessionCanSubmit('/api/v1/leave/import-apply');
+  const generation = authGeneration;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("preview_hash", previewHash);
+  formData.append("acknowledge_duties", String(acknowledgeDuties));
+  const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-apply?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: formData,
+  });
+  return readUploadResult<LeaveImportApplyResult>(response, "/api/v1/leave/import-apply", generation);
+}
+
+export function getLeaveRequests(month: string): Promise<LeaveRequest[]> {
+  return request<LeaveRequest[]>(`/api/v1/leave/requests?month=${encodeURIComponent(month)}`);
+}
+
+export function createLeaveRequest(payload: LeaveRequestPayload): Promise<LeaveRequest> {
+  return request<LeaveRequest>("/api/v1/leave/requests", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateLeaveRequest(id: string, payload: LeaveRequestPayload): Promise<LeaveRequest> {
+  return request<LeaveRequest>(`/api/v1/leave/requests/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function cancelLeaveRequest(id: string): Promise<LeaveRequest> {
+  return request<LeaveRequest>(`/api/v1/leave/requests/${id}/cancel`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function getUnits(): Promise<UnitRead[]> {
+  return request<UnitRead[]>("/api/v1/units");
+}
+
+export function getUnitManagementMonth(month: string): Promise<UnitManagementMonth> {
+  return request<UnitManagementMonth>(`/api/v1/unit-management/month?month=${encodeURIComponent(month)}`);
+}
+
+export async function previewUnitAssignmentImport(
+  month: string,
+  file: File,
+  replaceExisting = false,
+  resolutions: Record<string, UnitImportResolution> = {},
+): Promise<UnitAssignmentImportPreview> {
+  assertSessionCanSubmit('/api/v1/unit-management/import-preview');
+  const generation = authGeneration;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("resolutions_json", JSON.stringify(resolutions));
+  const response = await fetch(`${API_BASE_URL}/api/v1/unit-management/import-preview?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`, {
+    method: "POST",
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: formData,
+  });
+  return readUploadResult<UnitAssignmentImportPreview>(response, "/api/v1/unit-management/import-preview", generation, false);
+}
+
+export async function applyUnitAssignmentImport(
+  month: string,
+  file: File,
+  replaceExisting: boolean,
+  resolutions: Record<string, UnitImportResolution> = {},
+  previewHash = "",
+): Promise<UnitAssignmentImportApplyResult> {
+  assertSessionCanSubmit('/api/v1/unit-management/import-apply');
+  const generation = authGeneration;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("preview_hash", previewHash);
+  formData.append("resolutions_json", JSON.stringify(resolutions));
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/unit-management/import-apply?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`,
+    {
+      method: "POST",
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+      body: formData,
+    },
+  );
+  return readUploadResult<UnitAssignmentImportApplyResult>(response, "/api/v1/unit-management/import-apply", generation);
+}
+
+export function createUnitAssignment(payload: UnitAssignmentPayload): Promise<UnitAssignment> {
+  return request<UnitAssignment>("/api/v1/unit-management/assignments", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateUnitAssignment(id: string, payload: UnitAssignmentPayload): Promise<UnitAssignment> {
+  return request<UnitAssignment>(`/api/v1/unit-management/assignments/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteUnitAssignment(id: string): Promise<{ status: string }> {
+  return request<{ status: string }>(`/api/v1/unit-management/assignments/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export function updateUnitSettings(id: string, payload: UnitSettingsPayload, month?: string): Promise<UnitRead> {
+  const query = month ? `?month=${encodeURIComponent(month)}` : "";
+  return request<UnitRead>(`/api/v1/unit-management/units/${id}/settings${query}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getMemberAudit(): Promise<MemberAudit> {
+  return request<MemberAudit>("/api/v1/admin/members/audit");
+}
+
+/** A name close to an existing member is refused (409 near_duplicate) unless confirmDistinct. */
+export function createMember(
+  canonicalName: string,
+  activeStatus = "active",
+  confirmDistinct = false,
+): Promise<DepartmentMember> {
+  return request<DepartmentMember>("/api/v1/admin/members", {
+    method: "POST",
+    body: JSON.stringify({
+      canonical_name: canonicalName,
+      active_status: activeStatus,
+      ...(confirmDistinct ? { confirm_distinct: true } : {}),
+    }),
+  });
+}
+
+export function updateMember(member: DepartmentMember): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${member.id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      revision: member.revision,
+      canonical_name: member.canonical_name,
+      active_status: member.active_status,
+      call_level: member.call_level,
+    }),
+  });
+}
+
+export function archiveMember(personId: string): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/archive`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function restoreMember(personId: string): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/restore`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function addMemberAlias(personId: string, alias: string): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/aliases`, {
+    method: "POST",
+    body: JSON.stringify({ alias, source: "unit_import_resolution" }),
+  });
+}
+
+export function addMemberDesignation(
+  personId: string,
+  designation: string,
+  effectiveFrom: string,
+  notes = "",
+): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/designations`, {
+    method: "POST",
+    body: JSON.stringify({
+      designation,
+      effective_from: effectiveFrom,
+      notes: notes || null,
+    }),
+  });
+}
+
+export function getDedupeCandidates(): Promise<DuplicateCandidate[]> {
+  return request<DuplicateCandidate[]>("/api/v1/admin/members/dedupe-candidates");
+}
+
+export interface MergeConflict {
+  id: string;
+  description: string;
+  options: ("keep_target" | "keep_source")[];
+  chosen: "keep_target" | "keep_source";
+}
+
+export interface MergePreview {
+  preview_token: string;
+  target: { id: string; name: string };
+  sources: { id: string; name: string }[];
+  /** Records re-pointed to the kept member, by kind ("duty assignments": 12). */
+  moves: Record<string, number>;
+  /** Duplicates combined or dropped, in plain words. */
+  combined: string[];
+  conflicts: MergeConflict[];
+  warnings: string[];
+}
+
+export interface MemberMergeRecord {
+  merge_id: string;
+  merged_at: string;
+  operator_name: string;
+  target_id: string;
+  target_name: string;
+  source_names: string[];
+  undone_at: string | null;
+  undone_by_name: string | null;
+}
+
+/** What a merge would do; the server runs it and rolls it back. */
+export function previewMerge(targetPersonId: string, sourcePersonIds: string[],
+                             choices: Record<string, string> = {}): Promise<MergePreview> {
+  return request<MergePreview>("/api/v1/admin/members/merge/preview", {
+    method: "POST",
+    body: JSON.stringify({ target_person_id: targetPersonId, source_person_ids: sourcePersonIds, choices }),
+  });
+}
+
+/** Merge; with a preview token the server refuses (409 stale_preview) if anything changed. */
+export function mergeMembers(
+  targetPersonId: string,
+  sourcePersonIds: string[],
+  previewToken?: string,
+  choices: Record<string, string> = {},
+): Promise<DepartmentMember & { merge_id?: string }> {
+  return request<DepartmentMember & { merge_id?: string }>("/api/v1/admin/members/merge", {
+    method: "POST",
+    body: JSON.stringify({
+      target_person_id: targetPersonId,
+      source_person_ids: sourcePersonIds,
+      ...(previewToken ? { preview_token: previewToken } : {}),
+      choices,
+    }),
+  });
+}
+
+export function getMemberMerges(): Promise<MemberMergeRecord[]> {
+  return request<MemberMergeRecord[]>("/api/v1/admin/members/merges");
+}
+
+/** Undo a merge exactly; 409 {code: "cannot_undo", blockers} if records changed since. */
+export function undoMemberMerge(mergeId: string): Promise<{ merge_id: string; restored: string[] }> {
+  return request(`/api/v1/admin/members/merges/${encodeURIComponent(mergeId)}/undo`, { method: "POST", body: "{}" });
+}
+
+export function getInvalidMembers(): Promise<InvalidMembersResult> {
+  return request<InvalidMembersResult>("/api/v1/admin/members/invalid");
+}
+
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function cleanupInvalidMembers(previewToken?: string): Promise<CleanupMembersResult> {
+  return request<CleanupMembersResult>("/api/v1/admin/members/cleanup-invalid", {
+    method: "POST",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
+  });
+}
+
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function reconcileTrustedRoster(previewToken?: string): Promise<RosterReconciliationResult> {
+  return request<RosterReconciliationResult>("/api/v1/admin/members/reconcile-trusted-roster", {
+    method: "POST",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
+  });
+}
+
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function autoMergeDuplicates(previewToken?: string): Promise<AutoMergeDuplicatesResult> {
+  return request<AutoMergeDuplicatesResult>("/api/v1/admin/members/auto-merge-duplicates", {
+    method: "POST",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
+  });
+}
+
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function prefillCallLevels(previewToken?: string): Promise<CallLevelPrefillResult> {
+  return request<CallLevelPrefillResult>("/api/v1/admin/members/prefill-call-levels", {
+    method: "POST",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
+  });
+}
+
+export async function signIn(username: string, password: string, mayCommit: () => boolean = () => true): Promise<SignInResponse> {
+  const response = await request<SignInResponse>("/api/v1/auth/sign-in", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  });
+  if (!mayCommit()) throw new DOMException('Sign-in form changed; response ignored.', 'AbortError');
+  setAuthToken(response.token);
+  return response;
+}
+
+export function getCurrentUser(): Promise<UserAccount> {
+  return request<UserAccount>("/api/v1/auth/me");
+}
+
+export function updateCurrentUserProfile(payload: {
+  display_name: string;
+  email?: string | null;
+}): Promise<UserAccount> {
+  return request<UserAccount>("/api/v1/auth/me", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createUserAccount(payload: {
+  username: string;
+  display_name: string;
+  password: string;
+  email?: string;
+  role: string;
+}): Promise<UserAccount> {
+  return request<UserAccount>("/api/v1/auth/accounts", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listUserAccounts(): Promise<UserAccount[]> {
+  return request<UserAccount[]>("/api/v1/auth/accounts");
+}
+
+export function getCallClusters(): Promise<CallCluster[]> {
+  return request<CallCluster[]>("/api/v1/admin/call-clusters");
+}
+
+export function createCallCluster(payload: {
+  name: string;
+  call_level: string;
+  description?: string | null;
+  active?: boolean;
+}): Promise<CallCluster> {
+  return request<CallCluster>("/api/v1/admin/call-clusters", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateCallCluster(clusterId: string, payload: {
+  key?: string;
+  name: string;
+  call_level: string;
+  description?: string | null;
+  active?: boolean;
+}): Promise<CallCluster> {
+  return request<CallCluster>(`/api/v1/admin/call-clusters/${clusterId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getCallClusterMembers(clusterId: string): Promise<CallCluster> {
+  return request<CallCluster>(`/api/v1/admin/call-clusters/${clusterId}/members`);
+}
+
+export function updateCallClusterMembers(
+  clusterId: string,
+  members: Array<{ person_id: string; effective_from: string; effective_to?: string | null; notes?: string | null }>,
+): Promise<CallCluster> {
+  return request<CallCluster>(`/api/v1/admin/call-clusters/${clusterId}/members`, {
+    method: "PUT",
+    body: JSON.stringify({ members }),
+  });
+}
+
+export function forgotPassword(username: string): Promise<{ message: string }> {
+  return request<{ message: string }>("/api/v1/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ username }),
+  });
+}
+
+export function issueAccountRecoveryCode(id: string): Promise<{reset_token: string; expires_in_minutes: number}> {
+  return request(`/api/v1/auth/accounts/${encodeURIComponent(id)}/recovery-code`, { method: "POST" });
+}
+
+export function resetPassword(token: string, newPassword: string): Promise<{ status: string }> {
+  return request<{ status: string }>("/api/v1/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ token, new_password: newPassword }),
+  });
+}
+
+export function changePassword(currentPassword: string, newPassword: string): Promise<{ status: string }> {
+  return request<{ status: string }>("/api/v1/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+  });
+}
+
+export function getDiagnosticsSummary(): Promise<DiagnosticsSummary> {
+  return request<DiagnosticsSummary>("/api/v1/diagnostics/summary");
+}
+
+export function getRotaPhaseOneRules(): Promise<RotaPhaseOneRules> {
+  return request<RotaPhaseOneRules>("/api/v1/admin/rota-rules/phase-one");
+}
+
+/** Saves the full rules payload. `baseRevision` is the revision the edits started from: 409 `stale_rules` when someone saved since, 422 `invalid_rules` with every error problem. */
+export function updateRotaPhaseOneRules(payload: RotaRulesPayload, baseRevision: string | null = null): Promise<RotaPhaseOneRules> {
+  return request<RotaPhaseOneRules>("/api/v1/admin/rota-rules/phase-one", {
+    method: "PUT",
+    body: JSON.stringify({ ...payload, base_revision: baseRevision }),
+  });
+}
+
+export function getRotaSetupMonth(month: string): Promise<RotaSetupMonth> {
+  return request<RotaSetupMonth>(`/api/v1/rota-setup/month?month=${encodeURIComponent(month)}`);
+}
+
+export function updateRotaSetupScope(month: string, payload: {
+  included_unit_ids: string[];
+  excluded_unit_ids: string[];
+  include_excluded_units_in_safety: boolean;
+  is_locked: boolean;
+  lock_reason?: string | null;
+}): Promise<RotaSetupMonth> {
+  return request<RotaSetupMonth>(`/api/v1/rota-setup/month/scope?month=${encodeURIComponent(month)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function clonePreviousRotaSetupScope(month: string): Promise<RotaSetupMonth> {
+  return request<RotaSetupMonth>(`/api/v1/rota-setup/month/clone-previous?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function getRotaTemplateMonth(month: string): Promise<RotaTemplateMonth> {
+  return request<RotaTemplateMonth>(`/api/v1/rota-template/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaTemplateAllocationStatistics(month: string): Promise<RotaTemplateAllocationStatistics> {
+  return request<RotaTemplateAllocationStatistics>(`/api/v1/rota-template/allocation-statistics?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaSafetyMonth(month: string): Promise<RotaSafetyMonth> {
+  return request<RotaSafetyMonth>(`/api/v1/rota-safety/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaCandidateMonth(month: string): Promise<RotaCandidateMonth> {
+  return request<RotaCandidateMonth>(`/api/v1/rota-candidates/month?month=${encodeURIComponent(month)}&limit_per_slot=5`);
+}
+
+export function getRotaSlotCandidates(slotId: string, limit = 50): Promise<RotaCandidateSlot> {
+  return request<RotaCandidateSlot>(`/api/v1/rota-candidates/slots/${encodeURIComponent(slotId)}?limit=${encodeURIComponent(String(limit))}`);
+}
+
+export function getRotaAutoFillMonth(month: string): Promise<RotaAutoFillMonth> {
+  return request<RotaAutoFillMonth>(`/api/v1/rota-auto-fill/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaReviewMonth(month: string): Promise<RotaReviewMonth> {
+  return request<RotaReviewMonth>(`/api/v1/rota-review/month?month=${encodeURIComponent(month)}`);
+}
+
+export function acceptRotaReviewIssue(
+  slotId: string,
+  payload: { issue_code: string; note: string },
+): Promise<NonNullable<RotaReviewIssue["decision"]>> {
+  return request<NonNullable<RotaReviewIssue["decision"]>>(`/api/v1/rota-review/slots/${slotId}/decisions`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getRotaPublishMonth(month: string): Promise<RotaPublishMonth> {
+  return request<RotaPublishMonth>(`/api/v1/rota-publish/month?month=${encodeURIComponent(month)}`);
+}
+
+export function generateRotaTemplate(
+  month: string,
+  payload: RotaTemplateGeneratePayload,
+): Promise<RotaTemplateMonth> {
+  return request<RotaTemplateMonth>(`/api/v1/rota-template/generate?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function clearRotaTemplateCache(month: string, options: { clear_assignments?: boolean } = {}): Promise<RotaTemplateClearResult> {
+  const clearAssignments = options.clear_assignments ? "&clear_assignments=true" : "";
+  return request<RotaTemplateClearResult>(`/api/v1/rota-template/cache?month=${encodeURIComponent(month)}${clearAssignments}`, {
+    method: "DELETE",
+  });
+}
+
+export function assignRotaSlot(
+  slotId: string,
+  payload: RotaManualAssignmentPayload,
+): Promise<RotaManualAssignmentResult> {
+  return request<RotaManualAssignmentResult>(`/api/v1/rota-assignments/slots/${slotId}/assign`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function clearRotaAssignment(assignmentId: string): Promise<RotaManualAssignmentResult> {
+  return request<RotaManualAssignmentResult>(`/api/v1/rota-assignments/assignments/${assignmentId}`, {
+    method: "DELETE",
+  });
+}
+
+export function runRotaAutoFillDraft(month: string, payload: { strict_call_level?: boolean } = {}): Promise<RotaAutoFillRun> {
+  return request<RotaAutoFillRun>(`/api/v1/rota-auto-fill/draft?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: JSON.stringify({ strict_call_level: payload.strict_call_level ?? true }),
+  });
+}
+
+export function requestRotaExchange(payload: {
+  assignment_id: string;
+  to_person_id: string;
+  reason: string;
+}): Promise<RotaExchangeRequest> {
+  return request<RotaExchangeRequest>("/api/v1/rota-review/exchanges", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function approveRotaExchange(
+  exchangeId: string,
+  decisionReason?: string | null,
+): Promise<RotaExchangeRequest> {
+  return request<RotaExchangeRequest>(`/api/v1/rota-review/exchanges/${exchangeId}/approve`, {
+    method: "POST",
+    body: JSON.stringify({ decision_reason: decisionReason || null }),
+  });
+}
+
+export function rejectRotaExchange(
+  exchangeId: string,
+  decisionReason?: string | null,
+): Promise<RotaExchangeRequest> {
+  return request<RotaExchangeRequest>(`/api/v1/rota-review/exchanges/${exchangeId}/reject`, {
+    method: "POST",
+    body: JSON.stringify({ decision_reason: decisionReason || null }),
+  });
+}
+
+export function publishRotaMonth(
+  month: string,
+  payload: { confirm_warnings: boolean; approval_note: string },
+): Promise<RotaPublishMonth> {
+  return request<RotaPublishMonth>(`/api/v1/rota-publish/publish?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+function filenameFromDisposition(disposition: string | null, fallback: string): string {
+  const match = disposition?.match(/filename="?([^";]+)"?/i);
+  return match?.[1] ?? fallback;
+}
+
+/** Download reads have a bounded lifetime; stopping a read does not stop server work. */
+async function downloadSpreadsheet(path: string, fallback: string): Promise<{ blob: Blob; filename: string }> {
+  const generation = authGeneration;
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 120000);
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+      signal: controller.signal,
+    });
+    const blob = await readDownloadBlob(response, generation, path.split('?')[0], true);
+    return { blob, filename: filenameFromDisposition(response.headers.get('Content-Disposition'), fallback) };
+  } catch (error) {
+    if (generation !== authGeneration) throw new DOMException('Session changed; download cancelled.', 'AbortError');
+    if (timedOut) throw new ApiRequestError('The download took too long. No file was sent to your browser. The server may still be preparing it; check your connection and try the download again.', 'timeout');
+    if (error instanceof ApiRequestError || error instanceof DOMException && error.name === 'AbortError') throw error;
+    throw new ApiRequestError(networkRecoveryMessage(Boolean(import.meta.env.DEV)), 'network');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function downloadRotaExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-publish/export?month=${encodeURIComponent(month)}`, `final-rota-${month}.xlsx`);
+}
+
+export async function downloadRotaReviewExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-publish/review-export?month=${encodeURIComponent(month)}`, `review-rota-${month}.xlsx`);
+}
+
+export async function downloadElectiveMembersExport(month: string, starts: string, ends: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-publish/elective-members-export?month=${encodeURIComponent(month)}&starts=${encodeURIComponent(starts)}&ends=${encodeURIComponent(ends)}`, `elective-list-members-${month}.xlsx`);
+}
+
+export async function downloadProposalReviewExport(id: string, revision: number): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-compute/jobs/${encodeURIComponent(id)}/review.xlsx?revision=${revision}`, 'rota-review.xlsx');
+}
+
+export async function downloadRotaTemplateEagleEyeExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-template/eagle-eye-export?month=${encodeURIComponent(month)}`, `eagle-eye-rota-template-${month}.xlsx`);
+}
+
+export async function downloadRotaTemplateCallWiseExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-template/call-wise-export?month=${encodeURIComponent(month)}`, `call-wise-rota-template-${month}.xlsx`);
+}
+
+// --- Department members: clear all (archive) and suspected duplicates -------------------
+
+export interface ArchiveAllPreview {
+  members: number;
+  linked_duties: number;
+  future_duties: number;
+  leave: number;
+  postings: number;
+  preview_token: string;
+  confirm_phrase: string;
+}
+
+export interface ArchiveAllBatch {
+  batch_id: string;
+  at: string;
+  operator_name: string;
+  archived: number;
+  restored: number;
+}
+
+export function previewArchiveAll(): Promise<ArchiveAllPreview> {
+  return request<ArchiveAllPreview>("/api/v1/admin/members/archive-all/preview");
+}
+
+export function archiveAllMembers(previewToken: string, confirmPhrase: string): Promise<{ batch_id: string; archived: number }> {
+  return request("/api/v1/admin/members/archive-all", {
+    method: "POST",
+    body: JSON.stringify({ preview_token: previewToken, confirm_phrase: confirmPhrase }),
+  });
+}
+
+export function restoreArchiveBatch(batchId: string): Promise<{ batch_id: string; restored: number; skipped: number }> {
+  return request(`/api/v1/admin/members/archive-all/${encodeURIComponent(batchId)}/restore`, { method: "POST", body: "{}" });
+}
+
+export function listArchiveBatches(): Promise<ArchiveAllBatch[]> {
+  return request<ArchiveAllBatch[]>("/api/v1/admin/members/archive-all/batches");
+}
+
+export interface SuspectedDuplicatePerson {
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+  duties: number;
+  postings: number;
+  leave: number;
+  aliases: string[];
+}
+
+export interface SuspectedDuplicate {
+  pair_id: string;
+  similarity: number;
+  reason: string;
+  suggested_target_id: string;
+  people: SuspectedDuplicatePerson[];
+}
+
+export function getSuspectedDuplicates(): Promise<SuspectedDuplicate[]> {
+  return request<SuspectedDuplicate[]>("/api/v1/admin/members/suspected-duplicates");
+}
+
+export function dismissSuspectedDuplicate(personIds: string[], note: string | null = null): Promise<{ pair_id: string }> {
+  return request("/api/v1/admin/members/suspected-duplicates/dismiss", {
+    method: "POST",
+    body: JSON.stringify({ person_ids: personIds, note }),
+  });
+}
+
+// ---- Admin delete and recycle bin (docs/admin_delete_contract.md) ----
+
+export type AdminDeleteKind = "member" | "leave" | "posting" | "past_duty";
+
+export interface AdminDeleteSelection {
+  kind: AdminDeleteKind;
+  ids?: string[];
+  month?: string;
+}
+
+export interface AdminDeletePreview {
+  kind: AdminDeleteKind;
+  count: number;
+  items: { id: string; label: string }[];
+  blocked: { id: string; label: string; reason: string }[];
+  effects: { extra_slots?: number; linked_records?: number };
+  preview_token: string;
+  confirm_phrase: string | null;
+}
+
+export interface AdminDeleteResult {
+  batch_id: string;
+  deleted: number;
+}
+
+export interface RecycleBinBatch {
+  batch_id: string;
+  kind: AdminDeleteKind;
+  count: number;
+  labels: string[];
+  deleted_at: string;
+  deleted_by: string | null;
+  purge_after: string;
+  restored_at: string | null;
+  restored_by: string | null;
+}
+
+export interface RecycleRestoreResult {
+  restored: number;
+  failed: { label: string; reason: string }[];
+}
+
+export interface RecordedPastDuty {
+  id: string;
+  date: string;
+  duty_type: string;
+  duty_label: string;
+  member_id: string | null;
+  member_name: string | null;
+  source: string | null;
+  status: string;
+}
+
+export interface RecordedPastDuties {
+  items: RecordedPastDuty[];
+  truncated: boolean;
+}
+
+function selectionBody(selection: AdminDeleteSelection): Record<string, unknown> {
+  const body: Record<string, unknown> = { kind: selection.kind };
+  if (selection.month) body.month = selection.month;
+  else body.ids = selection.ids ?? [];
+  return body;
+}
+
+export function previewAdminDelete(selection: AdminDeleteSelection): Promise<AdminDeletePreview> {
+  return request<AdminDeletePreview>("/api/v1/admin/delete/preview", {
+    method: "POST",
+    body: JSON.stringify(selectionBody(selection)),
+  });
+}
+
+export function adminDelete(
+  selection: AdminDeleteSelection,
+  previewToken: string,
+  confirmPhrase?: string | null,
+): Promise<AdminDeleteResult> {
+  const body = selectionBody(selection);
+  body.preview_token = previewToken;
+  if (confirmPhrase) body.confirm_phrase = confirmPhrase;
+  return request<AdminDeleteResult>("/api/v1/admin/delete", { method: "POST", body: JSON.stringify(body) });
+}
+
+export function getRecycleBin(): Promise<RecycleBinBatch[]> {
+  return request<RecycleBinBatch[]>("/api/v1/admin/recycle-bin");
+}
+
+export function restoreRecycleBatch(batchId: string): Promise<RecycleRestoreResult> {
+  return request<RecycleRestoreResult>(`/api/v1/admin/recycle-bin/${encodeURIComponent(batchId)}/restore`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function purgeRecycleBatch(batchId: string): Promise<{ purged: number }> {
+  return request<{ purged: number }>(`/api/v1/admin/recycle-bin/${encodeURIComponent(batchId)}`, {
+    method: "DELETE",
+    body: JSON.stringify({ confirm: true }),
+  });
+}
+
+/** Past duty assignments in a month (YYYY-MM). Accepts either a bare list or {items, truncated}. */
+export async function getRecordedPastDuties(month: string): Promise<RecordedPastDuties> {
+  const data = await request<RecordedPastDuty[] | RecordedPastDuties>(
+    `/api/v1/admin/past-duties/recorded?month=${encodeURIComponent(month)}`,
+  );
+  return Array.isArray(data) ? { items: data, truncated: false } : { items: data.items ?? [], truncated: Boolean(data.truncated) };
+}
+
+// --- Rota rules: checks, history and eligibility gaps (docs/rota_rules_contract.md) ---
+
+export interface RotaRuleGroup { key: string; name: string; call_level: string | null; active: boolean; members: number; }
+
+/** What the PUT, /check and a version snapshot carry: the rules without server-only fields. */
+export type RotaRulesPayload = Omit<RotaPhaseOneRules, "rule_version" | "revision" | "groups">;
+
+export interface RotaRuleProblem {
+  duty_key: string | null;
+  field: string;
+  code: string;
+  /** "info" items (such as `call_level_pool`) are notes, not problems. */
+  severity: "error" | "warning" | "info";
+  message: string;
+  fix: string;
+}
+
+export interface RotaRuleDutyCheck { effective_call_levels: string[]; eligible_now: number; eligible_by_level: Record<string, number>; }
+
+export interface RotaRulesCheck { problems: RotaRuleProblem[]; duties: Record<string, RotaRuleDutyCheck>; }
+
+export interface RotaRuleVersionSummary {
+  version_id: string;
+  saved_at: string;
+  saved_by: string | null;
+  revision: string;
+  changed_duties: string[];
+  note: string | null;
+}
+
+export interface RotaRuleVersion { version_id: string; saved_at: string; saved_by: string | null; rules: RotaRulesPayload; }
+
+export interface RotaEligibilityGap { duty_key: string; label: string; reason: string; }
+
+/** Dry run of a save: every problem (errors block a save, warnings never do) and who is eligible today per duty. */
+export function checkRotaRules(payload: RotaRulesPayload): Promise<RotaRulesCheck> {
+  return request<RotaRulesCheck>("/api/v1/admin/rota-rules/phase-one/check", { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function getRotaRuleVersions(): Promise<RotaRuleVersionSummary[]> {
+  return request<RotaRuleVersionSummary[]>("/api/v1/admin/rota-rules/phase-one/versions");
+}
+
+export function getRotaRuleVersion(versionId: string): Promise<RotaRuleVersion> {
+  return request<RotaRuleVersion>(`/api/v1/admin/rota-rules/phase-one/versions/${encodeURIComponent(versionId)}`);
+}
+
+/** Saves an older snapshot as the current rules (a new version). 409 `stale_rules` as for the PUT; 404 for an unknown version. */
+export function restoreRotaRuleVersion(versionId: string, baseRevision: string | null): Promise<RotaPhaseOneRules> {
+  return request<RotaPhaseOneRules>(`/api/v1/admin/rota-rules/phase-one/versions/${encodeURIComponent(versionId)}/restore`, {
+    method: "POST",
+    body: JSON.stringify({ base_revision: baseRevision }),
+  });
+}
+
+/** Active duties nobody is eligible for in the month (YYYY-MM). */
+export function getEligibilityGaps(month: string): Promise<RotaEligibilityGap[]> {
+  return request<RotaEligibilityGap[]>(`/api/v1/admin/rota-rules/eligibility-gaps?month=${encodeURIComponent(month)}`);
+}
+
+type RotaRulesApiError = Error & { status?: number; detail?: unknown };
+
+/** The `{code, ...}` detail of a rota-rules error, when the server sent one. */
+export function rotaRulesErrorDetail(error: unknown): { code?: string; message?: string; problems?: RotaRuleProblem[]; current_revision?: string } | null {
+  const detail = (error as RotaRulesApiError | null)?.detail;
+  return detail && typeof detail === "object" && !Array.isArray(detail) ? detail as { code?: string } : null;
+}
+
+/** True for 409 `stale_rules`: someone else saved the rules after this page loaded them. */
+export function isStaleRulesError(error: unknown): boolean {
+  return (error as RotaRulesApiError | null)?.status === 409 && rotaRulesErrorDetail(error)?.code === "stale_rules";
+}
+
+/** The problems of a 422 `invalid_rules`, or null for any other error. */
+export function invalidRulesProblems(error: unknown): RotaRuleProblem[] | null {
+  const detail = rotaRulesErrorDetail(error);
+  return (error as RotaRulesApiError | null)?.status === 422 && detail?.code === "invalid_rules" ? detail.problems ?? [] : null;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Limits page (docs/limits_callevel_fairness_contract.md §3) and call-level fairness (§2)    */
+/* ---------------------------------------------------------------------------------------- */
+
+/** The five limit sections, stored inside the rules JSON but changed only through the Limits API. */
+export interface LimitSections {
+  duty_count_limits: RotaPhaseOneRules["duty_count_limits"];
+  rest_rules: RotaPhaseOneRules["rest_rules"];
+  unit_staffing_rules: RotaPhaseOneRules["unit_staffing_rules"];
+  fairness_rules: { max_gap_within_call_level: number; target_mode: string };
+  extra_duty_rules: { justice_lookback_months: number };
+}
+export type LimitSectionKey = keyof LimitSections;
+export const LIMIT_SECTION_KEYS: LimitSectionKey[] = ["duty_count_limits", "rest_rules", "unit_staffing_rules", "fairness_rules", "extra_duty_rules"];
+
+export interface LimitField {
+  path: string;
+  section: LimitSectionKey | string;
+  label: string;
+  help: string;
+  example: string;
+  kind: "int" | "bool" | "percent" | "hours" | "choice";
+  min?: number | null;
+  max?: number | null;
+  unit?: string | null;
+  /** Text for an empty value ("No limit"); null when the setting cannot be left blank. */
+  blank_means?: string | null;
+  hard_or_soft: "hard" | "soft" | "guide";
+  /** Only for kind "choice" (the server sends `options`). */
+  options?: { value: string; label: string }[];
+  choices?: { value: string; label: string }[];
+}
+
+export interface CallLevelTarget {
+  call_level: string;
+  label: string;
+  slots: number;
+  members: number;
+  target: number;
+  min_expected: number;
+  max_expected: number;
+}
+
+export interface LimitsRead {
+  version_id: string | null;
+  saved_at: string | null;
+  saved_by: string | null;
+  limits: LimitSections;
+  defaults: Partial<LimitSections>;
+  fields: LimitField[];
+  targets: CallLevelTarget[];
+  can_edit: boolean;
+  limits_version_id?: string | null;
+  month?: string;
+  sections?: { key: string; title: string; intro: string }[];
+  hard_or_soft_labels?: Record<string, string>;
+}
+
+export interface LimitChange { path: string; label: string; before: unknown; after: unknown; sentence: string }
+export interface LimitProblem { path: string; severity: "error" | "warning"; message: string }
+export interface LimitsPreview {
+  changes: LimitChange[];
+  problems: LimitProblem[];
+  /** Null when the preview found errors. */
+  impact: { over_limit_people: number; members_over: string[]; over_limit_people_now?: number; newly_over?: number; sentence?: string; month?: string } | null;
+  month?: string;
+}
+export interface LimitsHistoryEntry {
+  version_id: string;
+  saved_at: string;
+  saved_by: string | null;
+  note: string | null;
+  label?: string | null;
+  changes: LimitChange[];
+}
+
+export interface CallLevelSpreadMember { person_id: string; name: string; duties: number; extra_duties: number; diff_from_target: number }
+export interface CallLevelSpread {
+  call_level: string;
+  label?: string;
+  target: number;
+  min: number;
+  max: number;
+  gap: number;
+  allowed_gap: number;
+  ok: boolean;
+  reason?: string | null;
+  members: CallLevelSpreadMember[];
+}
+
+/* Balance duties (docs/call_level_pool_and_balance_contract.md §2). */
+export interface BalanceRange { min: number; max: number; gap: number }
+export interface BalanceLevel {
+  call_level: string;
+  label?: string;
+  /** [low, high] goals within the level, or a ready-made "6–7" text. */
+  goal_range: [number, number] | number[] | string | null;
+  before: BalanceRange;
+  after: BalanceRange;
+  ok_after: boolean;
+  reason_if_not?: string | null;
+  allowed_gap?: number;
+  availability_breakdown?: {
+    posted: BalanceRange & { members: number };
+    fully_available_posted: { members: number; min: number | null; max: number | null; gap: number | null };
+    fully_available_ordinary?: { members: number; min: number | null; max: number | null; gap: number | null };
+    unposted_holders: { members: number; min: number | null; max: number | null; gap: number | null };
+    outside_scope_holders?: number;
+  };
+}
+export interface BalanceMove {
+  kind: "move" | "swap";
+  slot_id: string;
+  duty_date: string;
+  duty_label: string;
+  from_person: string;
+  from_unit: string | null;
+  to_person: string;
+  to_unit: string | null;
+  cross_unit: boolean;
+  reason: string;
+  call_level?: string | null;
+  /** Swaps: the other duty that goes the opposite way, when the backend names it. */
+  swap_slot_id?: string | null;
+  swap_duty_date?: string | null;
+  swap_duty_label?: string | null;
+  /** docs/balance_extra_duties_contract.md §1: a duty placed by the extra-duty layer; its ledger record moves with it. */
+  extra_duty?: boolean;
+  ledger_from?: string | null;
+  ledger_to?: string | null;
+  new_overridden_rules?: string[];
+}
+export interface BalanceMember {
+  person_id: string;
+  name: string;
+  call_level: string;
+  unit: string | null;
+  before: number;
+  after: number;
+  goal: number;
+  avail_days: number;
+  /** Extra-duty-layer duties held before → after (balance_extra_duties_contract §1). */
+  extra_before?: number;
+  extra_after?: number;
+}
+export interface BalanceSummary { moves: number; swaps: number; cross_unit: number; levels_balanced_before: number; levels_balanced_after: number; extra_moves?: number }
+export interface BalancePreview {
+  month: string;
+  plan_hash: string;
+  context_hash: string;
+  token: string;
+  summary: BalanceSummary;
+  levels: BalanceLevel[];
+  moves: BalanceMove[];
+  members: BalanceMember[];
+}
+export interface BalanceApplyResult extends BalancePreview { batch_id: string }
+export interface BalanceBatch { id: string; status: string; created_at: string; created_by_name: string | null; summary?: Partial<BalanceSummary> & { mode?: string } }
+export interface BalanceStatus {
+  month: string;
+  enabled: boolean;
+  balanced: boolean;
+  levels: (Partial<BalanceLevel> & { call_level: string; label?: string; min?: number; max?: number; gap?: number; allowed_gap?: number; ok?: boolean })[];
+  batches: BalanceBatch[];
+}

@@ -1,0 +1,256 @@
+{
+  "recorded_at": "2026-11-20T14:00:18.702208+00:00",
+  "timebox": {
+    "started_at": "2026-11-20T13:04:11.0000000+00:00",
+    "deadline": "2026-11-20T14:04:11.0000000+00:00",
+    "elapsed_minutes": 56.13
+  },
+  "final_regression": {
+    "tests": 168,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 219.752
+  },
+  "separate_balance_suite": {
+    "tests": 54,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 344.125
+  },
+  "additional_boundary_gate": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 22.766
+  },
+  "promotion_fixture_gate": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 13.883
+  },
+  "distinct_regression_cases": 168,
+  "corpus": [
+    {
+      "case": "control",
+      "covered": 62,
+      "required": 62,
+      "uncovered": 0,
+      "minimum": 1,
+      "maximum": 2,
+      "maximum_weekends": 1,
+      "validation_failures": 0,
+      "optimizer_seconds": 23.233
+    },
+    {
+      "case": "ot_pressure",
+      "covered": 62,
+      "required": 62,
+      "uncovered": 0,
+      "minimum": 1,
+      "maximum": 2,
+      "maximum_weekends": 1,
+      "validation_failures": 0,
+      "optimizer_seconds": 54.597
+    },
+    {
+      "case": "dated_fixed",
+      "covered": 61,
+      "required": 62,
+      "uncovered": 1,
+      "minimum": 1,
+      "maximum": 2,
+      "maximum_weekends": 1,
+      "validation_failures": 0,
+      "optimizer_seconds": 36.843
+    }
+  ],
+  "unit_layout_probe": {
+    "recorded_at": "2026-11-20T13:53:09.524952+00:00",
+    "complete": true,
+    "scope": "Audit-only single-unit-layout change on the dated_fixed synthetic fixture. Not production activation.",
+    "proposal": {
+      "slot": "BENCH:26",
+      "date": "2026-05-14",
+      "before_unit": "BENCH_0",
+      "after_unit": "BENCH_1"
+    },
+    "new_assignments": 61,
+    "fixed_assignments": 1,
+    "uncovered": 0,
+    "validation_failures": 0,
+    "fixed_unchanged": true,
+    "ot_status": "feasible",
+    "fairness": [
+      {
+        "call_level": "1ST_CALL",
+        "members": 48,
+        "minimum": 1,
+        "maximum": 2,
+        "gap": 1,
+        "within_one": true,
+        "within_two": true,
+        "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+      }
+    ],
+    "refinement": {
+      "checks": 0,
+      "transfers": 0,
+      "additional_covered": 0,
+      "improved": false,
+      "limit_reached": true,
+      "global_optimum_proven": false
+    },
+    "solver_status": "feasible",
+    "objectives": [
+      {
+        "name": "required_coverage",
+        "value": -61,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "coverage",
+        "value": -61,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "call_level_equality",
+        "value": -6838,
+        "proven": false
+      },
+      {
+        "name": "weekend_burden",
+        "value": 62,
+        "proven": false
+      },
+      {
+        "name": "night_burden",
+        "value": 279,
+        "proven": false
+      },
+      {
+        "name": "holiday_burden",
+        "value": 6,
+        "proven": false
+      },
+      {
+        "name": "workload",
+        "value": 279,
+        "proven": false
+      },
+      {
+        "name": "spacing_history",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "preferences",
+        "value": 0,
+        "proven": false
+      }
+    ],
+    "elapsed_ms": 39841.45,
+    "operational_writes": 0,
+    "source_sha256": {
+      "backend/app/services/rota_optimizer.py": "11d7ef97eafbcc77984c4506396b9f180a705d74789afcad092b4220bfdd38bc",
+      "backend/app/services/allocation_refinement.py": "ab70cb3f9239a2eecc5fe2d8fc51c90a42cb7cc14a9459743fc008ef78296a62",
+      "tools/probe_focused_template_repair.py": "ab9d95d9a6ebb4567ff3c655d0bb7dc1922df9802388eddb2655c48e0a884eea"
+    }
+  },
+  "operational_readonly_check": {
+    "recorded_at": "2026-11-20T13:58:33.699381+00:00",
+    "month": "2026-11",
+    "operational_writes": 0,
+    "personal_identifiers_exported": false,
+    "levels": [],
+    "database_enforced_readonly": true,
+    "status": "month_or_saved_rules_not_available",
+    "month_present": false,
+    "saved_rules_present": true
+  },
+  "operational_period_inventory": {
+    "recorded_at": "2026-11-20T13:59:22.428489+00:00",
+    "operational_writes": 0,
+    "personal_identifiers_exported": false,
+    "periods": [
+      {
+        "starts_on": "2026-10-01",
+        "ends_on": "2026-10-31"
+      },
+      {
+        "starts_on": "2026-06-01",
+        "ends_on": "2026-06-30"
+      },
+      {
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-31"
+      },
+      {
+        "starts_on": "2026-04-01",
+        "ends_on": "2026-04-30"
+      },
+      {
+        "starts_on": "2026-03-01",
+        "ends_on": "2026-03-31"
+      },
+      {
+        "starts_on": "2026-02-01",
+        "ends_on": "2026-02-28"
+      }
+    ],
+    "months": [
+      {
+        "month": "2026-10",
+        "levels": []
+      },
+      {
+        "month": "2026-06",
+        "levels": []
+      }
+    ],
+    "database_enforced_readonly": true,
+    "status": "read_only_inventory_complete"
+  },
+  "source_sha256": {
+    "backend/app/services/rota_optimizer.py": "11d7ef97eafbcc77984c4506396b9f180a705d74789afcad092b4220bfdd38bc",
+    "backend/app/services/allocation_refinement.py": "ab70cb3f9239a2eecc5fe2d8fc51c90a42cb7cc14a9459743fc008ef78296a62",
+    "backend/app/services/allocation_objectives.py": "28af224769fe9ea1a073eabfdb9f0df054b73fe7a6af2d3d7056dd50fab9ca24",
+    "backend/app/services/rota_candidates.py": "8dc507bb14a2b5e17f44a3990e4ce6457013784a46cc779345d30d961c3eb599",
+    "backend/tests/test_allocation_engine_revision.py": "3453fda365364583b4f7a79d30d98daed63d487d2a4864ca54a1481ce9883594",
+    "backend/tests/test_focused_allocation_refinement.py": "9265586fb83e4794024b97359037291a686fed5bb27b02cc4d22b4dc61bee86c",
+    "tools/allocation_audit_window.py": "584886aec74676ddca47845056a58548ddac58b93a71362b7ff5c79e637ecc84",
+    "tools/compare_focused_optimizer.py": "f88797e03fc8c6c99892d21e5d4dbb936f78ada00639c3773c108ff468fc4b0a",
+    "tools/probe_focused_template_repair.py": "ab9d95d9a6ebb4567ff3c655d0bb7dc1922df9802388eddb2655c48e0a884eea",
+    "tools/finalize_focused_allocation_audit.py": "e9b124219a2f134cf4efdbffaa7bd41c0834de2e3423d43458e6d27b87fa380b",
+    "docs/allocation-progress/focused-unit-repair-integration-contract.json": "4bf14cb5b19e714e7ac5de53582e405268018e5646ec63ca0239dc1b658a8a89",
+    "tools/read_focused_operational_fairness.py": "f6e886b0c5869fa77968f464187b9488c2985427a3be1f290962d8e531ed2da8",
+    "tools/read_focused_month_inventory.py": "1692d525de7ea3c5cba2573ec1f72f1542df148dd367d1c3937bad1540e7d2cb"
+  },
+  "operational_writes": 0,
+  "production_deployed": false,
+  "full_50_item_tracker_done": 21,
+  "unresolved": [
+    "Production fixed-unit template can still leave a duty without a clear candidate. The successful unit-layout probe is audit-only, not an activated production repair.",
+    "No universal proof of gap<=2 or complete coverage for all inputs. Local refinement is bounded; real departmental months have not been piloted."
+  ],
+  "native_gui_verification": {
+    "recorded_at": "2026-11-20T14:02:32.641191+00:00",
+    "process_id": 50716,
+    "window_title": "Duty Rota | Allocation audit - LIVE",
+    "evidence": "docs/allocation-progress/focused-native-window-r4.png",
+    "result": "Visually inspected native desktop window: fixed countdown,168+54 verified counts, correctly scaled charts, report button enabled, actual-data limitation visible. Viewer only; no allocation worker."
+  },
+  "goal_handoff_status": {
+    "status": "blocked",
+    "recorded_at": "2026-11-20T14:03:22.478840+00:00",
+    "reason": "Actual problem month/app instance has not been identified. Configured DB has no November2026 period; latest inspected canonical spreads are empty. Required operational validation cannot proceed from synthetic fixtures. Same missing-dataset condition persisted across three consecutive goal turns; no allocation/test worker remains.",
+    "full_objective_complete": false,
+    "fixed_deadline": "2026-11-20T14:04:11Z"
+  }
+}

@@ -72,7 +72,7 @@ export interface Decision {
 export type Mode = "standard" | "all_units";
 export type Tier = "home" | "fallback" | "same_campus" | "any_unit" | "outside_scope" | "unposted";
 export interface Summary { filled: number; fallback: number; ledger_records: number; unfilled: number; slots_considered: number;
-  mode?: Mode; over_limit_people?: number; cross_unit?: number; unposted_used?: number }
+  mode?: Mode; allocation_mode?: "availability" | "equal_counts"; over_limit_people?: number; cross_unit?: number; unposted_used?: number }
 export interface UnfilledCause { cause: string; label: string; count: number; fix: string;
   examples: { slot_id: string; duty_date: string; duty_label?: string; unit_name?: string }[] }
 export interface Diagnostics { unposted_by_level?: Record<string, number>; unposted_by_group?: Record<string, number> }
@@ -279,7 +279,7 @@ function diagnosticsCallout(diagnostics: Diagnostics | null | undefined, month: 
     <p><strong>Postings check for ${esc(monthName)}</strong></p>
     <ul>${levels.map(([level, n]) => `<li data-diagnostic="${esc(level)}">${esc(`${n} ${callLevelText(level).replace(/ call$/, "-call")} ${Number(n) === 1 ? "member has" : "members have"} no posting this month`)}</li>`).join("")}</ul>
     ${groups.length ? `<p class="fill-all-diagnostics__groups">By group: ${esc(groups.map(([g, n]) => `${codeLabel(g.toUpperCase())} ${n}`).join(" · "))}</p>` : ""}
-    <p>Fill-all can use them, but each one is flagged and ledgered. To fix this at the source, enter their ${esc(monthName)} postings in Unit Management.</p></div>`;
+    <p>They cannot receive ordinary or extra duties until a dated posting to an included unit is recorded for ${esc(monthName)} in Unit Management.</p></div>`;
 }
 
 /* ----------------------------------------------------------------------------------------- */
@@ -288,7 +288,7 @@ function diagnosticsCallout(diagnostics: Diagnostics | null | undefined, month: 
 
 type Notice = { tone: "error" | "success" | "info"; text: string; next?: "preview" | "retry" | ""; list?: string[] };
 
-/** Fill remaining duties from every unit and from members without a posting (mode "all_units"). */
+/** Fill remaining duties using dated members of this month's included units. */
 export function openFillAll(month: string, onApplied: () => void): Promise<void> {
   return openExtraDuty(month, onApplied, "all_units");
 }
@@ -411,21 +411,23 @@ export async function openExtraDuty(month: string, onApplied: () => void, mode: 
     if (all || busy) return "";
     return `<section class="fill-all-cta" aria-labelledby="fill-all-cta-title"><div>
       <h3 id="fill-all-cta-title">Duties still open?</h3>
-      <p>Fill remaining duties from every unit and from members without a posting. Leave, rest, call level, groups and unit rules are still never broken; you see the full report before anything is saved.</p></div>
+      <p>Fill remaining duties using members with dated postings to this month?s included units only. Leave, rest, call level, groups and unit rules are still never broken; you see the full report before anything is saved.</p></div>
       <button type="button" class="fill-all-button" data-open-fill-all>Fill remaining duties (all units)</button></section>`;
   }
 
   function chips(summary: Partial<Summary>, done = false, overLimit?: number) {
+    const policy = summary.allocation_mode === 'availability' || summary.allocation_mode === 'equal_counts'
+      ? `<p class="extra-duty-notice" data-allocation-mode>Fairness approach: <strong>${summary.allocation_mode === 'availability' ? 'Availability-based fairness' : 'Equal duty counts'}</strong>. Extra-duty justice history keeps its existing priority; safety rules remain mandatory.</p>` : '';
     if (all) {
       const over = summary.over_limit_people ?? overLimit ?? 0;
-      return `<ul class="extra-duty-chips fill-all-chips" aria-label="Summary">
+      return `${policy}<ul class="extra-duty-chips fill-all-chips" aria-label="Summary">
       ${chip(summary.filled ?? 0, done ? "filled" : "to fill", "info")}
       ${chip(summary.cross_unit ?? 0, "from other units", "neutral")}
       ${chip(summary.unposted_used ?? 0, "members without a posting", (summary.unposted_used ?? 0) ? "warning" : "neutral")}
       ${chip(over, "over individual limit", over ? "warning" : "neutral")}
       ${chip(summary.unfilled ?? 0, "cannot be filled", (summary.unfilled ?? 0) ? "danger" : "neutral")}</ul>`;
     }
-    return `<ul class="extra-duty-chips" aria-label="Summary">
+    return `${policy}<ul class="extra-duty-chips" aria-label="Summary">
       ${chip(summary.filled ?? 0, done ? "filled" : "to fill", "info")}
       ${chip(summary.fallback ?? 0, "with a fallback unit", "neutral")}
       ${chip(summary.ledger_records ?? 0, "ledger records", "warning")}

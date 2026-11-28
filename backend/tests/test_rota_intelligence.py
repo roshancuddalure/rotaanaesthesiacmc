@@ -34,7 +34,9 @@ def complete(db, user, **kw):
 
 def test_whole_month_validated_reviewed_and_alternatives(compute_db):
     db, user = compute_db
-    job = complete(db, user)
+    # This exercises completed optimal proofs and the reviewed workflow. The
+    # separate bounded-search cases cover short deadlines without claiming optimality.
+    job = complete(db, user, seconds=30)
     assert job.status == "completed"
     result = job.state["intelligence"]["alternatives"][0]
     assert result["status"] == "optimal"

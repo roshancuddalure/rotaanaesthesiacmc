@@ -1,0 +1,125 @@
+{
+  "recorded_at": "2026-11-25T17:02:36.180326+00:00",
+  "status": "cycle-family-blocked-by-existing-eligibility-not-global-infeasibility",
+  "search": {
+    "status": "offline_study_only",
+    "cycles": 0,
+    "trials": 0,
+    "trial_limit": 128,
+    "inspections": 0,
+    "inspection_limit": 20000,
+    "refusals": {
+      "day_to_donor:call_subgroup_mismatch": 356,
+      "day_to_donor:unit_rule": 68
+    },
+    "duty_counts_preserved": true,
+    "extra_credits_preserved": true,
+    "weekends_preserved": true,
+    "limit_reached": false,
+    "levels": [
+      {
+        "call_level": "5TH_CALL",
+        "before_night_gap": 1,
+        "after_night_gap": 1,
+        "before_hour_gap": 24.0,
+        "after_hour_gap": 24.0
+      },
+      {
+        "call_level": "4TH_CALL",
+        "before_night_gap": 2,
+        "after_night_gap": 2,
+        "before_hour_gap": 40.0,
+        "after_hour_gap": 40.0
+      },
+      {
+        "call_level": "3RD_CALL",
+        "before_night_gap": 3,
+        "after_night_gap": 3,
+        "before_hour_gap": 48.0,
+        "after_hour_gap": 48.0
+      },
+      {
+        "call_level": "2ND_CALL",
+        "before_night_gap": 2,
+        "after_night_gap": 2,
+        "before_hour_gap": 48.0,
+        "after_hour_gap": 48.0
+      },
+      {
+        "call_level": "1ST_CALL",
+        "before_night_gap": 1,
+        "after_night_gap": 1,
+        "before_hour_gap": 24.0,
+        "after_hour_gap": 24.0
+      }
+    ],
+    "implementation_sha256": "f5b36a7b232429dcc9f9c2a5d8ef71b0846670db291695dd9f3bec2e5b9a658d"
+  },
+  "evidence": "docs\\allocation-progress\\production-nov2026-20261123\\fairness-modes-engine17-night-cycle-equal-study-structural-audit.json",
+  "safety": {
+    "ok": true,
+    "checked": 840,
+    "checks": [
+      {
+        "name": "Leave respected",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Rest after 24-hour duty",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "No double booking",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Call level and groups",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Posted to the duty's unit",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Duty allowed for unit",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Slot capacity",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      },
+      {
+        "name": "Active members",
+        "passed": true,
+        "checked": 840,
+        "violations": 0
+      }
+    ],
+    "ordinary_roster_fallback": 0,
+    "violation_codes": {}
+  },
+  "all_holder": {
+    "checked": 840,
+    "failures": {},
+    "ot_guard_present": false,
+    "affected_people": 0,
+    "failure_details": [],
+    "interpretation": "Placement-validator replay including individual limits; unit staffing is reported separately, in addition to the independent eight-check audit. reported restrictions require review of any existing attributed overrides."
+  },
+  "production_writes": 0,
+  "interpretation": "356call-subgroup and68unit-rule candidate-combination rejections prevent donor daytime replacements in this cycle family. These are not distinct people/duties. Rules are preserved; neither total fairness nor all possible repairs are certified."
+}

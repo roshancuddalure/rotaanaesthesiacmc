@@ -1,0 +1,200 @@
+{
+  "status": "complete",
+  "recorded_at": "2026-11-23T15:55:06.138318+00:00",
+  "operational_writes": 0,
+  "database_enforced_readonly": true,
+  "selected_ordinary_repairs": 183,
+  "optimizer": {
+    "status": "time_limited",
+    "uncovered": 183,
+    "objectives": [
+      {
+        "name": "required_coverage",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "coverage",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "worst_call_gap",
+        "value": 4,
+        "proven": false
+      },
+      {
+        "name": "call_gap_total",
+        "value": 13,
+        "proven": false
+      },
+      {
+        "name": "call_level_equality",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "hours_burden",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "extra_burden",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "weekend_burden",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "night_burden",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "holiday_burden",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "workload",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "spacing_history",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "preferences",
+        "value": 0,
+        "proven": false
+      },
+      {
+        "name": "changes",
+        "value": 183,
+        "proven": false
+      }
+    ],
+    "objective_basis": {
+      "version": 1,
+      "equality": "uniform_call_level_v1",
+      "target_by_call_level": {
+        "1ST_CALL": 4.285714285714286,
+        "2ND_CALL": 6.0,
+        "3RD_CALL": 6.966390222610185,
+        "4TH_CALL": 9.330922242314646,
+        "5TH_CALL": 2.3076923076923075
+      },
+      "fixed_duties": "included_in_month_total",
+      "personal_prorata_optimized": false,
+      "preferences_before_equality": false,
+      "worst_gap_optimized": true,
+      "hours_and_extra_optimized": true,
+      "basis": "This proposal uses a shared target within each call level, with fixed duties included. Dated eligibility limits assignments, but this objective does not minimize personal pro-rata deviation. Safety and required coverage remain higher priorities. Worst call-level gap precedes squared count deviation; hours and extra-duty burden also count. Preferences and repair stability follow fairness."
+    },
+    "fairness": [
+      {
+        "call_level": "1ST_CALL",
+        "members": 28,
+        "minimum": 3,
+        "maximum": 5,
+        "gap": 2,
+        "within_one": false,
+        "within_two": true,
+        "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+      },
+      {
+        "call_level": "2ND_CALL",
+        "members": 15,
+        "minimum": 3,
+        "maximum": 7,
+        "gap": 4,
+        "within_one": false,
+        "within_two": false,
+        "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+      },
+      {
+        "call_level": "3RD_CALL",
+        "members": 58,
+        "minimum": 4,
+        "maximum": 8,
+        "gap": 4,
+        "within_one": false,
+        "within_two": false,
+        "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+      },
+      {
+        "call_level": "4TH_CALL",
+        "members": 21,
+        "minimum": 0,
+        "maximum": 1,
+        "gap": 1,
+        "within_one": true,
+        "within_two": true,
+        "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+      },
+      {
+        "call_level": "5TH_CALL",
+        "members": 13,
+        "minimum": 1,
+        "maximum": 3,
+        "gap": 2,
+        "within_one": false,
+        "within_two": true,
+        "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+      }
+    ],
+    "gap_feasibility": [
+      {
+        "limit": 1,
+        "status": "infeasible_in_candidate_model",
+        "coverage": 0,
+        "validation_cuts": 0,
+        "scope": "Fixed units, dated candidates, protected duties and achieved coverage; not all possible unit layouts."
+      },
+      {
+        "limit": 2,
+        "status": "infeasible_in_candidate_model",
+        "coverage": 0,
+        "validation_cuts": 0,
+        "scope": "Fixed units, dated candidates, protected duties and achieved coverage; not all possible unit layouts."
+      }
+    ],
+    "elapsed_ms": 79866.21,
+    "refinement": {
+      "checks": 96,
+      "transfers": 0,
+      "additional_covered": 0,
+      "improved": false,
+      "limit_reached": true,
+      "global_optimum_proven": false
+    },
+    "warnings": [
+      "No holiday dates configured; holiday balancing was not evaluated.",
+      "183 duties remain unassigned. Review candidate restrictions and search evidence; a timeout is not proof of infeasibility.",
+      "2ND_CALL: monthly duty gap is 4 (target at most 1\u20132). Review fixed duties, partial availability and hard constraints; local search does not prove the gap unavoidable.",
+      "3RD_CALL: monthly duty gap is 4 (target at most 1\u20132). Review fixed duties, partial availability and hard constraints; local search does not prove the gap unavoidable.",
+      "Gap <= 1: infeasible_in_candidate_model. This concerns achieved coverage and the current fixed-unit candidate model; it is not a proof across other unit layouts.",
+      "Gap <= 2: infeasible_in_candidate_model. This concerns achieved coverage and the current fixed-unit candidate model; it is not a proof across other unit layouts."
+    ]
+  },
+  "changed_rows": 0,
+  "new_final_validation_failures": 0,
+  "rejected_issue_counts": {
+    "leave": 100,
+    "duty_overlap": 43,
+    "same_day_duty": 35,
+    "rest_after_24hr": 18,
+    "post_24hr_rest": 18,
+    "rest_before_recorded_duty": 5
+  },
+  "scope": "Current fixed units, ordinary automatic fourth-call duties only; all other duties and extra-duty ledger rows remain fixed. The baseline contains independently identified ineligible first/second-call holders; this validator compares preserved conflicts, so zero NEW failures is not a clean whole-month safety certificate. No apply token.",
+  "orm_dirty_rows": 0,
+  "orm_new_rows": 0,
+  "elapsed_seconds": 110.547,
+  "source_sha256": "3624c25dd1e7584291a76c8aec6ee6f80fdfdcc173a8d6e7af49847a14da8d77"
+}

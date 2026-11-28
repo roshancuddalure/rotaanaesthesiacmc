@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="41.712" timestamp="2026-11-23T21:07:36.883723+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_allocation_workload_and_pools" name="test_workload_normalization_beats_contrary_preferences_after_equality[False]" time="2.189" /><testcase classname="tests.test_allocation_workload_and_pools" name="test_workload_normalization_beats_contrary_preferences_after_equality[True]" time="1.045" /><testcase classname="tests.test_allocation_workload_and_pools" name="test_dated_pool_uses_canonical_monthly_targets_without_eligibility_leak[False]" time="1.385"><failure message="AssertionError: assert {'1b6a7928-a4...0a92612f4b5d'} == {'1b6a7928-a4...0a92612f4b5d'}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Differing items:&#10;  {'1b6a7928-a457-43d2-a84e-c76171ddfffb': '83d959dc-5d49-4414-84c9-49bd43e4b573'} != {'1b6a7928-a457-43d2-a84e-c76171ddfffb': '03bfed49-6466-478b-bf76-0b46a41b9685'}&#10;  Use -v to get more diff">compute_db = (&lt;sqlalchemy.orm.session.Session object at 0x000002848F0EF090&gt;, &lt;app.models.auth.UserAccount object at 0x000002848EF68E10&gt;)
+reverse = False
+
+    @pytest.mark.parametrize("reverse", [False, True])
+    def test_dated_pool_uses_canonical_monthly_targets_without_eligibility_leak(compute_db, reverse):
+        db, _ = compute_db
+        unit, people = clear_fixture(db)
+        promoted, colleague = people["Safe Member"], people["Spare One"]
+        for person in people.values():
+            person.call_level = "3RD_CALL"
+            for posting in person.postings:
+                posting.posting_type = "3RD_CALL"
+        senior = Person(canonical_name="Senior A", call_level="4TH_CALL")
+        reserve = Person(canonical_name="Senior B", call_level="4TH_CALL")
+        db.add_all([senior, reserve])
+        db.add(MemberCallLevelChange(
+            person=promoted, call_level="4TH_CALL", effective_from=date(2026, 5, 16)
+        ))
+        for person in (senior, reserve):
+            db.add(PersonPosting(
+                person=person, unit=unit, posting_type="4TH_CALL",
+                starts_on=date(2026, 5, 1), source="unit_board",
+            ))
+        _, rules = get_phase_one_rules(db)
+        rules.duty_rules.extend([
+            day_rule("AUDIT_POOL", ["3RD_CALL", "4TH_CALL"]),
+            day_rule("AUDIT_THIRD", ["3RD_CALL"]),
+            day_rule("AUDIT_FOURTH", ["4TH_CALL"]),
+        ])
+        early_pool = day_slot(db, unit, 5, "AUDIT_POOL", None)
+        early_senior = day_slot(db, unit, 6, "AUDIT_FOURTH", "4TH_CALL")
+        third = day_slot(db, unit, 8, "AUDIT_THIRD", "3RD_CALL")
+        late_pool = day_slot(db, unit, 20, "AUDIT_POOL", None)
+        db.commit()
+        rows = [early_pool, early_senior, third, late_pool]
+        if reverse:
+            rows.reverse()
+        slots = {str(row.id): row for row in rows}
+        context = candidate_context(db, "2026-05", rules=rules)
+        # An impossible senior preference before promotion must not become a candidate.
+        preferences = {f"{early_senior.id}:{promoted.id}": -2_000_000}
+        expected = {str(early_pool.id): str(promoted.id), str(early_senior.id): str(senior.id),
+                    str(third.id): str(colleague.id), str(late_pool.id): str(promoted.id)}
+        preferences.update({f"{sid}:{person}": -1_000_000 for sid, person in expected.items()})
+        result = solve_month(db, context, slots, mode="preferences", seconds=5, preferences=preferences)
+&gt;       assert result["choices"] == expected
+E       AssertionError: assert {'1b6a7928-a4...0a92612f4b5d'} == {'1b6a7928-a4...0a92612f4b5d'}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Differing items:
+E         {'1b6a7928-a457-43d2-a84e-c76171ddfffb': '83d959dc-5d49-4414-84c9-49bd43e4b573'} != {'1b6a7928-a457-43d2-a84e-c76171ddfffb': '03bfed49-6466-478b-bf76-0b46a41b9685'}
+E         Use -v to get more diff
+
+tests\test_allocation_workload_and_pools.py:149: AssertionError</failure></testcase></testsuite></testsuites>

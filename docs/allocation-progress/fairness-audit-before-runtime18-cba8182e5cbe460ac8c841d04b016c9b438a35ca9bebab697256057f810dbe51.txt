@@ -1,0 +1,112 @@
+DUTY ALLOCATION AUDIT - CURRENT REVISION 17
+Updated UTC: 2026-11-25T17:11:51.527863+00:00
+
+The total number of duties is now within a gap of two in the November equal-count
+simulation. All 840 duties remain filled, and the simulated final rota passes the
+clinical and individual-limit checks. Production has not been changed.
+
+NOVEMBER RESULTS: EQUAL-COUNT SETTING
+Call level People Duties Total gap Weekend gap Night gap Hours gap
+1ST_CALL       28 4- 5         1           1          1         24
+2ND_CALL       15 5- 7         2           1          2         48
+3RD_CALL       58 6- 8         2           1          3         48
+4TH_CALL       21 9-10         1           2          2         40
+5TH_CALL       13 2- 3         1           1          1         24
+
+Fourth call improved further: its night-duty gap fell from 3 to 2 and its hours
+gap fell from 56 to 40. Third call still has an overall night-duty gap of 3.
+The stricter saved gap-one setting still flags the second/third total-duty gaps
+of two. We have not changed that setting or hidden its warnings.
+
+WHY THIRD-CALL NIGHT COUNTS DIFFER
+The 58 third-call doctors fall into seven groups with different permitted duty
+types. Within each group, the night gap is 0-2 and the total-duty gap is 0-1.
+The larger overall night gap crosses those groups. Tested replacement combinations
+were blocked by existing call-subgroup or unit rules, which remain enforced.
+This comparison is descriptive: matching duty types does not mean identical dated
+availability, rest or staffing. It does not prove that no better rota is possible,
+and it does not replace the primary call-level fairness target.
+See November2026_third_call_fairness_explanation.xlsx for the anonymous groups/chart.
+
+WHAT THE ENGINE NOW DOES
+- Admin can choose equal counts or availability-based fairness. Half-days count
+  as 0.5, overlapping leave is counted once, and proportional targets use the
+  duties actually covered safely. Planned demand remains visible separately.
+- Ordinary AND extra duties require a dated posting to an included monthly unit.
+  The engine does not invent missing postings or create an extra-only category.
+- Effective call levels, explicitly permitted pools, leave, rest, overlap,
+  capacity, unit rules, individual limits and protected assignments remain checks.
+- The new night refinement exchanges ordinary duties while preserving each
+  person's total duties, weekends and extra credits. Hours inequality cannot
+  increase. It shares the existing work budget and shows its search bounds.
+- Repeated draft changes become one original-to-final change per assignment.
+  Real three-row Apply/Verify/Undo tests restore the original holders exactly.
+
+BUGS FIXED DURING THIS AUDIT
+Short-duty leave overlaps, an existing unattributed weekend-limit excess,
+unsafe Undo restoration of quota breaches, and Undo input locking when OT was
+switched off were corrected. Reports no longer bootstrap rule data while reading.
+Preview/checker/report work was reduced without changing their timing thresholds.
+The review screen now shows final hours after night refinement, rather than an
+intermediate result from the earlier hours pass. Failed historical tests remain
+in the execution records; they have not been counted as passes.
+
+VERIFICATION: CURRENT COMPLETED EVIDENCE
+Revision 16 completed 2,436 distinct passing backend cases, including the exact
+63 PostgreSQL-only cases; hashes matched and disposable-database cleanup completed.
+That certificate belongs to revision 16, before the new night refinement.
+
+Revision 17: 146 focused integration tests passed. Two additional real composed
+three-row Apply/Verify/Undo cases passed in both fairness modes and are now in the
+full suite. Both November modes were replayed with database-enforced read-only
+access: 840/840 filled, all eight clinical checks clear, all 840 holders' placement
+and individual-limit checks clear, and no ORM changes awaiting persistence.
+The equal/availability plans contain 197/127 unique original-to-final moves.
+
+Main and candidate each passed 32 actual frontend/API checks, including the night
+table, Apply/Verify/Undo, light/dark accessibility and mobile widths. The corrected
+builds passed in 33.09/17.52 seconds. All 101 packaged file hashes match, with
+184 backend modules matching the candidate. No release approval is inferred.
+
+Revision 17 full verification is complete: all 2,456 distinct backend cases passed,
+including the exact 63 PostgreSQL-only cases. All four original timing gates passed.
+Current source hashes match both completed audits. Guarded database cleanup was
+verified. The final frontend unit suite passed all 156 tests. Current main/candidate
+101 file hashes and 184 backend AST modules match. Broader programme remains open.
+
+NEW26NOV FINDING: count-preserving swaps cannot attain a third-call night gap2
+within the declared eligible/protected family (exact flow proof). Varying totals
+inside6-8 permits a structural6-7total/3-5night matching with better count cost
+2777vs2785. Clinical interactions are omitted: NOT a safe proposal. Next bounded
+multi-row clinical refinement. Review/November2026_night_gap_root_cause_current.txt
+
+LATEST26NOV CLINICAL PROTOTYPE: thirdnightgap3->2/hour48->40, all840filled
+andclinical+quotachecksclear; no worsenedtotalcount/weekendcosts. Accepted38
+hypotheticalchanges;5staffreviews/OTdisabled/timingprojectionremain. ThisisNOT
+yetintegrated. Deterministicextension31testsPASS;2actualhashseedreplaysrunning.
+Evidence:docs/allocation-progress/joint-clinical-night-success-reviewed.json.
+
+LIMITATIONS AND PRODUCTION REVIEW
+- Availability mode intentionally permits raw duty gaps of 2/4/4/6/2. Its third-call
+  adjusted spread 1.5092 remains above the saved tolerance of 1. Use equal-count
+  mode when the priority is the raw maximum-two target.
+- Projected staffing has zero hard blocks but five review warnings in equal mode
+  and eleven in availability mode. Production OT guarding is disabled, so these
+  are not a production OT-capacity certificate. Stored review flags remain visible.
+- 390 November timing windows/flags and corresponding saved-rule changes remain
+  proposed, not applied. Regular non-24h duties are 08:00-16:00; CHAD, RUHSA and
+  RC third-call A/B are 24h duties. Review timing and resulting allocation repairs
+  together, then regenerate a live preview before any operational Apply.
+- No holiday calendar or global optimum has been assumed. Bounded searches cannot
+  establish that every remaining difference is unavoidable.
+- The original 50-item programme remains 21 Done. Broader architecture, acceptance
+  and pilot work is not closed by this focused tuning or by a passing test suite.
+
+Overall goal: NOT COMPLETE. No production assignments, settings or deployment changed.
+
+EVIDENCE
+Current full/PG status: docs/allocation-progress/fairness-modes-revision17-holistic-*.json
+November aggregates: docs/allocation-progress/production-nov2026-20261123/
+Detailed requirement audit: Review/Allocation_engine_requirement_audit_current.txt
+Both formatted November review workbooks: Review/November2026_fairness-modes-engine17-*
+Candidate patch: Review/Allocation_engine_fairness_modes_r9_candidate.patch (current 17 code)

@@ -1,0 +1,138 @@
+{
+  "status": "failed",
+  "http_transport": "in-process ASGI through stdio",
+  "listener_ports_opened": 0,
+  "response_mocks": 0,
+  "cases": [
+    {
+      "scenario": "weekend",
+      "checks": 7,
+      "status": "passed"
+    },
+    {
+      "scenario": "leave",
+      "checks": 6,
+      "status": "failed",
+      "error": "unsafe original refused",
+      "page_errors": [],
+      "api_trace": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-template/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-template/allocation-statistics",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-safety/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-candidates/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-auto-fill/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/balance-duties/status",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/balance-duties/status",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-publish/month",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/balance-duties/preview",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/balance-duties/apply",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-publish/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/balance-duties/status",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-template/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-template/allocation-statistics",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-safety/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-candidates/month",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-auto-fill/month",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/balance-duties/batches/9f23eed0-be01-412f-ac04-e2679a46e790/undo",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-publish/month",
+          "status": 200
+        }
+      ]
+    }
+  ],
+  "error": "unsafe original refused"
+}

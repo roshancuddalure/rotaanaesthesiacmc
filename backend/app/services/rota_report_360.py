@@ -4,9 +4,8 @@ Three public functions:
 
 ``build_report_data(db, month)``
     Reads the month once and returns plain, JSON-serialisable data (dates as ISO strings).
-    Read-only: nothing is added, flushed or committed (rules are read through
-    ``get_phase_one_rules`` only when they have already been saved, so its first-run writes
-    never happen from here). Every section is built independently; a failing section is
+    Read-only: nothing is added, flushed or committed; saved rules use the
+    non-initialising reader. Every section is built independently; a failing section is
     replaced by an empty value and its reason is recorded in ``section_errors``.
 ``render_html(data)``
     One self-contained HTML file: inline CSS, inline SVG charts drawn here (no JavaScript,
@@ -39,10 +38,11 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from io import BytesIO
 from typing import Any, Callable
+from types import SimpleNamespace
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session, selectinload, joinedload
 
 from app.models import (
     DutyAssignment,
@@ -297,14 +297,15 @@ class ReportContext:
     cache: dict[str, Any] = field(default_factory=dict)
 
 
-def _choose_period(db: Session, starts_on: date, ends_on: date) -> RotaPeriod | None:
-    periods = list(
-        db.scalars(
-            select(RotaPeriod)
-            .where(RotaPeriod.starts_on == starts_on, RotaPeriod.ends_on == ends_on)
-            .order_by(RotaPeriod.created_at)
-        )
-    )
+def _choose_period(db: Session, starts_on: date, ends_on: date,
+                   *, periods: list[RotaPeriod] | None = None) -> RotaPeriod | None:
+    if periods is None:
+        periods = list(db.scalars(select(RotaPeriod).where(
+            RotaPeriod.starts_on == starts_on, RotaPeriod.ends_on == ends_on
+        ).order_by(RotaPeriod.created_at)))
+    else:
+        periods = [period for period in periods
+                   if period.starts_on == starts_on and period.ends_on == ends_on]
     if not periods:
         return None
     # Prefer the working (non-historical) period: handbook B3, historical imports add their own.
@@ -312,9 +313,10 @@ def _choose_period(db: Session, starts_on: date, ends_on: date) -> RotaPeriod | 
     return (working or periods)[0]
 
 
-def load_month_core(db: Session, month: str) -> MonthCore:
+def load_month_core(db: Session, month: str, *, postings_without_slots: bool = True,
+                    periods: list[RotaPeriod] | None = None) -> MonthCore:
     starts_on, ends_on = month_bounds(month)
-    period = _choose_period(db, starts_on, ends_on)
+    period = _choose_period(db, starts_on, ends_on, periods=periods)
     slots: list[DutySlot] = []
     if period is not None:
         slots = list(
@@ -326,14 +328,18 @@ def load_month_core(db: Session, month: str) -> MonthCore:
                     DutySlot.duty_date <= ends_on,
                 )
                 .options(
-                    selectinload(DutySlot.unit),
-                    selectinload(DutySlot.assignments).selectinload(DutyAssignment.person),
+                    joinedload(DutySlot.unit),
+                    selectinload(DutySlot.assignments).joinedload(DutyAssignment.person),
                 )
                 .order_by(DutySlot.duty_date, DutySlot.starts_at, DutySlot.duty_type, DutySlot.slot_label)
             )
         )
         slots = [slot for slot in slots if (slot.template_status or "") != "excluded"]
     active = [assignment for slot in slots for assignment in slot.assignments if _is_active(assignment)]
+    # Trend discards months without duties. Avoid loading their people/unit
+    # graphs; the current-month report still includes zero-duty posted people.
+    if not slots and not postings_without_slots:
+        return MonthCore(month, starts_on, ends_on, period, slots, active, [])
     postings = list(
         db.scalars(
             select(PersonPosting)
@@ -342,7 +348,7 @@ def load_month_core(db: Session, month: str) -> MonthCore:
                 (PersonPosting.ends_on.is_(None)) | (PersonPosting.ends_on >= starts_on),
                 PersonPosting.source == UNIT_BOARD_SOURCE,
             )
-            .options(selectinload(PersonPosting.person), selectinload(PersonPosting.unit))
+            .options(joinedload(PersonPosting.person), joinedload(PersonPosting.unit))
             .order_by(PersonPosting.starts_on, PersonPosting.posting_type)
         )
     )
@@ -354,16 +360,15 @@ def _duty_labels_and_revision(db: Session) -> tuple[dict[str, str], str | None, 
 
     labels = {item.key: item.label for item in DUTY_TYPES}
     try:
-        from app.services.rota_rules import PHASE_ONE_SETTING_KEY, default_phase_one_rules, get_phase_one_rules
+        from app.services.rota_rules import default_phase_one_rules, read_phase_one_rules
         from app.services.rota_rules_admin import rules_revision
 
-        saved = db.scalar(select(RuleSetting.id).where(RuleSetting.key == PHASE_ONE_SETTING_KEY).limit(1))
-        if saved is None:
+        rules = read_phase_one_rules(db)
+        if rules is None:
             # Never saved: describe the defaults without get_phase_one_rules' first-run writes.
             rules = default_phase_one_rules()
             source = "defaults (rules never saved)"
         else:
-            _version, rules = get_phase_one_rules(db)
             source = "saved rules"
         labels.update({rule.key: rule.label for rule in rules.duty_rules})
         return labels, rules_revision(rules), source
@@ -771,20 +776,22 @@ def _call_level_targets(ctx: ReportContext) -> tuple[list[dict[str, Any]], str |
     min, max and gap of month duties (all campuses) against the allowed gap, and the members off
     target (below ``floor(target)`` or above ``ceil(target)``)."""
     from app.services.fairness_targets import call_level_spread
+    from app.services.rota_template import PHASE4_SLOT_SOURCE
 
     try:
         from app.services.rota_rules import default_phase_one_rules
 
         # The report never writes: saved rules when present, else the defaults.
         rules = _saved_rules(ctx.db) or default_phase_one_rules()
-        spread = call_level_spread(ctx.db, ctx.core.month, rules)
+        spread = call_level_spread(ctx.db, ctx.core.month, rules,
+                                  logical_slots=[slot for slot in ctx.core.slots
+                                                 if slot.source == PHASE4_SLOT_SOURCE],
+                                  logical_period_id=ctx.core.period.id if ctx.core.period else None)
     except Exception as exc:  # noqa: BLE001 - the rest of the fairness section still renders
         return [], _reason(exc)
     rows = []
     for level in spread:
         target = level.get("target")
-        low = math.floor(target) if target is not None else None
-        high = math.ceil(target) if target is not None else None
         off = [
             {
                 "person_id": m["person_id"],
@@ -795,7 +802,8 @@ def _call_level_targets(ctx: ReportContext) -> tuple[list[dict[str, Any]], str |
                 "leave_days": m.get("leave_days", 0),
             }
             for m in level.get("members", [])
-            if target is not None and (m["duties"] < low or m["duties"] > high)
+            if target is not None and (m["duties"] < math.floor(m.get('personal_target', target))
+                                      or m["duties"] > math.ceil(m.get('personal_target', target)))
         ]
         rows.append({
             "call_level": level["call_level"],
@@ -806,6 +814,8 @@ def _call_level_targets(ctx: ReportContext) -> tuple[list[dict[str, Any]], str |
             "min": level["min"],
             "max": level["max"],
             "gap": level["gap"],
+            "allocation_mode": level.get('allocation_mode', 'equal_counts'),
+            "adjusted_gap": level.get('adjusted_gap'),
             "allowed_gap": level["allowed_gap"],
             "ok": level["ok"],
             "explained": level["explained"],
@@ -1029,13 +1039,71 @@ def _build_compliance(ctx: ReportContext, month: str) -> dict[str, Any]:
     }
 
 
+def _load_trend_core(db: Session, month: str, *, periods=None):
+    start, end = month_bounds(month)
+    period = _choose_period(db, start, end, periods=periods)
+    core = SimpleNamespace(month=month, starts_on=start, ends_on=end, period=period,
+               slots=[], active=[], postings=[])
+    if period is None:
+        return core
+    # No Person entities: avoid implicit select-in relationship graph loading.
+    values = db.execute(select(
+        DutySlot.id, DutySlot.duty_date, DutySlot.starts_at, DutySlot.ends_at,
+        DutySlot.is_24hr, DutySlot.template_status,
+        DutyAssignment.id, DutyAssignment.person_id, DutyAssignment.status,
+        DutyAssignment.override_reason,
+        Person.id, Person.canonical_name, Person.call_level, Person.active_status,
+    ).select_from(DutySlot).outerjoin(DutyAssignment, DutyAssignment.duty_slot_id == DutySlot.id)
+      .outerjoin(Person, Person.id == DutyAssignment.person_id).where(
+          DutySlot.rota_period_id == period.id, DutySlot.duty_date >= start,
+          DutySlot.duty_date <= end).order_by(
+              DutySlot.duty_date, DutySlot.starts_at, DutySlot.duty_type, DutySlot.slot_label))
+    slots = {}
+    for row in values:
+        if (row[5] or '') == 'excluded':
+            continue
+        slot = slots.setdefault(row[0], SimpleNamespace(id=row[0], duty_date=row[1], starts_at=row[2],
+            ends_at=row[3], is_24hr=row[4], assignments=[]))
+        if row[6] is None:
+            continue
+        person = (SimpleNamespace(id=row[10], canonical_name=row[11], call_level=row[12],
+                      active_status=row[13]) if row[10] is not None else None)
+        assignment = SimpleNamespace(id=row[6], person_id=row[7], status=row[8], override_reason=row[9],
+                         person=person, duty_slot=slot)
+        slot.assignments.append(assignment)
+        if _is_active(assignment):
+            core.active.append(assignment)
+    core.slots = list(slots.values())
+    if not core.slots:
+        return core
+    postings = db.execute(select(
+        PersonPosting.person_id, PersonPosting.unit_id, PersonPosting.starts_on,
+        PersonPosting.ends_on, PersonPosting.posting_type,
+        Person.id, Person.canonical_name, Person.call_level, Person.active_status,
+    ).select_from(PersonPosting).outerjoin(Person, Person.id == PersonPosting.person_id).where(
+        PersonPosting.starts_on <= end,
+        (PersonPosting.ends_on.is_(None)) | (PersonPosting.ends_on >= start),
+        PersonPosting.source == UNIT_BOARD_SOURCE,
+    ).order_by(PersonPosting.starts_on, PersonPosting.posting_type))
+    core.postings = [SimpleNamespace(person_id=r[0], unit_id=r[1], starts_on=r[2], ends_on=r[3],
+        posting_type=r[4], person=SimpleNamespace(id=r[5], canonical_name=r[6], call_level=r[7],
+        active_status=r[8]) if r[5] is not None else None) for r in postings]
+    return core
+
+
 def _build_trend(ctx: ReportContext, month: str) -> list[dict[str, Any]]:
     trend: list[dict[str, Any]] = []
+    # One report-local period snapshot; preserve working/historical precedence.
+    starts = [month_bounds(_month_shift(month, -back))[0]
+              for back in range(1, TREND_LOOKBACK + 1)]
+    periods = list(ctx.db.scalars(select(RotaPeriod).where(
+        RotaPeriod.starts_on.in_(starts)
+    ).order_by(RotaPeriod.created_at)))
     for back in range(1, TREND_LOOKBACK + 1):
         if len(trend) >= TREND_MONTHS:
             break
         prev = _month_shift(month, -back)
-        core = load_month_core(ctx.db, prev)
+        core = _load_trend_core(ctx.db, prev, periods=periods)
         if not core.slots:
             continue
         rows = workload_rows(core, ctx.holidays)
@@ -1061,13 +1129,9 @@ def _build_trend(ctx: ReportContext, month: str) -> list[dict[str, Any]]:
 
 def _saved_rules(db: Session):
     """The saved rules, or None when they were never saved (keeps the report read-only)."""
-    from app.services.rota_rules import PHASE_ONE_SETTING_KEY, get_phase_one_rules
+    from app.services.rota_rules import read_phase_one_rules
 
-    saved = db.scalar(select(RuleSetting.id).where(RuleSetting.key == PHASE_ONE_SETTING_KEY).limit(1))
-    if saved is None:
-        return None
-    _version, rules = get_phase_one_rules(db)
-    return rules
+    return read_phase_one_rules(db)
 
 
 def _build_individual_limits(ctx: ReportContext, month: str) -> dict[str, Any]:

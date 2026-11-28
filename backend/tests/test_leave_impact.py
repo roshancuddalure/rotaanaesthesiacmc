@@ -52,7 +52,7 @@ def test_legacy_start_hour_rule_and_physical_overlap_remain_distinct(environment
     assignment = duty(db, person, day=date(2026,5,10), start=datetime(2026,5,10,11),
                       end=datetime(2026,5,10,15), label="Morning start into PM")
     from app.services.rota_safety import slot_leave_blocks
-    assert slot_leave_blocks(row, assignment.duty_slot) is False
+    assert slot_leave_blocks(row, assignment.duty_slot) is True
     impact, = affected_duties(db, [row])
     assert impact["reasons"] == ["physical_interval_overlap"]
     assert impact["reviewed_repair_candidate"] is True

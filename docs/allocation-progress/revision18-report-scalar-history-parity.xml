@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="8" time="89.423" timestamp="2026-11-27T14:58:36.598131+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_all_summary_fields_and_zero_duty_members[0]" time="7.125" /><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_all_summary_fields_and_zero_duty_members[1]" time="4.846" /><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_all_summary_fields_and_zero_duty_members[2]" time="6.547" /><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_all_summary_fields_and_zero_duty_members[3]" time="7.393" /><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_all_summary_fields_and_zero_duty_members[4]" time="5.146" /><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_all_summary_fields_and_zero_duty_members[5]" time="6.115" /><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_historical_precedence_and_exact_month_bounds[False]" time="0.492"><failure message="KeyError: ('UNIT_I', '2ND_CALL')">tools\test_report_scalar_history_parity.py:58: in test_scalar_history_keeps_historical_precedence_and_exact_month_bounds
+    seed_realistic_month(db, month='2026-06', members_per_unit=2,
+backend\tests\test_rota_report_360.py:140: in seed_realistic_month
+    fill_month(report._month_shift(month, -back), "published", 31 + back)
+backend\tests\test_rota_report_360.py:128: in fill_month
+    pool = people_by_unit_level[(unit.code, duty[1])]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: ('UNIT_I', '2ND_CALL')</failure></testcase><testcase classname="tools.test_report_scalar_history_parity" name="test_scalar_history_keeps_historical_precedence_and_exact_month_bounds[True]" time="0.580"><failure message="KeyError: ('UNIT_I', '2ND_CALL')">tools\test_report_scalar_history_parity.py:58: in test_scalar_history_keeps_historical_precedence_and_exact_month_bounds
+    seed_realistic_month(db, month='2026-06', members_per_unit=2,
+backend\tests\test_rota_report_360.py:140: in seed_realistic_month
+    fill_month(report._month_shift(month, -back), "published", 31 + back)
+backend\tests\test_rota_report_360.py:128: in fill_month
+    pool = people_by_unit_level[(unit.code, duty[1])]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: ('UNIT_I', '2ND_CALL')</failure></testcase></testsuite></testsuites>

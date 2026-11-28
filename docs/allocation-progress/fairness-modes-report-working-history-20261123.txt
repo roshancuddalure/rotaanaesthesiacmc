@@ -1,0 +1,178 @@
+DUAL FAIRNESS MODES - IMPLEMENTATION AND HOLISTIC AUDIT (IN PROGRESS)
+Current evidence checkpoint: 2026-11-23T17:50:35.067268+00:00
+
+Outcome: implementation exists locally. Full-system regression is still running.
+No production setting, assignment, schema, migration or deployment was changed.
+The original 50-item programme remains 21/50 Done; this report does not close it.
+
+ADMIN SETTING
+Limits > Equal duties within a call level > Duty fairness approach.
+Only the existing superadmin Limits API can change it. Default: availability.
+The legacy target_mode=auto field remains accepted for saved JSON compatibility.
+- availability: personal target = call-level demand * available posted days / cohort available days.
+- equal_counts: personal target = call-level demand / eligible monthly cohort size.
+Safety and coverage precede fairness. Existing assignments are not reallocated by
+saving settings. Changed settings invalidate reviewed drafts; generate a fresh
+proposal, inspect it, then use the existing reviewed atomic Apply workflow.
+
+INTEGRATION AUDIT
+Candidate ranking and safe greedy generation: personal target used; dated
+eligibility, leave, rest, monthly caps and staffing validators unchanged.
+Whole-month balanced/repair/preferences: coverage first, then worst and total
+selected-policy deviation gaps, squared target deviations, hours and extra
+burden, weekends/nights/holidays, spacing/history, preferences and stability.
+CP-SAT availability deviations use 0.001-duty integer precision, disclosed in
+saved objective metadata. Time-limited searches do not prove optimality.
+Balance: same shared target weighting; only existing covered demand can be
+redistributed. Whole-month targets include required template demand. Thus when
+slots remain open, demand totals can differ; neither path manufactures coverage.
+Extra duties: target-distance tie-break follows the selected mode. Existing
+justice ledger priority remains; switching policy does not erase ledger history.
+Manual/superadmin/extra/exchange/import boundaries retain their existing clinical
+validators and explicitly attributed exception rules. The switch is not a new
+permission to override safety, call levels, postings or protected assignments.
+Saved whole-month and Balance reviews record policy; historical uniform proposals
+retain their recorded description. Review/Publish/360 reports distinguish raw
+counts from availability-adjusted deviations and use personal off-target bounds.
+Whole-month equality excludes entirely unavailable people with no duties;
+historical ineligible assignments cannot manufacture eligible roster membership.
+
+ACTUAL NOVEMBER 2026 - DATABASE-ENFORCED READ-ONLY SIMULATIONS
+135 eligible dated included-unit members. 840 duties. Current production rules
+and postings preserved. Each policy simulated locally, never saved to production.
+                       Equal counts             Availability
+1st-call raw gap       1 (4-5)                  2 (3-5)
+2nd-call raw gap        2 (5-7)                  4 (3-7)
+3rd-call raw gap        1 (6-7)                  4 (4-8)
+4th-call raw gap        1 (9-10)                 6 (5-11)
+5th-call raw gap        1 (2-3)                  2 (1-3)
+Proposed changes       42                       9
+Filled duties          840/840                  840/840
+Scope-holder repairs   7/7                      7/7
+Both proposals pass eight independent safety checks on all 840 rows, with zero
+violations. Changed-holder placement/quota checks are clear. ORM dirty/new rows
+zero and transactions rolled back. Production OT guard is disabled: this is not
+an OT or comprehensive unchanged staffing/quota certificate. Available-mode
+third-call adjusted gap remains 1.5092, above saved tolerance1 but below2.
+Neither result proves a globally optimal schedule over all possible unit layouts.
+Named local review workbooks are draft evidence, not operational apply tokens.
+
+TEST EVIDENCE SO FAR
+New focused batch:43 passed (40 exhaustive random-oracle scenarios across both
+policies;2 actual Balance+optimizer+apply safety scenarios;settings validation).
+Later corrective batch:46 passed,1 fixture failure (preserved). Both older-test corrections
+passed there; new history test attempted to restore an unsaved default version
+(None). Fixture now creates a real historical version first; corrective history rerun1 passed.
+Initial broad selected batch:143 passed,1 obsolete expected-response failure;
+response fixture corrected to include the new field. Full suite covers it again.
+Frontend:155 unit tests passed; post-fix production build passed.
+183 Balance/review browser checks and33 settings save/reload checks passed.
+Settings checks cover1280/390/320px and both light/dark accessibility scans.
+Legacy full Limits browser rerun is still in progress. Earlier browser failures retained, not counted
+as passing: obsolete raw-gap wording assertions; one actual stale-explanation
+handler bug corrected. Full backend:2256 cases collected, worker still active.
+
+HOLISTIC FINDINGS / OPEN GATES
+1. Actual new UI explanation-refresh bug fixed;33 settings browser checks pass.
+2. Backup rehearsal test expected migration0029 although current head is0030.
+   Disposable local diagnostic confirmed this; corrected test derives actual head.
+3. Strict-call test expected only call mismatch for an unposted person, omitting
+   the independently required scope rejection. Exact expected code set corrected.
+   These two findings predate this mode switch; no production safeguard relaxed.
+4. Availability third-call tolerance1 and equal-count second-call tolerance1 are
+   unmet in reviewed November proposals; both selected-policy gaps remain below
+   or equal to the requested maximum2. No irreducibility proof is claimed.
+5. The previously unmet10-second extra-preview benchmark must be remeasured on
+   current source without competing browser/solver load; no weakened threshold.
+6. Whole-month unit-layout repair and the broader50-item programme are unfinished.
+   Existing timeout/unknown evidence cannot be reported as infeasibility.
+7. Operational deployment/application and departmental pilot acceptance remain
+   separate from local implementation and read-only simulations.
+
+EVIDENCE
+fairness-modes-contract.xml;fairness-modes-corrective.xml
+fairness-modes-full-system.log/xml (XML appears on terminal completion)
+fairness-modes-frontend-final-tests.log;fairness-modes-build-v2.log
+fairness-modes-limits-browser-v4.log;fairness-modes-settings-browser-v2.log
+production-nov2026-20261123/fairness-modes-equal-counts.json
+production-nov2026-20261123/fairness-modes-availability.json
+Review/November2026_fairness-modes-equal-counts_review.xlsx
+Review/November2026_fairness-modes-availability_review.xlsx
+
+RESUMED AUDIT CHECKPOINT 2026-11-23T18:38:48.257080+00:00
+Latest154-case integration and7reporting/generation cases passed.
+Current backend passing-batch union: 245 distinct cases across named final-engine/integration/reporting/provenance/history/ledger receipts;
+this is not the full-system result. Full Limits210, Balance145, fairness review40,
+extra86,fill-all62 andfrontend155 checks passed (698 total, repeated33settings
+checks included in210, not added). Latest main build passed.
+Prior fullsuite was interrupted after1152reported outcomes/6failures without a
+finalXML. Known causes were investigated: backupmigration fixture, unpostedscope
+assertion, timinggate, historyfixture, policyreporting andactivelearning snapshot
+expectation. Corrections retain clinical validation; current full sweep is
+unfinished. Resumed durable batch uses streaming test outcomes and has no
+completionclaim. PostgreSQL concurrency migration roundtrip passed;testworker
+is still running. Revision9 isolated candidate matches177backend ASTs andselected
+sourcefiles; isolatedbuild/integration andfreshreadonlyNovemberreplays running.
+
+VERIFIED UPDATE 2026-11-23T18:47:32.939925+00:00
+Disposable PostgreSQL migration/concurrency batch:59passed in1284.35s.
+Isolated revision9 backend integration:154passed;isolated frontendbuildpassed.
+Full-stack synthetic browser (real bundledUI/HTTP/auth/in-memoryDB;no mocks):8
+checks passed, including persisted equal-count selection, unchanged4/2duties on
+settings save, reviewed apply to3/3,independent6-row safety check andsafeundo.
+Refreshed actualNovember read-only proposals again retain840filled andeight
+checks clear. Equal-count gaps1/2/1/1/1;availabilityraw2/4/4/6/2.
+New concurrency audit in progress: twoadmin settings edits may pass the same
+base-version check before either saves. A dedicated realPostgreSQL counterexample
+is running;this is not yet certified as fixed. Full regression remains running.
+
+CONFIRMED SETTINGS RACE AND CORRECTION 2026-11-23T18:54:42.960383+00:00
+Dedicated PostgreSQL counterexample producedtwo successful saves fromthe same
+baseversion, losing one update. Evidence:settings-race-focused-before.xml (1fail)
+and combinedbefore.xml (13pass/1samefailure). Corrected Limits save/restore and
+ordinary rules writes now lock/refresh inputs before stalechecks. Low-level rule
+save preserves the outer transaction until historycommit. Settings-race-after.xml:
+2passed (concurrent save andrestore). Atomic settings103passed;rollback/rulesAPI
+20passed, including injected history failure leaving settings unchanged.
+Full-stack bundledUI+realAPI rerun after this correction againpassed8checks.
+The isolated review candidate wasrefreshed for the correction; finalverification
+remains underway. Historical passing fullengine/integration receipts alone do
+not certify later source deltas.
+
+PERFORMANCE INVESTIGATION
+Currentstreamedsystemrun reproduced pre-existing preview10s gate at14.2155s.
+Addedperson-local memoization of pure justice ranking inputs (noteligibility,
+clinicalvalidation orstaffing). Cache invalidates whenever thatperson receives
+a provisional duty. Reference cache_justice=False path is retained for exact
+proposal/ledger paritytests. Four both-policy/both-extra-mode scenarios andthe
+existing extra-duty suites are running. No speed improvement is claimed yet.
+
+RANKING CACHE MEASUREMENT 2026-11-23T19:00:19.982492+00:00
+Initial parity test harness used _Plan.get ratherthan _Plan.result:4fixture
+failures preserved. Corrected4policy/mode paritycases passed;entire decisions,
+planhash,summary,overlimit/unfilled/diagnostic evidence matches uncached reference.
+Existing extra-duty/independent verification batch79passed;only unchanged10s
+previewgatefailed13.9767s. Controlled ABBA synthetic310duty comparison:reference
+14.7131/12.9704s,cache11.5732/10.5126s;identicalproposalhash/all310filled.
+Mean13.8417to11.0429s,20.2%improvement inthis measurement. Concurrent workload
+andfourrunslimitgeneralization;no10secondgatepass orproductionlatencyclaim.
+Cacheonlymemoizes pureperson ranking inputs andinvalidates thatpersononassignment.
+Noeligibility/leave/rest/staffing validation iscached orrelaxed. Refreshedisolated
+candidateverificationisnext;fullsystem sweepcontinues.
+
+FINAL POLICY AND EXACT-GAP AUDIT 2026-11-23T19:16:13.983286+00:00
+Equal-count target now restrictedto0/1/2 inmodel,APIandclient;availability
+rangeunchanged. Finalpolicy/API/cache/reference/rollback gate121passed;focused
+settings39browserchecks andfrontendbuild passed. One earlierbrowserloadtimeout
+was retained;unchanged Vite was responsiveandcorrectivererun passed. Isolated
+pre-exact-proof candidate121integration/buildpassed.
+Newrounded-proof boundarycounterexample:rounded1.000canrepresentexact1.0004.
+Scaledfeasibility probesnow independently checkexactpersonal deviations;invalid
+witnessesarecut,withroundingboundaryrelaxed inmodel toavoidfalseinfeasibility.
+Equalinteger-score exactvalidwitnessesmayreplace roundedties. Exactproof/objective
+gate53passed;revision10integration/stalesnapshot gate81passed. Optimizerrevision
+10invalidatesoldproof snapshots. The historical isolateddirectory/patchsuffix
+r9isretained;manifestrecordsactualoptimizerrevision10. Source177ASTmatch refresh
+underway. Broadsystembatch remainsactive onitsrecordedstarting source;later
+atomicity/cache/cap/exactproof deltas haveexplicitfocused receipts. Two unchanged
+timingtests arescheduled afterthatworkerexits;othermachineactivity uncontrolled.

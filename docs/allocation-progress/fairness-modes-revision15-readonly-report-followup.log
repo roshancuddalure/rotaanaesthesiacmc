@@ -1,0 +1,67 @@
+................FF...........                                            [100%]
+================================== FAILURES ===================================
+_______ test_real_report_does_not_bootstrap_rules_or_call_groups[True] ________
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+E   sqlite3.IntegrityError: NOT NULL constraint failed: rule_versions.effective_from
+
+The above exception was the direct cause of the following exception:
+backend\tests\test_rota_report_360.py:487: in test_real_report_does_not_bootstrap_rules_or_call_groups
+    session.flush()
+backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4331: in flush
+    self._flush(objects)
+backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4466: in _flush
+    with util.safe_reraise():
+backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4427: in _flush
+    flush_context.execute()
+backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:466: in execute
+    rec.execute(self)
+backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:93: in save_obj
+    _emit_insert_statements(
+backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1419: in execute
+    return meth(
+backend\.venv\Lib\site-packages\sqlalchemy\sql\elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+E   sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: rule_versions.effective_from
+E   [SQL: INSERT INTO rule_versions (id, name, description, effective_from, effective_to, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+E   [parameters: ('d8dd2ffe68e24aabaa739557fd7833d2', 'Rota generator default rules', None, None, None, 1, '2026-11-24 18:44:59.454198')]
+E   (Background on this error at: https://sqlalche.me/e/20/gkpj)
+___________________ test_performance_300_slots_150_members ____________________
+backend\tests\test_rota_report_360.py:519: in test_performance_300_slots_150_members
+    assert elapsed < 3.0, elapsed
+E   AssertionError: 4.011152099992614
+E   assert 4.011152099992614 < 3.0
+============================== warnings summary ===============================
+tests/test_rota_report_360.py: 11 warnings
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Unknown extension is not supported and will be removed
+    warn(msg)
+
+tests/test_rota_report_360.py: 11 warnings
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Conditional Formatting extension is not supported and will be removed
+    warn(msg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend\tests\test_rota_report_360.py::test_real_report_does_not_bootstrap_rules_or_call_groups[True]
+FAILED backend\tests\test_rota_report_360.py::test_performance_300_slots_150_members
+2 failed, 27 passed, 22 warnings in 178.36s (0:02:58)

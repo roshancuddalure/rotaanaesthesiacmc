@@ -1,0 +1,14 @@
+20261114_0030 (head)
+F                                                                        [100%]
+================================== FAILURES ===================================
+___________ test_concurrent_fairness_and_gap_edits_have_one_winner ____________
+tests\test_fairness_settings_concurrency.py:57: in test_concurrent_fairness_and_gap_edits_have_one_winner
+    assert results==['saved','stale_limits'],results
+E   AssertionError: ['saved', 'saved']
+E   assert ['saved', 'saved'] == ['saved', 'stale_limits']
+E     
+E     At index 1 diff: 'saved' != 'stale_limits'
+E     Use -v to get more diff
+=========================== short test summary info ===========================
+FAILED tests/test_fairness_settings_concurrency.py::test_concurrent_fairness_and_gap_edits_have_one_winner
+1 failed in 34.24s

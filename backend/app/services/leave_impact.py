@@ -7,8 +7,8 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
 
 from app.models import DutyAssignment, DutySlot
-from app.services.leave_semantics import leave_intervals
-from app.services.rota_safety import ACTIVE_ASSIGNMENT_STATUSES, slot_leave_blocks
+from app.services.leave_semantics import duty_leave_blocks, leave_intervals
+from app.services.rota_safety import ACTIVE_ASSIGNMENT_STATUSES
 
 
 def affected_duties(db, leaves):
@@ -54,7 +54,11 @@ def affected_duties(db, leaves):
             slot = assignment.duty_slot
             reasons, leave_ids = set(), set()
             for row in by_person[assignment.person_id]:
-                legacy = row.starts_on <= slot.duty_date <= row.ends_on and slot_leave_blocks(row, slot)
+                # Keep the explanation's date-policy reason separate from the
+                # physical overlap which now independently blocks allocation.
+                legacy = (row.starts_on <= slot.duty_date <= row.ends_on
+                          and duty_leave_blocks(row.leave_slot, is_24hr=slot.is_24hr,
+                                                start_hour=slot.starts_at.hour))
                 physical = any(span.starts_at < slot.ends_at and slot.starts_at < span.ends_at
                                for span in spans[id(row)])
                 if legacy or physical:

@@ -1,0 +1,217 @@
+"""Simulate the existing balance search in memory under DB-enforced read-only."""
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import sys
+import time
+from types import SimpleNamespace
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'backend'))
+from sqlalchemy import create_engine, text  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
+from app.services import balance_duties as bd  # noqa: E402
+from app.services.rota_rules import read_phase_one_rules  # noqa: E402
+
+
+def metrics(state):
+    rows = []
+    for level in state.levels():
+        members = state.members_by_level[level]
+        devs = [state.dev(pid) for pid in members]
+        rows.append(dict(call_level=level, members=len(members),
+                         minimum=min(state.duties[pid] for pid in members),
+                         maximum=max(state.duties[pid] for pid in members),
+                         deviation_spread=round(max(devs)-min(devs), 4),
+                         balanced=state.level_ok(level)))
+    return rows
+
+
+def main():
+    output = Path(sys.argv[1])
+    if output.exists():
+        raise RuntimeError('Preserve recorded evidence')
+    report = dict(recorded_at=datetime.now(timezone.utc).isoformat(),
+                  operational_writes=0, identifiers_exported=False, status='started')
+    engine = None
+    started = time.monotonic()
+    try:
+        variables = json.loads(sys.stdin.read())
+        url = variables['DATABASE_PUBLIC_URL'].replace('postgresql://', 'postgresql+psycopg://', 1)
+        if url.startswith('postgres://'):
+            url = url.replace('postgres://', 'postgresql+psycopg://', 1)
+        engine = create_engine(url, connect_args={'connect_timeout': 5,
+            'options': '-c default_transaction_read_only=on -c statement_timeout=10000'})
+        with Session(engine, autoflush=False) as db:
+            db.execute(text('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY'))
+            assert db.scalar(text('SHOW transaction_read_only')) == 'on'
+            report['database_enforced_readonly'] = True
+            rules = read_phase_one_rules(db)
+            assert rules is not None
+            state = bd._load(db, '2026-11', rules=rules)
+            report['before'] = metrics(state)
+            original = {aid: (row['person'], state.slot_unit[row['slot'].id]) for aid, row in state.rows.items()}
+            def signature(rows):
+                return hashlib.sha256('\n'.join(sorted(
+                    '|'.join(map(str, (aid, person, unit))) for aid, (person, unit) in rows.items())).encode()).hexdigest()
+            report['input_assignments_sha256'] = signature(original)
+            from app.services.scheduling_snapshot import capture
+            report['scheduling_context_sha256'] = capture(db).digest
+            report['rows_before'] = len(original)
+            report['ot_guard_present'] = state.ctx.ot_guard is not None
+            report['availability_cohorts'] = []
+            for level in state.levels():
+                members = state.members_by_level[level]
+                cohorts = {}
+                for label, pids in (
+                    ('posted', [pid for pid in members if state.unit_of.get(pid) is not None]),
+                    ('unposted_holder', [pid for pid in members if state.unit_of.get(pid) is None]),
+                    ('fully_available_posted', [pid for pid in members if state.unit_of.get(pid) is not None and state.avail[pid] == 30]),
+                ):
+                    cohorts[label] = dict(members=len(pids), histogram=dict(Counter(state.duties[pid] for pid in pids)))
+                recipients = [pid for pid in members if state.dev(pid) < -state.gap]
+                unposted = [pid for pid in members if state.unit_of.get(pid) is None]
+                reasons = Counter()
+                for pid in recipients:
+                    for aid, row in state.rows.items():
+                        donor = row['person']
+                        if not row['movable'] or state.dev(donor) - state.dev(pid) <= 1 + bd.EPS:
+                            continue
+                        if level not in state.levels_of.get(row['slot'].id, set()):
+                            continue
+                        code = state.structural_block(pid, row['slot'], bool(row.get('extra')))
+                        reasons[code or 'structurally_eligible'] += 1
+                report['availability_cohorts'].append(dict(call_level=level, cohorts=cohorts,
+                    substantially_under_share_members=len(recipients), improving_pair_structural_status=dict(reasons),
+                    ordinary_fallback_members=len(unposted),
+                    unposted_holder_posting_status=dict(Counter(
+                        'no_month_posting' if not any(p.person_id == pid for p in state.ctx.postings)
+                        else 'month_posting_without_usable_in_scope_unit'
+                        for pid in members if state.unit_of.get(pid) is None))))
+            planner = bd._Planner(state, max(bd.MAX_WORK, bd.WORK_PER_SLOT * len(state.slots)))
+            planner.run()
+            report['after'] = metrics(state)
+            report['search'] = dict(work=planner.work, budget=planner.max_work, exhausted=planner.exhausted,
+                                    swaps=planner.swaps, swap_trials=planner.swap_trials,
+                                    swap_capped=planner.swap_capped, moved_rows=len(planner.moves))
+            report['refusals'] = {level: {code: len(items) for code, items in reasons.items()}
+                                  for level, reasons in planner.refusals.items()}
+            report['rows_after'] = len(state.rows)
+            assert len(state.rows) == len(original)
+            # Validate every changed holder against the final in-memory state, never ORM mutations.
+            failures = Counter()
+            changed = [aid for aid, row in state.rows.items()
+                       if original[aid] != (row['person'], state.slot_unit[row['slot'].id])]
+            for aid in changed:
+                row = state.rows[aid]
+                person, unit = row['person'], state.slot_unit[row['slot'].id]
+                state.remove(aid)
+                actual_unit, code = state.place_check(person, row['slot'], allow_unposted=bool(row.get('extra')))
+                state.add(aid, person, unit)
+                if actual_unit != unit or code is not None:
+                    failures[code or 'unit_mismatch'] += 1
+            report['final_changed_holder_failures'] = dict(failures)
+            report['changed_rows'] = len(changed)
+            report['proposed_assignments_sha256'] = signature({
+                aid: (row['person'], state.slot_unit[row['slot'].id]) for aid, row in state.rows.items()})
+            report['ordinary_pool_policy'] = 'Owner23Nov: active members with no monthly unit posting receive ordinary duties, including zero duties; people posted only outside scope excluded.'
+            report['outside_scope_holders_preserved'] = len(state.outside_scope_holders)
+            report['outside_scope_rows_unchanged'] = all(
+                original[aid] == (row['person'], state.slot_unit[row['slot'].id])
+                for aid, row in state.rows.items() if original[aid][0] in state.outside_scope_holders)
+            # Rebuild the independent checker snapshot with detached final rows.
+            # Never set an ORM field or flush a hypothetical production plan.
+            from app.services.extra_duty_verify import load_month_state, check_state
+            verified = load_month_state(db, '2026-11', rules=rules)
+            final_rows = []
+            for assignment in verified.month_assignments:
+                planned = state.rows.get(assignment.id)
+                if planned is None:
+                    final_rows.append(assignment)
+                    continue
+                slot = assignment.duty_slot
+                uid = state.slot_unit[slot.id]
+                detached_slot = SimpleNamespace(**{key: getattr(slot, key) for key in (
+                    'id', 'duty_date', 'starts_at', 'ends_at', 'is_24hr', 'duty_type',
+                    'call_level', 'max_assignees', 'source', 'rota_period_id', 'template_status')},
+                    unit_id=uid, unit=state.units.get(uid))
+                final_rows.append(SimpleNamespace(id=assignment.id, duty_slot=detached_slot,
+                    duty_slot_id=slot.id, person_id=planned['person'], source=assignment.source,
+                    status=assignment.status, created_at=assignment.created_at))
+            for pid in list(verified.duties_by_person):
+                verified.duties_by_person[pid] = [d for d in verified.duties_by_person[pid] if not d.in_month]
+            verified.active_by_slot = {}
+            for assignment in final_rows:
+                verified.add_duty(assignment.person_id, assignment.duty_slot, assignment.id)
+            verified.month_assignments = final_rows
+            safety = check_state(verified)
+            report['independent_final_safety'] = {k: safety[k] for k in ('ok', 'checked', 'checks', 'ordinary_roster_fallback')}
+            report['independent_final_safety']['violation_codes'] = dict(Counter(v['code'] for v in safety['violations']))
+            if '--proposal-review' in sys.argv:
+                assert safety['ok'] and not failures and report['outside_scope_rows_unchanged']
+                from export_ordinary_pool_review import export_review
+                review = export_review(ROOT, state, original, report)
+                report['local_proposal_review_workbook'] = str(review.relative_to(ROOT))
+                report['local_review_contains_names'] = True
+                report['identifiers_exported'] = 'Names/current and proposed rota in separate local review workbook only; none in aggregate JSON.'
+            if '--posting-review' in sys.argv:
+                from openpyxl import Workbook
+                from openpyxl.styles import Alignment, Font, PatternFill
+                workbook = Workbook()
+                sheet = workbook.active
+                sheet.title = 'Posting review'
+                sheet.append(['NOVEMBER 2026 POSTING REVIEW - NO CHANGES APPLIED'])
+                sheet.append(['Names are included only in this local review workbook; aggregate audit evidence omits identifiers.'])
+                sheet.append(['Confirm ordinary-duty eligibility and exact unit/dates before any posting correction. No proposed unit is inferred.'])
+                sheet.append(['Name', 'Call level', 'Duty count', 'Current November postings', 'Review issue',
+                              'Confirmed November unit (owner)', 'Effective start (owner)', 'Effective end (owner)'])
+                for level in state.levels():
+                    for pid in state.members_by_level[level]:
+                        if state.unit_of.get(pid) is not None:
+                            continue
+                        postings = [p for p in state.ctx.postings if p.person_id == pid]
+                        sheet.append([state.name(pid), level, state.duties[pid],
+                            '; '.join(f'{state.unit_name(p.unit_id)} | {p.starts_on} to {p.ends_on or "open"}' for p in postings) or 'None',
+                            'No November posting' if not postings else 'No usable in-scope unit', '', '', ''])
+                for row in sheet.iter_rows(min_row=4, max_row=4):
+                    for cell in row:
+                        cell.fill = PatternFill('solid', fgColor='17365D')
+                        cell.font = Font(color='FFFFFF', bold=True)
+                for row in sheet.iter_rows(min_row=5):
+                    for cell in row:
+                        cell.fill = PatternFill('solid', fgColor='FFF2CC' if cell.column >= 6 else 'EAF1FA')
+                        cell.alignment = Alignment(wrap_text=True, vertical='top')
+                from openpyxl.utils import get_column_letter
+                for i, width in enumerate([32, 17, 13, 60, 30, 35, 24, 24], 1):
+                    sheet.column_dimensions[get_column_letter(i)].width = width
+                sheet.freeze_panes = 'A5'
+                sheet.auto_filter.ref = f'A4:H{sheet.max_row}'
+                review = ROOT / 'Review/November2026_posting_review_20261123.xlsx'
+                review.parent.mkdir(exist_ok=True)
+                if review.exists():
+                    raise RuntimeError('Preserve existing owner review workbook')
+                workbook.save(review)
+                report['local_posting_review_workbook'] = str(review.relative_to(ROOT))
+                report['local_review_contains_names'] = True
+                report['identifiers_exported'] = 'Only names/current postings in separate local owner-review workbook; none in aggregate JSON.'
+            report['orm_dirty_rows'] = len(db.dirty)
+            report['orm_new_rows'] = len(db.new)
+            assert not db.dirty and not db.new
+            db.rollback()
+            report['status'] = 'simulation_complete'
+    except Exception as exc:
+        report.update(status='failed', error_class=type(exc).__name__)
+    finally:
+        if engine is not None:
+            engine.dispose()
+        report['elapsed_seconds'] = round(time.monotonic()-started, 3)
+        report['source_sha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        report['balance_source_sha256'] = hashlib.sha256(Path(bd.__file__).read_bytes()).hexdigest()
+        output.write_text(json.dumps(report, indent=2), encoding='utf-8')
+        print(json.dumps(report, indent=2))
+
+
+if __name__ == '__main__':
+    main()

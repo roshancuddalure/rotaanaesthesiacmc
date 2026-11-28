@@ -5,6 +5,10 @@ independent implementation so the 360° report and the invariant tests can catch
 It reuses only the shared primitives (eligibility, leave overlap, same-day/next-day block
 predicates); the way they are combined is this module's own.
 
+Owner clarification 23 Nov 2026: ordinary AND extra duties require a dated posting
+into included units. Historical unposted ledger exemptions confer no eligibility.
+The independent checker reports these assignments rather than silently waiving them.
+
 ``check_month(db, month)`` checks every active assignment (``assigned``/``draft``/``confirmed``)
 on the month's rota-period slots against the strict rules:
 
@@ -13,9 +17,7 @@ Check                 Codes                                       Rule (contract
 ====================  ==========================================  ==============================
 Active members        ``inactive_member``                         person is active
 Posted to the ...     ``not_in_unit``                             posting to slot unit on date
-                                                                  (exempt: active ledger record
-                                                                  with ``unposted_member`` AND no
-                                                                  posting at all on the date)
+                                                                  and membership in included scope
 Duty allowed for unit ``unit_rule``                               ``rota_template.rule_applies_to_unit``
                                                                   for the slot's final unit
 Call level and groups ``call_level_mismatch``,                    ``rota_eligibility.eligibility``
@@ -108,7 +110,7 @@ CHECKS: list[tuple[str, tuple[str, ...]]] = [
     ("Rest after 24-hour duty", ("post_24hr_rest", "pre_24hr_rest", "rest_gap")),
     ("No double booking", ("same_day_duty",)),
     ("Call level and groups", ("call_level_mismatch", "call_level_unresolved", "call_subgroup_mismatch")),
-    ("Posted to the duty's unit", ("not_in_unit",)),
+    ("Posted to the duty's unit", ("not_in_unit", "scope_member_excluded", "scope_unit_excluded")),
     ("Duty allowed for unit", ("unit_rule",)),
     ("Slot capacity", ("slot_full",)),
     ("Active members", ("inactive_member",)),
@@ -203,6 +205,8 @@ class MonthState:
     units: dict[UUID, Unit] = field(default_factory=dict)
     # Assignment ids backed by an active ledger record whose overridden_rules has ``unposted_member``.
     unposted_assignment_ids: set = field(default_factory=set)
+    ordinary_fallback_person_ids: set = field(default_factory=set)
+    included_unit_ids: frozenset | None = None
     # Assignment ids whose source is a superadmin allocation (exempt per SUPERADMIN_EXEMPT_CODES).
     superadmin_assignment_ids: set = field(default_factory=set)
     _flags: dict = field(default_factory=dict)
@@ -294,12 +298,16 @@ class MonthState:
 
         # Posting and eligibility.
         contexts = self.contexts(person_id, day)
+        # Independently derive membership; neither an old ledger exemption nor
+        # a superadmin source grants admission to the monthly unit roster.
+        if self.included_unit_ids is not None and unit_id not in self.included_unit_ids:
+            problems.append(("scope_unit_excluded", "Duty unit is outside the month's included units."))
+        if not any(c.unit_id is not None and (
+                self.included_unit_ids is None or c.unit_id in self.included_unit_ids) for c in contexts):
+            problems.append(("scope_member_excluded", "No dated posting to an included unit on the duty date."))
         in_unit = [c for c in contexts if unit_id is not None and c.unit_id == unit_id]
         if not in_unit:
-            if not unposted_ok:
-                problems.append(("not_in_unit", f"Not posted to the duty's unit on {day.isoformat()}."))
-            elif contexts:
-                problems.append(("not_in_unit", f"Recorded as having no posting, but posted to another unit on {day.isoformat()}."))
+            problems.append(("not_in_unit", f"Not posted to the duty's unit on {day.isoformat()}."))
 
         # Unit rules of the duty (allowed / excluded units), on the slot's final unit.
         rule = self._slot_flags(slot)[0]
@@ -320,7 +328,7 @@ class MonthState:
 
         # Leave (every active status is a strict block).
         for leave in self.leaves_by_person.get(person_id, []):
-            if leave.starts_on <= day <= leave.ends_on and slot_leave_blocks(leave, slot):
+            if slot_leave_blocks(leave, slot):
                 problems.append(
                     ("leave", f"On {leave.leave_type} ({leave.status}, {leave.leave_slot}) {leave.starts_on}–{leave.ends_on}.")
                 )
@@ -434,6 +442,7 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
             )
         )
         person_ids |= posted_ids
+        person_ids |= set(db.scalars(select(Person.id).where(Person.active_status == 'active')))
         persons = (
             {
                 p.id: p
@@ -460,8 +469,11 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         ):
             postings_by_person[posting.person_id].append(posting)
         leaves_by_person: dict[UUID, list[LeaveRequest]] = defaultdict(list)
+        leave_first = min([window_start, *(s.starts_at.date() for s in [*month_slots, *context_slots])])
+        leave_last = max([window_end, *((s.ends_at-timedelta(microseconds=1)).date()
+                                      for s in [*month_slots, *context_slots])])
         for leave in db.scalars(
-            select(LeaveRequest).where(LeaveRequest.starts_on <= ends_on, LeaveRequest.ends_on >= starts_on)
+            select(LeaveRequest).where(LeaveRequest.starts_on <= leave_last, LeaveRequest.ends_on >= leave_first)
         ):
             if is_active(leave.status):
                 leaves_by_person[leave.person_id].append(leave)
@@ -492,6 +504,10 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         unposted_assignment_ids=unposted_ids,
         superadmin_assignment_ids={a.id for a in month_assignments if a.source == SUPERADMIN_SOURCE},
     )
+    # Historical unposted ledger records are evidence, not eligibility grants.
+    state.ordinary_fallback_person_ids = set()
+    from app.services.allocation_scope import locked_unit_ids
+    state.included_unit_ids = locked_unit_ids(db, period.id) if period is not None else None
     for a in month_assignments:
         duty = _Duty(key=a.id, slot=a.duty_slot, person_id=a.person_id, in_month=True)
         state.duties_by_person.setdefault(a.person_id, []).append(duty)
@@ -562,9 +578,15 @@ def check_state(state: MonthState, assignment_ids: Iterable[UUID] | None = None)
 
     # Capacity, once per slot: the latest assignment(s) over the limit are named.
     checked_slots = {a.duty_slot_id: a.duty_slot for a in targets}
+    # Include every holder of a selected slot even for a partial verification.
+    # Group once instead of scanning the entire month for every checked slot.
+    assignments_by_slot: dict[UUID, list[DutyAssignment]] = defaultdict(list)
+    for assignment in state.month_assignments:
+        if assignment.duty_slot_id in checked_slots:
+            assignments_by_slot[assignment.duty_slot_id].append(assignment)
     for slot_id, slot in checked_slots.items():
         active = sorted(
-            (a for a in state.month_assignments if a.duty_slot_id == slot_id),
+            assignments_by_slot[slot_id],
             key=lambda a: (a.created_at or datetime.min, str(a.id)),
         )
         limit = int(slot.max_assignees or 1)
@@ -586,7 +608,10 @@ def check_state(state: MonthState, assignment_ids: Iterable[UUID] | None = None)
         "checked": len(targets),
         "violations": violations,
         "checks": checks,
-        "unposted_exempt": sum(1 for a in targets if a.id in state.unposted_assignment_ids),
+        "unposted_exempt": 0,
+        "legacy_unposted_records": sum(1 for a in targets if a.id in state.unposted_assignment_ids),
+        "ordinary_roster_fallback": sum(1 for a in targets if a.person_id in state.ordinary_fallback_person_ids
+                                       and a.id not in state.unposted_assignment_ids),
         "superadmin_exempt": sum(1 for a in targets if a.id in state.superadmin_assignment_ids),
         "superadmin_cross_level": cross_level,
         "superadmin_cross_level_count": len(cross_level),

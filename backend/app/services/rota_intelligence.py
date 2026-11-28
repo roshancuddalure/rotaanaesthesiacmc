@@ -10,7 +10,7 @@ from uuid import UUID, uuid4
 from fastapi import HTTPException
 from sqlalchemy import select
 
-from app.models import RotaTeachingExample, RotaLearningVersion, RuleSetting, RuleVersion
+from app.models import RotaTeachingExample, RotaLearningVersion, RuleSetting, RuleVersion, ExtraDutyRecord
 from app.services import rota_compute as compute
 from app.services.rota_candidates import candidate_context, add_provisional_assignment
 from app.services.rota_assignment import validate_assignment
@@ -122,6 +122,13 @@ def start(db, month, user, options, *, origin=None):
         raise HTTPException(422, "Existing assignments can only change in repair mode")
     if any(len(compute.active_slot_assignments(slots[s])) != 1 for s in repair):
         raise HTTPException(422, "Repair requires exactly one current assignment per selected slot")
+    repair_rows = [compute.active_slot_assignments(slots[s])[0] for s in repair]
+    ledger_row = db.scalar(select(ExtraDutyRecord.id).where(
+        ExtraDutyRecord.assignment_id.in_([a.id for a in repair_rows]),
+        ExtraDutyRecord.status == 'active').limit(1)) if repair_rows else None
+    if ledger_row is not None or any(a.source == 'extra_duty_layer' for a in repair_rows):
+        raise HTTPException(409, 'Use Balance duties to transfer extra duties and preserve their ledger credit. '
+                            'The intelligent generator repairs ordinary duties only.')
     requested = options.get("preferences", [])
     context = candidate_context(db, month)
     people = context.people
@@ -583,6 +590,11 @@ def evaluate(db, version, user, months):
             return [
                 objective.get("required_coverage", 10**9),
                 result["uncovered"],
+                objective.get("worst_call_gap", 10**9),
+                objective.get("call_gap_total", 10**9),
+                objective.get("call_level_equality", 10**9),
+                objective.get("hours_burden", 10**9),
+                objective.get("extra_burden", 10**9),
                 objective.get("weekend_burden", 10**9),
                 objective.get("night_burden", 10**9),
                 objective.get("holiday_burden", 10**9),

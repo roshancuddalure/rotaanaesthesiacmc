@@ -100,6 +100,8 @@ def uneven_spread_detail(rows: list[dict[str, object]]) -> str:
             + (f", target {target:.2f}" if isinstance(target, (int, float)) else "")
             + ")"
         )
+        if row.get('allocation_mode') == 'availability':
+            text += f"; availability-adjusted gap {row.get('adjusted_gap')}, allowed {row.get('allowed_gap')} for that measure"
         if row.get("reason"):
             text += f" - {row['reason']}"
         parts.append(text)

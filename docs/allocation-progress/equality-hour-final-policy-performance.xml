@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="5" time="64.778" timestamp="2026-11-23T21:23:19.324593+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_allocation_workload_and_pools" name="test_workload_normalization_beats_contrary_preferences_after_equality[False]" time="2.243" /><testcase classname="tests.test_allocation_workload_and_pools" name="test_workload_normalization_beats_contrary_preferences_after_equality[True]" time="1.156" /><testcase classname="tests.test_allocation_workload_and_pools" name="test_dated_pool_uses_canonical_monthly_targets_without_eligibility_leak[False]" time="1.108" /><testcase classname="tests.test_allocation_workload_and_pools" name="test_dated_pool_uses_canonical_monthly_targets_without_eligibility_leak[True]" time="1.159" /><testcase classname="tests.test_extra_duty" name="test_full_month_plans_quickly" time="23.818"><failure message="AssertionError: 16.116028599994024&#10;assert 16.116028599994024 &lt; 10">db = &lt;sqlalchemy.orm.session.Session object at 0x0000016338D30890&gt;
+user = &lt;app.models.auth.UserAccount object at 0x0000016338DB84D0&gt;
+
+    def test_full_month_plans_quickly(db, user):
+        units = [make_unit(db, f"UNIT_{i:02d}", f"Unit {i:02d}", campus="MAIN" if i % 2 else "RANI") for i in range(10)]
+        people = [member(db, f"Member {u:02d}-{p:02d}", units[u]) for u in range(10) for p in range(15)]
+        setup_month(db, units)
+        for day in range(1, 32):
+            for unit in units:
+                make_slot(db, unit, date(2026, 5, day))
+        for index, person in enumerate(people[::7]):
+            leave(db, person, date(2026, 5, 1 + index % 28), date(2026, 5, 3 + index % 28))
+        db.commit()
+        began = perf_counter()
+        plan = ed.preview(db, MONTH, user)
+        elapsed = perf_counter() - began
+        assert plan["summary"]["slots_considered"] == 310
+&gt;       assert elapsed &lt; 10, elapsed
+E       AssertionError: 16.116028599994024
+E       assert 16.116028599994024 &lt; 10
+
+tests\test_extra_duty.py:801: AssertionError</failure></testcase></testsuite></testsuites>

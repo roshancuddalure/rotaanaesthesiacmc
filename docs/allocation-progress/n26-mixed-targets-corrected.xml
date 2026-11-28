@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="80.311" timestamp="2026-11-20T17:00:29.908888+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_month_full_objectives" name="test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership" time="7.247"><failure message="AssertionError: assert '7c8a462f-475a-4b5b-be29-4d12c6367c44' in set()&#10; +  where '7c8a462f-475a-4b5b-be29-4d12c6367c44' = str(UUID('7c8a462f-475a-4b5b-be29-4d12c6367c44'))&#10; +    where UUID('7c8a462f-475a-4b5b-be29-4d12c6367c44') = &lt;app.models.person.Person object at 0x00000205426456D0&gt;.id&#10; +  and   set() = &lt;function test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership.&lt;locals&gt;.eligible_ids at 0x0000020544836160&gt;(&lt;app.models.rota.DutySlot object at 0x00000205444B6F50&gt;)">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000020543C76A10&gt;
+
+    def test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership(monkeypatch):
+        monkeypatch.setattr(settings, "ot_calendar_enabled", True)
+        engine = create_engine("sqlite+pysqlite:///:memory:")
+        Base.metadata.create_all(engine)
+        try:
+            with Session(engine, expire_on_commit=False) as db:
+                _, people, alternatives = experiment.fixture(db, mixed_calls=True)
+                case = experiment.Experiment(db, people, alternatives, locked_open=False, full_objectives=True)
+                # Fifteen strict third-call duties plus fifteen pooled duties split
+                # 6:2 give26.25 and3.75 demand, hence4.375 and1.875 per member.
+                assert case.targets == {"3RD_CALL": 4.375, "4TH_CALL": 1.875}
+                assert case.context.fairness_member_levels[people[0].id] == "3RD_CALL"
+                early = alternatives[3, 0]
+                late = alternatives[17, 0]
+                def eligible_ids(row):
+                    result = slot_candidates_with_context(db, slot=row, context=case.context)
+                    return {p["person_id"] for p in result["candidates"] if p["candidate_status"] == "eligible"
+                        and p["validation_status"] == "clear" and not p["requires_override"]}
+                assert str(people[0].id) in eligible_ids(early)
+                assert str(people[0].id) not in eligible_ids(late)
+                late_pool = alternatives[18, 0]
+&gt;               assert str(people[0].id) in eligible_ids(late_pool)
+E               AssertionError: assert '7c8a462f-475a-4b5b-be29-4d12c6367c44' in set()
+E                +  where '7c8a462f-475a-4b5b-be29-4d12c6367c44' = str(UUID('7c8a462f-475a-4b5b-be29-4d12c6367c44'))
+E                +    where UUID('7c8a462f-475a-4b5b-be29-4d12c6367c44') = &lt;app.models.person.Person object at 0x00000205426456D0&gt;.id
+E                +  and   set() = &lt;function test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership.&lt;locals&gt;.eligible_ids at 0x0000020544836160&gt;(&lt;app.models.rota.DutySlot object at 0x00000205444B6F50&gt;)
+
+tests\test_month_full_objectives.py:90: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,180 @@
+diff --git a/backend/app/services/allocation_day_capacity.py b/backend/app/services/allocation_day_capacity.py
+new file mode 100644
+--- /dev/null
++++ b/backend/app/services/allocation_day_capacity.py
+@@ -0,0 +1,20 @@
++"""EXPERIMENT ONLY: compare partial-day target policies pending owner choice.
++
++Clinical duty/leave validation is unchanged. This helper weights the existing
++canonical active leave bands, not entitlement, attendance or actual working hours.
++"""
++from app.services.leave_semantics import is_active, leave_intervals, union_intervals
++
++PARTIAL_DAY_POLICY = 'fractional'
++
++
++def posted_capacity(person_id, days, leaves):
++    total = 0.0
++    for day in days:
++        spans = union_intervals(span
++            for leave in leaves.get(day, {}).get(person_id, []) if is_active(leave.status)
++            for span in leave_intervals(leave, day, day))
++        blocked = sum((s.ends_at-s.starts_at).total_seconds() for s in spans)/86400
++        remaining = max(0.0, min(1.0, 1-blocked))
++        total += remaining if PARTIAL_DAY_POLICY == 'fractional' else int(remaining > 0)
++    return total
+diff --git a/backend/app/services/fairness_targets.py b/backend/app/services/fairness_targets.py
+--- a/backend/app/services/fairness_targets.py
++++ b/backend/app/services/fairness_targets.py
+@@ -39,6 +39,7 @@
+ from sqlalchemy.orm import Session
+ 
+ from app.models import RotaPeriod
++from app.services.allocation_day_capacity import posted_capacity
+ from app.services.leave import month_bounds
+ from app.services.rota_eligibility import (
+     CALL_LEVEL_ORDER,
+@@ -223,7 +224,7 @@
+                 first_posting[person.id] = posting
+ 
+         self.level_of: dict[UUID, str] = {}
+-        self.available_days: dict[UUID, int] = {}
++        self.available_days: dict[UUID, float] = {}
+         self.posted_days: dict[UUID, int] = {}
+         self.unit_of: dict[UUID, UUID | None] = {}
+         for pid, days in posted_days.items():
+@@ -240,7 +241,7 @@
+             )
+             self.posted_days[pid] = len(days)
+             self.leave_days[pid] = len(days & leave_sets.get(pid, set()))
+-            self.available_days[pid] = len(days - leave_sets.get(pid, set()))
++            self.available_days[pid] = posted_capacity(pid, days, leaves)
+ 
+         self.duties: dict[UUID, int] = defaultdict(int)
+         self.extra: dict[UUID, int] = defaultdict(int)
+diff --git a/backend/app/services/balance_duties.py b/backend/app/services/balance_duties.py
+--- a/backend/app/services/balance_duties.py
++++ b/backend/app/services/balance_duties.py
+@@ -358,6 +358,7 @@
+     # ---- members and shares ------------------------------------------------------------------
+ 
+     def _members(self) -> None:
++        from app.services.allocation_day_capacity import posted_capacity
+         ctx = self.ctx
+         leave_days: dict[UUID, set[date]] = defaultdict(set)
+         for day, people in ctx.leaves.items():
+@@ -392,7 +393,7 @@
+                 first[person.id] = (key, posting)
+         self.level: dict[UUID, str] = {}
+         self.unit_of: dict[UUID, UUID | None] = {}
+-        self.avail: dict[UUID, int] = {}
++        self.avail: dict[UUID, float] = {}
+         self.persons = persons
+         for pid, days in posted.items():
+             (lo, _ptype, _unit), posting = first[pid]
+@@ -401,7 +402,7 @@
+                               posting_type=posting.posting_type, day=lo)
+             )
+             self.unit_of[pid] = posting.unit_id
+-            self.avail[pid] = len(days - leave_days.get(pid, set()))
++            self.avail[pid] = posted_capacity(pid, days, ctx.leaves)
+         # Unposted and excluded-only holders stay visible as historical data,
+         # but never acquire ordinary/extra eligibility or fairness membership.
+         self.outside_scope_holders = {
+diff --git a/backend/app/services/allocation_objectives.py b/backend/app/services/allocation_objectives.py
+--- a/backend/app/services/allocation_objectives.py
++++ b/backend/app/services/allocation_objectives.py
+@@ -14,7 +14,8 @@
+ # all proposal modes. Preferences and repair stability follow fair allocation.
+ # Revision 10 independently verifies exact personal-target gaps at rounded model boundaries.
+ # Revision 11 adds reviewed count-preserving weekend refinement in equal-count Balance.
+-OPTIMIZER_OBJECTIVE_REVISION = 11
++# Unreleased revision12 study: partial-day roster/target accounting options.
++OPTIMIZER_OBJECTIVE_REVISION = 12
+ 
+ 
+ def describe_objectives(mode, targets, *, policy='equal_counts', personal_targets=None):
+diff --git a/backend/tests/test_partial_day_capacity_study.py b/backend/tests/test_partial_day_capacity_study.py
+new file mode 100644
+--- /dev/null
++++ b/backend/tests/test_partial_day_capacity_study.py
+@@ -0,0 +1,79 @@
++"""Unreleased policy comparison; canonical leave/clinical rules remain intact."""
++from datetime import date
++from types import SimpleNamespace
++from uuid import UUID
++
++import pytest
++
++from app.models import LeaveRequest
++from app.services import allocation_day_capacity as capacity, balance_duties as bd
++from app.services.rota_candidates import candidate_context, context_targets, slot_candidates_with_context
++from app.services.rota_optimizer import solve_month, validate_plan
++from app.services.rota_rules import DutyRule
++from app.services.leave_semantics import leave_intervals
++from tests.test_balance_duties import db as db  # noqa: F401
++from tests.test_balance_duties import assign, edit_rules, make_slot, make_unit, member, relaxed, setup_month
++
++
++@pytest.mark.parametrize('slots,expected', [(['AM'],.5),(['PM'],.5),(['NIGHT'],10/24),
++    (['AM','PM'],0),(['AM','AM'],.5),(['AM','NIGHT'],.25),(['PM','NIGHT'],4/24),
++    (['FULL_DAY'],0),(['unknown'],0)])
++@pytest.mark.parametrize('partial_policy',['fractional','calendar'])
++def test_existing_leave_bands_are_unioned_without_double_counting(slots,expected,partial_policy,monkeypatch):
++    monkeypatch.setattr(capacity,'PARTIAL_DAY_POLICY',partial_policy)
++    day=date(2026,5,3)
++    person=UUID(int=1)
++    rows=[SimpleNamespace(leave_slot=slot,status='approved',starts_on=day,ends_on=day) for slot in slots]
++    actual=capacity.posted_capacity(person,{day},{day:{person:rows}})
++    assert actual==pytest.approx(expected if partial_policy=='fractional' else int(expected>0))
++
++
++@pytest.mark.parametrize('status,expected',[('requested',.5),('imported_pending_review',.5),('cancelled',1),('rejected',1)])
++def test_existing_active_status_policy_is_preserved(status,expected,monkeypatch):
++    monkeypatch.setattr(capacity,'PARTIAL_DAY_POLICY','fractional')
++    day=date(2026,5,3)
++    person=UUID(int=1)
++    row=SimpleNamespace(leave_slot='AM',status=status,starts_on=day,ends_on=day)
++    assert capacity.posted_capacity(person,{day},{day:{person:[row]}})==expected
++
++
++@pytest.mark.parametrize('policy',['availability','equal_counts'])
++@pytest.mark.parametrize('partial_policy',['fractional','calendar'])
++def test_compatible_pm_worker_remains_in_targets_optimizer_and_balance(db,policy,partial_policy,monkeypatch):
++    monkeypatch.setattr(capacity,'PARTIAL_DAY_POLICY',partial_policy)
++    def configure(rules):
++        relaxed(rules)
++        rules.fairness_rules.allocation_mode=policy
++        rules.duty_rules.append(DutyRule(key='PARTIAL_PM_STUDY',label='PM study',group='audit',
++            duration_hours=8,start_time='13:00',end_time='21:00',allowed_call_levels=['1ST_CALL']))
++    edit_rules(db,configure)
++    unit=make_unit(db,'PARTIAL_POLICY_STUDY')
++    a,b=member(db,'Synthetic full day',unit),member(db,'Synthetic AM leave',unit)
++    setup_month(db,[unit])
++    leave=LeaveRequest(person=b,leave_type='ANNUAL_LEAVE',leave_slot='AM',
++        starts_on=date(2026,5,1),ends_on=date(2026,5,31),status='approved')
++    db.add(leave)
++    rows=[make_slot(db,unit,date(2026,5,d),duty_type='PARTIAL_PM_STUDY',hours=8,start_hour=13)
++          for d in (3,6,9,12,15,18)]
++    db.commit()
++    bands=leave_intervals(leave,date(2026,5,1),date(2026,5,31))
++    assert not any(row.starts_at<span.ends_at and row.ends_at>span.starts_at for row in rows for span in bands)
++    context=candidate_context(db,'2026-05')
++    context_targets(db,context)
++    expected=(4,2) if policy=='availability' and partial_policy=='fractional' else (3,3)
++    assert set(context.fairness_member_levels)=={a.id,b.id}
++    assert context.fairness_person_targets[a.id]==expected[0]
++    assert context.fairness_person_targets[b.id]==expected[1]
++    candidates=slot_candidates_with_context(db,slot=rows[0],context=context)['candidates']
++    assert {c['person_id'] for c in candidates if c['validation_status']=='clear'}=={str(a.id),str(b.id)}
++    slots={str(row.id):row for row in rows}
++    result=solve_month(db,context,slots,seconds=8)
++    assert len(result['choices'])==6
++    assert tuple(list(result['choices'].values()).count(str(p.id)) for p in (a,b))==expected
++    assert validate_plan(db,context,slots,result['choices'])==[]
++    for row in rows:
++        assign(db,row,a)
++    db.commit()
++    _,state=bd._plan(db,'2026-05')
++    assert (state.duties[a.id],state.duties[b.id])==expected
++    assert not db.new and not db.dirty

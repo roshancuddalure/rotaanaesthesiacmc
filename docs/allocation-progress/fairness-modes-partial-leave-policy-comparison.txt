@@ -1,0 +1,35 @@
+PARTIAL-DAY FAIRNESS - ISOLATED POLICY COMPARISON
+
+Verified synthetic example: two same-level people,31 dated posted days each.
+Person B has approved morning-only leave on all 31 dates. There are six 8-hour
+13:00-21:00 duties. Both people pass clinical eligibility. The duties intersect
+zero canonical leave intervals. All six duties are covered in every result.
+
+Current main revision 11:
+  Fairness roster:A only. Actual allocation:A 6, B 0. Reported gap:0.
+  This is a confirmed roster omission defect. Candidate is NOT ready to release.
+
+Unreleased isolated repair study:
+  Equal-count mode:A 3, B 3 under both tested partial-day weighting options.
+  Availability mode, fractional days:A 4, B 2 (A 31 day equivalents,B 15.5).
+  Availability mode, available-calendar-date interpretation:A 3, B 3 (31/31).
+  Clinical leave validation is unchanged. No production or main source change.
+
+Evidence: 29 isolated checks passed,including canonical leave-band unions,
+duplicate/overlapping records,known/unknown slots,active/cancelled statuses,
+actual optimizer and Balance outcomes,and engine-revision staleness checks.
+Broader compatibility:125passed541.86s;allselectedmain/studyhashesmatch.
+This isolated evidence is not a full repair certificate or main implementation.
+The alternative calendar interpretation was demonstrated for this compatible-PM
+fixture;it is not an approved global policy or entitlement calculation.
+
+The owner's half-day weighting choice is still required before main integration.
+The separate shortage-target question(actual covered duties versus all template
+duties) and clinical duty-timing confirmation also remain pending.
+
+Study:Debug/Allocation-halfday-policy-study-20261124
+Patch:Review/Partial_day_fairness_policy_study_NOT_APPROVED.patch
+The patch passed git apply --check against main. It remains unapproved and has
+not been applied. Main's full revision11 suite finished2241pass/61skip/0fail/source unchanged.
+All61PostgreSQL-only skips replayed and passed;exactcaseIDs/sourceunchanged;
+newdisposableDBremoved,olderDBpreserved. Main2302distinctcasespassed.

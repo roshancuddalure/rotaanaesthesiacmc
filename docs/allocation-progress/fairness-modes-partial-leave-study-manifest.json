@@ -1,0 +1,45 @@
+{
+  "status": "EXPERIMENT ONLY;owner half-day target policy choice pending;do not release",
+  "main_optimizer_revision": 11,
+  "study_optimizer_revision": 12,
+  "study": "Debug\\Allocation-halfday-policy-study-20261124",
+  "patch": "Review\\Partial_day_fairness_policy_study_NOT_APPROVED.patch",
+  "paths": {
+    "backend/app/services/allocation_day_capacity.py": {
+      "main": null,
+      "study": "e9a81a680ab5a80cd156b00e8cbab2674d5138358e130ff49172153bd580ad4c"
+    },
+    "backend/app/services/fairness_targets.py": {
+      "main": "dddeae6a6802bb70374e144f174f5c21f2d665ffa62a09e0779eb6008dedad0a",
+      "study": "a362e0e2e863aaba312f0c74966114c5c795524cbc90d18aff1270ca46b8323c"
+    },
+    "backend/app/services/balance_duties.py": {
+      "main": "e880bca2677701c4d25ad80af4606987542f9d0fbfd5ae6894d2e3308e98936a",
+      "study": "c0ce58c3588f7b3260bfa1b349205ed28ca80080480462595e87922e473f28f9"
+    },
+    "backend/app/services/allocation_objectives.py": {
+      "main": "d08c9df3e9f8c6c9740af1b33f5cef1e490fa26906f25c4256dae645dac7964d",
+      "study": "9e0c4131c9849c7ba96bfb085ae88d64599282a2288b7b3de41ef4618e4375cd"
+    },
+    "backend/tests/test_partial_day_capacity_study.py": {
+      "main": null,
+      "study": "276743aff878f0d77ddf555cab343798dc9e5c0c7ee97f9d90ec7d5fb4feb3bf"
+    }
+  },
+  "patch_sha256": "3a2b6eb76c96202c6abde252903846b7be5d123568ce6251b9fd6ef29324b40b",
+  "line_endings": "Per-file original line endings preserved",
+  "targeted_tests": "29passed46.88s;bothpolicies/weights;clinicalcanonicalintersections0",
+  "patch_check": "git apply --check passed afterpreservingper-filelineendings",
+  "compatibility_tests": {
+    "recorded_at": "2026-11-23T21:49:13.205893+00:00",
+    "tests": 125,
+    "passed": 125,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": "541.857",
+    "evidence": "fairness-modes-partial-leave-compatibility-resumed.xml",
+    "source_check": "all selected main/study hashes match recorded manifest",
+    "limitation": "Isolated experiment only; not full-system approval or main fix."
+  }
+}

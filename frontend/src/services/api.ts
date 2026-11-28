@@ -1148,8 +1148,8 @@ export interface RotaPhaseOneRules {
     hard_block_unavailable_percent: number;
     small_unit_uses_absolute_minimum: boolean;
   };
-  /** Limit section (docs/limits_callevel_fairness_contract.md §3); changed only through the Limits page. */
-  fairness_rules?: { max_gap_within_call_level: number; target_mode: string };
+  /** Limit section (docs/limits_callevel_fairness_contract.md Â§3); changed only through the Limits page. */
+  fairness_rules?: { max_gap_within_call_level: number; target_mode: string; allocation_mode?: "availability" | "equal_counts" };
   /** Limit section; changed only through the Limits page. */
   extra_duty_rules?: { justice_lookback_months: number };
   notes: string | null;
@@ -1744,7 +1744,7 @@ export interface RotaPublishApproval {
   created_at: string;
 }
 
-/** One member above an individual duty limit after the plan (docs/extra_duty_fill_all_contract.md §4). */
+/** One member above an individual duty limit after the plan (docs/extra_duty_fill_all_contract.md Â§4). */
 export interface OverLimitPerson {
   person_id: string;
   person_name: string;
@@ -1777,7 +1777,7 @@ export interface RotaPublishMonth {
   latest_publish: RotaPublishApproval | null;
   /** Full list behind the "Members over their individual limit" warning. */
   over_limit_people?: OverLimitPerson[];
-  /** Duty totals per call level (docs/limits_callevel_fairness_contract.md §2). */
+  /** Duty totals per call level (docs/limits_callevel_fairness_contract.md Â§2). */
   call_level_spread?: CallLevelSpread[];
 }
 
@@ -2743,7 +2743,7 @@ export function invalidRulesProblems(error: unknown): RotaRuleProblem[] | null {
 }
 
 /* ---------------------------------------------------------------------------------------- */
-/* Limits page (docs/limits_callevel_fairness_contract.md §3) and call-level fairness (§2)    */
+/* Limits page (docs/limits_callevel_fairness_contract.md Â§3) and call-level fairness (Â§2)    */
 /* ---------------------------------------------------------------------------------------- */
 
 /** The five limit sections, stored inside the rules JSON but changed only through the Limits API. */
@@ -2751,7 +2751,7 @@ export interface LimitSections {
   duty_count_limits: RotaPhaseOneRules["duty_count_limits"];
   rest_rules: RotaPhaseOneRules["rest_rules"];
   unit_staffing_rules: RotaPhaseOneRules["unit_staffing_rules"];
-  fairness_rules: { max_gap_within_call_level: number; target_mode: string };
+  fairness_rules: { max_gap_within_call_level: number; target_mode: string; allocation_mode?: "availability" | "equal_counts" };
   extra_duty_rules: { justice_lookback_months: number };
 }
 export type LimitSectionKey = keyof LimitSections;
@@ -2781,6 +2781,9 @@ export interface CallLevelTarget {
   slots: number;
   members: number;
   target: number;
+  planned_target?: number | null;
+  covered_slots?: number;
+  demand_basis?: "covered_duties" | "planned_template";
   min_expected: number;
   max_expected: number;
 }
@@ -2818,8 +2821,10 @@ export interface LimitsHistoryEntry {
   changes: LimitChange[];
 }
 
-export interface CallLevelSpreadMember { person_id: string; name: string; duties: number; extra_duties: number; diff_from_target: number }
+export interface CallLevelSpreadMember { person_id: string; name: string; duties: number; extra_duties: number; diff_from_target: number; personal_target?: number }
 export interface CallLevelSpread {
+  allocation_mode?: "availability" | "equal_counts";
+  adjusted_gap?: number;
   call_level: string;
   label?: string;
   target: number;
@@ -2832,18 +2837,29 @@ export interface CallLevelSpread {
   members: CallLevelSpreadMember[];
 }
 
-/* Balance duties (docs/call_level_pool_and_balance_contract.md §2). */
+/* Balance duties (docs/call_level_pool_and_balance_contract.md Â§2). */
 export interface BalanceRange { min: number; max: number; gap: number }
 export interface BalanceLevel {
+  allocation_mode?: "availability" | "equal_counts";
+  adjusted_gap_before?: number;
+  adjusted_gap_after?: number;
   call_level: string;
   label?: string;
-  /** [low, high] goals within the level, or a ready-made "6–7" text. */
+  /** [low, high] goals within the level, or a ready-made "6â€“7" text. */
   goal_range: [number, number] | number[] | string | null;
   before: BalanceRange;
   after: BalanceRange;
+  ok_before?: boolean;
   ok_after: boolean;
   reason_if_not?: string | null;
   allowed_gap?: number;
+  availability_breakdown?: {
+    posted: BalanceRange & { members: number };
+    fully_available_posted: { members: number; min: number | null; max: number | null; gap: number | null };
+    fully_available_ordinary?: { members: number; min: number | null; max: number | null; gap: number | null };
+    unposted_holders: { members: number; min: number | null; max: number | null; gap: number | null };
+    outside_scope_holders?: number;
+  };
 }
 export interface BalanceMove {
   kind: "move" | "swap";
@@ -2861,7 +2877,7 @@ export interface BalanceMove {
   swap_slot_id?: string | null;
   swap_duty_date?: string | null;
   swap_duty_label?: string | null;
-  /** docs/balance_extra_duties_contract.md §1: a duty placed by the extra-duty layer; its ledger record moves with it. */
+  /** docs/balance_extra_duties_contract.md Â§1: a duty placed by the extra-duty layer; its ledger record moves with it. */
   extra_duty?: boolean;
   ledger_from?: string | null;
   ledger_to?: string | null;
@@ -2876,12 +2892,32 @@ export interface BalanceMember {
   after: number;
   goal: number;
   avail_days: number;
-  /** Extra-duty-layer duties held before → after (balance_extra_duties_contract §1). */
+  /** Extra-duty-layer duties held before â†’ after (balance_extra_duties_contract Â§1). */
   extra_before?: number;
   extra_after?: number;
 }
-export interface BalanceSummary { moves: number; swaps: number; cross_unit: number; levels_balanced_before: number; levels_balanced_after: number; extra_moves?: number }
+export interface BalanceWeekendRefinement {
+  swaps: number; trials: number; trial_limit: number;
+  levels: Array<{call_level: string; before_gap: number; after_gap: number}>;
+}
+export interface BalanceHoursRefinement {
+  swaps: number; trials: number; trial_limit: number;
+  levels: Array<{call_level: string; before_hour_gap: number; after_hour_gap: number}>;
+}
+export interface BalanceNightRefinement {
+  swaps: number; trials: number; trial_limit: number;
+  levels: Array<{call_level: string; before_night_gap: number; after_night_gap: number; before_hour_gap: number; after_hour_gap: number}>;
+}
+export interface BalanceJointNightRefinement {
+  status: string; accepted_levels?: number; changed_rows?: number;
+  deterministic_work_limit?: number; deterministic_work_used?: number;
+  levels: Array<{call_level: string; accepted: boolean; stop: string;
+    before?: Record<"duties" | "minutes" | "night" | "weekend", {gap: number; squares: number}>;
+    after?: Record<"duties" | "minutes" | "night" | "weekend", {gap: number; squares: number}>}>;
+}
+export interface BalanceSummary { allocation_mode?: "availability" | "equal_counts"; moves: number; swaps: number; cross_unit: number; levels_balanced_before: number; levels_balanced_after: number; extra_moves?: number; membership_repair?: {invalid_before:number;repaired:number;unresolved:number}; clinical_repair?: {invalid_before:number;repaired:number;unresolved:number;inspections:number}; individual_limit_repair?: {invalid_before:number;repaired:number;unresolved:number;affected_members:number;reassigned:number;inspections:number}; weekend_refinement?: BalanceWeekendRefinement | null; hours_refinement?: BalanceHoursRefinement | null; night_refinement?: BalanceNightRefinement | null; joint_night_refinement?: BalanceJointNightRefinement | null }
 export interface BalancePreview {
+  preview_job_id?: string;
   month: string;
   plan_hash: string;
   context_hash: string;

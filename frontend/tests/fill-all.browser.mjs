@@ -43,7 +43,7 @@ const decisions = [
   { slot_id: "s6", action: "unfilled", tier: null, person_id: null, person_name: null, home_unit_id: U1, assigned_unit_id: null, overridden_rules: [], ledger: false,
     justice: null, alternatives: [], duty_date: "2026-06-08", duty_label: "Main 3rd call", reason: "UNIT I: 4 on leave" },
 ];
-const summary = { filled: 4, fallback: 2, ledger_records: 4, unfilled: 2, slots_considered: 6, mode: "all_units", over_limit_people: 2, cross_unit: 2, unposted_used: 1 };
+const summary = { allocation_mode: "equal_counts", filled: 4, fallback: 2, ledger_records: 4, unfilled: 2, slots_considered: 6, mode: "all_units", over_limit_people: 2, cross_unit: 2, unposted_used: 1 };
 const previewBody = () => ({
   month: "2026-06", plan_hash: "plan-all", context_hash: "ctx-all", token: "tok-all", generated_at: "2026-10-21T08:00:00Z",
   summary, decisions, over_limit_people: overLimit,
@@ -108,6 +108,8 @@ const shot = async name => { if (shots) await page.screenshot({ path: `${shots}/
 
 // 1. The report shows before anything can be applied.
 await openFill();
+await page.locator("[data-allocation-mode]").waitFor();
+ok(/Equal duty counts/.test(await page.locator("[data-allocation-mode]").innerText()), "saved equal-count policy disclosed");
 await dialog.getByRole("heading", { name: "Fill remaining duties (all units)" }).waitFor();
 await dialog.locator("[data-decision]").first().waitFor();
 eq(state.previewBodies, [{ month: "2026-06", mode: "all_units" }], "preview asks for all units");

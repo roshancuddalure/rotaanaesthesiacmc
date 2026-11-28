@@ -22,6 +22,11 @@ from app.services.rota_safety import assignment_indexes, rule_for_slot
 from app.services.allocation_objectives import describe_objectives
 from app.services.allocation_objective_model import build_objectives
 from app.services.allocation_count_constraints import add_monthly_count_limits
+from app.services.allocation_refinement import refine_incumbent, fairness_summary
+from app.services.allocation_equality import probe_gap_limits, explain_count_outliers
+from app.services.allocation_equality import deviation_scale
+from app.services.allocation_fairness_policy import fairness_mode, person_target
+from app.services.allocation_covered_targets import enabled as covered_enabled, exact_targets
 
 
 def without_slots(context, slot_ids):
@@ -51,6 +56,10 @@ def without_slots(context, slot_ids):
         timings=dict(context.timings),
     )
     result.optimizer_removed_slots = getattr(context, "optimizer_removed_slots", set()) | removed
+    result.optimizer_extra_slots = getattr(context, "optimizer_extra_slots", set()) | {
+        str(a.duty_slot_id) for a in context.assignments
+        if str(a.duty_slot_id) in removed and a.source == "extra_duty_layer"
+    }
     return result
 
 
@@ -203,7 +212,7 @@ def solve_month(
         ]
         candidates[sid] = {c["person_id"]: c for c in valid}
         rejected[sid] = [
-            {"person_name": c["person_name"], "issues": c["validation_issues"]}
+            {"person_id": c["person_id"], "person_name": c["person_name"], "issues": c["validation_issues"]}
             for c in row["candidates"]
             if c not in valid
         ]
@@ -250,11 +259,13 @@ def solve_month(
     model.add(coverage >= minimum_coverage)
     model.add(mandatory >= minimum_required)
     targets = context_targets(db, context)
+    enhance_equality = mode in {"balanced", "repair", "preferences"}
     terms = build_objectives(model, variables, candidates, slots, context,
         targets=targets, mandatory=mandatory, coverage=coverage, mode=mode,
         originals=originals, preferences=preferences, weights=weights,
-        holiday_dates=holiday_dates, incompatible=incompatible)
+        holiday_dates=holiday_dates, incompatible=incompatible, enhance_equality=enhance_equality)
     tiers, quality, level_of = terms.tiers, terms.quality, terms.level_of
+    equality_model = model.clone() if enhance_equality else None
     # Seed with a validated, scarcity-aware greedy draft. A short search must never
     # replace that draft with an equally covered but needlessly concentrated incumbent.
     seed_context = without_slots(context, [])
@@ -362,23 +373,29 @@ def solve_month(
     # Equality tier lower bound: with every possible slot covered, each duty costs at least
     # the cheapest candidate's first-duty increment (increments only grow with n).
     equality_lower = None
-    if full_coverage:
+    if full_coverage and not covered_enabled(context):
         equality_lower = 0
         for s in possible:
             increments = []
             for p in candidates[s]:
                 target = targets.get(level_of.get(p))
+                if enhance_equality:
+                    target = person_target(context, p, target)
                 if target is None:
                     target = context.average_assignments
                 base = len(context.assignments_by_person.get(UUID(p), []))
                 increments.append(round((2 * (base + 1) - 1 - 2 * target) * 100))
             equality_lower += min(increments)
-    bounds["call_level_equality"] = equality_lower
+    bounds["call_level_equality"] = 0 if covered_enabled(context) else equality_lower
     bounds["preferences"] = pref_lower
+    bounds.update({name: 0 for name in ("worst_call_gap", "call_gap_total", "hours_burden", "extra_burden")})
     solver = cp_model.CpSolver()
     solver.parameters.num_search_workers = 1
     solver.parameters.random_seed = 17
     choices, objectives = (dict(seed) if seed_valid else {}), []
+    # Leave a bounded portion for validated local coverage/fairness repair. Search
+    # time allocation changes, not objective precedence or clinical constraints.
+    search_deadline = deadline - max(0, deadline - perf_counter()) * 0.20
     all_optimal = True
     cuts = 0
     last_status = None
@@ -397,8 +414,10 @@ def solve_month(
             continue
         tier_proven = False
         tier_found = False
-        remaining = max(0, deadline - perf_counter())
-        tier_deadline = min(deadline, perf_counter() + remaining / max(1, len(tiers) - tier_index))
+        remaining = max(0, search_deadline - perf_counter())
+        tier_weights = [4 if n in {"required_coverage", "coverage", "worst_call_gap", "call_gap_total", "call_level_equality"}
+                        else 1 for n, _ in tiers[tier_index:]]
+        tier_deadline = min(search_deadline, perf_counter() + remaining * tier_weights[0] / sum(tier_weights))
         while perf_counter() < tier_deadline:
             solver.parameters.max_time_in_seconds = max(0.01, tier_deadline - perf_counter())
             model.minimize(expression)
@@ -439,6 +458,24 @@ def solve_month(
             {"name": name, "value": value, "proven": False}
             for (name, _), value in zip(tiers, quality(choices))
         ]
+    before_refinement = quality(choices)
+    def validate_refinement(trial):
+        if len(trial) < minimum_coverage or -quality(trial)[0] < minimum_required:
+            return [{"code": "minimum_coverage_not_met"}]
+        return validate_plan(db, context, slots, trial)
+    probe_budget = max(0, deadline-perf_counter()) * .30 if enhance_equality else 0
+    choices, refinement = refine_incumbent(
+        choices, candidates, slots, context, quality=quality,
+        validate=validate_refinement,
+        incompatible=incompatible, deadline=deadline-probe_budget, forbidden=forbidden,
+    )
+    if refinement["improved"]:
+        # Proofs for a changed tier and all subsequent tiers were conditional on
+        # the old prefix. Preserve only receipts whose entire prefix still agrees.
+        after_refinement = quality(choices)
+        first_changed = next(i for i, (a, b) in enumerate(zip(before_refinement, after_refinement)) if a != b)
+        objectives = objectives[:first_changed]
+        all_optimal = False
     recorded = {o["name"] for o in objectives}
     objectives.extend(
         {"name": name, "value": value, "proven": False}
@@ -448,6 +485,45 @@ def solve_month(
     failures = validate_plan(db, context, slots, choices)
     if failures:
         raise RuntimeError("Optimizer returned an invalid proposal")
+    gap_feasibility, probed_choices = probe_gap_limits(
+        equality_model, variables, dict(tiers)['worst_call_gap'], choices=choices,
+        quality=quality, validate=lambda trial: validate_plan(db, context, slots, trial),
+        deadline=deadline, required=mandatory,
+        coverage_established=(len(choices) == len(slots) and len(choices) >= minimum_coverage
+                              and -quality(choices)[0] >= minimum_required),
+        gap_scale=deviation_scale(context), fairness_policy=fairness_mode(context.rules),
+        rounding_slack=2 if covered_enabled(context) else 1,
+        gap_check=lambda trial, limit: all(
+            (row['adjusted_gap'] if fairness_mode(context.rules) == 'availability' else row['gap'])
+            <= limit+1e-9 for row in fairness_summary(context, trial, slots)),
+    ) if enhance_equality else ([], choices)
+    if quality(probed_choices) < quality(choices):
+        first_changed = next(i for i, (a, b) in enumerate(zip(quality(choices), quality(probed_choices))) if a != b)
+        choices = probed_choices
+        objectives = [o if i < first_changed else {**o, 'value': quality(choices)[i], 'proven': False}
+                      for i, o in enumerate(objectives)]
+        all_optimal = False
+    elif probed_choices != choices and quality(probed_choices) == quality(choices):
+        # Same integer objective values, but an exact boundary witness can meet
+        # the requested personal-target gap where its rounded tie did not.
+        choices = probed_choices
+    fairness = fairness_summary(context, choices, slots)
+    warnings = [] if holiday_dates else ["No holiday dates configured; holiday balancing was not evaluated."]
+    if len(choices) < len(slots):
+        warnings.append(f"{len(slots) - len(choices)} duties remain unassigned. Review candidate restrictions and search evidence; a timeout is not proof of infeasibility.")
+    for row in fairness:
+        if not row["policy_within_two"]:
+            warnings.append(f"{row['call_level']}: raw duty gap {row['gap']}, availability-adjusted gap {row['adjusted_gap']:.3f}; selected policy {row['policy']} exceeds two. Review fixed duties, availability and hard constraints; local search does not prove the gap unavoidable.")
+    for probe in gap_feasibility:
+        if probe['status'] != 'feasible':
+            warnings.append(f"Gap <= {probe['limit']}: {probe['status']}. This concerns achieved coverage and the current fixed-unit candidate model; it is not a proof across other unit layouts.")
+    selected_personal = exact_targets(context, choices, slots)
+    selected_levels = targets
+    if covered_enabled(context):
+        selected_levels = {}
+        for level in set(level_of.values()):
+            members = [p for p, group in level_of.items() if group == level]
+            selected_levels[level] = sum(selected_personal.get(p, 0) for p in members) / len(members)
     return {
         "choices": choices,
         **({"ot_reservations": {"status": "modeled", **joint_reservations}} if joint_reservations is not None else {}),
@@ -461,17 +537,20 @@ def solve_month(
             else ("infeasible" if last_status == cp_model.INFEASIBLE else "time_limited")
         ),
         "objectives": objectives,
-        "objective_basis": describe_objectives(mode, targets),
+        "objective_basis": describe_objectives(mode, selected_levels, policy=fairness_mode(context.rules),
+            personal_targets=selected_personal),
         "cuts": cuts,
         "baseline_retained": baseline_retained,
         "quality": quality(choices),
+        "refinement": refinement,
+        "fairness": fairness,
+        "gap_feasibility": gap_feasibility,
+        "fairness_exceptions": explain_count_outliers(context, choices, candidates, rejected),
         "elapsed_ms": round((perf_counter() - started) * 1000, 2),
         "uncovered": len(slots) - len(choices),
         "mode": mode,
         "holiday_dates": sorted(holiday_dates),
-        "warnings": []
-        if holiday_dates
-        else ["No holiday dates configured; holiday balancing was not evaluated."],
+        "warnings": warnings,
         "history_window": {
             "start": str(context.history["start"]),
             "end": str(context.history["end"]),

@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-11-27T04:48:41.589536+00:00",
+  "status": "integrated_after_exact66_postgres_hash_cleanup",
+  "source": "backend\\app\\services\\rota_report_360.py",
+  "before_sha256": "98140e446de29857d42a05b5f31dc8cba3fb7cf051fd3d49432dc7e4287ede48",
+  "patch": "Review\\Revision18_report_period_prefetch_pending.patch",
+  "isolated_candidate": "tools\\revision18_report_prefetch_candidate.py",
+  "candidate_sha256": "06ee0dae211793bf3bfd874deedd2c8b85e6b68a0da12756e8f4727d60e8cd14",
+  "tests": "Original report tests copied with only module import redirected; all assertions including3secondlimit retained",
+  "runtime_modified": false,
+  "first_preparation": "Failed before file writes: Windows defaultcp1252 decoding; explicitUTF8corrected. Earlier pytestcollectionerrorartifactretained.",
+  "verification": {
+    "recorded_at": "2026-11-27T04:53:32.140294+00:00",
+    "xml": "docs\\allocation-progress\\revision18-report-prefetch-candidate-utf8.xml",
+    "passed": 31,
+    "original_three_second_assertion_passed": true,
+    "elapsed_suite_seconds": 199.12,
+    "warnings": "22existingopenpyxlunsupportedextensionwarnings",
+    "runtime_source_unchanged": true,
+    "limitations": "Singlepassingcandidateexecutiondoesnoteraseoriginalfullfailureorprovecontrolledspeedup. IntegrateafterPGterminal+hashcleanup; rerunactualreport/fullgates."
+  },
+  "candidate_adversarial_verification": {
+    "recorded_at": "2026-11-27T04:55:55.721585+00:00",
+    "xml": "docs\\allocation-progress\\revision18-report-candidate-period-edges.xml",
+    "passed": 4,
+    "elapsed_seconds": 31.43,
+    "direct_comparison_to_original_runtime": true,
+    "cases": [
+      "working_empty",
+      "historical_only",
+      "excluded",
+      "malformed"
+    ]
+  },
+  "integrated_at": "2026-11-27T05:06:28.572209+00:00",
+  "after_sha256": "06ee0dae211793bf3bfd874deedd2c8b85e6b68a0da12756e8f4727d60e8cd14",
+  "new_backend_regression": "backend\\tests\\test_report_trend_period_snapshot.py"
+}

@@ -34,12 +34,10 @@ from app.models import (
 )
 from app.services.history_fairness import OFFICIAL_STATUSES, unique_assignments
 from app.services.leave import (
-    date_range,
-    leave_requests_for_month,
     month_bounds,
 )
 from app.services.rota_call_levels import normalize_call_level
-from app.services.leave_semantics import duty_leave_blocks, is_active, is_approved
+from app.services.leave_semantics import leave_blocks_slot, leaves_for_slot, is_approved
 from app.services.rota_eligibility import (
     active_group_keys_on,
     attached_groups,
@@ -128,10 +126,8 @@ def rules_groups(rules: RotaPhaseOneRules, slot: DutySlot | None = None, context
 
 
 def slot_leave_blocks(leave: LeaveRequest, slot: DutySlot) -> bool:
-    """Does this leave overlap the slot? Any partial-day leave blocks a 24h duty; for shorter
-    duties AM/PM/NIGHT are compared with the slot start hour; unknown slot values block."""
-    return duty_leave_blocks(leave.leave_slot, is_24hr=slot.is_24hr,
-                             start_hour=0 if slot.is_24hr else slot.starts_at.hour)
+    """Legacy date denials plus approved full-window intersection policy."""
+    return leave_blocks_slot(leave, slot)
 
 
 def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[PersonPosting]:
@@ -181,32 +177,36 @@ def member_contexts_for_day(postings: list[PersonPosting], day: date) -> list[Me
     return contexts
 
 
-def leaves_by_day_and_person(db: Session, month: str) -> dict[date, dict[UUID, list[LeaveRequest]]]:
-    starts_on, ends_on = month_bounds(month)
-    indexed: dict[date, dict[UUID, list[LeaveRequest]]] = {}
-    for leave in leave_requests_for_month(db, month):
-        if not is_active(leave.status):
-            continue
-        first = max(leave.starts_on, starts_on)
-        last = min(leave.ends_on, ends_on)
-        for day in date_range(first, last):
-            indexed.setdefault(day, {}).setdefault(leave.person_id, []).append(leave)
-    return indexed
+def leaves_by_day_and_person(db: Session, month: str, *, rules=None, prospective_slots=()) -> dict[date, dict[UUID, list[LeaveRequest]]]:
+    from app.services.leave import allocation_leave_index
+    return allocation_leave_index(db, month, rules=rules, prospective_slots=prospective_slots)
+
+
+def _month_assignment_statement(starts_on: date, ends_on: date, *columns):
+    return (
+        select(*columns).select_from(DutyAssignment)
+        .join(DutyAssignment.duty_slot)
+        .outerjoin(DutySlot.rota_period)
+        .where(
+            DutySlot.duty_date >= starts_on,
+            DutySlot.duty_date <= ends_on,
+            or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
+        )
+    )
+
+
+def month_assignment_summaries(db: Session, starts_on: date, ends_on: date):
+    """Same monthly source/period boundary, without unused relationship graphs."""
+    return list(db.execute(_month_assignment_statement(
+        starts_on, ends_on, DutyAssignment.id, DutyAssignment.person_id,
+        DutyAssignment.status, DutyAssignment.source,
+    )))
 
 
 def assignments_for_month(db: Session, starts_on: date, ends_on: date) -> list[DutyAssignment]:
     return list(
         db.scalars(
-            select(DutyAssignment)
-            .join(DutyAssignment.duty_slot)
-            .outerjoin(DutySlot.rota_period)
-            .where(
-                DutySlot.duty_date >= starts_on,
-                DutySlot.duty_date <= ends_on,
-                or_(
-                    DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)
-                ),
-            )
+            _month_assignment_statement(starts_on, ends_on, DutyAssignment)
             .options(
                 selectinload(DutyAssignment.person),
                 selectinload(DutyAssignment.duty_slot)
@@ -409,7 +409,7 @@ def slot_safety(
     eligible = [
         context for context in unit_contexts if eligibility(context, slot, rule, groups).eligible
     ]
-    day_leaves = leaves.get(slot.duty_date, {})
+    day_leaves = leaves_for_slot(leaves, slot)
     same_day = same_day_assignments.get(slot.duty_date, {})
     previous_day = previous_day_assignments.get(slot.duty_date, {})
     hard_people: list[dict[str, object]] = []

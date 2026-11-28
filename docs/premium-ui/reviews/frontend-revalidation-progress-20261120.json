@@ -1,0 +1,168 @@
+{
+  "recorded_at_utc": "2026-11-20T11:49:21.255009+00:00",
+  "status": "partial; goal active",
+  "scope": "November20 actual-source frontend revalidation and dashboard ETA. No backend edits by this work; concurrent allocation changes preserved.",
+  "checks": {
+    "unit_tests_passed": 153,
+    "keyboard_contexts_passed": 6,
+    "named_keyboard_regions_per_context": 4,
+    "guidance_contexts_passed": 4,
+    "guidance_matrix_passed": false,
+    "dashboard_contexts_passed": 2,
+    "isolated_estimate_cases_passed": 5
+  },
+  "guidance_failure": {
+    "error": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#account-form') to be visible\u001b[22m\n\n    at D:\\Coding\\Duty Rota software\\tmp\\frontend-current-nov20\\guidance-v2\\whole-app-guidance.browser.mjs:54:95",
+    "engine": "firefox",
+    "last_requests": [
+      {
+        "method": "GET",
+        "path": "/api/health"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/mappings/options"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/mappings"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/auth/accounts"
+      }
+    ],
+    "observed_page_errors": [],
+    "interpretation": "Accounts GET was observed after explicit startup retry; form visibility timed out. Current test did not record rendered DOM at failure. Cause remains unresolved."
+  },
+  "estimate": {
+    "reviewed_at": "2026-11-20T11:38:29.418577+00:00",
+    "confidence": "low; current verification batch only",
+    "current_batch": "Estimated time left for the current verification batch: 30-60 active minutes. Overall programme estimate is being recalibrated.",
+    "basis": "Measured November20 runs: 153 unit tests in 122 seconds; six browser contexts in 494 seconds. The batch allowance includes the remaining guidance and date-format matrices, build, diagnosis and evidence review. It is a planning range, not measured throughput for all 197 unaccepted requirements. The older 90-180-hour overall range is historical.",
+    "measured_seconds": {
+      "unit_tests": 122.0778773,
+      "keyboard_matrix": 493.61075
+    },
+    "batch_minutes_low": 30,
+    "batch_minutes_high": 60,
+    "overall_status": "awaiting remaining-scope calibration",
+    "includes": [
+      "guidance recovery matrix",
+      "date-format boundary matrix",
+      "current build",
+      "failure diagnosis",
+      "evidence review"
+    ],
+    "excludes": [
+      "completion of all remaining frontend requirements",
+      "physical devices",
+      "native assistive technology",
+      "production deployment"
+    ]
+  },
+  "evidence_sha256": {
+    "tmp/frontend-current-nov20/unit-v2/exit.json": "bc80b60032a26c5e5b00802a2ddf6477936b93ef1e1fe2596c014f3b22fe7b35",
+    "tmp/frontend-current-nov20/unit-v2/summary-parsed.json": "060da8751549cd26ed9f5bf07bc441014472ea8e21f8a0a29f7f11f418052285",
+    "tmp/frontend-current-nov20/past-root/exit.json": "60712275bc93d94d3d9e1199a08aa323a2467934b645d164f7f2c252f1b81c4f",
+    "tmp/frontend-current-nov20/past/keyboard-v3-2026-11-20T11-28-09-317Z.json": "640a9007a150e7fabf60786a03fcdb9dd7da2ec57460189a30b17b74d4ffb3d0",
+    "tmp/frontend-current-nov20/guidance-root/exit.json": "7f73a854709c743ddd0dea4734aeaa90a9eb6c01360dd62344efb0300fbf164d",
+    "tmp/frontend-current-nov20/guidance-root-v2/exit.json": "d99cfb9db48ca4ae792737ba49c9a39755cc2721b51ffa79249754defa30dbd7",
+    "tmp/frontend-current-nov20/guidance-v2/whole-app-2026-11-20T11-40-26-601Z.json": "63eb7dce5e61b547653ff9878fc00dc0f8d3a4fc5e09b4018622c3f1bc5426f3",
+    "tmp/frontend-current-nov20/eta-browser.json": "88b6132e5cb30cf2dfde23a5ed7c12c93c2b2c4bc5008754665a52508d90b01e",
+    "tmp/frontend-current-nov20/eta-logic-verification.json": "cccacde2abbaa093119fa3f1639a021df98f149045c95df31b18e793730f7fa9"
+  },
+  "source_sha256": {
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/admin-preview.ts": "6f6b041bdff47a07f5b02ae932d9a8cebafb14c173dcdcd69d10b190237227ae",
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/api-errors.ts": "55d90faf3f364b3a7835fe5dd465f6b3633e05942bd6f71e37d89fb7b7f8b94d",
+    "frontend/src/assistant-ot-reference.ts": "be25fecb48564b9a11b7a99e4f601b22bedc9b52fa08b5404352fa6e508e58de",
+    "frontend/src/assistant-reference.ts": "67dce77f4f24271e4843c196c06f3824f5b000809265c7c140bb06d13977d9e1",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/balance-duties.ts": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+    "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+    "frontend/src/component-reference.ts": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+    "frontend/src/compute-conflict.ts": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+    "frontend/src/compute-device.ts": "386a4d1187ab6377c8f5ca7a10c5492b0c8140970cd7cb62bacec538cbd8c076",
+    "frontend/src/compute-protocol.ts": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+    "frontend/src/compute-worker.ts": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+    "frontend/src/connection-status.ts": "bb8080819c5d9aac5c5caf402565256bf2df0129a08367cdb6a41fadc2311007",
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/diagnostics-summary.ts": "2ff6394f8659735796af81a155592034537507b69c380a6351292c5d6f44e5e7",
+    "frontend/src/extra-duty.ts": "d2ef57f8c7e6e4e0d9c7b05e8f0463e6e9842cbdbd2b16b6664a5c9eb4990b97",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+    "frontend/src/generation-comparison.ts": "a331e6a20880b4535401262a3da35f2a98d38af93061552867e6f71d0d18115e",
+    "frontend/src/generation-reversal-scope.ts": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+    "frontend/src/history-filter.ts": "9f4540aabab34b3eb4732b28f415f40281f393d92e49c988c77b9e57d4e5310e",
+    "frontend/src/import-report.ts": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+    "frontend/src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "frontend/src/leave-approval.ts": "8ce8f7c7728f6de08ded64d1201fc3946cd36788cc350b34a87e27f33338809f",
+    "frontend/src/leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3",
+    "frontend/src/leave-counting-basis.ts": "da76459fdbe529cd338e3dc11ac2bfe136979bef96affdcf4df1e1cf86886cd8",
+    "frontend/src/leave-impact-view.ts": "85ed85e8a193c12cfa6f00a04ba7af9e245e6a18f05eb3f8308959ad21714878",
+    "frontend/src/leave-repair.ts": "f47987d91afbf7b9541089128e3bb9e73b985debeb349137d4478764c9b67ca4",
+    "frontend/src/limits.ts": "d032b489814c6b5dc6ec7038af2f491e2dbce5815eba5a3744849f44fef61df8",
+    "frontend/src/list-pagination.ts": "6fe56f860c18b2a2f3a8a302175289722e1db0a67ca69a522ba1c4fc4275448a",
+    "frontend/src/main.ts": "d65c8b9248662cea62c575a663c03d2acb21be2fad7181869dad2331196ca8f4",
+    "frontend/src/mapping-reference-details.ts": "1f903b142cea375127e1a8e61cba8fdf8442708fc71061ef2f7eb74477f4eca9",
+    "frontend/src/member-bulk.ts": "8ae7cf7d899a528027d9362c6f4c895d0cb9f8b14fdb2a3458acc090617f378d",
+    "frontend/src/member-duplicates.ts": "f43e871e219a6652bad3fa027b2566448ed69ef51a833f185821cbfa0b70f4c5",
+    "frontend/src/member-import-history.ts": "7a97dcafc17024d438d2c4c0353c0d6f5073a87bb02e0933b853de1a7f13a762",
+    "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "frontend/src/member-leave-cancel.ts": "0b33a1133b7500e7c8bb13399f3debab3e8a6ad22cb188a8470935c47e1382cf",
+    "frontend/src/member-leave-filters.ts": "d82898fc5d67f0f5c7d554409f13d63300c7b66acd838ecffb1afd49f4e91acd",
+    "frontend/src/member-leave-history.ts": "335fb67938394aca867b95cee4e0e03782e96864694b94ea19314e1e04f0eaa1",
+    "frontend/src/member-leave-statistics.ts": "a6f13d593108106fa51b9e484d0b82d98c40020fda34c53458bca034dfa8d8a3",
+    "frontend/src/member-presentation.ts": "71c8c8f7b1eadd1d02e84e3a997f3c636a3b7edb04b4bf527b19bdde223c5f60",
+    "frontend/src/member-profile.ts": "6874284e2437402f0cb00d57841f0d4170d8ecc6f2067ad2a156e38c3b0b69f2",
+    "frontend/src/member-workspace.ts": "f31db1ee2b893ac598c50f026ef2c955837b82366595dc54f2f0b94bbe8362c2",
+    "frontend/src/navigation-history.ts": "1927c9196352c92e46619fa4cbd8075bcabd34febb2b0e84403d536e5623988e",
+    "frontend/src/objective-basis.ts": "367d88ea617782a1333c8c4eebe783d72186a6468a7fe6658302b3f3bd442501",
+    "frontend/src/operational-import.ts": "a9cbf7c803917c1a466eb94430977ad87f73f9c9a8ba8e9450f56751a59da205",
+    "frontend/src/ot-calendar-model.ts": "9526fd0597b7c69e294fec5c7bc8241ef4a81129feb55451d1588b4c47a1a630",
+    "frontend/src/ot-calendar-transfer.ts": "c372af62d067f85a82b1728fa8331d7a761a22773b72f3adf819b26f5be17966",
+    "frontend/src/ot-calendar.css": "0f5500352d03a7d3fb93a33d3738abd29d1e22920adb2017c5fecd8f590b414a",
+    "frontend/src/ot-calendar.ts": "b9571e276a2d7425717c06ac289051aed8cb9c91461cdc5448325a8952531f18",
+    "frontend/src/ot-month-capacity.ts": "aeca9fb822cf5e9b0507f2177d02ed22e5190f911d50fbcfd6233d53b0defc0a",
+    "frontend/src/past-duties.ts": "479c959954b1ffd85d574a662ae4d185cab170ed742618934306646340624e6e",
+    "frontend/src/premium-theme.css": "c938cc2bfb0713aca1b37522ac8ad88b5cc9d4593a26e0598fd606bcbdbb089a",
+    "frontend/src/record-workspace.ts": "e6250ad95d8870c28e14ffab137bee1e3078e31e7f8aebc504f3ae93691a589b",
+    "frontend/src/recycle-bin.ts": "8d8cf469c4262444e0d4fbd3bb9764177bd0e7fe09076edeca03b583a531a03a",
+    "frontend/src/reference-workspace.ts": "91133b6913c3e7c5a493bbf19436ca06ba5ad9d1813a13974c70d0d6473a434a",
+    "frontend/src/rota-compute.ts": "bb3e3de1de824978f8131f62aae17a19136866f9dc6daee9869d3fc779e1e25e",
+    "frontend/src/rota-intelligence.ts": "95653cc009403ed3ddde167b17e8742834281a8664b5a9201fd7d59135c98e89",
+    "frontend/src/rota-rules.ts": "ebf2734ccfe81a8ff3b3530a5f94213a77b2f5c9faf052e02faa3222aa7756ea",
+    "frontend/src/services/api.ts": "b47c79ee0d2333aea7f5a815b1caad9d3796f1647abaf333214a1672f8a368e7",
+    "frontend/src/session-role.ts": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+    "frontend/src/shell-accessibility.ts": "7a0fea8b59e15ee29cd2cc288102eb767d47c0f8e008697fce5aa9af69a7e1a4",
+    "frontend/src/styles.css": "ed20cd124d147116f8bcb6434d4537e969b9c16ba36e34a78071aa0d1e723bd3",
+    "frontend/src/superadmin.ts": "55e7a34e8bcae001b7d8b805241ada151edb5e890ecf2efeed2cd326019bb636",
+    "frontend/src/ui-feedback.ts": "af25aa3329afbe97de610ecfd83a00c70991863b2cba8ba5e301c205230f19da",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/unit-board-filters.ts": "1c01b57eace54e99d01205fc07273bacbfe1649c4db576763bb55768d0d33766",
+    "frontend/src/unit-member-lists.ts": "54810229ccec2d2000aa71eb6e0740529be5286b78b0701adce6b309070d01dc",
+    "frontend/src/unit-modal-accessibility.ts": "f24dc45dd7b548ac66311252cb03c74430a117949e7b76bc72c0a3c652f6b147",
+    "frontend/src/unit-settings-recovery.ts": "9e899c32f81c23b2fbedbe164e188880c21cc7dad5021a57f6cac9fe98e38679",
+    "frontend/src/vite-env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+    "frontend/src/workflow-import-history.ts": "b04102c7dd2578e3ccc417920c83d6ff67a8f483059f17ae157e52ce5ff34b18",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "tmp/frontend-current-nov20/manifest.json": "36156b7d0d42b06dbff13bc232340962262026579695909c53037b59025bf9f9",
+    "tmp/frontend-current-nov20/past/comparison-keyboard-v3.browser.mjs": "0c77c3790f385fb80913e4f4b2422ce81c78cc8c6cffc939538a10c6ce7baecc"
+  },
+  "independent_estimate_review": {
+    "agent": "current_guidance_format_keyboard_nov20",
+    "scope": "Supplied text only; no repository/tool inspection",
+    "conclusion": "Honest batch estimate, partial fulfilment of overall ETA request. Make workload and last-reviewed time visible; test durations do not establish estimate accuracy.",
+    "response": "Dashboard displays remaining batch workload and estimate review timestamp. Overall range withheld pending calibration."
+  },
+  "limitations": [
+    "Current build/date-format matrix pending.",
+    "63 accepted historical checkpoints are not 63 current-source certifications.",
+    "Physical device and native AT checks pending.",
+    "Observed resource pressure95percent RAM/787MB available may delay tests; no proof this caused guidance timeout.",
+    "OT read-error paragraph fix staged but not applied."
+  ]
+}

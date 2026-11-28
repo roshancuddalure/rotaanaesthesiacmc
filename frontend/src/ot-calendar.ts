@@ -30,6 +30,7 @@ export async function renderOtCalendar(host:HTMLElement):Promise<void> {
   let units:UnitRead[]=[],unit='',day='SUN',saved:OtSaved|null=null,draft:OtConfig|null=null;
   let reserveChoice='',cleanReserve='',cleanKey='',note='',message='',remote:OtSaved|null=null,versions:OtVersion[]=[];
   let needsRead=false,groupsLoaded=false;
+  let confirmedImportUnit='';
   let qualificationGroups:{key:string;name:string;call_level:string;active:boolean}[]=[];
   let editWeekly:{id:string;key:string}|null=null,editException:string|null=null,editExceptionRole:string|null=null;
   let preview:OtPreview|null=null,copy:OtConfig|null=null;
@@ -93,16 +94,19 @@ export async function renderOtCalendar(host:HTMLElement):Promise<void> {
     disposeMonth=mountOtMonthCapacity(monthPanel,unit,saved?.revision??'');
     const transferPanel=document.createElement('section');transferPanel.className='panel';
     host.querySelector('.ot-page')?.append(transferPanel);
-    disposeTransfer=mountOtCalendarTransfer(transferPanel,unit,saved?.revision??'',()=>!dirty()&&!saving,value=>{saving=value;status();},()=>loadUnit(unit));
+    disposeTransfer=mountOtCalendarTransfer(transferPanel,unit,saved?.revision??'',()=>!dirty()&&!saving,value=>{saving=value;if(value){confirmedImportUnit='';notify('');}status();},outcome=>{confirmedImportUnit=outcome==='confirmed'&&current()?unit:'';return loadUnit(unit);});
     status();
   }
   function showDialog(title:string,body:string){const dialog=host.querySelector<HTMLDialogElement>('dialog')!;dialog.innerHTML=`<h2 id="ot-dialog-title">${esc(title)}</h2>${body}`;dialog.oncancel=event=>{if(saving)event.preventDefault();};dialog.showModal();return dialog;}
   function closeDialog(){host.querySelector<HTMLDialogElement>('dialog')?.close();preview=null;copy=null;}
   function adopt(value:OtSaved){saved=value;draft=structuredClone(value.configuration??{schema_version:1,reserve_mode:'included',weekly:[],exceptions:[]});reserveChoice=value.configuration?.reserve_mode??'';cleanReserve=reserveChoice;cleanKey=configurationKey(draft);needsRead=false;formDirty=false;editWeekly=null;editException=null;editExceptionRole=null;remote=null;versions=[];groupsLoaded=false;qualificationGroups=[];}
   async function loadUnit(value:string){
+    if(!current())return;
+    if(confirmedImportUnit!==value)confirmedImportUnit='';
+    const confirmed=confirmedImportUnit===value?'Reviewed monthly import saved.':'';
     const sequence=++readSequence;unit=value;host.innerHTML='<section class="panel" aria-busy="true"><p role="status">Loading OT calendar…</p></section>';
-    try{const result=await request<OtSaved>(`${API}/${encodeURIComponent(value)}`);if(!current()||sequence!==readSequence)return;adopt(result);message='';draw();}
-    catch(error){if(!current()||sequence!==readSequence)return;host.innerHTML=`<section class="panel"><h2>OT calendar unavailable</h2><p role="alert">${esc(error instanceof Error?error.message:'Unable to load calendar.')}</p><p>Saved schedules have not been changed. Enable this feature only after its database migration and reviewed setup.</p><button type="button" data-ot="retry">Try again</button></section>`;}
+    try{const result=await request<OtSaved>(`${API}/${encodeURIComponent(value)}`);if(!current()||sequence!==readSequence)return;adopt(result);message=confirmed;draw();}
+    catch(error){if(!current()||sequence!==readSequence)return;host.innerHTML=`<section class="panel"><h2>OT calendar unavailable</h2>${confirmed?`<p role="status">${esc(confirmed)}</p>`:''}<p role="alert">${esc(error instanceof Error?error.message:'Unable to load calendar.')}</p><p>The OT calendar could not be loaded. Choose Try again to load it, or ask your system administrator to check access and setup.</p><button type="button" data-ot="retry">Try again</button></section>`;}
   }
   async function readLatest(){
     const sequence=readSequence,requestedUnit=unit;notify('Reading the latest saved calendar; your draft is preserved.');

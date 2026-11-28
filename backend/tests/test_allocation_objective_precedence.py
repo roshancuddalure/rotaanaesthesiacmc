@@ -1,4 +1,4 @@
-"""Adversarial, real-solver examples of the preserved objective priorities.
+"""Adversarial, real-solver examples of the approved fairness-first priorities.
 
 Two compatible duties can be shared or concentrated. Large preference costs
 make the competing outcome explicit, without relying on tie-breaking identities.
@@ -35,9 +35,9 @@ def competing_fixture(db):
 
 
 @pytest.mark.parametrize(
-    ("mode", "expected_largest_load"), [("balanced", 1), ("preferences", 2)]
+    ("mode", "expected_largest_load"), [("balanced", 1), ("preferences", 1)]
 )
-def test_explicit_preferences_change_priority_only_in_preferences_mode(
+def test_preferences_cannot_override_fairness_in_any_mode(
     compute_db, mode, expected_largest_load
 ):
     db, _ = compute_db
@@ -49,13 +49,12 @@ def test_explicit_preferences_change_priority_only_in_preferences_mode(
     )
     assert len(result["choices"]) == 2
     assert max(Counter(result["choices"].values()).values()) == expected_largest_load
-    if mode == "preferences":
-        assert set(result["choices"].values()) == {str(favored.id)}
+    assert result['objective_basis']['preferences_before_equality'] is False
     assert not validate_plan(db, context, slots, result["choices"])
     assert db.query(DutyAssignment).count() == 0
 
 
-def test_repair_stability_precedes_equality_and_preferences_without_writing(compute_db):
+def test_approved_repair_equality_precedes_stability_without_writing(compute_db):
     db, _ = compute_db
     slots, favored = competing_fixture(db)
     originals = {sid: str(favored.id) for sid in slots}
@@ -68,7 +67,9 @@ def test_repair_stability_precedes_equality_and_preferences_without_writing(comp
         db, context, slots, mode="repair", originals=originals,
         preferences={f"{sid}:{favored.id}": 1_000_000 for sid in slots}, seconds=5,
     )
-    assert result["choices"] == originals
+    assert max(Counter(result["choices"].values()).values()) == 1
+    names = [row['name'] for row in result['objectives']]
+    assert names.index('worst_call_gap') < names.index('changes')
     assert not validate_plan(db, context, slots, result["choices"])
     db.expire_all()
     saved = list(db.scalars(select(DutyAssignment)))
@@ -138,15 +139,15 @@ def test_promotion_does_not_make_monthly_equality_depend_on_slot_iteration_order
             db, context, ordered, mode="preferences", seconds=5,
             preferences={f"{sid}:{favored.id}": -1_000_000 for sid in slots},
         )
-        assert set(result["choices"].values()) == {str(favored.id)}
+        assert max(Counter(result['choices'].values()).values()) == 1
         assert len(result["choices"]) == 2
         assert not validate_plan(db, context, ordered, result["choices"])
         results.append(next(
             item["value"] for item in result["objectives"]
             if item["name"] == "call_level_equality"
         ))
-    # Canonical monthly membership counts the first posted day: four first-call
-    # people share one first-call duty, so favored's uniform target is 1/4.
-    # Two duties contribute 100*((2 - 1/4)**2 - (0 - 1/4)**2) = 300.
-    assert results == [300, 300]
+    # Include all four first-call members, including the three with zero duties.
+    # The second-call member meets their target exactly. Targets are scaled1000.
+    expected = (1000 - 250)**2 + 3 * 250**2
+    assert results == [expected, expected]
     assert db.query(DutyAssignment).count() == 0

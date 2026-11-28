@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="29" time="178.321" timestamp="2026-11-25T00:13:24.321715+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_rota_report_360" name="test_gini_and_std_on_known_values" time="0.005" /><testcase classname="tests.test_rota_report_360" name="test_night_definition" time="0.002" /><testcase classname="tests.test_rota_report_360" name="test_totals_add_up" time="6.906" /><testcase classname="tests.test_rota_report_360" name="test_extra_duties_listed_and_void_excluded_from_counts" time="3.941" /><testcase classname="tests.test_rota_report_360" name="test_html_is_self_contained_and_escapes_names" time="4.081" /><testcase classname="tests.test_rota_report_360" name="test_xlsx_opens_with_expected_sheets" time="4.939" /><testcase classname="tests.test_rota_report_360" name="test_formula_like_names_are_written_as_text" time="3.806" /><testcase classname="tests.test_rota_report_360" name="test_empty_month_renders" time="0.507" /><testcase classname="tests.test_rota_report_360" name="test_section_failure_is_isolated" time="4.483" /><testcase classname="tests.test_rota_report_360" name="test_chart_failure_falls_back_to_table" time="4.184" /><testcase classname="tests.test_rota_report_360" name="test_compliance_fallback_when_checker_missing" time="3.838" /><testcase classname="tests.test_rota_report_360" name="test_compliance_fallback_when_checker_raises" time="5.436" /><testcase classname="tests.test_rota_report_360" name="test_compliance_uses_independent_checker" time="4.006" /><testcase classname="tests.test_rota_report_360" name="test_real_checker_or_fallback_never_breaks_report" time="5.557" /><testcase classname="tests.test_rota_report_360" name="test_fingerprint_changes_with_assignments" time="8.261" /><testcase classname="tests.test_rota_report_360" name="test_real_report_does_not_bootstrap_rules_or_call_groups[False]" time="2.834" /><testcase classname="tests.test_rota_report_360" name="test_real_report_does_not_bootstrap_rules_or_call_groups[True]" time="0.363"><failure message="sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: rule_versions.effective_from&#10;[SQL: INSERT INTO rule_versions (id, name, description, effective_from, effective_to, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]&#10;[parameters: ('d8dd2ffe68e24aabaa739557fd7833d2', 'Rota generator default rules', None, None, None, 1, '2026-11-24 18:44:59.454198')]&#10;(Background on this error at: https://sqlalche.me/e/20/gkpj)">backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+E   sqlite3.IntegrityError: NOT NULL constraint failed: rule_versions.effective_from
+
+The above exception was the direct cause of the following exception:
+backend\tests\test_rota_report_360.py:487: in test_real_report_does_not_bootstrap_rules_or_call_groups
+    session.flush()
+backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4331: in flush
+    self._flush(objects)
+backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4466: in _flush
+    with util.safe_reraise():
+backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4427: in _flush
+    flush_context.execute()
+backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:466: in execute
+    rec.execute(self)
+backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:93: in save_obj
+    _emit_insert_statements(
+backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1419: in execute
+    return meth(
+backend\.venv\Lib\site-packages\sqlalchemy\sql\elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+E   sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: rule_versions.effective_from
+E   [SQL: INSERT INTO rule_versions (id, name, description, effective_from, effective_to, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+E   [parameters: ('d8dd2ffe68e24aabaa739557fd7833d2', 'Rota generator default rules', None, None, None, 1, '2026-11-24 18:44:59.454198')]
+E   (Background on this error at: https://sqlalche.me/e/20/gkpj)</failure></testcase><testcase classname="tests.test_rota_report_360" name="test_performance_300_slots_150_members" time="9.592"><failure message="AssertionError: 4.011152099992614&#10;assert 4.011152099992614 &lt; 3.0">backend\tests\test_rota_report_360.py:519: in test_performance_300_slots_150_members
+    assert elapsed &lt; 3.0, elapsed
+E   AssertionError: 4.011152099992614
+E   assert 4.011152099992614 &lt; 3.0</failure></testcase><testcase classname="tests.test_rota_report_360" name="test_individual_limits_section_lists_members_over_limit" time="12.173" /><testcase classname="tests.test_rota_report_360" name="test_individual_limits_none_when_within_limits_or_unset" time="7.360" /><testcase classname="tests.test_rota_report_360" name="test_individual_limits_failure_is_isolated" time="4.983" /><testcase classname="tests.test_rota_report_360" name="test_ledger_labels_new_codes_and_audit_trail_shows_mode" time="5.572" /><testcase classname="tests.test_rota_report_360" name="test_superadmin_section_lists_allocations_and_publish_override" time="6.339" /><testcase classname="tests.test_rota_report_360" name="test_superadmin_section_empty_and_isolated" time="6.329" /><testcase classname="tests.test_rota_report_360" name="test_fairness_shows_call_level_targets_and_finding" time="5.768" /><testcase classname="tests.test_rota_report_360" name="test_fairness_targets_failure_is_isolated" time="5.180" /><testcase classname="tests.test_rota_report_360" name="test_superadmin_cross_level_label" time="0.002" /><testcase classname="tests.test_rota_report_360" name="test_report_shows_extra_duties_passed_on_by_balance" time="4.756" /><testcase classname="tests.test_rota_report_360" name="test_report_without_balance_transfers_has_no_passed_on_finding" time="4.439" /></testsuite></testsuites>

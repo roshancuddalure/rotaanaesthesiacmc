@@ -360,8 +360,15 @@ def test_individual_limit_refuses_move(db):
         rules.duty_count_limits.max_24hr_per_month = 2
 
     edit_rules(db, limit)
-    plan = _refused(db, data)
-    assert "limit" in level_row(plan)["reason_if_not"].lower()
+    # Eight duties exceed the two members' combined configured capacity of four.
+    # Returning an unchanged unsafe proposal is no longer acceptable.
+    before = {row.id: row.person_id for row in db.scalars(select(DutyAssignment))}
+    with pytest.raises(bd.BalanceError) as error:
+        bd.plan_balance(db, MONTH)
+    assert error.value.code == 'individual_limit_repair_incomplete'
+    assert error.value.extra['refusals']['individual_limit'] > 0
+    assert error.value.extra['live_changes'] == 0
+    assert {row.id: row.person_id for row in db.scalars(select(DutyAssignment))} == before
 
 
 def test_unit_staffing_hard_block_refuses_cross_unit_move(db):
@@ -1004,7 +1011,13 @@ def test_unposted_member_code_dropped_for_posted_recipient(db, user):
     setup_month(db, [unit])
     rows = [_manual_extra(db, make_slot(db, unit, d), uma, ["unposted_member"])[0] for d in days(1, 4, 7, 10)]
     db.commit()
-    assert check_month(db, MONTH)["ok"]  # the unposted exemption follows the record
+    # An old ledger record is not eligibility. Correcting a real posting is
+    # required before this historical assignment can enter a balance preview.
+    assert not check_month(db, MONTH)['ok']
+    db.add(PersonPosting(person=uma, unit=unit, posting_type='1ST_CALL',
+                         starts_on=date(2026, 5, 1), source='unit_board'))
+    db.commit()
+    assert check_month(db, MONTH)['ok']
 
     preview = bd.preview(db, MONTH, user)
     assert preview["summary"]["extra_moves"] == 2
@@ -1224,51 +1237,28 @@ def _unposted_member(db, name, level="1ST_CALL"):
     return person
 
 
-def test_extra_duty_moves_to_unposted_member_with_ledger_code(db, user):
+@pytest.mark.parametrize('extra', [False, True])
+def test_neither_ordinary_nor_extra_row_moves_to_unposted_holder(db, extra):
     edit_rules(db, relaxed)
-    unit = make_unit(db, "UNIT_I")
-    alpha = member(db, "Alpha", unit)
-    uma = _unposted_member(db, "Uma")
-    setup_month(db, [unit])
-    alpha_rows = [_manual_extra(db, make_slot(db, unit, d), alpha, ["fallback_unit"], ed.MODE_STANDARD)[0]
-                  for d in days(1, 4, 7, 10)]
-    _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), uma, ["unposted_member"])
-    db.commit()
-    assert check_month(db, MONTH)["ok"]
-
-    preview = bd.preview(db, MONTH, user)
-    (move,) = moves_to(preview, uma)
-    assert move["extra_duty"] and move["ledger_to"] == "Uma" and move["cross_unit"] is False
-    assert move["to_unit_id"] == str(unit.id)
-    assert move["new_overridden_rules"] == ["unposted_member"]
-    result = bd.apply(db, MONTH, preview["token"], preview["plan_hash"], user)
-    db.expire_all()
-    moved = db.get(DutyAssignment, UUID(move["assignment_id"]))
-    assert moved.person_id == uma.id and moved.duty_slot.unit_id == unit.id
-    assert moved.id in {r.id for r in alpha_rows}
-    record = db.scalar(select(ExtraDutyRecord).where(ExtraDutyRecord.assignment_id == moved.id))
-    assert record.person_id == uma.id and record.overridden_rules == ["unposted_member"]
-    check = check_month(db, MONTH)
-    assert check["ok"], check["violations"]
-    assert check.get("unposted_exempt", 0) >= 2
-    bd.undo(db, UUID(result["batch_id"]), user)
-    db.expire_all()
-    assert db.get(DutyAssignment, moved.id).person_id == alpha.id
-
-
-def test_ordinary_row_never_moves_to_unposted_member(db):
-    edit_rules(db, relaxed)
-    unit = make_unit(db, "UNIT_I")
-    alpha = member(db, "Alpha", unit)
-    uma = _unposted_member(db, "Uma")
+    unit = make_unit(db, 'UNIT_I')
+    alpha = member(db, 'Alpha', unit)
+    uma = _unposted_member(db, 'Uma')
     setup_month(db, [unit])
     for d in days(1, 4, 7, 10):
-        assign(db, make_slot(db, unit, d), alpha)
-    _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), uma, ["unposted_member"])
+        slot = make_slot(db, unit, d)
+        if extra:
+            _manual_extra(db, slot, alpha, ['fallback_unit'])
+        else:
+            assign(db, slot, alpha)
+    _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), uma, ['unposted_member'])
     db.commit()
+    assert not check_month(db, MONTH)['ok']
+    state = bd._load(db, MONTH)
+    assert uma.id not in state.level
     plan = bd.plan_balance(db, MONTH)
-    assert moves_to(plan, uma) == []
-    assert "not posted" in level_row(plan)["reason_if_not"].lower()
+    assert plan['summary']['membership_repair'] == {'invalid_before': 1, 'repaired': 1, 'unresolved': 0}
+    assert all(m['to_person_id'] == str(alpha.id) for m in plan['moves'])
+    assert all(m['to_person_id'] != str(uma.id) for m in plan['moves'])
 
 
 def test_extra_duty_not_moved_to_member_posted_elsewhere_that_day(db):
@@ -1283,8 +1273,14 @@ def test_extra_duty_not_moved_to_member_posted_elsewhere_that_day(db):
         _manual_extra(db, make_slot(db, unit, d), alpha, ["fallback_unit"], ed.MODE_STANDARD)
     _manual_extra(db, make_slot(db, unit, date(2026, 5, 20)), away, ["outside_scope_unit"])
     db.commit()
+    # Owner23Nov excludes outside-scope members from the ordinary fairness
+    # denominator, so the one in-scope member is already balanced.
+    state = bd._load(db, MONTH)
+    assert away.id not in state.level
     plan = bd.plan_balance(db, MONTH)
-    assert moves_to(plan, away) == []
+    assert plan['summary']['membership_repair']['repaired'] == 1
+    assert all(m['from_person_id'] == str(away.id) and m['to_person_id'] == str(alpha.id)
+               for m in plan['moves'])
 
 
 def test_large_month_reaches_natural_stop_within_budget(db, user):
@@ -1313,7 +1309,7 @@ def test_large_month_reaches_natural_stop_within_budget(db, user):
             busy.add(day)
             added += 1
     for n in range(20):
-        spare = _unposted_member(db, f"Spare {n:02d}", level="3RD_CALL")
+        spare = member(db, f'Spare {n:02d}', unit, level='3RD_CALL')
         slot = make_slot(db, unit, date(2026, 5, 1 + n), level="3RD_CALL", duty_type=DUTY_OF["3RD_CALL"])
         _manual_extra(db, slot, spare, ["unposted_member"])
     db.commit()
@@ -1329,7 +1325,7 @@ def test_large_month_reaches_natural_stop_within_budget(db, user):
     assert summary["work"] < bd.MAX_WORK  # within even the minimum budget
     assert elapsed < 10
     assert summary["extra_moves"] > 0
-    assert any(m["new_overridden_rules"] == ["unposted_member"] for m in preview["moves"])
+    assert all("unposted_member" not in m["new_overridden_rules"] for m in preview["moves"])
     result = bd.apply(db, MONTH, preview["token"], preview["plan_hash"], user)
     assert result["plan_hash"] == preview["plan_hash"]
     check = check_month(db, MONTH)

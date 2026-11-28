@@ -1,0 +1,74 @@
+{
+  "recorded_at": "2026-11-27T03:11:37.987980+00:00",
+  "status": "source_and_existing_regression_arithmetic_review_not_new_test_pass",
+  "examples": [
+    {
+      "name": "Equal versus availability",
+      "inputs": "Six safely covered duties, two same-call members; posted availability30days and15days.",
+      "equal_counts": "Shared3/3 duty target.",
+      "availability": "Weights2:1 give targets4/2.",
+      "hard_rule": "Both must still be eligible for each actual duty interval. A target never overrides leave/rest/posting.",
+      "evidence": [
+        "backend/tests/test_partial_day_fairness.py::test_compatible_pm_worker_remains_in_targets_optimizer_and_balance",
+        "backend/tests/test_covered_demand_fairness.py::test_shortage_solver_and_independent_exhaustive_oracle_use_six_covered_duties"
+      ]
+    },
+    {
+      "name": "Unfilled demand",
+      "inputs": "Twelve planned duties but only six safely covered; availability30:15.",
+      "expected": "Proportional targets4/2 from6covered; not8/4 from12planned. The6unfilled remain separatelyreported, not forced assignments.",
+      "evidence": [
+        "backend/tests/test_covered_demand_fairness.py::test_shortage_solver_and_independent_exhaustive_oracle_use_six_covered_duties"
+      ]
+    },
+    {
+      "name": "Half-day and duplicate overlap",
+      "inputs": "One posted day, AMleave. SameAMrecord repeated.",
+      "expected": "Capacity0.5 in both cases; duplicate interval does not subtract twice. AM+PM leaves0; full-day0.",
+      "hard_rule": "Duty overlapping approved AMleave remains blocked. A compatible13:00-21:00 synthetic test duty can remain eligible; ordinary productionnon24h default remains08:00-16:00.",
+      "evidence": [
+        "backend/tests/test_partial_day_fairness.py::test_existing_leave_bands_are_unioned_without_double_counting",
+        "backend/tests/test_partial_day_fairness.py::test_compatible_pm_worker_remains_in_targets_optimizer_and_balance"
+      ]
+    },
+    {
+      "name": "Existing pending-status semantics",
+      "expected": "Fairness capacity retains canonical active-leave status treatment: requested/imported_pending_review AMreduces weight0.5; cancelled/rejected does not. Approved interval overlap is a hard allocation blocker; pending-risk treatment is not silently equated with approved blocking.",
+      "evidence": [
+        "backend/tests/test_partial_day_fairness.py::test_existing_active_status_policy_is_preserved",
+        "backend/app/services/allocation_day_capacity.py::posted_capacity"
+      ]
+    },
+    {
+      "name": "Fixed duties and pooled calls",
+      "expected": "Fixed duties count once toward monthly coverage/load. A duty under replacement is not counted both fixed and proposed. Explicit approved mixed-call pools retain their canonical split; no unapproved cross-call permission follows from fairness.",
+      "evidence": [
+        "backend/app/services/allocation_covered_targets.py::CoveredTargets",
+        "backend/tests/test_covered_demand_fairness.py::test_pooled_covered_demand_keeps_existing_proportional_call_level_split",
+        "backend/tests/test_month_full_objectives.py::test_mixed_logical_demand_and_promotion_preserve_monthly_target_membership"
+      ]
+    },
+    {
+      "name": "Zero capacity and rounding",
+      "expected": "A call-level group with zero summed availability receives zero proportional shares; not division byzero or inferred eligibility. Model uses bounded integer precision; report/certificate uses independently recomputed rational targets. Zero-target membership cannot create an eligible placement.",
+      "evidence": [
+        "backend/app/services/allocation_covered_targets.py::CoveredTargets",
+        "backend/app/services/allocation_covered_targets.py::exact_targets",
+        "backend/tests/test_covered_demand_fairness.py"
+      ]
+    },
+    {
+      "name": "November observed comparison",
+      "equal_counts": "840covered; totalgaps1/2/2/1/1; nightgaps1/2/2/2/1.",
+      "availability": "840covered; rawtotalgaps2/4/4/6/2; selected proportional policy can intentionally exceed2raw.",
+      "limits": "Confirmedtiming projectiononly; production390timingrepairsunapplied, OTguarddisabled,5/11staffingreviews. Not a universaloptimalitycertificate.",
+      "evidence": [
+        "docs/allocation-progress/runtime18-november-reviewed-verification.json"
+      ]
+    }
+  ],
+  "acceptance_scope": "N05worked arithmetic evidence; does not ratify newN06thresholds or complete original50-itemprogramme",
+  "fresh_full_pending": true,
+  "source_references_resolve": true,
+  "distinct_source_references": 11
+}

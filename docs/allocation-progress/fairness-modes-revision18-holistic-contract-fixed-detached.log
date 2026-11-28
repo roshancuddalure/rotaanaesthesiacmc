@@ -1,0 +1,94 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+....................................................................ssss [ 11%]
+s....................................................................... [ 14%]
+............................................................ss.......... [ 17%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+...............................ss....................................... [ 43%]
+......................ss................................................ [ 46%]
+.............sss.......................sssss.............s.............. [ 49%]
+................ss..................ss.....ssss......................... [ 52%]
+.....s....................ss............................................ [ 54%]
+........................................................................ [ 57%]
+........................................................................ [ 60%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+.....................ssssssssssssssss................................... [ 72%]
+..........................................................ss............ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+.....................sss................................................ [ 83%]
+........................................................................ [ 86%]
+...........................ssssss....................................... [ 89%]
+.................................................F...................... [ 92%]
+........................................................................ [ 95%]
+.........................................ssss.........................ss [ 98%]
+ss.........................................                              [100%]
+================================== FAILURES ===================================
+___________________ test_performance_300_slots_150_members ____________________
+backend\tests\test_rota_report_360.py:588: in test_performance_300_slots_150_members
+    assert elapsed < 3.0, elapsed
+E   AssertionError: 5.513578499958385
+E   assert 5.513578499958385 < 3.0
+============================== warnings summary ===============================
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_backup_restore_migrate_and_clean_exactly
+tests/test_backup_clean_database.py::test_restore_verification_failure_preserves_source
+tests/test_backup_clean_database.py::test_production_failure_rolls_back_migration_and_clear
+tests/test_backup_clean_database.py::test_production_failure_rolls_back_migration_and_clear
+tests/test_backup_clean_database.py::test_production_failure_rolls_back_migration_and_clear
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\alembic\config.py:612: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+tests/test_focused_allocation_refinement.py::test_exhausted_solver_still_balances_real_safe_month
+  tests\test_focused_allocation_refinement.py:28: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    def test_exhausted_solver_still_balances_real_safe_month(compute_db, monkeypatch, record_property):
+
+tests/test_ot_dated_month_oracle.py::test_dated_month_matches_independent_call_pool_and_partial_leave_oracle[promotion-False]
+tests/test_ot_dated_month_oracle.py::test_dated_month_matches_independent_call_pool_and_partial_leave_oracle[promotion-True]
+tests/test_ot_dated_month_oracle.py::test_dated_month_matches_independent_call_pool_and_partial_leave_oracle[posting-True]
+  tests\test_ot_dated_month_oracle.py:17: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("dated_change,partial_leave", [("promotion", False), ("promotion", True), ("posting", True)])
+
+tests/test_ot_skilled_month_oracle.py::test_dated_skills_preserve_distinct_ot_roles_and_best_monthly_load[False-False]
+tests/test_ot_skilled_month_oracle.py::test_dated_skills_preserve_distinct_ot_roles_and_best_monthly_load[True-False]
+tests/test_ot_skilled_month_oracle.py::test_dated_skills_preserve_distinct_ot_roles_and_best_monthly_load[True-True]
+  tests\test_ot_skilled_month_oracle.py:18: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("expires,reverse", [(False, False), (True, False), (True, True)])
+
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-False-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[availability-True-True]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-False-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-False]
+tests/test_ot_whole_month_oracle.py::test_real_month_optimizer_matches_independent_coverage_and_fairness[equal_counts-True-True]
+  tests\test_ot_whole_month_oracle.py:63: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    @pytest.mark.parametrize("boundary_leave,reverse", [(False, False), (True, False), (True, True)])
+
+tests/test_rota_publish.py: 1 warning
+tests/test_rota_report_360.py: 11 warnings
+tests/test_rota_review_export.py: 1 warning
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Unknown extension is not supported and will be removed
+    warn(msg)
+
+tests/test_rota_publish.py: 1 warning
+tests/test_rota_report_360.py: 11 warnings
+tests/test_rota_review_export.py: 1 warning
+  D:\Coding\Duty Rota software\backend\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Conditional Formatting extension is not supported and will be removed
+    warn(msg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend\tests\test_rota_report_360.py::test_performance_300_slots_150_members
+1 failed, 2424 passed, 66 skipped, 47 warnings in 5119.50s (1:25:19)

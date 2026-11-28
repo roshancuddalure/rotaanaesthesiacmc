@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="3092.965" timestamp="2026-11-23T17:34:32.052889+05:30" hostname="DESKTOP-7O391KT"><testcase classname="tests.test_ordinary_pool_guard_edges" name="test_no_posting_member_still_requires_duty_subgroup" time="2.335" /><testcase classname="tests.test_ordinary_pool_guard_edges" name="test_no_posting_member_uses_dated_promotion_without_switching_monthly_target" time="0.688" /><testcase classname="tests.test_ordinary_pool_guard_edges" name="test_no_posting_fallback_cannot_hide_unmet_ot_reservation" time="0.575"><failure message="assert []">environment = (&lt;sqlalchemy.orm.session.Session object at 0x000001EB20E16C10&gt;, &lt;app.models.unit.Unit object at 0x000001EB23827410&gt;, [...D0&gt;, &lt;app.models.person.Person object at 0x000001EB20DED8D0&gt;], &lt;app.models.rota.DutySlot object at 0x000001EB238ABE10&gt;)
+
+    def test_no_posting_fallback_cannot_hide_unmet_ot_reservation(environment):
+        db, unit, people, target = environment
+        free = Person(canonical_name='No posting ordinary member', call_level='3RD_CALL', active_status='active')
+        db.add(free)
+        db.commit()
+        # Five OT staff are mandatory, but only four posted/qualified people exist.
+        # The fallback must not invent a posting or count this person as OT supply.
+        demand(db, unit, minimum=5)
+        context = candidate_context(db, '2026-11')
+        assert free.id in context.ordinary_fallback_ids
+        # An unrelated placement can leave the existing OT shortage unchanged. The
+        # whole-plan gate must still refuse to certify the resulting schedule.
+        from app.services.rota_optimizer import validate_plan
+        failures = validate_plan(db, context, {str(target.id): target}, {str(target.id): str(free.id)})
+&gt;       assert failures
+E       assert []
+
+backend\tests\test_ordinary_pool_guard_edges.py:53: AssertionError</failure></testcase></testsuite></testsuites>

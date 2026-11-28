@@ -31,6 +31,7 @@ class ApplyRequest(BaseModel):
     month: str
     token: str
     plan_hash: str
+    preview_job_id: UUID | None = None
 
 
 class UndoRequest(BaseModel):
@@ -83,7 +84,48 @@ def balance_preview(payload: MonthRequest, db: Session = Depends(get_db),
 def balance_apply(payload: ApplyRequest, db: Session = Depends(get_db),
                   user: UserAccount = Depends(require_admin)) -> dict:
     _require_enabled()
+    if payload.preview_job_id is not None:
+        from app.services.balance_preview_jobs import apply
+        return _call(apply, db, payload.preview_job_id, payload.month, payload.token, payload.plan_hash, user)
     return _call(_service().apply, db, _check_month(payload.month), payload.token, payload.plan_hash, user)
+
+
+@router.post('/preview-jobs')
+def start_balance_preview(payload: MonthRequest, db: Session = Depends(get_db),
+                          user: UserAccount = Depends(require_admin)) -> dict:
+    _require_enabled()
+    from app.services import balance_preview_jobs as jobs
+    result = _call(jobs.start, db, _check_month(payload.month), user)
+    if result['status'] in {'queued', 'running'}:
+        jobs.launch(UUID(result['id']))
+    return result
+
+
+@router.get('/preview-jobs/{job_id}')
+def read_balance_preview(job_id: UUID, db: Session = Depends(get_db),
+                         user: UserAccount = Depends(require_admin)) -> dict:
+    from app.services import balance_preview_jobs as jobs
+    return jobs.public(jobs.owned(db, job_id, user), user)
+
+
+@router.post('/preview-jobs/{job_id}/resume')
+def resume_balance_preview(job_id: UUID, db: Session = Depends(get_db),
+                           user: UserAccount = Depends(require_admin)) -> dict:
+    _require_enabled()
+    from app.services import balance_preview_jobs as jobs
+    job = jobs.owned(db, job_id, user)
+    result = jobs.public(job, user)
+    db.commit()
+    if result['status'] in {'queued', 'running'}:
+        jobs.launch(job_id)
+    return result
+
+
+@router.post('/preview-jobs/{job_id}/cancel')
+def cancel_balance_preview(job_id: UUID, db: Session = Depends(get_db),
+                           user: UserAccount = Depends(require_admin)) -> dict:
+    from app.services import balance_preview_jobs as jobs
+    return jobs.cancel(db, job_id, user)
 
 
 @router.post("/batches/{batch_id}/undo")

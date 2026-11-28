@@ -47,8 +47,8 @@ from app.models import (
     RotaAutoFillEvent,
     Unit,
 )
-from app.services.leave import date_range, leave_requests_for_month, month_bounds
-from app.services.leave_semantics import duty_leave_blocks, is_active
+from app.services.leave import date_range, month_bounds
+from app.services.leave_semantics import leave_blocks_slot, leaves_for_slot
 from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
 from app.services.rota_eligibility import call_level_missing_message, effective_call_levels
 from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
@@ -199,9 +199,8 @@ def parse_rule_time(value: str) -> time:
 def slot_bounds(day: date, rule: DutyRule) -> tuple[datetime, datetime]:
     """Slot start/end datetimes from the rule's start time and duration (or end time).
 
-    KNOWN ISSUE (handbook B9): default rules for non-24h, non-12h duties (PAC, shifts, CHAD,
-    RUHSA, ...) have ``duration_hours=0`` and start == end == 08:00, so they fall through to
-    the "end <= start -> next day" branch and become 24-hour windows.
+    Missing-duration regular duties with identical start/end use the owner-confirmed
+    eight-hour working day. Explicit durations and overnight end times stay authoritative.
     """
     starts_at = datetime.combine(day, parse_rule_time(rule.start_time))
     if rule.duration_hours > 0:
@@ -209,16 +208,18 @@ def slot_bounds(day: date, rule: DutyRule) -> tuple[datetime, datetime]:
     if rule.is_24hr:
         return starts_at, starts_at + timedelta(hours=24)
     ends_at = datetime.combine(day, parse_rule_time(rule.end_time))
+    if ends_at == starts_at:
+        return starts_at, starts_at + timedelta(hours=8)
     if ends_at <= starts_at:
         ends_at += timedelta(days=1)
-    if ends_at == starts_at:
-        ends_at = starts_at + timedelta(hours=8)
     return starts_at, ends_at
 
 
 def leave_blocks_rule(leave_slot: str, rule: DutyRule) -> bool:
-    return duty_leave_blocks(leave_slot, is_24hr=rule.is_24hr,
-                             start_hour=0 if rule.is_24hr else parse_rule_time(rule.start_time).hour)
+    day = date(2000, 1, 1)
+    start, end = slot_bounds(day, rule)
+    return leave_blocks_slot(SimpleNamespace(leave_slot=leave_slot, starts_on=day, ends_on=day),
+                             SimpleNamespace(duty_date=day, starts_at=start, ends_at=end, is_24hr=rule.is_24hr))
 
 
 def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[PersonPosting]:
@@ -293,17 +294,9 @@ def allocation_target_weights(
     }
 
 
-def leave_by_day_and_person(db: Session, month: str) -> dict[date, dict[UUID, list[LeaveRequest]]]:
-    leaves_by_day: dict[date, dict[UUID, list[LeaveRequest]]] = {}
-    starts_on, ends_on = month_bounds(month)
-    for leave in leave_requests_for_month(db, month):
-        if not is_active(leave.status):
-            continue
-        first = max(leave.starts_on, starts_on)
-        last = min(leave.ends_on, ends_on)
-        for day in date_range(first, last):
-            leaves_by_day.setdefault(day, {}).setdefault(leave.person_id, []).append(leave)
-    return leaves_by_day
+def leave_by_day_and_person(db: Session, month: str, *, rules=None) -> dict[date, dict[UUID, list[LeaveRequest]]]:
+    from app.services.leave import allocation_leave_index
+    return allocation_leave_index(db, month, rules=rules)
 
 
 def pressure_for_slot(
@@ -315,6 +308,7 @@ def pressure_for_slot(
     provisional_unit_day_duties: int = 0,
     provisional_post_24hr_duties: int = 0,
     minimum_free_people: int | None = None,
+    day: date | None = None,
 ) -> dict[str, object]:
     """Unit staffing pressure if this slot were given to the unit.
 
@@ -327,7 +321,9 @@ def pressure_for_slot(
         person_id
         for person_id in unit_member_ids
         for leave in day_leaves.get(person_id, [])
-        if leave_blocks_rule(leave.leave_slot, rule)
+        if (leave_blocks_slot(leave, SimpleNamespace(duty_date=day, is_24hr=rule.is_24hr,
+                starts_at=slot_bounds(day, rule)[0], ends_at=slot_bounds(day, rule)[1]))
+            if day is not None else leave_blocks_rule(leave.leave_slot, rule))
     }
     total = len(unit_member_ids)
     unavailable_count = len(unavailable)
@@ -734,7 +730,8 @@ def slot_pressure_in_layout(
         unit_member_ids=active_unit_member_ids(
             postings, unit.id, slot.duty_date, call_level=required_calls or None
         ),
-        day_leaves=leaves.get(slot.duty_date, {}),
+        day_leaves=leaves_for_slot(leaves, slot),
+        day=slot.duty_date,
         rule=rule,
         rules=rules,
         provisional_unit_day_duties=same_day_count,
@@ -1014,6 +1011,7 @@ def choose_balanced_unit(
         pressure = pressure_for_slot(
             unit_member_ids=bucket_member_ids,
             day_leaves=day_leaves,
+            day=day,
             rule=rule,
             rules=rules,
             provisional_unit_day_duties=provisional_unit_day_counts.get((unit.id, day), 0),
@@ -1342,7 +1340,7 @@ def generate_empty_template(
 
     starts_on, ends_on = month_bounds(month)
     postings = postings_for_month(db, starts_on, ends_on)
-    leaves = leave_by_day_and_person(db, month)
+    leaves = leave_by_day_and_person(db, month, rules=rules)
     existing_slots = list(
         db.scalars(
             select(DutySlot).where(
@@ -1448,8 +1446,10 @@ def generate_empty_template(
                 return ot_capacity.check(unfilled_layout(layout))
 
     for day in days:
-        day_leaves = leaves.get(day, {})
         for rule in duty_rules_for_day(duties, day, days[0]):
+            start, end = slot_bounds(day, rule)
+            day_leaves = leaves_for_slot(leaves, SimpleNamespace(
+                duty_date=day, starts_at=start, ends_at=end))
             if (day,rule.key) in existing_duties:
                 continue
             selected, allocations = choose_balanced_unit(

@@ -42,6 +42,7 @@ VALID_CALL_LEVELS = {
 
 INACTIVE_PAC_DUTY_KEYS = {"PAC", "MAIN_PAC_SR", "RC_PAC_SR"}
 SYNCED_DUTY_METADATA_KEYS = {"RC_3RD_CALL_A", "RC_3RD_CALL_B"}
+OPTIONAL_24HR_DUTY_KEYS = {"RC_3RD_CALL_A", "RC_3RD_CALL_B", "CHAD", "RUHSA"}
 
 PAC_SUBDIVISION_RULES = {
     "RC_3RD_CALL_A": {
@@ -148,6 +149,13 @@ class FairnessRules(BaseModel):
 
     max_gap_within_call_level: int = Field(default=1, ge=0, le=10)
     target_mode: Literal["auto"] = "auto"
+    allocation_mode: Literal["availability", "equal_counts"] = "availability"
+
+    @model_validator(mode="after")
+    def equal_count_gap_limit(self):
+        if self.allocation_mode == "equal_counts" and self.max_gap_within_call_level > 2:
+            raise ValueError("Equal duty counts requires a gap target of at most two duties")
+        return self
 
 
 class ExtraDutyRules(BaseModel):
@@ -194,7 +202,7 @@ def _default_duration_hours(is_24hr: bool, key: str) -> int:
         return 24
     if "12HR" in key or key == "CAESAR_A_12HR":
         return 12
-    return 0
+    return 8
 
 
 def _default_duty_rule(duty_type: Any) -> DutyRule:
@@ -204,10 +212,12 @@ def _default_duty_rule(duty_type: Any) -> DutyRule:
         label=duty_type.label,
         group=duty_type.group,
         duration_hours=_default_duration_hours(is_24hr, duty_type.key),
+        end_time="08:00" if is_24hr else (
+            "20:00" if _default_duration_hours(is_24hr, duty_type.key) == 12 else "16:00"),
         is_24hr=is_24hr,
         counts_in_main_24hr=bool(duty_type.counts_in_main_24hr),
-        is_mandatory=is_24hr,
-        is_adjustable=not is_24hr,
+        is_mandatory=is_24hr and duty_type.key not in OPTIONAL_24HR_DUTY_KEYS,
+        is_adjustable=not is_24hr or duty_type.key in OPTIONAL_24HR_DUTY_KEYS,
         blocks_elective_same_day=is_24hr or duty_type.group in {"pac", "shift", "caesar"},
         blocks_elective_next_day=is_24hr,
     )
@@ -381,7 +391,10 @@ def save_phase_one_rules(
                 rule.active,
             )
             value.version += 1
-    db.commit()
+    # A reviewed rules/limits save owns the input lock until its history row
+    # is durable. Direct legacy callers retain their ordinary commit behavior.
+    from app.services.scheduling_inputs import finish_bootstrap
+    finish_bootstrap(db)
     db.refresh(rule_version)
     attach_groups(rules, db=db)
     return rule_version, rules

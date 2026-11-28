@@ -1,0 +1,94 @@
+{
+  "recorded_at": "2026-11-20T13:53:09.524952+00:00",
+  "complete": true,
+  "scope": "Audit-only single-unit-layout change on the dated_fixed synthetic fixture. Not production activation.",
+  "proposal": {
+    "slot": "BENCH:26",
+    "date": "2026-05-14",
+    "before_unit": "BENCH_0",
+    "after_unit": "BENCH_1"
+  },
+  "new_assignments": 61,
+  "fixed_assignments": 1,
+  "uncovered": 0,
+  "validation_failures": 0,
+  "fixed_unchanged": true,
+  "ot_status": "feasible",
+  "fairness": [
+    {
+      "call_level": "1ST_CALL",
+      "members": 48,
+      "minimum": 1,
+      "maximum": 2,
+      "gap": 1,
+      "within_one": true,
+      "within_two": true,
+      "basis": "Raw monthly duties including fixed duties; partial availability can explain a larger gap."
+    }
+  ],
+  "refinement": {
+    "checks": 0,
+    "transfers": 0,
+    "additional_covered": 0,
+    "improved": false,
+    "limit_reached": true,
+    "global_optimum_proven": false
+  },
+  "solver_status": "feasible",
+  "objectives": [
+    {
+      "name": "required_coverage",
+      "value": -61,
+      "proven": true,
+      "proof": "independent_lower_bound"
+    },
+    {
+      "name": "coverage",
+      "value": -61,
+      "proven": true,
+      "proof": "independent_lower_bound"
+    },
+    {
+      "name": "call_level_equality",
+      "value": -6838,
+      "proven": false
+    },
+    {
+      "name": "weekend_burden",
+      "value": 62,
+      "proven": false
+    },
+    {
+      "name": "night_burden",
+      "value": 279,
+      "proven": false
+    },
+    {
+      "name": "holiday_burden",
+      "value": 6,
+      "proven": false
+    },
+    {
+      "name": "workload",
+      "value": 279,
+      "proven": false
+    },
+    {
+      "name": "spacing_history",
+      "value": 0,
+      "proven": false
+    },
+    {
+      "name": "preferences",
+      "value": 0,
+      "proven": false
+    }
+  ],
+  "elapsed_ms": 39841.45,
+  "operational_writes": 0,
+  "source_sha256": {
+    "backend/app/services/rota_optimizer.py": "11d7ef97eafbcc77984c4506396b9f180a705d74789afcad092b4220bfdd38bc",
+    "backend/app/services/allocation_refinement.py": "ab70cb3f9239a2eecc5fe2d8fc51c90a42cb7cc14a9459743fc008ef78296a62",
+    "tools/probe_focused_template_repair.py": "ab9d95d9a6ebb4567ff3c655d0bb7dc1922df9802388eddb2655c48e0a884eea"
+  }
+}

@@ -93,8 +93,9 @@ def serialize(job):
         "unresolved": sum(bool(d.get("forced")) for d in decisions) if state.get("template") else sum(d.get("action") == "unresolved" for d in decisions),
         "decisions": decisions,
         "frame": pending_frame,
-        "kind": "template" if state.get("template") else "intelligent" if state.get("intelligence") else "members",
+        "kind": "balance" if state.get('balance_preview') else "template" if state.get("template") else "intelligent" if state.get("intelligence") else "members",
         "requested_engine": state.get("requested_engine", job.engine),
+        "allocation_mode": state.get("allocation_mode"),
         "template": {key: value for key, value in state.get("template", {}).items() if key in {"options", "summary", "plan_hash"}} or None,
         "metrics": state.get("metrics", {}),
         "error": state.get("error"),
@@ -148,7 +149,7 @@ def conflict_summary(db, job, operator):
         "job_id": str(job.id),
         "month": job.month,
         "status": job.status,
-        "kind": "template" if state.get("template") else "intelligent" if state.get("intelligence") else "members",
+        "kind": "balance" if state.get('balance_preview') else "template" if state.get("template") else "intelligent" if state.get("intelligence") else "members",
         "processed": state.get("cursor", 0),
         "total": len(state.get("slots", [])),
         "owned": job.operator_id == operator.id,
@@ -223,6 +224,7 @@ def create_job(db, month, operator, engine="server", *, commit=True):
         context_hash=context_hash(db),
         state={
             "requested_engine": engine,
+            "allocation_mode": context.rules.fairness_rules.allocation_mode,
             "slots": [str(s.id) for s in slots],
             "cursor": 0,
             "operator_name": operator.display_name or operator.username,
@@ -338,6 +340,8 @@ def decision_for(
 
 
 def advance(db, job, revision, selection=None, token=None, fallback=False, batch=8,selections=None):
+    if job.state.get('balance_preview'):
+        raise HTTPException(409, 'Resume this proposal through Balance duties.')
     if job.state.get("template"):
         from app.services.template_compute import advance as advance_template
         return advance_template(db, job, revision, selection, token, fallback,selections)
@@ -442,6 +446,8 @@ def lock_operational_inputs(db):
     from app.services.scheduling_inputs import lock_inputs
     lock_inputs(db)
 def apply_job(db, job, revision, operator=None, dry_run=False):
+    if job.state.get('balance_preview'):
+        raise HTTPException(409, 'Review and apply this proposal through Balance duties.')
     if job.state.get("template"):
         from app.core.config import settings
         if not settings.template_compute_enabled:

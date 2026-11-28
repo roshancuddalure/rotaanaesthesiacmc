@@ -1,4 +1,4 @@
-"""Locked monthly unit boundaries for ordinary prospective allocations."""
+"""Configured monthly unit boundaries for prospective ordinary and extra duties."""
 
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -12,7 +12,10 @@ def locked_unit_ids(db, period_id, context=None):
         return cache[period_id]
     scope = db.scalar(select(MonthlyGenerationScope).where(
         MonthlyGenerationScope.rota_period_id == period_id).options(selectinload(MonthlyGenerationScope.units)))
-    result = frozenset(row.unit_id for row in scope.units if row.status == "included") if scope and scope.is_locked else None
+    # Unlocking an already configured month must not grant eligibility to its
+    # excluded units. Legacy periods without a configured scope retain None.
+    result = (frozenset(row.unit_id for row in scope.units if row.status == "included")
+              if scope and (scope.is_locked or scope.units) else None)
     if context is not None:
         if cache is None:
             cache = {}

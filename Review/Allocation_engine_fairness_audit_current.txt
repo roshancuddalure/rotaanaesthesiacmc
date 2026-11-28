@@ -1,0 +1,160 @@
+DUTY ALLOCATION AUDIT - LOCAL REVISION18, NOT DEPLOYED
+Updated UTC: 2026-11-27T00:53:02.876981+00:00
+
+The integrated engine now achieves total-duty AND night-duty gaps of at most2
+in the confirmed-timing November2026 equal-count replay. All840duties remain
+filled. All840holders passed placement/individual-limit checks; all eight
+independent clinical checks reported zero violations. This is a read-only
+projection, not a change to the live production rota or a universal guarantee.
+
+Call level        Total-duty gap     Night-duty gap     Weekend gap    Hours gap
+1st                    1                   1                1             24
+2nd                    2                   2                1             48
+3rd                    2                   2                1             40
+4th                    1                   2                2             40
+5th                    1                   1                1             24
+
+WHAT CHANGED
+Count-preserving swaps could not close the third-call night gap. The new bounded
+joint refinement can change ordinary duty totals inside the existing fair range,
+while preserving higher count-equality, hours and weekend bounds, protected rows
+and extra-duty credits. It models rest/overlap and then uses the existing atomic
+placement checks plus all-holder replay. In November it needed38additional
+hypothetical changes after the existing repaired baseline. It found a feasible
+schedule; no global optimum or impossibility claim is made.
+
+Two actual November read-only replays under different Python hash seeds accepted
+identical final assignment hashes. Single-worker deterministic work limits and
+stable input ordering replace wall-clock-dependent choices. The promoted runtime
+was then replayed through the actual full Balance pipeline with all840checks.
+A local formatted840-row proposal workbook exists; it is not an Apply token.
+
+A new durable preview path avoids holding one browser request throughout the long
+solver search. It uses the existing job table/month exclusion, authenticated
+ownership, resumable read-only work, and a stored server-owned witness. Apply
+revalidates current context and every placement without repeating the long solver.
+Job-specific tokens cannot use the old Apply endpoint after cancellation. Actual
+Apply and job outcome commit together. Existing published-month, exception,
+protected-row and Undo checks remain authoritative. No schema migration added.
+
+NEW BUGS FOUND DURING INTEGRATION
+- The old browser60s preview timeout could cancel a valid long search. Durable
+  jobs and UI polling are implemented; main browser/API checks now pass.
+- PostgreSQL reproduced a race in the new initial worker claim: cancellation
+  could commit between read and update. Initial/error claim reads now lock rows;
+  the fixed three-race PostgreSQL verification passed all3 tests (105.14s).
+- The browser harness expected revision17. It was updated explicitly to18; the
+  earlier failed receipt remains recorded. The application did not fail that gate.
+- Earlier audit found a legacy-objective architecture benchmark and a diagnostic
+  that returned exit0 after failure; both were corrected and separately tested.
+
+TEST EVIDENCE AND CURRENT LIMITS
+The final focused lifecycle gate passed43tests (81.65s), including real
+Preview/Apply/independent Verify/exact Undo, cached witness replay, expiry and
+background cancellation. The frontend unit suite passed156tests. Suites overlap;
+these counts are not summed with the full system test count.
+Main AND candidate actual compiled-browser/API workflows each passed48checks:
+quota18, hours16, joint14, including Close/reopen of the same durable preview,
+Discard/restart, light/dark,1280/390layouts and accessibility checks. No response
+mocks or listener ports were used. Main and candidate production builds passed.
+All112owned release hashes and188backend module AST matches were verified.
+Two new840-row review workbooks include native workload charts; reopened rota
+and validation values match their immutable source exports.
+
+The frozen2491-test full run is now finished, exit1/source unchanged:
+2423PASS,66PostgreSQL-onlySKIP,2FAIL,0ERROR. All four original timing assertions
+passed (10s/15sPreview,2sverification,3sreport); pytest call durations include
+setup and other work outside those measured sections.
+
+Both failures have prospective corrections that passed in isolated copies:
+1. The architecture test expected9old objective tiers. The explicit13-tier
+   contract passes with candidate denominator, model immutability, expired-no-proof
+   and no-write assertions unchanged.
+2. The whole-month workflow test demanded a proved optimum under a3secondbudget.
+   Identical-source isolated runs both failed and passed. In the failed replay,
+   local improvement retained coverage proofs and correctly marked later tiers
+   unproven; no false optimal claim was found. The exact reason the earlier
+   per-tier search stopped is unproven without that run's internal trace.
+   A30secondcompletion allowance retains optimal,2choices,distinct alternatives
+   and reviewedApply assertions; all passed. Separate bounded-search/UNKNOWN
+   tests and original performance limits are unchanged.
+Both corrections have now been applied. Only two backend test files changed;
+application code and its clinical policies are unchanged. Main focused checks
+passed40/40(source unchanged); refreshed candidate affected tests passed24/24.
+The candidate has115matching owned files and188matching backend modules.
+
+The exact66PostgreSQL cases all passed(1373.66s), with exit0, matching source
+hashes, exact skipped-test identities and guarded disposable-database cleanup.
+This reconciles the earlier full run to2489/2491distinct passes and its2recorded
+test failures. These historical failures remain preserved.
+
+The first fresh full attempt lost its processes and is retained as interrupted.
+The replacement corrected-source full run completed2491cases, source unchanged:
+2424PASS,66PostgreSQL-onlySKIP,1FAIL,0ERROR. Both corrected objective-contract and
+optimal reviewed-workflow tests passed in the full run. The only failure was the
+unchanged report speed gate:5.5136seconds against3seconds. Three other original
+speed gates passed. The earlier passing report result remains historical; this
+failure is not waived.
+
+An unchanged-assertion diagnostic also failed: report construction10.9754seconds
+wall/2.8438secondsCPU; HTML0.0628wall/0.0469CPU; Excel0.4733wall/0.3438CPU. Its
+concurrent-workload conditions do not establish the cause. Report source and test
+hashes match the earlier revision18 passing run. A current synthetic profile is
+running to locate avoidable construction cost before any proposed code change.
+The exact66PostgreSQL follow-up is active; final ID/hash/cleanup reconciliation
+and a fully passing current-source certificate remain pending. No source edit
+has occurred during its freeze, and no new3second threshold is substituted.
+
+REPORT PERFORMANCE - INTEGRATED, BROADER VERIFICATION PENDING
+The exact66PostgreSQL audit completed successfully with matching source/IDs and
+cleanup, reconciling the previous full run to2490/2491passes. Only report speed
+failed. After that freeze ended, period prefetch was integrated. Its main35-case
+report gate had34passes and the same3secondassertion failed at3.8230seconds.
+That failure remains recorded; the first optimization alone was insufficient.
+
+A warmed diagnostic then identified historical trend ORM graph loading as a
+remaining cost. The trend now reads explicit historical columns while retaining
+working/historical period precedence, excluded-slot filtering, zero-duty posted
+members and the existing workload/fairness calculations. Current-month loading
+and clinical allocation rules are unchanged. The scalar study reduced historical
+trend queries15to7 with exact output parity; timings are diagnostic observations.
+
+The integrated code passed43report/parity checks including the original3second
+assertion, exports/read-only checks and historical-workload parity. Existing22
+openpyxlwarnings remain. Eight independent previous-ORM/scalar regressions are
+now promoted into backend tests withouttoolsimports. Their permanent-suite final
+gate passed43/43 with unchangedsource and the original3secondassertion. Candidate
+verification is running, as is the fresh full audit holistic-report-scalar-audit
+with queuedexactPostgreSQL/ID-hash-cleanup reconciliation. The broader goal remains incomplete; a focused report pass alone
+is not a complete system certificate. No production writes or deployment.
+
+PRODUCTION AND REMAINING SCOPE
+- No production assignments, settings, jobs, postings, timing repairs or deployment
+  changed. Simulations enforce read-only database transactions.
+-390November timing windows/flags and saved-rule repairs remain proposed. Regular
+  non24h duties are08:00-16:00; CHAD,RUHSA,RC3rdA/B are24h. The projection uses those
+  confirmed times; operational repair and a fresh live preview need separate review.
+- Production OT guarding remains disabled. Equal-mode staffing has5reviewwarnings,
+  zero hard blocks; this is not a production OT-capacity certificate.
+- Saved gap1 warnings remain for2nd/3rd total counts. Availability policy intentionally
+  permits larger raw counts; its fresh revision18 read-only replay passed all840holder and eight clinical checks; raw gaps2/4/4/6/2.
+- No holiday calendar, missing posting, exclusive extra-duty roster or unauthorized
+  call-level substitution was invented. Approved leave,24hpost-duty rest and dated
+  included-unit postings remain mandatory. Explicit older mixed pools remain valid.
+- Original50-item programme remains21Done. Architecture, further acceptance,
+  concurrency/recovery, AI/GPU and pilots retain their original scope. Passing this
+  focused tuning does not close that programme or authorize deployment.
+
+NEXT
+Finish the same live full run, inspect every failure, execute the exact skipped
+PostgreSQL cases and reconcile IDs/source hashes/guarded cleanup. Then review
+any failures and require the final corrected-source certificate. Overall goal
+remains active; no production deployment or writes are authorized by this report.
+
+Evidence:docs/allocation-progress/runtime18-november-reviewed-verification.json
+Replay parity:docs/allocation-progress/joint-clinical-night-deterministic-replay-status.json
+Detailed scope:Plan/to do/November26_allocation_action_tracker.md
+
+
+CURRENT FULL AUDIT UPDATE - 2026-11-27T10:21:41.377412+00:00
+The current 2503-case unchanged-source run is still active: 1198 terminal outcomes and 1 recorded failure. The generation-reliability server case expected optimal but returned feasible under its default 3-second solver budget. This is not yet a proven clinical safety defect or a confirmed harmless test issue. Root-cause reproduction and actual objective/proof evidence are required after the frozen full/PG run finishes. Both main and candidate focused 43-case report gates passed; that does not certify the full run. All prior results above remain historical at their recorded revisions. Production is unchanged; the original 50-item programme remains 21 Done.
